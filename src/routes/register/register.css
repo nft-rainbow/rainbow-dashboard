@@ -1,0 +1,70 @@
+body {
+  height: 100%;
+  background-color: #f8f8f8;
+  overflow-y: hidden;
+}
+
+.register-form {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  margin: -160px 0 0 -160px;
+  width: 320px;
+  height: 320px;
+  padding: 36px;
+  box-shadow: 0 0 100px rgba(0,0,0,.08);
+}
+
+.register-form .login-form-button {
+  width: 100%;
+}
+
+.register-form .logo img {
+  width: 40px;
+  margin-right: 8px;
+}
+
+.register-form .logo {
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 24px;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.register-form .logo span {
+  vertical-align: text-bottom;
+  font-size: 16px;
+  text-transform: uppercase;
+  display: inline-block;
+  font-weight: 700;
+  color: #1890ff;
+  background-image: -webkit-gradient(linear,37.219838% 34.532506%,36.425669% 93.178216%,from(#29cdff),to(#0a60ff),color-stop(.37,#148eff));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.register-footer {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+}
+
+.register-footer .footer {
+  margin: 48px 0 24px;
+  padding: 0 16px;
+  text-align: center;
+}
+
+.register-footer .footer .copyright {
+  color: rgba(0,0,0,.45);
+  font-size: 13px;
+}
+
+.register-form .site-form-item-icon {
+  color: rgba(0,0,0,.45);
+}

@@ -3,10 +3,10 @@ import { Outlet, Link } from "react-router-dom";
 import "./dashboardLayout.css";
 import {
   DesktopOutlined,
-  FileOutlined,
   PieChartOutlined,
-  TeamOutlined,
-  UserOutlined,
+  // FileOutlined,
+  // TeamOutlined,
+  // UserOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu } from 'antd';
