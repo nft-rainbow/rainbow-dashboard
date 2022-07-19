@@ -1,16 +1,41 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { 
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
 import './index.css';
-import 'antd/dist/antd.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { AuthProvider, RequireAuth } from './Auth';
+
+import App from './App';
+import Login from './routes/login';
+import Register from './routes/register';
+import DashboardLayout from './routes/dashboardLayout';
+import Dashboard from './routes/dashboard';
+import User from './routes/user';
+import NotFound from './routes/404';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="user" element={<User />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );
 
