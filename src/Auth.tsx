@@ -1,27 +1,46 @@
 import { createContext, useState, ReactNode, useContext } from "react";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
-import { fakeAuthProvider } from "./FakeAuth";
+import { userLogin, userLogout, LoginMeta } from "./services/user";
+import { APIResponse } from "./services/";
 
 interface AuthContextType {
-  user: any;
-  signin: (user: string, callback: VoidFunction) => void;
+  user: UserInfo | null;
+  signin: (user: LoginMeta, callback: VoidFunction) => void;
   signout: (callback: VoidFunction) => void;
+}
+
+interface UserInfo {
+  id?: number;
+  email: string;
+  jwtToken: string;
+  tokenExpire: Date;
 }
 
 let AuthContext = createContext<AuthContextType>(null!);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  let [user, setUser] = useState<any>(null);
+  let [user, setUser] = useState<UserInfo | null>(null);
 
-  let signin = (newUser: string, callback: VoidFunction) => {
-    return fakeAuthProvider.signin(() => {
-      setUser(newUser);
-      callback();
+  let signin = (newUser: LoginMeta, callback: VoidFunction) => {
+    return userLogin(newUser).then((result: APIResponse) => {
+      if (result.code === 0) {
+        const user = {
+          email: newUser.email,
+          // @ts-ignore
+          jwtToken: result.data.token,
+          tokenExpire: new Date(result.data.expire),
+        };
+        setUser(user);
+        // TODO write to local storage
+        callback();
+      } else {
+        alert(result.message);
+      }
     });
   };
 
   let signout = (callback: VoidFunction) => {
-    return fakeAuthProvider.signout(() => {
+    return userLogout().then(() => {
       setUser(null);
       callback();
     });
@@ -46,7 +65,7 @@ export function AuthStatus() {
 
   return (
     <p>
-      Welcome {auth.user}!{" "}
+      Welcome {auth.user.email}!{" "}
       <button
         onClick={() => {
           auth.signout(() => navigate("/"));

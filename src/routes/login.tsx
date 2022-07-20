@@ -1,8 +1,8 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../Auth';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, message } from 'antd';
+import { useAuth } from '../Auth';
 import './register/register.css';
 
 function Login() {
@@ -13,25 +13,15 @@ function Login() {
   // @ts-ignore
   let from = location.state?.from?.pathname || "/";
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    let formData = new FormData(event.currentTarget);
-    let username = formData.get("username") as string;
-
-    auth.signin(username, () => {
-      // Send them back to the page they tried to visit when they were
-      // redirected to the login page. Use { replace: true } so we don't create
-      // another entry in the history stack for the login page.  This means that
-      // when they get to the protected page and click the back button, they
-      // won't end up back on the login page, which is also really nice for the
-      // user experience.
-      navigate(from, { replace: true });
+  const onFinish = (values: object) => {
+    // @ts-ignore
+    auth.signin(values, (err) => {
+      if (!err) {
+        navigate(from, { replace: true });
+        return;
+      }
+      message.error('Login failed: ' + err.message);
     });
-  }
-
-  const onFinish = (values: any) => {
-    console.log('Received values of form: ', values);
   };
 
   return (
@@ -48,10 +38,10 @@ function Login() {
           onFinish={onFinish}
         >
           <Form.Item
-            name="username"
-            rules={[{ required: true, message: 'Please input your Username!' }]}
+            name="email"
+            rules={[{ required: true, message: 'Please input your Email!' }]}
           >
-            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+            <Input type='email' prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
           </Form.Item>
           <Form.Item
             name="password"
@@ -68,7 +58,11 @@ function Login() {
             <Button type="primary" htmlType="submit" className="login-form-button">
               登录
             </Button>
+            <p className="mt-5">
+              <Link to="/register">注册</Link>
+            </p>
           </Form.Item>
+
         </Form>
       </div>
       <div className="register-footer">

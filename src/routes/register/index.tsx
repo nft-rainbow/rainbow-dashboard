@@ -1,11 +1,21 @@
 import React from 'react';
 import './register.css';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, message } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
+import { userRegister, LoginMeta } from '../../services/user';
 
 function Register() {
-  const onFinish = (values: any) => {
-    console.log('Received values of form: ', values);
+  const navigate = useNavigate();
+
+  const onFinish = async (values: object) => {
+    const result = await userRegister(values as LoginMeta);
+    if (result.code === 0) {
+      message.success('Register success!');
+      navigate('/login');
+    } else {
+      message.error(`Register failed: ${result.message}`);
+    }
   };
 
   return (
@@ -22,10 +32,10 @@ function Register() {
           onFinish={onFinish}
         >
           <Form.Item
-            name="username"
-            rules={[{ required: true, message: 'Please input your Username!' }]}
+            name="email"
+            rules={[{ required: true, message: 'Please input your Email!' }]}
           >
-            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+            <Input type="email" prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Email" />
           </Form.Item>
           <Form.Item
             name="password"
@@ -42,6 +52,9 @@ function Register() {
             <Button type="primary" htmlType="submit" className="login-form-button">
               注册
             </Button>
+            <p className="mt-5">
+              <Link to="/login">登录</Link>
+            </p>
           </Form.Item>
         </Form>
       </div>
