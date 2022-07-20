@@ -14,6 +14,8 @@
 
 .site-layout .site-layout-footer {
   text-align: center;
+  color: rgba(0,0,0,.45);
+  font-size: 12px;
 }
 
 .content-body {

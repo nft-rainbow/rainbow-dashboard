@@ -68,7 +68,7 @@ function Login() {
       <div className="register-footer">
         <div className='footer'>
           <div className="copyright">
-            @2020 NFT Rainbow
+            @2022 NFTRainbow
           </div>
         </div>
       </div>

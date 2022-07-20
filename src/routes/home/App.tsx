@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from "react-router-dom";
-import { AuthStatus } from './Auth';
+import { AuthStatus } from '../../Auth';
 
 function App() {
   return (

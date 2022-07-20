@@ -4,7 +4,7 @@ import RainbowBreadcrumb from '../components/Breadcrumb';
 function Dashboard() {
   return (
     <div>
-      <RainbowBreadcrumb items={['Dashboard', 'Home']} />
+      <RainbowBreadcrumb items={['Dashboard']} />
       <div className="content-body">
         Dashboard
       </div>

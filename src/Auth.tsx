@@ -1,7 +1,9 @@
 import { createContext, useState, ReactNode, useContext } from "react";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
-import { userLogin, userLogout, LoginMeta } from "./services/user";
+import { userLogin, userLogout, LoginMeta, UserInfo } from "./services/user";
 import { APIResponse } from "./services/";
+
+const USER_LOCALSTORAGE_KEY = "session_user";
 
 interface AuthContextType {
   user: UserInfo | null;
@@ -9,18 +11,11 @@ interface AuthContextType {
   signout: (callback: VoidFunction) => void;
 }
 
-interface UserInfo {
-  id?: number;
-  email: string;
-  jwtToken: string;
-  tokenExpire: Date;
-}
-
 let AuthContext = createContext<AuthContextType>(null!);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  let [user, setUser] = useState<UserInfo | null>(null);
-
+  let [user, setUser] = useState<UserInfo | null>(retriveUserFromLocalStorage());
+  
   let signin = (newUser: LoginMeta, callback: VoidFunction) => {
     return userLogin(newUser).then((result: APIResponse) => {
       if (result.code === 0) {
@@ -30,8 +25,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           jwtToken: result.data.token,
           tokenExpire: new Date(result.data.expire),
         };
+
+        localStorage.setItem(USER_LOCALSTORAGE_KEY, JSON.stringify(user));
         setUser(user);
-        // TODO write to local storage
         callback();
       } else {
         alert(result.message);
@@ -41,6 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   let signout = (callback: VoidFunction) => {
     return userLogout().then(() => {
+      localStorage.removeItem(USER_LOCALSTORAGE_KEY);
       setUser(null);
       callback();
     });
@@ -82,12 +79,15 @@ export function RequireAuth({ children }: { children: JSX.Element }) {
   let location = useLocation();
 
   if (!auth.user) {
-    // Redirect them to the /login page, but save the current location they were
-    // trying to go to when they were redirected. This allows us to send them
-    // along to that page after they login, which is a nicer user experience
-    // than dropping them off on the home page.
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return children;
+}
+
+function retriveUserFromLocalStorage() {
+  if (localStorage.getItem(USER_LOCALSTORAGE_KEY)) {
+    return JSON.parse(localStorage.getItem(USER_LOCALSTORAGE_KEY) as string);
+  }
+  return null;
 }

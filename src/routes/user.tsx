@@ -1,11 +1,15 @@
 import React from 'react';
+import RainbowBreadcrumb from '../components/Breadcrumb';
 
-function User() {
+function UserManagement() {
   return (
-    <div className="App">
-      <h1>User</h1>
+    <div>
+      <RainbowBreadcrumb items={['User']} />
+      <div className="content-body">
+        UserManagement
+      </div>
     </div>
   );
 }
 
-export default User;
+export default UserManagement;

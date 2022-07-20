@@ -9,12 +9,13 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider, RequireAuth } from './Auth';
 
-import App from './App';
+import Home from './routes/home/App';
 import Login from './routes/login';
 import Register from './routes/register';
-import DashboardLayout from './routes/dashboardLayout';
+import DashboardLayout from './routes/layout';
 import Dashboard from './routes/dashboard';
 import User from './routes/user';
+import App from './routes/apps';
 import NotFound from './routes/404';
 
 const root = ReactDOM.createRoot(
@@ -25,12 +26,13 @@ root.render(
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<App />} />
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<RequireAuth><DashboardLayout /></RequireAuth>}>
             <Route index element={<Dashboard />} />
             <Route path="user" element={<User />} />
+            <Route path="apps" element={<App />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -1,6 +1,13 @@
 import axios from 'axios';
 import { methodUrl } from '.';
 
+export interface UserInfo {
+  id?: number;
+  email: string;
+  jwtToken: string;
+  tokenExpire: Date;
+}
+
 export interface LoginMeta {
   email: string;
   password: string;
