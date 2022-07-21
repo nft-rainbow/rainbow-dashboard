@@ -12,7 +12,7 @@ import {
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Dropdown, Space, Button } from 'antd';
 import { useAuth } from '../../Auth';
-import { UserInfo } from '../../services/user';
+import { UserInfo } from '../../services/';
 const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];

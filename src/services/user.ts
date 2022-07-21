@@ -1,16 +1,19 @@
 import axios from 'axios';
-import { methodUrl } from '.';
-
-export interface UserInfo {
-  id?: number;
-  email: string;
-  jwtToken: string;
-  tokenExpire: Date;
-}
+import { methodUrl, get, post } from '.';
 
 export interface LoginMeta {
   email: string;
   password: string;
+}
+
+export interface User {
+  id: number;
+  email: string;
+  name: string;
+  phone: string;
+  id_name: string;
+  id_no: string;
+  id_image: string;
 }
 
 export async function userRegister (metadata: LoginMeta) {
@@ -23,26 +26,22 @@ export async function userLogin (metadata: LoginMeta) {
   return data;
 }
 
+export async function userProfile() {
+  return await get('/dashboard/users/profile');
+}
+
+export async function updateUserProfile(metadata: any) {
+  return await post('/dashboard/users/profile', metadata);
+}
+
+export async function updateUserKyc(metadata: any) {
+  return await post('/dashboard/users/kyc', metadata);
+}
+
 export async function userLogout () {
-  const jwtToken = ''; // TODO
-  const { data } = await axios({
-    url: methodUrl('/dashboard/logout'),
-    method: 'post',
-    headers: {
-      Authorization: `Bearer ${jwtToken}`,
-    }
-  });
-  return data;
+  return await post('/dashboard/logout');
 }
 
 export async function userRefreshToken () {
-  const jwtToken = '';  // TODO
-  const { data } = await axios({
-    method: 'get',
-    url: methodUrl('/dashboard/refresh_token'),
-    headers: {
-      Authorization: `Bearer ${jwtToken}`
-    }
-  });
-  return data;
+  return await get('/dashboard/refresh_token');
 }
