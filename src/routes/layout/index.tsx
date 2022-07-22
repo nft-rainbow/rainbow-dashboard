@@ -32,8 +32,8 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem(<Link to="/dashboard">Dashboard</Link>, '1', <PieChartOutlined />),
-  getItem(<Link to="/dashboard/apps">Apps</Link>, '2', <AppstoreOutlined />),
+  getItem(<Link to="/panels">Dashboard</Link>, '1', <PieChartOutlined />),
+  getItem(<Link to="/panels/apps">Apps</Link>, '2', <AppstoreOutlined />),
   // getItem(<Link to="/dashboard/user">User</Link>, '3', <UserOutlined />),
   /* getItem(<Link to="/dashboard/user">User</Link>, 'sub1', <UserOutlined />, [
     getItem('Tom', '3'),
@@ -48,8 +48,9 @@ const App: React.FC = () => {
   const user = auth.user as UserInfo;
 
   const userMenuItems: MenuItem[] = [
-    getItem(<Link to="/dashboard/user">设置</Link>, '2', <SettingOutlined />),
-    getItem('退出', '3', <LogoutOutlined />),
+    getItem(<Link to="/panels/user">设置</Link>, '2', <SettingOutlined />),
+    getItem(<Link to="/panels/company">企业认证</Link>, '3', <SettingOutlined />),
+    getItem('退出', '4', <LogoutOutlined />),
   ];
 
   const userMenu = <Menu items={userMenuItems}/>;

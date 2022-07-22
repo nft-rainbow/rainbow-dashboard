@@ -1,12 +1,12 @@
 import { Upload, Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { methodUrl, authHeader } from '../services';
+import { methodUrl, authHeaderSync } from '../services';
 
 export default function FileUpload(props: any) {
   const uploadProps = {
     name: 'file',
     action: methodUrl("/dashboard/misc/upload"),
-    headers: authHeader(),
+    headers: authHeaderSync(),
     onChange(info: any) {
       if (info.file.status === 'done') {
         const { data } = info.file.response;

@@ -1,9 +1,7 @@
 import { createContext, useState, ReactNode, useContext } from "react";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
 import { userLogin, userLogout, LoginMeta } from "./services/user";
-import { APIResponse, UserInfo } from "./services/";
-
-const USER_LOCALSTORAGE_KEY = "session_user";
+import { APIResponse, UserInfo, USER_LOCALSTORAGE_KEY } from "./services/";
 
 interface AuthContextType {
   user: UserInfo | null;

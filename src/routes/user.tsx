@@ -94,7 +94,6 @@ function UserManagement() {
                 <Input />
               </Form.Item>
               <Form.Item name="id_image" label="身份证照片" rules={[{ required: true }]}>
-                {/* <Input /> */}
                 <FileUpload onChange={(err: Error, file: any) => kycForm.setFieldsValue({id_image: file.url})}/>
               </Form.Item>
               <Form.Item {...tailLayout}>

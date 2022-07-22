@@ -15,8 +15,10 @@ import Register from './routes/register';
 import DashboardLayout from './routes/layout';
 import Dashboard from './routes/dashboard';
 import User from './routes/user';
+import Company from './routes/company';
 import App from './routes/apps';
-import NotFound from './routes/404';
+import AppDetail from './routes/apps/detail';
+// import NotFound from './routes/404';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -29,12 +31,14 @@ root.render(
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<RequireAuth><DashboardLayout /></RequireAuth>}>
+          <Route path="/panels" element={<RequireAuth><DashboardLayout /></RequireAuth>}>
             <Route index element={<Dashboard />} />
             <Route path="user" element={<User />} />
+            <Route path="company" element={<Company />} />
             <Route path="apps" element={<App />} />
+            <Route path="apps/:id" element={<AppDetail />} />
           </Route>
-          <Route path="*" element={<NotFound />} />
+          {/* <Route path="*" element={<NotFound />} /> */}
         </Routes>
       </AuthProvider>
     </BrowserRouter>
