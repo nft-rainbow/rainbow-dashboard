@@ -19,30 +19,30 @@ export async function createApp(metadata: any) {
   return await post('/dashboard/apps', metadata);
 }
 
-export async function getAppDetail(id: number) {
+export async function getAppDetail(id: number | string) {
   return await get(`/dashboard/apps/${id}`);
 }
 
-export async function updateApp(id: number, metadata: any) {
+export async function updateApp(id: number | string, metadata: any) {
   return await put(`/dashboard/apps/${id}`, metadata);
 }
 
-export async function getAppFiles(id: number, page?: number, limit?: number) {
+export async function getAppFiles(id: number | string, page?: number, limit?: number) {
   return await get(`/dashboard/apps/${id}/files`, {page, limit});
 }
 
-export async function getAppMetadatas(id: number, page?: number, limit?: number) {
+export async function getAppMetadatas(id: number | string, page?: number, limit?: number) {
   return await get(`/dashboard/apps/${id}/metadata`, {page, limit});
 }
 
-export async function getAppContracts(id: number, page?: number, limit?: number) {
+export async function getAppContracts(id: number | string, page?: number, limit?: number) {
   return await get(`/dashboard/apps/${id}/contracts`, {page, limit});
 }
 
-export async function getAppNfts(id: number, page?: number, limit?: number) {
+export async function getAppNfts(id: number | string, page?: number, limit?: number) {
   return await get(`/dashboard/apps/${id}/nft`, {page, limit});
 }
 
-export async function getAppNftsOfContract(id: number, address: string, page?: number, limit?: number) {
+export async function getAppNftsOfContract(id: number | string, address: string, page?: number, limit?: number) {
   return await get(`/dashboard/apps/${id}/contracts/${address}/nft`, {page, limit});
 }

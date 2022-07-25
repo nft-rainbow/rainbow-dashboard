@@ -7,7 +7,7 @@ import {
   Form, 
   Input, 
   Select, 
-  TablePaginationConfig, 
+  TablePaginationConfig,
   message 
 } from "antd";
 import { Link } from "react-router-dom";
@@ -62,8 +62,7 @@ function Apps() {
       setIsModalVisible(false);
       message.success('创建成功');
     } catch(err) {
-      message.success('创建失败');
-      console.log(err);
+      message.error('创建失败');
     }
   };
 
@@ -72,17 +71,15 @@ function Apps() {
   };
 
   useEffect(() => {
-    getApps().then(res => {
-      if (res.code === 0) {
-        setApps(res.data.items);
-        setTotal(res.data.count);
-      }
+    getApps().then(data => {
+      setApps(data.items);
+      setTotal(data.count);
     });
   }, []);
 
   return (
     <>
-      <RainbowBreadcrumb items={['Apps']} />
+      <RainbowBreadcrumb items={['应用列表']} />
       <Card extra={<Button onClick={showModal} type="primary">创建</Button>}>
         <Table 
           rowKey='id'

@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { Outlet, Link } from "react-router-dom";
 import "./layout.css";
 import {
-  PieChartOutlined,
+  DashboardOutlined,
   AppstoreOutlined,
   MenuFoldOutlined,
   DownOutlined,
-  SettingOutlined,
+  UserOutlined,
   LogoutOutlined,
+  UsergroupAddOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Dropdown, Space, Button } from 'antd';
@@ -32,8 +33,8 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem(<Link to="/panels">Dashboard</Link>, '1', <PieChartOutlined />),
-  getItem(<Link to="/panels/apps">Apps</Link>, '2', <AppstoreOutlined />),
+  getItem(<Link to="/panels">仪表盘</Link>, '1', <DashboardOutlined />),
+  getItem(<Link to="/panels/apps">应用</Link>, '2', <AppstoreOutlined />),
   // getItem(<Link to="/dashboard/user">User</Link>, '3', <UserOutlined />),
   /* getItem(<Link to="/dashboard/user">User</Link>, 'sub1', <UserOutlined />, [
     getItem('Tom', '3'),
@@ -48,8 +49,8 @@ const App: React.FC = () => {
   const user = auth.user as UserInfo;
 
   const userMenuItems: MenuItem[] = [
-    getItem(<Link to="/panels/user">设置</Link>, '2', <SettingOutlined />),
-    getItem(<Link to="/panels/company">企业认证</Link>, '3', <SettingOutlined />),
+    getItem(<Link to="/panels/user">用户设置</Link>, '2', <UserOutlined />),
+    getItem(<Link to="/panels/company">企业认证</Link>, '3', <UsergroupAddOutlined />),
     getItem('退出', '4', <LogoutOutlined />),
   ];
 

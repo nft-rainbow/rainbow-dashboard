@@ -14,7 +14,7 @@ const tailLayout = {
 };
 
 function UserManagement() {
-  const [user, setUser] = useState<User | {}>({});
+  const [, setUser] = useState<User | {}>({});
   const [basicForm] = Form.useForm();
   const [kycForm] = Form.useForm();
 
@@ -59,7 +59,7 @@ function UserManagement() {
 
   return (
     <div>
-      <RainbowBreadcrumb items={['User', 'Profile']} />
+      <RainbowBreadcrumb items={['设置', '用户信息']} />
       <div className="content-body">
         <Divider orientation="left">基本信息</Divider>
         <Row>

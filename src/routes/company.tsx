@@ -15,7 +15,7 @@ const tailLayout = {
 };
 
 export default function CompanyManagement() {
-  const [company, setCompany] = useState<Company | {}>({});
+  const [, setCompany] = useState<Company | {}>({});
   const [kycForm] = Form.useForm();
 
   const onKycInfoUpdate = async (values: any) => {
@@ -39,7 +39,7 @@ export default function CompanyManagement() {
 
   return (
     <div>
-      <RainbowBreadcrumb items={['机构认证']} />
+      <RainbowBreadcrumb items={['设置', '机构认证']} />
       <div className="content-body">
         <Divider orientation="left">认证信息</Divider>
         <Row>

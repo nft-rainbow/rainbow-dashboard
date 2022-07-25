@@ -1,20 +1,26 @@
 import { createContext, useState, ReactNode, useContext } from "react";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
 import { userLogin, userLogout, LoginMeta } from "./services/user";
-import { APIResponse, UserInfo, USER_LOCALSTORAGE_KEY } from "./services/";
+import { 
+  APIResponse,
+  UserInfo,
+  USER_LOCALSTORAGE_KEY,
+  ErrorCallback,
+  tryToGetLocalStorageUser
+} from "./services/";
 
 interface AuthContextType {
   user: UserInfo | null;
-  signin: (user: LoginMeta, callback: VoidFunction) => void;
+  signin: (user: LoginMeta, callback: ErrorCallback) => void;
   signout: (callback: VoidFunction) => void;
 }
 
 let AuthContext = createContext<AuthContextType>(null!);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  let [user, setUser] = useState<UserInfo | null>(retriveUserFromLocalStorage());
+  let [user, setUser] = useState<UserInfo | null>(tryToGetLocalStorageUser());
   
-  let signin = (newUser: LoginMeta, callback: VoidFunction) => {
+  let signin = (newUser: LoginMeta, callback: ErrorCallback) => {
     return userLogin(newUser).then((result: APIResponse) => {
       if (result.code === 0) {
         const user = {
@@ -26,10 +32,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         localStorage.setItem(USER_LOCALSTORAGE_KEY, JSON.stringify(user));
         setUser(user);
-        callback();
+        callback(null);
       } else {
-        alert(result.message);
+        callback(new Error(result.message));
       }
+    }).catch((err) => {
+      callback(err);
     });
   };
 
@@ -81,11 +89,4 @@ export function RequireAuth({ children }: { children: JSX.Element }) {
   }
 
   return children;
-}
-
-function retriveUserFromLocalStorage() {
-  if (localStorage.getItem(USER_LOCALSTORAGE_KEY)) {
-    return JSON.parse(localStorage.getItem(USER_LOCALSTORAGE_KEY) as string);
-  }
-  return null;
 }

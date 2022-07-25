@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message } from 'antd';
+import { LoginMeta } from '../services/user';
 import { useAuth } from '../Auth';
 import './register/register.css';
 
@@ -14,8 +15,7 @@ function Login() {
   let from = location.state?.from?.pathname || "/";
 
   const onFinish = (values: object) => {
-    // @ts-ignore
-    auth.signin(values, (err) => {
+    auth.signin(values as LoginMeta, (err) => {
       if (!err) {
         navigate(from, { replace: true });
         return;
