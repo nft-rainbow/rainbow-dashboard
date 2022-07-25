@@ -28,12 +28,9 @@ export default function CompanyManagement() {
   }
 
   useEffect(() => {
-    userCompany().then((result) => {
-      if (result.code === 0) {
-        const _company = result.data;
-        setCompany(_company);
-        kycForm.setFieldsValue(_company);
-      }
+    userCompany().then((_company) => {
+      setCompany(_company);
+      kycForm.setFieldsValue(_company);
     });
   }, [kycForm]);
 

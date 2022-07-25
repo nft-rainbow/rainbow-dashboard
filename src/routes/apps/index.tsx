@@ -8,11 +8,11 @@ import {
   Input, 
   Select, 
   TablePaginationConfig,
-  message 
+  message,
 } from "antd";
 import { Link } from "react-router-dom";
 import RainbowBreadcrumb from '../../components/Breadcrumb';
-import { getApps, App, createApp } from '../../services/app';
+import { getApps, App, createApp, getAppDetail } from '../../services/app';
 import { mapChainName, formatDate } from '../../utils';
 
 function Apps() {
@@ -21,6 +21,10 @@ function Apps() {
   const [page, setPage] = useState(1);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [createForm] = Form.useForm();
+
+  const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
+  const [toViewAppId, setToViewAppId] = useState<number>(0);
+  const [appDetail, setAppDetail] = useState<App | {}>({});
 
   const columns = [
     {
@@ -40,16 +44,18 @@ function Apps() {
       render: mapChainName,
     },
     {
-      title: '应用ID',
-      dataIndex: 'app_id',
-      key: 'app_id',
-    },
-    {
       title: '创建时间',
       dataIndex: 'created_at',
       key: 'created_at',
       render: formatDate,
     },
+    {
+      title: '操作',
+      key: 'action',
+      render: (text: number, record: App) => {
+        return <Button type='link' onClick={() => {setToViewAppId(record.id);setIsDetailModalVisible(true)}}>查看Key</Button>;
+      }
+    }
   ];
 
   const showModal = () => {
@@ -76,6 +82,14 @@ function Apps() {
       setTotal(data.count);
     });
   }, []);
+
+  useEffect(() => {
+    if (toViewAppId) {
+      getAppDetail(toViewAppId).then(data => {
+        setAppDetail(data);
+      });
+    }
+  }, [toViewAppId]);
 
   return (
     <>
@@ -129,6 +143,11 @@ function Apps() {
             <Input.TextArea rows={4} />
           </Form.Item>
         </Form>
+      </Modal>
+      <Modal title='应用详情' visible={isDetailModalVisible} onOk={() => setIsDetailModalVisible(false)} onCancel={() => setIsDetailModalVisible(false)}>
+        <p>应用：{(appDetail as App).name}</p>
+        <p>AppId: {(appDetail as App).app_id}</p>
+        <p>AppSecret: {(appDetail as App).app_secret}</p>
       </Modal>
     </>
   );

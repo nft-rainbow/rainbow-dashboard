@@ -51,7 +51,7 @@ const App: React.FC = () => {
   const userMenuItems: MenuItem[] = [
     getItem(<Link to="/panels/user">用户设置</Link>, '2', <UserOutlined />),
     getItem(<Link to="/panels/company">企业认证</Link>, '3', <UsergroupAddOutlined />),
-    getItem('退出', '4', <LogoutOutlined />),
+    getItem(<span onClick={() => auth.signout(console.log)}>退出</span>, '4', <LogoutOutlined />),
   ];
 
   const userMenu = <Menu items={userMenuItems}/>;
@@ -76,7 +76,7 @@ const App: React.FC = () => {
             </Dropdown>
           </div>
         </Header>
-        <Content style={{ margin: '0 16px' }}>
+        <Content style={{ margin: '16px 16px' }}>
           <Outlet />
         </Content>
         <Footer className="site-layout-footer">©2022 NFTRainbow</Footer>

@@ -37,23 +37,20 @@ function UserManagement() {
   }
 
   useEffect(() => {
-    userProfile().then((result) => {
-      if (result.code === 0) {
-        const _user = result.data;
-        setUser(_user);
+    userProfile().then((_user) => {
+      setUser(_user);
 
-        basicForm.setFieldsValue({
-          email: _user.email,
-          name: _user.name,
-          phone: _user.phone,
-        });
+      basicForm.setFieldsValue({
+        email: _user.email,
+        name: _user.name,
+        phone: _user.phone,
+      });
 
-        kycForm.setFieldsValue({
-          id_no: _user.id_no,
-          id_name: _user.id_name,
-          id_image: _user.id_image,
-        });
-      }
+      kycForm.setFieldsValue({
+        id_no: _user.id_no,
+        id_name: _user.id_name,
+        id_image: _user.id_image,
+      });
     });
   }, [basicForm, kycForm]);
 
