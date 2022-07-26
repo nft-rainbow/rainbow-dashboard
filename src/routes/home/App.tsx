@@ -1,8 +1,13 @@
 import React from 'react';
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { AuthStatus } from '../../Auth';
 
 function App() {
+  // NOTE: currently we do not have home page
+  if (true) {
+    return <Navigate to="/panels" />;
+  }
+
   return (
     <div className="App">
       <h1>App</h1>

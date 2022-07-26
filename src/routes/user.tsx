@@ -21,7 +21,7 @@ function UserManagement() {
   const onBasicInfoUpdate = async (values: any) => {
     try {
       await updateUserProfile(values);
-      message.success('Basic info updated successfully');
+      message.success('用户信息更新成功');
     } catch (error: any) {
       message.error(error.message);
     }
@@ -30,7 +30,7 @@ function UserManagement() {
   const onKycInfoUpdate = async (values: any) => {
     try {
       await updateUserKyc(values);
-      message.success('KYC info updated successfully');
+      message.success('KYC信息更新成功');
     } catch (error: any) {
       message.error(error.message);
     }

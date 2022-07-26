@@ -21,7 +21,7 @@ export default function CompanyManagement() {
   const onKycInfoUpdate = async (values: any) => {
     try {
       await updateUserCompany(values);
-      message.success('KYC info updated successfully');
+      message.success('企业信息更新成功');
     } catch (error: any) {
       message.error(error.message);
     }

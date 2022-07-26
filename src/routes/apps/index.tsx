@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import RainbowBreadcrumb from '../../components/Breadcrumb';
 import { getApps, App, createApp, getAppDetail } from '../../services/app';
 import { mapChainName, formatDate } from '../../utils';
+import { SERVICE_HOST } from '../../config';
 
 function Apps() {
   const [apps, setApps] = useState<App[]>([]);
@@ -25,6 +26,13 @@ function Apps() {
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [toViewAppId, setToViewAppId] = useState<number>(0);
   const [appDetail, setAppDetail] = useState<App | {}>({});
+
+  const refreshItems = (currentPage: number) => {
+    getApps(currentPage).then(data => {
+      setApps(data.items);
+      setTotal(data.count);
+    });
+  }
 
   const columns = [
     {
@@ -58,15 +66,12 @@ function Apps() {
     }
   ];
 
-  const showModal = () => {
-    setIsModalVisible(true);
-  };
-
   const handleOk = async (values: object) => {
     try {
       await createApp(values);
       setIsModalVisible(false);
       message.success('创建成功');
+      refreshItems(page);
     } catch(err) {
       message.error('创建失败');
     }
@@ -77,11 +82,8 @@ function Apps() {
   };
 
   useEffect(() => {
-    getApps().then(data => {
-      setApps(data.items);
-      setTotal(data.count);
-    });
-  }, []);
+    refreshItems(page);
+  }, [page]);
 
   useEffect(() => {
     if (toViewAppId) {
@@ -94,7 +96,7 @@ function Apps() {
   return (
     <>
       <RainbowBreadcrumb items={['应用列表']} />
-      <Card extra={<Button onClick={showModal} type="primary">创建</Button>}>
+      <Card extra={<Button onClick={() => setIsModalVisible(true)} type="primary">创建</Button>}>
         <Table 
           rowKey='id'
           dataSource={apps} 
@@ -148,6 +150,7 @@ function Apps() {
         <p>应用：{(appDetail as App).name}</p>
         <p>AppId: {(appDetail as App).app_id}</p>
         <p>AppSecret: {(appDetail as App).app_secret}</p>
+        <p>服务地址: {SERVICE_HOST}</p>
       </Modal>
     </>
   );

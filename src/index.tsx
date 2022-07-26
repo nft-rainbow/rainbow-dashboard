@@ -4,6 +4,7 @@ import {
   BrowserRouter,
   Routes,
   Route,
+  // Navigate,
 } from "react-router-dom";
 import './index.css';
 import reportWebVitals from './reportWebVitals';
@@ -38,7 +39,7 @@ root.render(
             <Route path="apps" element={<App />} />
             <Route path="apps/:id" element={<AppDetail />} />
           </Route>
-          {/* <Route path="*" element={<NotFound />} /> */}
+          {/* <Route path="*" element={<Navigate to="/panels" />} /> */}
         </Routes>
       </AuthProvider>
     </BrowserRouter>

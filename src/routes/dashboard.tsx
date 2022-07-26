@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Button, Col, Row, Statistic, Card } from 'antd';
+import { Alert, Col, Row, Statistic, Card } from 'antd';
 
 function Dashboard() {
   return (
