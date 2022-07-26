@@ -28,7 +28,7 @@ function Login() {
     <div className="register">
       <div className="register-form">
         <div className="logo">
-          <img src="https://avatars.githubusercontent.com/u/108182053?s=200&v=4" alt="logo" />
+          <img src="/nft-rainbow-logo.png" alt="logo" />
           <span>NFT Rainbow</span>
         </div>
         <Form
