@@ -36,7 +36,7 @@ export default function CompanyManagement() {
 
   return (
     <div>
-      <RainbowBreadcrumb items={['设置', '机构认证']} />
+      <RainbowBreadcrumb items={['设置', '企业认证']} />
       <div className="content-body">
         <Divider orientation="left">认证信息</Divider>
         <Row>

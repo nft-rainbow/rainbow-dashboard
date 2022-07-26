@@ -30,6 +30,13 @@ export interface Company {
   status: number;
 }
 
+export interface UserStatistics {
+  nft_count: number;
+  contract_count: number;
+  app_count: number;
+  request_count: number;
+}
+
 export async function userRegister (metadata: LoginMeta) {
   const { data } = await axios.post(methodUrl('/dashboard/register'), metadata);
   return data;
@@ -71,4 +78,8 @@ export async function userCompany() {
 
 export async function updateUserCompany(metadata: any) {
   return await post('/dashboard/users/company', metadata);
+}
+
+export async function userStatistics() {
+  return await get('/dashboard/users/statistics');
 }

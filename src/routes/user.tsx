@@ -56,7 +56,7 @@ function UserManagement() {
 
   return (
     <div>
-      <RainbowBreadcrumb items={['设置', '用户信息']} />
+      <RainbowBreadcrumb items={['设置', '用户设置']} />
       <div className="content-body">
         <Divider orientation="left">基本信息</Divider>
         <Row>
