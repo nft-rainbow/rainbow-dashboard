@@ -11,6 +11,24 @@ export interface App {
   updated_at: string;
 }
 
+export interface File {
+  file_name: string;
+  file_size: number;
+  file_url: string;
+  file_type: string;
+}
+
+export interface MetadataInfo {
+  name: string;
+  description: string;
+  file: string;
+}
+
+export interface Metadata {
+  metadata: MetadataInfo;
+  uri: string;
+}
+
 export async function getApps(page?: number, limit?: number) {
   return await get('/dashboard/apps', {page, limit});
 }

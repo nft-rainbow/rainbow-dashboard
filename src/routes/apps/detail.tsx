@@ -6,11 +6,14 @@ import {
   getAppDetail,
   getAppContracts,
   getAppNfts,
-  // getAppFiles,
+  getAppMetadatas,
+  getAppFiles,
+  File,
+  Metadata,
   // getAppNftsOfContract 
 } from '../../services/app';
 import { NFT, Contract } from '../../services';
-import { Card, Tabs, Table, TablePaginationConfig, Tooltip, Empty } from 'antd';
+import { Card, Tabs, Table, TablePaginationConfig, Tooltip, Space } from 'antd';
 import { mapChainName, formatDate, short, scanTxLink, mapSimpleStatus, scanNFTLink, mapNFTType } from '../../utils';
 const { TabPane } = Tabs;
 
@@ -20,7 +23,7 @@ export default function AppDetail() {
   const [breadcrumbItems, setBreadcrumbItems] = useState<string[]>(["应用详情"]);
 
   const onChange = (key: string) => {
-    console.log(key);
+    console.log("Switch to tab: ", key);
   };
 
   useEffect(() => {
@@ -30,17 +33,7 @@ export default function AppDetail() {
     });
   }, [id]);
 
-  /* useEffect(() => {
-    getAppFiles(id as string).then(res => {
-      console.log('getAppFiles', res);
-    });
-  }, []); */
-
-  /* useEffect(() => {
-    getAppNftsOfContract(id as string).then(res => {
-      console.log('getAppNftsOfContract', res);
-    });
-  }, []); */
+  const idStr = id as string;
 
   return (
     <div className="App">
@@ -48,16 +41,16 @@ export default function AppDetail() {
       <Card>
         <Tabs defaultActiveKey="1" onChange={onChange}>
           <TabPane tab="数字藏品" key="1">
-            <AppNFTs id={id as string} />
+            <AppNFTs id={idStr} />
           </TabPane>
           <TabPane tab="合约" key="2">
-            <AppContracts id={id as string} />
+            <AppContracts id={idStr} />
           </TabPane>
           <TabPane tab="元数据" key="3">
-            <Empty/>
+            <AppMetadatas id={idStr} />
           </TabPane>
           <TabPane tab="文件" key="4">
-            <Empty/>
+            <AppFiles id={idStr} />
           </TabPane>
         </Tabs>
       </Card>
@@ -233,6 +226,100 @@ function AppContracts(props: {id: string}) {
     <>
       <Table 
         rowKey='id'
+        dataSource={items} 
+        columns={columns}
+        pagination={{
+          total,
+          current: page,
+          showTotal: (total) => `共 ${total} 条`,
+        }}
+        onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
+      />
+    </>
+  );
+}
+
+function AppMetadatas(props: {id: string}) {
+  const { id } = props;
+  const [items, setItems] = useState<Metadata[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+
+  const columns = [
+    {
+      title: '名字',
+      dataIndex: ['metadata', 'name'],
+    },
+    {
+      title: '操作',
+      dataIndex: ['metadata', 'file'],
+      render: (text: string, item: Metadata) => (<Space>
+        <a target="_blank" rel="noreferrer" href={item.metadata.file}>文件</a>
+        <a target="_blank" rel="noreferrer" href={item.uri}>Metadata</a>
+      </Space>),
+    }
+  ];
+
+  useEffect(() => {
+    getAppMetadatas(id as string, page, 10).then(res => {
+      setTotal(res.count);
+      setItems(res.items);
+    });
+  }, [id, page]);
+
+  return (
+    <>
+      <Table 
+        rowKey='uri'
+        dataSource={items} 
+        columns={columns}
+        pagination={{
+          total,
+          current: page,
+          showTotal: (total) => `共 ${total} 条`,
+        }}
+        onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
+      />
+    </>
+  );
+}
+
+function AppFiles(props: {id: string}) {
+  const { id } = props;
+  const [items, setItems] = useState<File[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+
+  const columns = [
+    {
+      title: '文件名',
+      dataIndex: 'file_name',
+      key: 'file_name',
+      render: (text: string, record: File) => <a target="_blank" rel="noreferrer" href={record.file_url}>{text}</a>,
+    },
+    {
+      title: '文件类型',
+      dataIndex: 'file_type',
+      key: 'file_type',
+    },
+    {
+      title: '文件大小',
+      dataIndex: 'file_size',
+      key: 'file_size',
+    },
+  ];
+
+  useEffect(() => {
+    getAppFiles(id as string, page, 10).then(res => {
+      setTotal(res.count);
+      setItems(res.items);
+    });
+  }, [id, page]);
+
+  return (
+    <>
+      <Table 
+        rowKey='file_name'
         dataSource={items} 
         columns={columns}
         pagination={{
