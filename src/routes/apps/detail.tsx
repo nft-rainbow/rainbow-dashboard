@@ -13,14 +13,28 @@ import {
   // getAppNftsOfContract 
 } from '../../services/app';
 import { NFT, Contract } from '../../services';
-import { Card, Tabs, Table, TablePaginationConfig, Tooltip, Space } from 'antd';
+import { 
+  Card, 
+  Tabs, 
+  Table, 
+  TablePaginationConfig, 
+  Tooltip, 
+  Space, 
+  Button, 
+  Modal,
+  Typography,
+} from 'antd';
+import { SERVICE_HOST } from '../../config';
 import { mapChainName, formatDate, short, scanTxLink, mapSimpleStatus, scanNFTLink, mapNFTType } from '../../utils';
 const { TabPane } = Tabs;
+const { Text } = Typography;
 
 export default function AppDetail() {
   const { id } = useParams();
-  const [, setApp] = useState<App | {}>({});
+  const [app, setApp] = useState<App | {}>({});
   const [breadcrumbItems, setBreadcrumbItems] = useState<string[]>(["应用详情"]);
+
+  const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
 
   const onChange = (key: string) => {
     console.log("Switch to tab: ", key);
@@ -39,7 +53,7 @@ export default function AppDetail() {
     <div className="App">
       <RainbowBreadcrumb items={breadcrumbItems} />
       <Card>
-        <Tabs defaultActiveKey="1" onChange={onChange}>
+        <Tabs defaultActiveKey="1" onChange={onChange} tabBarExtraContent={<Button type='primary' onClick={() => setIsDetailModalVisible(true)}>查看AppKey</Button>}>
           <TabPane tab="数字藏品" key="1">
             <AppNFTs id={idStr} />
           </TabPane>
@@ -52,8 +66,16 @@ export default function AppDetail() {
           <TabPane tab="文件" key="4">
             <AppFiles id={idStr} />
           </TabPane>
+          <TabPane tab="铸造藏品" key="5">
+            <p>TODO</p>
+          </TabPane>
         </Tabs>
       </Card>
+      <Modal title='应用详情' visible={isDetailModalVisible} onOk={() => setIsDetailModalVisible(false)} onCancel={() => setIsDetailModalVisible(false)}>
+        <p>App Id: <Text code>{(app as App).app_id}</Text></p>
+        <p>App Secret: <Text code>{(app as App).app_secret}</Text></p>
+        <p>Service Host: <Text code>{SERVICE_HOST}</Text></p>
+      </Modal>
     </div>
   );
 }

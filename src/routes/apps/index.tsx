@@ -12,9 +12,8 @@ import {
 } from "antd";
 import { Link } from "react-router-dom";
 import RainbowBreadcrumb from '../../components/Breadcrumb';
-import { getApps, App, createApp, getAppDetail } from '../../services/app';
+import { getApps, App, createApp } from '../../services/app';
 import { mapChainName, formatDate } from '../../utils';
-import { SERVICE_HOST } from '../../config';
 
 function Apps() {
   const [apps, setApps] = useState<App[]>([]);
@@ -22,10 +21,6 @@ function Apps() {
   const [page, setPage] = useState(1);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [createForm] = Form.useForm();
-
-  const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
-  const [toViewAppId, setToViewAppId] = useState<number>(0);
-  const [appDetail, setAppDetail] = useState<App | {}>({});
 
   const refreshItems = (currentPage: number) => {
     getApps(currentPage).then(data => {
@@ -36,14 +31,10 @@ function Apps() {
 
   const columns = [
     {
-      title: '序号',
-      dataIndex: 'id',
-      key: 'id',
-      render: (text: number) => <Link to={`/panels/apps/${text}`}>{text}</Link>
-    }, {
       title: '应用名',
       dataIndex: 'name',
       key: 'name',
+      render: (text: string, record: App) => <Link to={`/panels/apps/${record.id}`}>{text}</Link>
     },
     {
       title: '区块链',
@@ -60,8 +51,11 @@ function Apps() {
     {
       title: '操作',
       key: 'action',
-      render: (text: number, record: App) => {
+      /* render: (text: number, record: App) => {
         return <Button type='link' onClick={() => {setToViewAppId(record.id);setIsDetailModalVisible(true)}}>查看Key</Button>;
+      }, */
+      render: (text: number, record: App) => {
+        return <Link to={`/panels/apps/${record.id}`}>查看</Link>;
       }
     }
   ];
@@ -84,14 +78,6 @@ function Apps() {
   useEffect(() => {
     refreshItems(page);
   }, [page]);
-
-  useEffect(() => {
-    if (toViewAppId) {
-      getAppDetail(toViewAppId).then(data => {
-        setAppDetail(data);
-      });
-    }
-  }, [toViewAppId]);
 
   return (
     <>
@@ -145,12 +131,6 @@ function Apps() {
             <Input.TextArea rows={4} />
           </Form.Item>
         </Form>
-      </Modal>
-      <Modal title='应用详情' visible={isDetailModalVisible} onOk={() => setIsDetailModalVisible(false)} onCancel={() => setIsDetailModalVisible(false)}>
-        <p>应用：{(appDetail as App).name}</p>
-        <p>AppId: {(appDetail as App).app_id}</p>
-        <p>AppSecret: {(appDetail as App).app_secret}</p>
-        <p>服务地址: {SERVICE_HOST}</p>
       </Modal>
     </>
   );
