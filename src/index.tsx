@@ -14,7 +14,7 @@ import Home from './routes/home/App';
 import Login from './routes/login';
 import Register from './routes/register';
 import DashboardLayout from './routes/layout';
-import Dashboard from './routes/dashboard';
+import Panel from './routes/panel';
 import User from './routes/user';
 import Company from './routes/company';
 import App from './routes/apps';
@@ -33,7 +33,7 @@ root.render(
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/panels" element={<RequireAuth><DashboardLayout /></RequireAuth>}>
-            <Route index element={<Dashboard />} />
+            <Route index element={<Panel />} />
             <Route path="user" element={<User />} />
             <Route path="company" element={<Company />} />
             <Route path="apps" element={<App />} />

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import RainbowBreadcrumb from '../components/Breadcrumb';
 import FileUpload from '../components/FileUpload';
-import { Divider, Button, Form, Input, Row, Col, message } from 'antd';
-import { userProfile, updateUserProfile, User, updateUserKyc } from '../services/user';
+import { Divider, Button, Form, Input, Row, Col, message, Alert } from 'antd';
+import { userProfile, updateUserProfile, updateUserKyc } from '../services/user';
+import { User } from '../models';
 
 const layout = {
   labelCol: { span: 6 },
@@ -14,7 +15,7 @@ const tailLayout = {
 };
 
 function UserManagement() {
-  const [, setUser] = useState<User | {}>({});
+  const [user, setUser] = useState<User | {}>({});
   const [basicForm] = Form.useForm();
   const [kycForm] = Form.useForm();
 
@@ -58,6 +59,7 @@ function UserManagement() {
     <div>
       <RainbowBreadcrumb items={['设置', '用户设置']} />
       <div className="content-body">
+        { (user as User).kyc_msg ? <Alert message={(user as User).kyc_msg} type="error" showIcon /> : null }
         <Divider orientation="left">基本信息</Divider>
         <Row>
           <Col span={8}>

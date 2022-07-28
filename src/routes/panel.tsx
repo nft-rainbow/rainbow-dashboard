@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Alert, Col, Row, Statistic, Card } from 'antd';
-import { userStatistics, UserStatistics } from '../services/user';
+import { 
+  userStatistics, 
+  UserStatistics,
+  userProfile,
+} from '../services/user';
+import { User } from '../models';
 
-function Dashboard() {
+export default function Panel() {
   const defaultStatistics = {
     nft_count: 0,
     contract_count: 0,
@@ -10,16 +15,19 @@ function Dashboard() {
     request_count: 0,
   };
   const [statistics, setStatistics] = useState<UserStatistics>(defaultStatistics);
+  const [user, setUser] = useState<User|null>(null);
 
   useEffect(() => {
-    userStatistics().then((_statistics) => {
-      setStatistics(_statistics);
-    });
+    userStatistics().then(setStatistics);
+  }, []);
+
+  useEffect(() => {
+    userProfile().then(setUser);
   }, []);
 
   return (
     <div>
-      <Alert message="新用户请先至个人中心完善信息" type="info" showIcon />
+      {user && user.status === 0 ? <Alert message="新用户请先至个人中心完善信息" type="info" showIcon /> : null}
       <Row gutter={16} style={{margin: '16px 0'}}>
         <Col span={6}>
           <Card>
@@ -45,5 +53,3 @@ function Dashboard() {
     </div>
   );
 }
-
-export default Dashboard;

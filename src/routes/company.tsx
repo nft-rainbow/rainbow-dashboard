@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import RainbowBreadcrumb from '../components/Breadcrumb';
 import FileUpload from '../components/FileUpload';
-import { Divider, Button, Form, Input, Row, Col, message } from 'antd';
-import { userCompany, Company, updateUserCompany } from '../services/user';
+import { Divider, Button, Form, Input, Row, Col, message, Alert } from 'antd';
+import { userCompany, updateUserCompany } from '../services/user';
+import { Company } from '../models';
 const { TextArea } = Input;
 
 const layout = {
@@ -15,7 +16,7 @@ const tailLayout = {
 };
 
 export default function CompanyManagement() {
-  const [, setCompany] = useState<Company | {}>({});
+  const [company, setCompany] = useState<Company | {}>({});
   const [kycForm] = Form.useForm();
 
   const onKycInfoUpdate = async (values: any) => {
@@ -38,6 +39,7 @@ export default function CompanyManagement() {
     <div>
       <RainbowBreadcrumb items={['设置', '企业认证']} />
       <div className="content-body">
+        { (company as Company).kyc_msg ? <Alert message={(company as Company).kyc_msg} type="error" showIcon /> : null }
         <Divider orientation="left">认证信息</Divider>
         <Row>
           <Col span={8}>

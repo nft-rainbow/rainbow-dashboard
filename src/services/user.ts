@@ -1,33 +1,10 @@
 import axios from 'axios';
 import { methodUrl, get, post, authHeaderSync } from '.';
+import { User } from '../models';
 
 export interface LoginMeta {
   email: string;
   password: string;
-}
-
-export interface User {
-  id: number;
-  email: string;
-  name: string;
-  phone: string;
-  id_name: string;
-  id_no: string;
-  id_image: string;
-  status: number;
-}
-
-export interface Company {
-  id: number;
-  name: string;
-  company_no: string;
-  company_id_img: string;
-  phone: string;
-  legal_person_name: string;
-  legal_person_id_no: string;
-  company_range: string;
-  user_id: number;
-  status: number;
 }
 
 export interface UserStatistics {
@@ -47,7 +24,7 @@ export async function userLogin (metadata: LoginMeta) {
   return data;
 }
 
-export async function userProfile() {
+export async function userProfile(): Promise<User> {
   return await get('/dashboard/users/profile');
 }
 
