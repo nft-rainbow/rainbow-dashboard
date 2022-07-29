@@ -49,11 +49,18 @@ export default function AppDetail() {
 
   const idStr = id as string;
 
+  const extraOp = (
+    <Space>
+      <Button type='primary' onClick={() => setIsDetailModalVisible(true)}>查看AppKey</Button>
+      <Button type='primary'>铸造藏品</Button>
+    </Space>
+  );
+
   return (
     <div className="App">
       <RainbowBreadcrumb items={breadcrumbItems} />
       <Card>
-        <Tabs defaultActiveKey="1" onChange={onChange} tabBarExtraContent={<Button type='primary' onClick={() => setIsDetailModalVisible(true)}>查看AppKey</Button>}>
+        <Tabs defaultActiveKey="1" onChange={onChange} tabBarExtraContent={extraOp}>
           <TabPane tab="数字藏品" key="1">
             <AppNFTs id={idStr} />
           </TabPane>
@@ -65,9 +72,6 @@ export default function AppDetail() {
           </TabPane>
           <TabPane tab="文件" key="4">
             <AppFiles id={idStr} />
-          </TabPane>
-          <TabPane tab="铸造藏品" key="5">
-            <p>TODO</p>
           </TabPane>
         </Tabs>
       </Card>
