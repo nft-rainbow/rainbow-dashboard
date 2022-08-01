@@ -43,12 +43,6 @@ function Apps() {
       render: mapChainName,
     },
     {
-      title: '创建时间',
-      dataIndex: 'created_at',
-      key: 'created_at',
-      render: formatDate,
-    },
-    {
       title: '操作',
       key: 'action',
       /* render: (text: number, record: App) => {
@@ -57,6 +51,12 @@ function Apps() {
       render: (text: number, record: App) => {
         return <Link to={`/panels/apps/${record.id}`}>查看</Link>;
       }
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'created_at',
+      key: 'created_at',
+      render: formatDate,
     }
   ];
 

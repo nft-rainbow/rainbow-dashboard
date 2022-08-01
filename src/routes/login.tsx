@@ -20,7 +20,7 @@ function Login() {
         navigate(from, { replace: true });
         return;
       }
-      message.error('登录失败: ' + err.message);
+      message.error('登录失败: 用户名或密码错误');
     });
   };
 

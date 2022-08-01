@@ -6,10 +6,9 @@ export type { Contract } from './contract';
 
 export const USER_LOCALSTORAGE_KEY = "NFT_RAINBOW_SESSION_USER";
 
-export interface APIResponse {
+export interface ErrorResponse {
   code: number;
   message?: string;
-  data?: any;
 }
 
 export interface UserInfo {
@@ -85,10 +84,10 @@ export async function get(url: string, query = {}) {
     headers,
     params: query
   });
-  if (data.code !== 0) {
+  if (data.code) {
     throw new Error(data.message);
   }
-  return data.data;
+  return data;
 }
 
 export async function post(url: string, body = {}) {

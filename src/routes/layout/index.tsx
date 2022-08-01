@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import "./layout.css";
 import {
   DashboardOutlined,
@@ -9,9 +9,11 @@ import {
   UserOutlined,
   LogoutOutlined,
   UsergroupAddOutlined,
+  ApiOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Layout, Menu, Dropdown, Space, Button } from 'antd';
+import { Layout, Menu, Dropdown, Space, Button, } from 'antd';
+import { SelectInfo } from 'rc-menu/lib/interface';
 import { useAuth } from '../../Auth';
 import { UserInfo } from '../../services/';
 const { Header, Content, Footer, Sider } = Layout;
@@ -35,38 +37,49 @@ function getItem(
 const items: MenuItem[] = [
   getItem(<Link to="/panels">仪表盘</Link>, '1', <DashboardOutlined />),
   getItem(<Link to="/panels/apps">应用</Link>, '2', <AppstoreOutlined />),
-  // getItem(<Link to="/dashboard/user">User</Link>, '3', <UserOutlined />),
-  /* getItem(<Link to="/dashboard/user">User</Link>, 'sub1', <UserOutlined />, [
-    getItem('Tom', '3'),
-    getItem('Bill', '4'),
-    getItem('Alex', '5'),
-  ]), */
+  getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">文档</a>, '3', <ApiOutlined />),
 ];
 
+function menuKeyFromLocation(location: object): string {
+  // @ts-ignore
+  const pathname = location.pathname;
+  if (pathname === '/panels') return '1';
+  if (pathname.startsWith('/panels/apps')) return '2';
+  return '1';
+}
+
 const App: React.FC = () => {
+  const location = useLocation();
+
+  const [ selectedKeys, setSelectedKeys ] = useState<string[]>([menuKeyFromLocation(location)]);
   const [collapsed, setCollapsed] = useState(false);
   const auth = useAuth();
   const user = auth.user as UserInfo;
 
   const userMenuItems: MenuItem[] = [
-    getItem(<Link to="/panels/user">用户设置</Link>, '2', <UserOutlined />),
-    getItem(<Link to="/panels/company">企业认证</Link>, '3', <UsergroupAddOutlined />),
-    getItem(<span onClick={() => auth.signout(console.log)}>退出</span>, '4', <LogoutOutlined />),
+    getItem(<Link to="/panels/user">用户设置</Link>, '1', <UserOutlined />),
+    getItem(<Link to="/panels/company">企业认证</Link>, '2', <UsergroupAddOutlined />),
+    getItem(<span onClick={() => auth.signout(console.log)}>退出</span>, '3', <LogoutOutlined />),
   ];
-
-  const userMenu = <Menu items={userMenuItems}/>;
 
   return (
     <Layout id="rainbow-layout">
       <Sider collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)}>
         <div className="logo" />
-        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+        <Menu 
+          theme="dark" 
+          defaultSelectedKeys={['1']} 
+          mode="inline" 
+          items={items} 
+          selectedKeys={selectedKeys} 
+          onSelect={(opts: SelectInfo) => setSelectedKeys([opts.key])}
+        />
       </Sider>
       <Layout className="site-layout">
         <Header className="bg-white" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between' }}>
           <div><MenuFoldOutlined style={{fontSize: '20px'}} onClick={() => setCollapsed(!collapsed)}/></div>
           <div>
-            <Dropdown overlay={userMenu}>
+            <Dropdown overlay={<Menu items={userMenuItems}/>}>
               <Button type='link' onClick={e => e.preventDefault()} href="#">
                 <Space>
                   {user.email}

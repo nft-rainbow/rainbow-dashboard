@@ -2,7 +2,6 @@ import { createContext, useState, ReactNode, useContext } from "react";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
 import { userLogin, userLogout, LoginMeta } from "./services/user";
 import { 
-  APIResponse,
   UserInfo,
   USER_LOCALSTORAGE_KEY,
   ErrorCallback,
@@ -21,21 +20,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   let [user, setUser] = useState<UserInfo | null>(tryToGetLocalStorageUser());
   
   let signin = (newUser: LoginMeta, callback: ErrorCallback) => {
-    return userLogin(newUser).then((result: APIResponse) => {
-      if (result.code === 0) {
-        const user = {
-          email: newUser.email,
-          // @ts-ignore
-          jwtToken: result.data.token,
-          tokenExpire: new Date(result.data.expire),
-        };
+    return userLogin(newUser).then((result: object) => {
+      const user = {
+        email: newUser.email,
+        // @ts-ignore
+        jwtToken: result.token,
+        // @ts-ignore
+        tokenExpire: new Date(result.expire),
+      };
 
-        localStorage.setItem(USER_LOCALSTORAGE_KEY, JSON.stringify(user));
-        setUser(user);
-        callback(null);
-      } else {
-        callback(new Error(result.message));
-      }
+      localStorage.setItem(USER_LOCALSTORAGE_KEY, JSON.stringify(user));
+      setUser(user);
+      callback(null);
     }).catch((err) => {
       callback(err);
     });

@@ -93,11 +93,6 @@ function AppNFTs(props: {id: string}) {
   // TODO: display metadata and picture
   const columns = [
     {
-      title: '序号',
-      dataIndex: 'id',
-      key: 'id',
-    },
-    {
       title: '区块链',
       dataIndex: 'chain_type',
       key: 'chain_type',
@@ -177,11 +172,6 @@ function AppContracts(props: {id: string}) {
   const [page, setPage] = useState(1);
 
   const columns = [
-    {
-      title: '序号',
-      dataIndex: 'id',
-      key: 'id',
-    },
     {
       title: '区块链',
       dataIndex: 'chain_type',
