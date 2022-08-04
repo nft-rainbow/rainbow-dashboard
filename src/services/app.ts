@@ -64,3 +64,11 @@ export async function getAppNfts(id: number | string, page?: number, limit?: num
 export async function getAppNftsOfContract(id: number | string, address: string, page?: number, limit?: number) {
   return await get(`/dashboard/apps/${id}/contracts/${address}/nft`, {page, limit});
 }
+
+export async function easyMintUrl(id: string, options: any) {
+  return await post(`/dashboard/apps/${id}/nft`, options);
+}
+
+export async function getAppAccounts(id: number | string) {
+  return await get(`/dashboard/apps/${id}/accounts`);
+}

@@ -24,3 +24,12 @@ export interface Company {
   status: number;
   kyc_msg?: string;
 }
+
+export interface ChainAccount {
+  id: number;
+  chain_type: number;
+  chain_id: number;
+  app_id: number;
+  address: string;
+  public_key: string;
+}

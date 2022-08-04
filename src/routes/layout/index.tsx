@@ -9,7 +9,7 @@ import {
   UserOutlined,
   LogoutOutlined,
   UsergroupAddOutlined,
-  ApiOutlined,
+  CodeOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Dropdown, Space, Button, } from 'antd';
@@ -36,8 +36,8 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem(<Link to="/panels">仪表盘</Link>, '1', <DashboardOutlined />),
-  getItem(<Link to="/panels/apps">应用</Link>, '2', <AppstoreOutlined />),
-  getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">文档</a>, '3', <ApiOutlined />),
+  getItem(<Link to="/panels/apps">我的应用</Link>, '2', <AppstoreOutlined />),
+  getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">开发文档</a>, '3', <CodeOutlined />),
 ];
 
 function menuKeyFromLocation(location: object): string {

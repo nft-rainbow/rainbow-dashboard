@@ -10,7 +10,8 @@ import {
   getAppFiles,
   File,
   Metadata,
-  // getAppNftsOfContract 
+  easyMintUrl,
+  getAppAccounts,
 } from '../../services/app';
 import { NFT, Contract } from '../../services';
 import { 
@@ -23,22 +24,45 @@ import {
   Button, 
   Modal,
   Typography,
+  Form,
+  Input,
 } from 'antd';
 import { SERVICE_HOST } from '../../config';
 import { mapChainName, formatDate, short, scanTxLink, mapSimpleStatus, scanNFTLink, mapNFTType } from '../../utils';
+import FileUpload from '../../components/FileUpload';
+import { ChainAccount } from '../../models';
 const { TabPane } = Tabs;
 const { Text } = Typography;
+
+const formLayout = {
+  labelCol: { span: 4 },
+  wrapperCol: { span: 18 },
+};
 
 export default function AppDetail() {
   const { id } = useParams();
   const [app, setApp] = useState<App | {}>({});
   const [breadcrumbItems, setBreadcrumbItems] = useState<string[]>(["应用详情"]);
+  const [form] = Form.useForm();
+  const [accounts, setAccounts] = useState<ChainAccount[]>([] as ChainAccount[]);
 
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
+  const [isMintModalVisible, setIsMintModalVisible] = useState(false);
 
   const onChange = (key: string) => {
     console.log("Switch to tab: ", key);
   };
+
+  const onNftMint = (values: any) => {
+    values.chain = 'conflux_test';
+    easyMintUrl(id as string, values).then((res) => {
+      setIsMintModalVisible(false);
+      form.resetFields();
+    });
+  }
+
+  const closeMintModal = () => setIsMintModalVisible(false);
+  const closeDetailModal = () => setIsDetailModalVisible(false);
 
   useEffect(() => {
     getAppDetail(id as string).then(data => {
@@ -52,9 +76,18 @@ export default function AppDetail() {
   const extraOp = (
     <Space>
       <Button type='primary' onClick={() => setIsDetailModalVisible(true)}>查看AppKey</Button>
-      <Button type='primary'>铸造藏品</Button>
+      <Button type='primary' onClick={() => setIsMintModalVisible(true)}>铸造藏品</Button>
     </Space>
   );
+
+  useEffect(() => {
+    getAppAccounts(id as string).then(data => {
+      setAccounts(data);
+    });
+  }, [id]);
+
+  const mainnetAccount = accounts.find(item => item.chain_id === 1029) || {address: ""};
+  const testAccount = accounts.find(item => item.chain_id === 1) || {address: ""};
 
   return (
     <div className="App">
@@ -75,10 +108,28 @@ export default function AppDetail() {
           </TabPane>
         </Tabs>
       </Card>
-      <Modal title='应用详情' visible={isDetailModalVisible} onOk={() => setIsDetailModalVisible(false)} onCancel={() => setIsDetailModalVisible(false)}>
-        <p>App Id: <Text code>{(app as App).app_id}</Text></p>
-        <p>App Secret: <Text code>{(app as App).app_secret}</Text></p>
-        <p>Service Host: <Text code>{SERVICE_HOST}</Text></p>
+      <Modal title='应用详情' visible={isDetailModalVisible} onOk={closeDetailModal} onCancel={closeDetailModal}>
+        <p>AppId: <Text code>{(app as App).app_id}</Text></p>
+        <p>AppSecret: <Text code>{(app as App).app_secret}</Text></p>
+        <p>APIHost: <Text code>{SERVICE_HOST}</Text></p>
+        <p>主网账户: <Text code>{mainnetAccount.address}</Text></p>
+        <p>测试网账户: <Text code>{testAccount.address}</Text></p>
+      </Modal>
+      <Modal title='铸造藏品' visible={isMintModalVisible} onOk={() => {form.submit();closeMintModal()}} onCancel={closeMintModal}>
+        <Form {...formLayout} form={form} name="control-hooks" onFinish={onNftMint}>
+          <Form.Item name="name" label="名字" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="description" label="描述" rules={[{ required: true }]}>
+            <Input.TextArea rows={4} />
+          </Form.Item>
+          <Form.Item name="file_url" label="图片" rules={[{ required: true }]}>
+            <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({file_url: file.url})}/>
+          </Form.Item>
+          <Form.Item name="mint_to_address" label="接受地址" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+        </Form>
       </Modal>
     </div>
   );

@@ -65,12 +65,12 @@ function UserManagement() {
           <Col span={8}>
             <Form {...layout} form={basicForm} name="control-hooks" onFinish={onBasicInfoUpdate}>
               <Form.Item name="email" label="邮箱" rules={[{ required: true }]}>
-                <Input />
+                <Input type="email" />
               </Form.Item>
               <Form.Item name="name" label="用户名" rules={[{ required: true }]}>
                 <Input />
               </Form.Item>
-              <Form.Item name="phone" label="手机号" rules={[{ required: true }]}>
+              <Form.Item name="phone" label="手机号" rules={[{ required: true, min: 10 }]}>
                 <Input />
               </Form.Item>
               <Form.Item {...tailLayout}>
@@ -89,7 +89,7 @@ function UserManagement() {
               <Form.Item name="id_name" label="身份证姓名" rules={[{ required: true }]}>
                 <Input />
               </Form.Item>
-              <Form.Item name="id_no" label="身份证号" rules={[{ required: true }]}>
+              <Form.Item name="id_no" label="身份证号" rules={[{ required: true, min: 18 }]}>
                 <Input />
               </Form.Item>
               <Form.Item name="id_image" label="身份证照片" rules={[{ required: true }]}>

@@ -9,7 +9,7 @@ export default function FileUpload(props: any) {
     headers: authHeaderSync(),
     onChange(info: any) {
       if (info.file.status === 'done') {
-        const { data } = info.file.response;
+        const data = info.file.response;
         props.onChange(null, data);
       } else if (info.file.status === 'error') {
         props.onChange(new Error('Upload failed.'));

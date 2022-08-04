@@ -47,19 +47,19 @@ export default function CompanyManagement() {
               <Form.Item name="name" label="公司名" rules={[{ required: true }]}>
                 <Input />
               </Form.Item>
-              <Form.Item name="company_no" label="营业执照号" rules={[{ required: true }]}>
+              <Form.Item name="company_no" label="营业执照号" rules={[{ required: true, min: 10 }]}>
                 <Input />
               </Form.Item>
               <Form.Item name="company_id_img" label="营业执照" rules={[{ required: true }]}>
                 <FileUpload onChange={(err: Error, file: any) => kycForm.setFieldsValue({company_id_img: file.url})}/>
               </Form.Item>
-              <Form.Item name="phone" label="联系电话" rules={[{ required: true }]}>
+              <Form.Item name="phone" label="联系电话" rules={[{ required: true, min: 8 }]}>
                 <Input />
               </Form.Item>
               <Form.Item name="legal_person_name" label="公司法人" rules={[{ required: true }]}>
                 <Input />
               </Form.Item>
-              <Form.Item name="legal_person_id_no" label="法人身份证号" rules={[{ required: true }]}>
+              <Form.Item name="legal_person_id_no" label="法人身份证号" rules={[{ required: true, min: 18 }]}>
                 <Input />
               </Form.Item>
               <Form.Item name="company_range" label="经营范围" rules={[{ required: true }]}>
