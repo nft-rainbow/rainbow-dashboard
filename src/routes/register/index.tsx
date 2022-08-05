@@ -10,12 +10,12 @@ function Register() {
 
   const onFinish = async (values: object) => {
     const result = await userRegister(values as LoginMeta);
-    if (result.code === 0) {
-      message.success('Register success!');
-      navigate('/login');
-    } else {
+    if (result.code) {
       message.error(`Register failed: ${result.message}`);
+      return;
     }
+    message.success('Register success!');
+    navigate('/login');
   };
 
   return (
