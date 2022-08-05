@@ -33,3 +33,14 @@ export interface ChainAccount {
   address: string;
   public_key: string;
 }
+
+export interface App {
+  id: number;
+  name: string;
+  intro: string;
+  app_id: string;
+  app_secret?: string;
+  chain_type: number;
+  created_at: string;
+  updated_at: string;
+}

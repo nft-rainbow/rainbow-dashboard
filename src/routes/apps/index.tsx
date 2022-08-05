@@ -12,8 +12,9 @@ import {
 } from "antd";
 import { Link } from "react-router-dom";
 import RainbowBreadcrumb from '../../components/Breadcrumb';
-import { getApps, App, createApp } from '../../services/app';
+import { getApps, createApp } from '../../services/app';
 import { mapChainName, formatDate } from '../../utils';
+import { App } from '../../models';
 
 function Apps() {
   const [apps, setApps] = useState<App[]>([]);

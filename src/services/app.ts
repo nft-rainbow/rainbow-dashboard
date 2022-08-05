@@ -1,16 +1,5 @@
 import { get, post, put } from '.';
 
-export interface App {
-  id: number;
-  name: string;
-  intro: string;
-  app_id: string;
-  app_secret?: string;
-  chain_type: number;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface File {
   file_name: string;
   file_size: number;

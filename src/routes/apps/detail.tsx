@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import RainbowBreadcrumb from '../../components/Breadcrumb';
 import {
-  App,
   getAppDetail,
   getAppContracts,
   getAppNfts,
@@ -26,11 +25,12 @@ import {
   Typography,
   Form,
   Input,
+  message,
 } from 'antd';
 import { SERVICE_HOST } from '../../config';
 import { mapChainName, formatDate, short, scanTxLink, mapSimpleStatus, scanNFTLink, mapNFTType } from '../../utils';
 import FileUpload from '../../components/FileUpload';
-import { ChainAccount } from '../../models';
+import { ChainAccount, App } from '../../models';
 const { TabPane } = Tabs;
 const { Text } = Typography;
 
@@ -55,9 +55,15 @@ export default function AppDetail() {
 
   const onNftMint = (values: any) => {
     values.chain = 'conflux_test';
+    if (!values.mint_to_address.toLocaleLowerCase().startsWith('cfxtest')) {
+      message.error('接受地址目前只支持树图测试网地址');
+      return;
+    }
     easyMintUrl(id as string, values).then((res) => {
       setIsMintModalVisible(false);
       form.resetFields();
+    }).catch((err) => {
+      message.error(err.message);
     });
   }
 
@@ -115,7 +121,7 @@ export default function AppDetail() {
         <p>主网账户: <Text code>{mainnetAccount.address}</Text></p>
         <p>测试网账户: <Text code>{testAccount.address}</Text></p>
       </Modal>
-      <Modal title='铸造藏品' visible={isMintModalVisible} onOk={() => {form.submit();closeMintModal()}} onCancel={closeMintModal}>
+      <Modal title='铸造藏品' visible={isMintModalVisible} onOk={() => form.submit()} onCancel={closeMintModal}>
         <Form {...formLayout} form={form} name="control-hooks" onFinish={onNftMint}>
           <Form.Item name="name" label="名字" rules={[{ required: true }]}>
             <Input />
@@ -127,7 +133,7 @@ export default function AppDetail() {
             <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({file_url: file.url})}/>
           </Form.Item>
           <Form.Item name="mint_to_address" label="接受地址" rules={[{ required: true }]}>
-            <Input />
+            <Input placeholder='树图链测试网地址'/>
           </Form.Item>
         </Form>
       </Modal>

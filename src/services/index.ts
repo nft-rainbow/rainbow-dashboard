@@ -32,13 +32,13 @@ export async function authHeader() {
     
     // refresh jwt token
     if (userMeta.tokenExpire.getTime() < new Date().getTime()) {
-      const { code, data } = await userRefreshToken();
-      if (code !== 0) {
+      const res = await userRefreshToken();
+      if (res.code) {
         localStorage.removeItem(USER_LOCALSTORAGE_KEY);
         throw new Error('refresh token failed');
       }
-      userMeta.jwtToken = data.token;
-      userMeta.tokenExpire = new Date(data.expire);
+      userMeta.jwtToken = res.token;
+      userMeta.tokenExpire = new Date(res.expire);
       localStorage.setItem(USER_LOCALSTORAGE_KEY, JSON.stringify(userMeta));
     }
 
@@ -48,7 +48,8 @@ export async function authHeader() {
   } catch (error) {
     console.log('AuthHeader error: ', error);
     localStorage.removeItem(USER_LOCALSTORAGE_KEY);
-    // TODO: navigate to login page
+    // @ts-ignore
+    window.location.reload();
     throw error;
   }
 }
