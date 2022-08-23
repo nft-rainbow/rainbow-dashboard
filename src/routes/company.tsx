@@ -24,7 +24,7 @@ export default function CompanyManagement() {
       await updateUserCompany(values);
       message.success('企业信息更新成功');
     } catch (error: any) {
-      message.error(error.message);
+      message.error(`信息更新失败: ${error.response.data.message}`);
     }
   }
 

@@ -24,7 +24,7 @@ function UserManagement() {
       await updateUserProfile(values);
       message.success('用户信息更新成功');
     } catch (error: any) {
-      message.error(error.message);
+      message.error(error.response.data.message);
     }
   };
 
@@ -33,7 +33,7 @@ function UserManagement() {
       await updateUserKyc(values);
       message.success('KYC信息更新成功');
     } catch (error: any) {
-      message.error(error.message);
+      message.error(error.response.data.message);
     }
   }
 

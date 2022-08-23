@@ -54,6 +54,13 @@ export async function authHeader() {
   }
 }
 
+export function authHeaderSync() {
+  let userMeta = localStorageUser();
+  return {
+    Authorization: `Bearer ${userMeta.jwtToken}`
+  }
+}
+
 export function localStorageUser(): UserInfo {
   let user = tryToGetLocalStorageUser();
   if (!user) {
@@ -70,13 +77,6 @@ export function tryToGetLocalStorageUser(): UserInfo | null {
   let userMeta = JSON.parse(user) as UserInfo;
   userMeta.tokenExpire = new Date(userMeta.tokenExpire);
   return userMeta;
-}
-
-export function authHeaderSync() {
-  let userMeta = localStorageUser();
-  return {
-    Authorization: `Bearer ${userMeta.jwtToken}`
-  }
 }
 
 export async function get(url: string, query = {}) {

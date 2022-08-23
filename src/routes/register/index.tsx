@@ -9,13 +9,14 @@ function Register() {
   const navigate = useNavigate();
 
   const onFinish = async (values: object) => {
-    const result = await userRegister(values as LoginMeta);
-    if (result.code) {
-      message.error(`Register failed: ${result.message}`);
-      return;
+    try {
+      await userRegister(values as LoginMeta);
+      message.success('Register success!');
+      navigate('/login');
+    } catch (e) {
+      // @ts-ignore
+      message.error(`Register failed: ${e.response.data.message}`);
     }
-    message.success('Register success!');
-    navigate('/login');
   };
 
   return (
