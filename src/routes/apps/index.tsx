@@ -8,8 +8,7 @@ import {
   Input,
   Select,
   TablePaginationConfig,
-  message,
-  Spin
+  message
 } from "antd";
 import { Link } from "react-router-dom";
 import RainbowBreadcrumb from '../../components/Breadcrumb';
@@ -21,14 +20,16 @@ function Apps() {
   const [apps, setApps] = useState<App[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [createForm] = Form.useForm();
 
   const refreshItems = (currentPage: number) => {
+    setLoading(true);
     getApps(currentPage).then(data => {
       setApps(data.items);
       setTotal(data.count);
+    }).then(() => {
       setLoading(false);
     });
   }
@@ -87,22 +88,18 @@ function Apps() {
     <>
       <RainbowBreadcrumb items={['应用列表']} />
       <Card extra={<Button onClick={() => setIsModalVisible(true)} type="primary">创建</Button>}>
-        <Spin spinning={loading}>
-          <Table
-            rowKey='id'
-            dataSource={apps}
-            columns={columns}
-            pagination={{
-              total,
-              current: page,
-              showTotal: (total) => `共 ${total} 条`,
-            }}
-            onChange={(info: TablePaginationConfig) => {
-              setLoading(true);
-              setPage(info.current as number);
-            }}
-          />
-        </Spin>
+        <Table
+          rowKey='id'
+          dataSource={apps}
+          columns={columns}
+          loading={loading}
+          pagination={{
+            total,
+            current: page,
+            showTotal: (total) => `共 ${total} 条`,
+          }}
+          onChange={(info: TablePaginationConfig) => { setPage(info.current as number); }}
+        />
       </Card>
       <Modal title="创建应用" visible={isModalVisible} onOk={createForm.submit} onCancel={handleCancel}>
         <Form
