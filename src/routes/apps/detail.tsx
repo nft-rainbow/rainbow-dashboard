@@ -146,6 +146,7 @@ function AppNFTs(props: {id: string}) {
   const [items, setItems] = useState<NFT[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   // TODO: display metadata and picture
   const columns = [
@@ -199,9 +200,12 @@ function AppNFTs(props: {id: string}) {
   ];
 
   useEffect(() => {
+    setLoading(true);
     getAppNfts(id as string, page, 10).then(res => {
       setTotal(res.count);
       setItems(res.items);
+    }).then(() => {
+      setLoading(false);
     });
   }, [id, page]);
 
@@ -211,6 +215,7 @@ function AppNFTs(props: {id: string}) {
         rowKey='id'
         dataSource={items} 
         columns={columns}
+        loading={loading}
         pagination={{
           total,
           current: page,

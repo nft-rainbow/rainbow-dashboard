@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  Card, 
-  Button, 
-  Table, 
-  Modal, 
-  Form, 
-  Input, 
-  Select, 
+import {
+  Card,
+  Button,
+  Table,
+  Modal,
+  Form,
+  Input,
+  Select,
   TablePaginationConfig,
-  message,
+  message
 } from "antd";
 import { Link } from "react-router-dom";
 import RainbowBreadcrumb from '../../components/Breadcrumb';
@@ -20,13 +20,17 @@ function Apps() {
   const [apps, setApps] = useState<App[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [createForm] = Form.useForm();
 
   const refreshItems = (currentPage: number) => {
+    setLoading(true);
     getApps(currentPage).then(data => {
       setApps(data.items);
       setTotal(data.count);
+    }).then(() => {
+      setLoading(false);
     });
   }
 
@@ -67,7 +71,7 @@ function Apps() {
       setIsModalVisible(false);
       message.success('创建成功');
       refreshItems(page);
-    } catch(err) {
+    } catch (err) {
       message.error('创建失败');
     }
   };
@@ -84,16 +88,17 @@ function Apps() {
     <>
       <RainbowBreadcrumb items={['应用列表']} />
       <Card extra={<Button onClick={() => setIsModalVisible(true)} type="primary">创建</Button>}>
-        <Table 
+        <Table
           rowKey='id'
-          dataSource={apps} 
+          dataSource={apps}
           columns={columns}
+          loading={loading}
           pagination={{
             total,
             current: page,
             showTotal: (total) => `共 ${total} 条`,
           }}
-          onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
+          onChange={(info: TablePaginationConfig) => { setPage(info.current as number); }}
         />
       </Card>
       <Modal title="创建应用" visible={isModalVisible} onOk={createForm.submit} onCancel={handleCancel}>
@@ -103,7 +108,7 @@ function Apps() {
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 18 }}
           onFinish={handleOk}
-          initialValues={{chain: 'conflux'}}
+          initialValues={{ chain: 'conflux' }}
           onFinishFailed={handleCancel}
           autoComplete="off"
         >
