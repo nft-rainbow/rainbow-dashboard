@@ -1,3 +1,5 @@
+import { ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from "@ant-design/icons";
+import { Tooltip, Image } from "antd";
 
 export function mapChainName(chainType: number) {
   switch (chainType) {
@@ -46,16 +48,27 @@ export function scanNFTLink(chainType: number, chainId: number, contract: string
   }
 }
 
-export function mapSimpleStatus(status: number) {
+export function scanAddressLink(chainType: number, chainId: number, address: string) {
+  switch (chainId) {
+    case 1:
+      return `https://testnet.confluxscan.io/address/${address}`;
+    case 1029:
+      return `https://confluxscan.io/address/${address}`;
+    default:
+      return `#`;
+  }
+}
+
+export function mapSimpleStatus(status: number, error: string) {
   switch (status) {
     case 0:
-      return "待处理";
+      return <Tooltip title="待处理"><ClockCircleTwoTone /></Tooltip>;
     case 1:
-      return "成功";
+      return <Tooltip title="成功"><CheckCircleTwoTone /></Tooltip>;
     case 2:
-      return "失败";
+      return <Tooltip title={error}><CloseCircleTwoTone twoToneColor={'#e3422f'} /></Tooltip>;
     default:
-      return "未知";
+      return <Tooltip title="未知"><QuestionCircleTwoTone /></Tooltip>;
   }
 }
 
