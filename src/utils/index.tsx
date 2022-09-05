@@ -1,6 +1,3 @@
-import { ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from "@ant-design/icons";
-import { Tooltip, Image } from "antd";
-
 export function mapChainName(chainType: number) {
   switch (chainType) {
     case 1:
@@ -59,16 +56,18 @@ export function scanAddressLink(chainType: number, chainId: number, address: str
   }
 }
 
-export function mapSimpleStatus(status: number, error: string) {
+
+
+export function mapSimpleStatus(status: number) {
   switch (status) {
     case 0:
-      return <Tooltip title="待处理"><ClockCircleTwoTone /></Tooltip>;
+      return "待处理";
     case 1:
-      return <Tooltip title="成功"><CheckCircleTwoTone /></Tooltip>;
+      return "成功";
     case 2:
-      return <Tooltip title={error}><CloseCircleTwoTone twoToneColor={'#e3422f'} /></Tooltip>;
+      return "失败";
     default:
-      return <Tooltip title="未知"><QuestionCircleTwoTone /></Tooltip>;
+      return "未知";
   }
 }
 

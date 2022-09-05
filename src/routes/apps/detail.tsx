@@ -35,7 +35,6 @@ import {
   formatDate,
   short,
   scanTxLink,
-  mapSimpleStatus,
   scanNFTLink,
   scanAddressLink,
   mapNFTType,
@@ -43,7 +42,7 @@ import {
 import FileUpload from '../../components/FileUpload';
 import { ChainAccount, App } from '../../models';
 import axios from 'axios';
-import { FileImageOutlined } from '@ant-design/icons';
+import { FileImageOutlined, ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 const { TabPane } = Tabs;
 const { Text } = Typography;
 
@@ -51,6 +50,20 @@ const formLayout = {
   labelCol: { span: 4 },
   wrapperCol: { span: 18 },
 };
+
+// SJR: show status in icons
+const mapSimpleStatus = (status: number, error: string) => {
+  switch (status) {
+    case 0:
+      return <Tooltip title="待处理"><ClockCircleTwoTone /></Tooltip>;
+    case 1:
+      return <Tooltip title="成功"><CheckCircleTwoTone /></Tooltip>;
+    case 2:
+      return <Tooltip title={error}><CloseCircleTwoTone twoToneColor={'#e3422f'} /></Tooltip>;
+    default:
+      return <Tooltip title="未知"><QuestionCircleTwoTone /></Tooltip>;
+  }
+}
 
 export default function AppDetail() {
   const { id } = useParams();
@@ -211,7 +224,10 @@ function AppNFTs(props: { id: string }) {
               placement="right"
               content={<Image width={200} src={images[index]} />}
               trigger='click'>
-              <Button style={{ border: 'none' }} icon={<FileImageOutlined />}></Button>
+              <Button
+                style={{ border: 'none' }}
+                icon={<FileImageOutlined />}
+                onClick={() => showNFTImage(record.token_uri, index)}></Button>
             </Popover>
           </Tooltip>
         </>,
@@ -251,22 +267,18 @@ function AppNFTs(props: { id: string }) {
     });
   }, [id, page]);
 
-  useEffect(() => {
-    getImages(items)
-  }, [items]);
-
-  // SJR: Request for images
-  const getImages = async (items: NFT[]) => {
+  // SJR: click button to load one image
+  const showNFTImage = (metadataUri: string, index: number) => {
     let temp: string[] = [];
-    for (let i = 0; i < items.length; i++) {
-      let metadataUri = items[i].token_uri;
-      await axios.get(metadataUri)
-        .then(res => {
-          temp.push(res.data.image);
-        })
-    }
+    temp = images;
+    axios.get(metadataUri)
+      .then(res => {
+        temp[index] = res.data.image;
+      })
     setImages(temp);
   }
+
+  useEffect(() => {}, [images]);
 
   return (
     <>
