@@ -7,6 +7,8 @@ export interface NFT {
   mint_to: string;
   created_at: string;
   updated_at: string;
+  error: string;
   hash: string;
   status: number;
+  token_uri: string;
 }
