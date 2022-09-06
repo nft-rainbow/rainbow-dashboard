@@ -56,8 +56,6 @@ export function scanAddressLink(chainType: number, chainId: number, address: str
   }
 }
 
-
-
 export function mapSimpleStatus(status: number) {
   switch (status) {
     case 0:

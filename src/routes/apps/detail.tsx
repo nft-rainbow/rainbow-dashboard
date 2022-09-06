@@ -75,10 +75,6 @@ export default function AppDetail() {
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [isMintModalVisible, setIsMintModalVisible] = useState(false);
 
-  const onChange = (key: string) => {
-    console.log("Switch to tab: ", key);
-  };
-
   const onNftMint = (values: any) => {
     values.chain = 'conflux_test';
     if (!values.mint_to_address.toLocaleLowerCase().startsWith('cfxtest')) {
@@ -125,7 +121,7 @@ export default function AppDetail() {
     <div className="App">
       <RainbowBreadcrumb items={breadcrumbItems} />
       <Card>
-        <Tabs defaultActiveKey="1" onChange={onChange} tabBarExtraContent={extraOp}>
+        <Tabs defaultActiveKey="1" tabBarExtraContent={extraOp}>
           <TabPane tab="数字藏品" key="1">
             <AppNFTs id={idStr} />
           </TabPane>
@@ -270,15 +266,19 @@ function AppNFTs(props: { id: string }) {
   // SJR: click button to load one image
   const showNFTImage = (metadataUri: string, index: number) => {
     let temp: string[] = [];
-    temp = images;
-    axios.get(metadataUri)
-      .then(res => {
-        temp[index] = res.data.image;
-      })
-    setImages(temp);
+    if (images[index] != null)
+      return;
+    else {
+      temp = images;
+      axios.get(metadataUri)
+        .then(res => {
+          temp[index] = res.data.image;
+        })
+      setImages(temp);
+    }
   }
 
-  useEffect(() => {}, [images]);
+  useEffect(() => { }, [images]);
 
   return (
     <>
