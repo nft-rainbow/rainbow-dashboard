@@ -270,15 +270,19 @@ function AppNFTs(props: { id: string }) {
   // SJR: click button to load one image
   const showNFTImage = (metadataUri: string, index: number) => {
     let temp: string[] = [];
-    temp = images;
-    axios.get(metadataUri)
-      .then(res => {
-        temp[index] = res.data.image;
-      })
-    setImages(temp);
+    if (images[index] != null)
+      return;
+    else {
+      temp = images;
+      axios.get(metadataUri)
+        .then(res => {
+          temp[index] = res.data.image;
+        })
+      setImages(temp);
+    }
   }
 
-  useEffect(() => {}, [images]);
+  useEffect(() => { }, [images]);
 
   return (
     <>
