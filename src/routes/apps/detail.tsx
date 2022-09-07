@@ -413,8 +413,6 @@ function AppMetadatas(props: { id: string }) {
     getAppMetadatas(id as string, page, 10).then(res => {
       setTotal(res.count);
       setItems(res.items);
-      console.log(res.items);
-      console.log("items", items);
     });
   }, [id, page]);
 
