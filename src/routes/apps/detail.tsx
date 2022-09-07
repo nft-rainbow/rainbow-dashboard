@@ -397,13 +397,13 @@ function AppMetadatas(props: { id: string }) {
   const columns = [
     {
       title: '名字',
-      dataIndex: ['metadata', 'name'],
+      dataIndex: ['name'],
     },
     {
       title: '操作',
-      dataIndex: ['metadata', 'file'],
+      dataIndex: ['image'],
       render: (text: string, item: Metadata) => (<Space>
-        <a target="_blank" rel="noreferrer" href={item.metadata.file}>文件</a>
+        <a target="_blank" rel="noreferrer" href={item.image}>文件</a>
         <a target="_blank" rel="noreferrer" href={item.uri}>Metadata</a>
       </Space>),
     }
@@ -413,6 +413,8 @@ function AppMetadatas(props: { id: string }) {
     getAppMetadatas(id as string, page, 10).then(res => {
       setTotal(res.count);
       setItems(res.items);
+      console.log(res.items);
+      console.log("items", items);
     });
   }, [id, page]);
 
