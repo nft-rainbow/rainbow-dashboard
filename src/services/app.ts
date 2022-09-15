@@ -10,11 +10,15 @@ export interface File {
 export interface MetadataInfo {
   name: string;
   description: string;
-  file: string;
+  image: string;
 }
 
+// SJR: modify this interface to match the response data
 export interface Metadata {
-  metadata: MetadataInfo;
+  // metadata: MetadataInfo;
+  name: string;
+  description: string;
+  image: string;
   uri: string;
 }
 
