@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation } from "react-router-dom";
 import "./layout.css";
 import {
@@ -51,8 +51,9 @@ function menuKeyFromLocation(location: object): string {
 const App: React.FC = () => {
   const location = useLocation();
 
-  const [ selectedKeys, setSelectedKeys ] = useState<string[]>([menuKeyFromLocation(location)]);
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([menuKeyFromLocation(location)]);
   const [collapsed, setCollapsed] = useState(false);
+  const [logo, setLogo] = useState("/nftrainbow-logo-light.png");
   const auth = useAuth();
   const user = auth.user as UserInfo;
 
@@ -62,24 +63,33 @@ const App: React.FC = () => {
     getItem(<span onClick={() => auth.signout(console.log)}>退出</span>, '3', <LogoutOutlined />),
   ];
 
+  useEffect(() => {
+    if (collapsed)
+      setLogo("/nftrainbow-logo-icon.png");
+    else
+      setLogo("/nftrainbow-logo-light.png");
+  }, [collapsed]);
+
   return (
     <Layout id="rainbow-layout">
       <Sider collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)}>
-        <div className="logo" />
-        <Menu 
-          theme="dark" 
-          defaultSelectedKeys={['1']} 
-          mode="inline" 
-          items={items} 
-          selectedKeys={selectedKeys} 
+        <div className="logo">
+          <img src={logo} alt='logo' />
+        </div>
+        <Menu
+          theme="dark"
+          defaultSelectedKeys={['1']}
+          mode="inline"
+          items={items}
+          selectedKeys={selectedKeys}
           onSelect={(opts: SelectInfo) => setSelectedKeys([opts.key])}
         />
       </Sider>
       <Layout className="site-layout">
         <Header className="bg-white" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between' }}>
-          <div><MenuFoldOutlined style={{fontSize: '20px'}} onClick={() => setCollapsed(!collapsed)}/></div>
+          <div><MenuFoldOutlined style={{ fontSize: '20px' }} onClick={() => setCollapsed(!collapsed)} /></div>
           <div>
-            <Dropdown overlay={<Menu items={userMenuItems}/>}>
+            <Dropdown overlay={<Menu items={userMenuItems} />}>
               <Button type='link' onClick={e => e.preventDefault()} href="#">
                 <Space>
                   {user.email}
