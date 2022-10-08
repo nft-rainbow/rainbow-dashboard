@@ -4,7 +4,7 @@
 
 1. Git clone code
 2. Install dependencies: `yarn`
-3. Add config file (edit it's config): `cp src/config.sample.ts src/config.ts`
+3. Add config file: `cp src/config.sample.ts src/config.ts`, then edit it's config `SERVICE_HOST`
 4. Build dist: `yarn build`
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
