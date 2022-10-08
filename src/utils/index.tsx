@@ -1,4 +1,3 @@
-
 export function mapChainName(chainType: number) {
   switch (chainType) {
     case 1:
@@ -41,6 +40,17 @@ export function scanNFTLink(chainType: number, chainId: number, contract: string
       return `https://testnet.confluxscan.io/nft/${contract}/${tokenId}`;
     case 1029:
       return `https://confluxscan.io/nft/${contract}/${tokenId}`;
+    default:
+      return `#`;
+  }
+}
+
+export function scanAddressLink(chainType: number, chainId: number, address: string) {
+  switch (chainId) {
+    case 1:
+      return `https://testnet.confluxscan.io/address/${address}`;
+    case 1029:
+      return `https://confluxscan.io/address/${address}`;
     default:
       return `#`;
   }

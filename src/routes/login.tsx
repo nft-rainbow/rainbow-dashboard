@@ -28,8 +28,7 @@ function Login() {
     <div className="register">
       <div className="register-form">
         <div className="logo">
-          <img src="/nft-rainbow-logo.png" alt="logo" />
-          <span>NFT Rainbow</span>
+          <img src="/nftrainbow-logo-blank.png" alt="logo" />
         </div>
         <Form
           name="normal_login"

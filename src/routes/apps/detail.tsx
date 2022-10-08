@@ -13,24 +13,36 @@ import {
   getAppAccounts,
 } from '../../services/app';
 import { NFT, Contract } from '../../services';
-import { 
-  Card, 
-  Tabs, 
-  Table, 
-  TablePaginationConfig, 
-  Tooltip, 
-  Space, 
-  Button, 
+import {
+  Card,
+  Tabs,
+  Table,
+  TablePaginationConfig,
+  Tooltip,
+  Space,
+  Button,
   Modal,
   Typography,
   Form,
   Input,
   message,
+  Image,
+  Popover
 } from 'antd';
 import { SERVICE_HOST } from '../../config';
-import { mapChainName, formatDate, short, scanTxLink, mapSimpleStatus, scanNFTLink, mapNFTType } from '../../utils';
+import {
+  mapChainName,
+  formatDate,
+  short,
+  scanTxLink,
+  scanNFTLink,
+  scanAddressLink,
+  mapNFTType,
+} from '../../utils';
 import FileUpload from '../../components/FileUpload';
 import { ChainAccount, App } from '../../models';
+import axios from 'axios';
+import { FileImageOutlined, ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 const { TabPane } = Tabs;
 const { Text } = Typography;
 
@@ -38,6 +50,20 @@ const formLayout = {
   labelCol: { span: 4 },
   wrapperCol: { span: 18 },
 };
+
+// SJR: show status in icons
+const mapSimpleStatus = (status: number, error: string) => {
+  switch (status) {
+    case 0:
+      return <Tooltip title="待处理"><ClockCircleTwoTone /></Tooltip>;
+    case 1:
+      return <Tooltip title="成功"><CheckCircleTwoTone /></Tooltip>;
+    case 2:
+      return <Tooltip title={error}><CloseCircleTwoTone twoToneColor={'#e3422f'} /></Tooltip>;
+    default:
+      return <Tooltip title="未知"><QuestionCircleTwoTone /></Tooltip>;
+  }
+}
 
 export default function AppDetail() {
   const { id } = useParams();
@@ -48,10 +74,6 @@ export default function AppDetail() {
 
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [isMintModalVisible, setIsMintModalVisible] = useState(false);
-
-  const onChange = (key: string) => {
-    console.log("Switch to tab: ", key);
-  };
 
   const onNftMint = (values: any) => {
     values.chain = 'conflux_test';
@@ -92,14 +114,14 @@ export default function AppDetail() {
     });
   }, [id]);
 
-  const mainnetAccount = accounts.find(item => item.chain_id === 1029) || {address: ""};
-  const testAccount = accounts.find(item => item.chain_id === 1) || {address: ""};
+  const mainnetAccount = accounts.find(item => item.chain_id === 1029) || { address: "" };
+  const testAccount = accounts.find(item => item.chain_id === 1) || { address: "" };
 
   return (
     <div className="App">
       <RainbowBreadcrumb items={breadcrumbItems} />
       <Card>
-        <Tabs defaultActiveKey="1" onChange={onChange} tabBarExtraContent={extraOp}>
+        <Tabs defaultActiveKey="1" tabBarExtraContent={extraOp}>
           <TabPane tab="数字藏品" key="1">
             <AppNFTs id={idStr} />
           </TabPane>
@@ -130,10 +152,10 @@ export default function AppDetail() {
             <Input.TextArea rows={4} />
           </Form.Item>
           <Form.Item name="file_url" label="图片" rules={[{ required: true }]}>
-            <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({file_url: file.url})}/>
+            <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} />
           </Form.Item>
           <Form.Item name="mint_to_address" label="接受地址" rules={[{ required: true }]}>
-            <Input placeholder='树图链测试网地址'/>
+            <Input placeholder='树图链测试网地址' />
           </Form.Item>
         </Form>
       </Modal>
@@ -141,11 +163,13 @@ export default function AppDetail() {
   );
 }
 
-function AppNFTs(props: {id: string}) {
+function AppNFTs(props: { id: string }) {
   const { id } = props;
   const [items, setItems] = useState<NFT[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [images, setImages] = useState<string[]>([]);
 
   // TODO: display metadata and picture
   const columns = [
@@ -164,25 +188,56 @@ function AppNFTs(props: {id: string}) {
       title: '合约',
       dataIndex: 'contract',
       key: 'contract',
-      render: (text: string) => <Tooltip title={text}><span>{short(text)}</span></Tooltip>,
+      render: (text: string, record: NFT) => <a target="_blank" rel="noreferrer" href={scanAddressLink(record.chain_type, record.chain_id, text)}>{short(text)}</a>,
+    },
+    {
+      title: '类型',
+      dataIndex: 'contract_type',
+      key: 'contract_type',
+      render: mapNFTType,
     },
     {
       title: '接受地址',
       dataIndex: 'mint_to',
       key: 'mint_to',
-      render: (text: string) => <Tooltip title={text}><span>{short(text)}</span></Tooltip>,
+      render: (text: string, record: NFT) => <a target="_blank" rel="noreferrer" href={scanAddressLink(record.chain_type, record.chain_id, text)}>{short(text)}</a>,
     },
     {
       title: 'TokenID',
       dataIndex: 'token_id',
       key: 'token_id',
-      render: (text: string, record: NFT) => <a target="_blank" rel="noreferrer" href={scanNFTLink(record.chain_type, record.chain_id, record.contract, record.token_id)}>{text}</a>,
+      render: (text: string, record: NFT, index: number) =>
+        <>
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href={scanNFTLink(record.chain_type, record.chain_id, record.contract, record.token_id)}>
+            {text}
+          </a>
+          {/* SJR: render the preview button */}
+          <Tooltip title='预览'>
+            <Popover
+              placement="right"
+              content={<Image width={200} src={images[index]} />}
+              trigger='click'>
+              <Button
+                style={{ border: 'none' }}
+                icon={<FileImageOutlined />}
+                onClick={() => showNFTImage(record.token_uri, index)}></Button>
+            </Popover>
+          </Tooltip>
+        </>,
+    },
+    {
+      title: 'Mint数量',
+      dataIndex: 'amount',
+      key: 'amount',
     },
     {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: mapSimpleStatus,
+      render: (text: number, record: NFT) => mapSimpleStatus(text, record.error),
     },
     {
       title: '哈希',
@@ -199,18 +254,39 @@ function AppNFTs(props: {id: string}) {
   ];
 
   useEffect(() => {
+    setLoading(true);
     getAppNfts(id as string, page, 10).then(res => {
       setTotal(res.count);
       setItems(res.items);
+    }).then(() => {
+      setLoading(false);
     });
   }, [id, page]);
 
+  // SJR: click button to load one image
+  const showNFTImage = (metadataUri: string, index: number) => {
+    let temp: string[] = [];
+    if (images[index] != null)
+      return;
+    else {
+      temp = images;
+      axios.get(metadataUri)
+        .then(res => {
+          temp[index] = res.data.image;
+        })
+      setImages(temp);
+    }
+  }
+
+  useEffect(() => { }, [images]);
+
   return (
     <>
-      <Table 
+      <Table
         rowKey='id'
-        dataSource={items} 
+        dataSource={items}
         columns={columns}
+        loading={loading}
         pagination={{
           total,
           current: page,
@@ -222,7 +298,7 @@ function AppNFTs(props: {id: string}) {
   );
 }
 
-function AppContracts(props: {id: string}) {
+function AppContracts(props: { id: string }) {
   const { id } = props;
   const [items, setItems] = useState<Contract[]>([]);
   const [total, setTotal] = useState(0);
@@ -260,19 +336,19 @@ function AppContracts(props: {id: string}) {
       title: '状态',
       dataIndex: 'status',
       key: 'status',
-      render: mapSimpleStatus,
+      render: (text: number) => mapSimpleStatus(text, ""),
     },
     {
       title: '合约',
       dataIndex: 'address',
       key: 'address',
-      render: (text: string) => <Tooltip title={text}><span>{short(text)}</span></Tooltip>,
+      render: (text: string, record: Contract) => <a target="_blank" rel="noreferrer" href={scanAddressLink(record.chain_type, record.chain_id, text)}>{short(text)}</a>,
     },
     {
       title: '管理员',
       dataIndex: 'owner_address',
       key: 'owner_address',
-      render: (text: string) => <Tooltip title={text}><span>{short(text)}</span></Tooltip>,
+      render: (text: string, record: Contract) => <a target="_blank" rel="noreferrer" href={scanAddressLink(record.chain_type, record.chain_id, text)}>{short(text)}</a>,
     },
     {
       title: '哈希',
@@ -297,9 +373,9 @@ function AppContracts(props: {id: string}) {
 
   return (
     <>
-      <Table 
+      <Table
         rowKey='id'
-        dataSource={items} 
+        dataSource={items}
         columns={columns}
         pagination={{
           total,
@@ -312,7 +388,7 @@ function AppContracts(props: {id: string}) {
   );
 }
 
-function AppMetadatas(props: {id: string}) {
+function AppMetadatas(props: { id: string }) {
   const { id } = props;
   const [items, setItems] = useState<Metadata[]>([]);
   const [total, setTotal] = useState(0);
@@ -321,13 +397,13 @@ function AppMetadatas(props: {id: string}) {
   const columns = [
     {
       title: '名字',
-      dataIndex: ['metadata', 'name'],
+      dataIndex: ['name'],
     },
     {
       title: '操作',
-      dataIndex: ['metadata', 'file'],
+      dataIndex: ['image'],
       render: (text: string, item: Metadata) => (<Space>
-        <a target="_blank" rel="noreferrer" href={item.metadata.file}>文件</a>
+        <a target="_blank" rel="noreferrer" href={item.image}>文件</a>
         <a target="_blank" rel="noreferrer" href={item.uri}>Metadata</a>
       </Space>),
     }
@@ -342,9 +418,9 @@ function AppMetadatas(props: {id: string}) {
 
   return (
     <>
-      <Table 
+      <Table
         rowKey='uri'
-        dataSource={items} 
+        dataSource={items}
         columns={columns}
         pagination={{
           total,
@@ -357,7 +433,7 @@ function AppMetadatas(props: {id: string}) {
   );
 }
 
-function AppFiles(props: {id: string}) {
+function AppFiles(props: { id: string }) {
   const { id } = props;
   const [items, setItems] = useState<File[]>([]);
   const [total, setTotal] = useState(0);
@@ -391,9 +467,9 @@ function AppFiles(props: {id: string}) {
 
   return (
     <>
-      <Table 
+      <Table
         rowKey='file_name'
-        dataSource={items} 
+        dataSource={items}
         columns={columns}
         pagination={{
           total,
