@@ -581,7 +581,7 @@ function AppPoaps(props: { id: string }) {
         {
             title: 'POAP Link',
             dataIndex: 'id',
-            render:   (text: string, record: Poap) => <a target="_blank" rel="noreferrer" href={"https://nftrainbow.cn/poap?id="+text}>POAP链接</a>,
+            render:   (text: string, record: Poap) => <a target="_blank" rel="noreferrer" href={"https://nftrainbow.cn/poap.html?id="+text}>POAP链接</a>,
         },
         {
             title: '创建时间',
