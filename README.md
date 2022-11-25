@@ -1,5 +1,7 @@
 # rainbow-dashboard
 
+Version
+
 ## How to run
 
 1. Git clone code
