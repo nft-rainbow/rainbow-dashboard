@@ -1,3 +1,5 @@
+import { post } from '.';
+
 export interface Contract {
   id: number;
   chain_type: number;
@@ -11,4 +13,8 @@ export interface Contract {
   base_uri: string;
   created_at: string;
   updated_at: string;
+}
+
+export async function deployContract(id: number | string, meta: object) {
+    return await post(`/dashboard/apps/${id}/contracts`, meta);   
 }

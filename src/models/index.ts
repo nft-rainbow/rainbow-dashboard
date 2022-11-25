@@ -11,6 +11,11 @@ export interface User {
   kyc_msg?: string;
 }
 
+export interface UserBalance {
+    user_id: number;
+    balance: number;
+}
+
 export interface Company {
   id: number;
   name: string;

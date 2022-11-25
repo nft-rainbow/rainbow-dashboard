@@ -15,7 +15,8 @@ import Login from './routes/login';
 import Register from './routes/register';
 import DashboardLayout from './routes/layout';
 import Panel from './routes/panel';
-import User from './routes/user';
+import User from './routes/users/user';
+import UserBalance from './routes/users/userBalance';
 import Company from './routes/company';
 import App from './routes/apps';
 import AppDetail from './routes/apps/detail';
@@ -35,6 +36,7 @@ root.render(
           <Route path="/panels" element={<RequireAuth><DashboardLayout /></RequireAuth>}>
             <Route index element={<Panel />} />
             <Route path="user" element={<User />} />
+            <Route path="userBalance" element={<UserBalance />} />
             <Route path="company" element={<Company />} />
             <Route path="apps" element={<App />} />
             <Route path="apps/:id" element={<AppDetail />} />

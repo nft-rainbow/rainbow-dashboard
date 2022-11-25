@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { methodUrl, get, post, authHeaderSync } from '.';
-import { User } from '../models';
+import { User, UserBalance } from '../models';
 
 export interface LoginMeta {
   email: string;
@@ -59,4 +59,8 @@ export async function updateUserCompany(metadata: any) {
 
 export async function userStatistics() {
   return await get('/dashboard/users/statistics');
+}
+
+export async function userBalance(): Promise<UserBalance> {
+    return await get('/dashboard/users/balance');
 }

@@ -7,6 +7,8 @@
 3. Add config file: `cp src/config.example.ts src/config.ts`, then edit it's config `SERVICE_HOST`
 4. Build dist: `yarn build`
 
+## create-react-app
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

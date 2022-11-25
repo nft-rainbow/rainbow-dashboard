@@ -9,6 +9,17 @@ export function mapChainName(chainType: number) {
   }
 }
 
+export function mapAppType(appType: number) {
+    switch (appType) {
+      case 1:
+        return "数藏";
+      case 2:
+        return "POAP";
+      default:
+        return "数藏";
+    }
+  }
+
 export function formatDate(date: Date | string) {
   if (typeof date === "string") {
     date = new Date(date);

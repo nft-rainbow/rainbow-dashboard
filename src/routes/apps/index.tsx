@@ -13,7 +13,7 @@ import {
 import { Link } from "react-router-dom";
 import RainbowBreadcrumb from '../../components/Breadcrumb';
 import { getApps, createApp } from '../../services/app';
-import { mapChainName, formatDate } from '../../utils';
+import { mapChainName, formatDate, mapAppType } from '../../utils';
 import { App } from '../../models';
 
 function Apps() {
@@ -38,14 +38,17 @@ function Apps() {
     {
       title: '应用名',
       dataIndex: 'name',
-      key: 'name',
       render: (text: string, record: App) => <Link to={`/panels/apps/${record.id}`}>{text}</Link>
     },
     {
       title: '区块链',
       dataIndex: 'chain_type',
-      key: 'chain_type',
       render: mapChainName,
+    },
+    {
+      title: '类型',
+      dataIndex: 'type',
+      render: mapAppType
     },
     {
       title: '操作',

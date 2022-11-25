@@ -2,7 +2,7 @@
   "name": "rainbow-dashboard",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://dev.nftrainbow.xyz",
+  "proxy": "http://localhost:8080",
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@testing-library/jest-dom": "^5.14.1",
@@ -14,6 +14,7 @@
     "@types/react-dom": "^18.0.0",
     "antd": "^4.21.7",
     "axios": "^0.27.2",
+    "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "6",

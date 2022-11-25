@@ -12,6 +12,8 @@ import {
   easyMintUrl,
   getAppAccounts,
 } from '../../services/app';
+import { deployContract } from '../../services/contract'; 
+import { createPoap, listPoaps, Poap } from '../../services/poap';
 import { NFT, Contract } from '../../services';
 import {
   Card,
@@ -27,7 +29,8 @@ import {
   Input,
   message,
   Image,
-  Popover
+  Popover,
+  Select,
 } from 'antd';
 import { SERVICE_HOST } from '../../config';
 import {
@@ -45,6 +48,7 @@ import axios from 'axios';
 import { FileImageOutlined, ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 const { TabPane } = Tabs;
 const { Text } = Typography;
+const { Option } = Select;
 
 const formLayout = {
   labelCol: { span: 4 },
@@ -74,13 +78,13 @@ export default function AppDetail() {
 
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [isMintModalVisible, setIsMintModalVisible] = useState(false);
+  const [isDeployModalVisible, setIsDeployModalVisible] = useState(false);
+  const [isPoapModalVisible, setIsPoapModalVisible] = useState(false);
+
+  const mainnetAccount = accounts.find(item => item.chain_id === 1029) || { address: "" };
+  const testAccount = accounts.find(item => item.chain_id === 1) || { address: "" };
 
   const onNftMint = (values: any) => {
-    values.chain = 'conflux_test';
-    if (!values.mint_to_address.toLocaleLowerCase().startsWith('cfxtest')) {
-      message.error('接受地址目前只支持树图测试网地址');
-      return;
-    }
     easyMintUrl(id as string, values).then((res) => {
       setIsMintModalVisible(false);
       form.resetFields();
@@ -89,8 +93,47 @@ export default function AppDetail() {
     });
   }
 
+  const onContractCreate = (values: any) => {
+    const meta = Object.assign({
+        is_sponsor_for_all_user: true,
+        owner_address: values.chain === 'conflux' ? mainnetAccount.address : testAccount.address,
+    }, values);
+    deployContract(id as string, meta).then((res) => {
+        setIsDeployModalVisible(false);
+        form.resetFields();
+    }).catch((err) => {
+        message.error(err.message);
+    });
+  }
+
+  const onCreatePoap = (values: any) => {
+    createPoap(id as string, values).then((res) => {
+        setIsPoapModalVisible(false);
+        form.resetFields();
+    }).catch((err) => {
+       message.error(err.message); 
+    });
+  }
+
   const closeMintModal = () => setIsMintModalVisible(false);
+  const closeDeployModal = () => setIsDeployModalVisible(false);
   const closeDetailModal = () => setIsDetailModalVisible(false);
+  const closePoapModal = () => setIsPoapModalVisible(false);
+
+  const idStr = id as string;
+
+  const extraOp = (
+    <Space>
+        <Button type='primary' onClick={() => setIsMintModalVisible(true)}>快捷铸造藏品</Button>
+        <Button type='primary' onClick={() => setIsDeployModalVisible(true)}>部署合约</Button>
+        <Button type='primary' onClick={() => setIsPoapModalVisible(true)}>创建POAP</Button>
+        <Button type='primary' onClick={() => setIsDetailModalVisible(true)}>查看AppKey</Button>
+    </Space>
+  );
+
+  useEffect(() => {
+    getAppAccounts(id as string).then(data => setAccounts(data));
+  }, [id]);
 
   useEffect(() => {
     getAppDetail(id as string).then(data => {
@@ -98,24 +141,6 @@ export default function AppDetail() {
       setBreadcrumbItems(["应用详情", data.name]);
     });
   }, [id]);
-
-  const idStr = id as string;
-
-  const extraOp = (
-    <Space>
-      <Button type='primary' onClick={() => setIsDetailModalVisible(true)}>查看AppKey</Button>
-      <Button type='primary' onClick={() => setIsMintModalVisible(true)}>铸造藏品</Button>
-    </Space>
-  );
-
-  useEffect(() => {
-    getAppAccounts(id as string).then(data => {
-      setAccounts(data);
-    });
-  }, [id]);
-
-  const mainnetAccount = accounts.find(item => item.chain_id === 1029) || { address: "" };
-  const testAccount = accounts.find(item => item.chain_id === 1) || { address: "" };
 
   return (
     <div className="App">
@@ -133,6 +158,9 @@ export default function AppDetail() {
           </TabPane>
           <TabPane tab="文件" key="4">
             <AppFiles id={idStr} />
+          </TabPane>
+          <TabPane tab="POAP" key="5">
+            <AppPoaps id={idStr} />
           </TabPane>
         </Tabs>
       </Card>
@@ -154,8 +182,52 @@ export default function AppDetail() {
           <Form.Item name="file_url" label="图片" rules={[{ required: true }]}>
             <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} />
           </Form.Item>
+          <Form.Item name="chain" label="网络" rules={[{ required: true }]}>
+            <Select>
+                <Option value="conflux">树图主网</Option>
+                <Option value="conflux_test">树图测试网</Option>
+            </Select>
+          </Form.Item>
           <Form.Item name="mint_to_address" label="接受地址" rules={[{ required: true }]}>
-            <Input placeholder='树图链测试网地址' />
+            <Input placeholder='树图链地址' />
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal title='部署合约' visible={isDeployModalVisible} onOk={form.submit} onCancel={closeDeployModal}>
+        <Form {...formLayout} form={form} name="control-hooks" onFinish={onContractCreate}>
+          <Form.Item name="name" label="名字" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="symbol" label="Symbol" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="type" label="类型" rules={[{ required: true }]}>
+            <Select>
+                <Option value="erc721">ERC721</Option>
+                <Option value="erc1155">ERC1155</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item name="chain" label="网络" rules={[{ required: true }]}>
+            <Select>
+                <Option value="conflux">树图主网</Option>
+                <Option value="conflux_test">树图测试网</Option>
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+      <Modal title='创建POAP' visible={isPoapModalVisible} onOk={() => form.submit()} onCancel={closePoapModal}>
+        <Form {...formLayout} form={form} name="control-hooks" onFinish={onCreatePoap}>
+          <Form.Item name="title" label="标题" rules={[{ required: true }]}>
+            <Input />
+          </Form.Item>
+          <Form.Item name="intro" label="简介" rules={[{ required: true }]}>
+            <Input.TextArea rows={4} />
+          </Form.Item>
+          <Form.Item name="image_uri" label="图片" rules={[{ required: true }]}>
+            <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ image_uri: file.url })} />
+          </Form.Item>
+          <Form.Item name="contract" label="合约地址" rules={[{ required: true }]}>
+            <Input placeholder='树图链地址' />
           </Form.Item>
         </Form>
       </Modal>
@@ -481,3 +553,63 @@ function AppFiles(props: { id: string }) {
     </>
   );
 }
+
+function AppPoaps(props: { id: string }) {
+    const { id } = props;
+    const [items, setItems] = useState<Poap[]>([]);
+    const [total, setTotal] = useState(0);
+    const [page, setPage] = useState(1);
+  
+    const columns = [
+        {
+            title: 'ID',
+            dataIndex: 'id',
+        },
+        {
+            title: '标题',
+            dataIndex: 'title',
+        },
+        {
+            title: '合约',
+            dataIndex: 'contract',
+            render: (text: string, record: Poap) => <a target="_blank" rel="noreferrer" href={"#"}>{text}</a>,
+        },
+        {
+            title: 'NextID',
+            dataIndex: 'next_id',
+        },
+        {
+            title: 'POAP Link',
+            dataIndex: 'id',
+            render:   (text: string, record: Poap) => <a target="_blank" rel="noreferrer" href={"https://nftrainbow.cn/poap?id="+text}>POAP链接</a>,
+        },
+        {
+            title: '创建时间',
+            dataIndex: 'created_at',
+            render: formatDate,
+        },
+    ];
+  
+    useEffect(() => {
+      listPoaps(id as string, page, 10).then(res => {
+        setTotal(res.count);
+        setItems(res.items);
+      });
+    }, [id, page]);
+  
+    return (
+      <>
+        <Table
+          rowKey='id'
+          dataSource={items}
+          columns={columns}
+          pagination={{
+            total,
+            current: page,
+            showTotal: (total) => `共 ${total} 条`,
+          }}
+          onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
+        />
+      </>
+    );
+  }

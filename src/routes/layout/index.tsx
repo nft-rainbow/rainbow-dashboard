@@ -10,6 +10,7 @@ import {
   LogoutOutlined,
   UsergroupAddOutlined,
   CodeOutlined,
+  MoneyCollectOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Dropdown, Space, Button, } from 'antd';
@@ -58,16 +59,14 @@ const App: React.FC = () => {
   const user = auth.user as UserInfo;
 
   const userMenuItems: MenuItem[] = [
-    getItem(<Link to="/panels/user">用户设置</Link>, '1', <UserOutlined />),
-    getItem(<Link to="/panels/company">企业认证</Link>, '2', <UsergroupAddOutlined />),
-    getItem(<span onClick={() => auth.signout(console.log)}>退出</span>, '3', <LogoutOutlined />),
+    getItem(<Link to="/panels/userBalance">用户余额</Link>, '1', <MoneyCollectOutlined />),
+    getItem(<Link to="/panels/user">用户设置</Link>, '2', <UserOutlined />),
+    getItem(<Link to="/panels/company">企业认证</Link>, '3', <UsergroupAddOutlined />),
+    getItem(<span onClick={() => auth.signout(console.log)}>退出</span>, '4', <LogoutOutlined />),
   ];
 
   useEffect(() => {
-    if (collapsed)
-      setLogo("/nftrainbow-logo-icon.png");
-    else
-      setLogo("/nftrainbow-logo-light.png");
+    setLogo(collapsed ? "/nftrainbow-logo-icon.png" : "/nftrainbow-logo-light.png");
   }, [collapsed]);
 
   return (

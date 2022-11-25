@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import RainbowBreadcrumb from '../components/Breadcrumb';
-import FileUpload from '../components/FileUpload';
+import RainbowBreadcrumb from '../../components/Breadcrumb';
+import FileUpload from '../../components/FileUpload';
 import { Divider, Button, Form, Input, Row, Col, message, Alert } from 'antd';
-import { userProfile, updateUserProfile, updateUserKyc } from '../services/user';
-import { User } from '../models';
+import { userProfile, updateUserProfile, updateUserKyc } from '../../services/user';
+import { User } from '../../models';
 
 const layout = {
   labelCol: { span: 6 },
@@ -93,7 +93,7 @@ function UserManagement() {
                 <Input />
               </Form.Item>
               <Form.Item name="id_image" label="身份证照片" rules={[{ required: true }]}>
-                <FileUpload onChange={(err: Error, file: any) => kycForm.setFieldsValue({id_image: file.url})}/>
+                <FileUpload private={true} onChange={(err: Error, file: any) => kycForm.setFieldsValue({id_image: file.url})}/>
               </Form.Item>
               <Form.Item {...tailLayout}>
                 <Button type="primary" htmlType="submit">
