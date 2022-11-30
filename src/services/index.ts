@@ -2,7 +2,6 @@ import axios from 'axios';
 import { SERVICE_HOST } from "../config";
 import { userRefreshToken } from "./user";
 export type { NFT } from './NFT';
-export type { Contract } from './contract';
 
 export const USER_LOCALSTORAGE_KEY = "NFT_RAINBOW_SESSION_USER";
 

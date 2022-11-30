@@ -14,7 +14,7 @@ import {
 } from '../../services/app';
 import { deployContract } from '../../services/contract'; 
 import { createPoap, listPoaps, Poap } from '../../services/poap';
-import { NFT, Contract } from '../../services';
+import { NFT } from '../../services';
 import {
   Card,
   Tabs,
@@ -43,7 +43,7 @@ import {
   mapNFTType,
 } from '../../utils';
 import FileUpload from '../../components/FileUpload';
-import { ChainAccount, App } from '../../models';
+import { ChainAccount, App, Contract } from '../../models';
 import axios from 'axios';
 import { FileImageOutlined, ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 const { TabPane } = Tabs;
@@ -380,58 +380,48 @@ function AppContracts(props: { id: string }) {
     {
       title: '区块链',
       dataIndex: 'chain_type',
-      key: 'chain_type',
       render: mapChainName,
     },
     {
       title: 'ChainID',
       dataIndex: 'chain_id',
-      key: 'chain_id',
     },
     {
       title: '类型',
       dataIndex: 'type',
-      key: 'type',
       render: mapNFTType
     },
     {
       title: '名字',
       dataIndex: 'name',
-      key: 'name',
     },
     {
       title: 'Symbol',
       dataIndex: 'symbol',
-      key: 'symbol',
     },
     {
       title: '状态',
       dataIndex: 'status',
-      key: 'status',
       render: (text: number) => mapSimpleStatus(text, ""),
     },
     {
       title: '合约',
       dataIndex: 'address',
-      key: 'address',
       render: (text: string, record: Contract) => <a target="_blank" rel="noreferrer" href={scanAddressLink(record.chain_type, record.chain_id, text)}>{short(text)}</a>,
     },
     {
       title: '管理员',
       dataIndex: 'owner_address',
-      key: 'owner_address',
       render: (text: string, record: Contract) => <a target="_blank" rel="noreferrer" href={scanAddressLink(record.chain_type, record.chain_id, text)}>{short(text)}</a>,
     },
     {
       title: '哈希',
       dataIndex: 'hash',
-      key: 'hash',
       render: (text: string, record: Contract) => <a target="_blank" rel="noreferrer" href={scanTxLink(record.chain_type, record.chain_id, text)}>{short(text)}</a>,
     },
     {
       title: '创建时间',
       dataIndex: 'created_at',
-      key: 'created_at',
       render: formatDate,
     },
   ];

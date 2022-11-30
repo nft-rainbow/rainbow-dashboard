@@ -23,7 +23,11 @@ export interface Metadata {
 }
 
 export async function getApps(page?: number, limit?: number) {
-  return await get('/dashboard/apps', {page, limit});
+    return await get('/dashboard/apps', {page, limit});
+}
+
+export async function getAllApps() {
+    return await get('/dashboard/apps/all');
 }
 
 export async function createApp(metadata: any) {

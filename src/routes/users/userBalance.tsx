@@ -7,12 +7,17 @@ import {
     Input,
     Radio,
     Space,
+    Card,
+    Table,
+    TablePaginationConfig,
     // Checkbox,
 } from 'antd';
-import { userBalance } from '../../services/user';
+import { userBalance, userFiatLogs } from '../../services/user';
 import { createWxPayOrder } from '../../services/pay';
-import {QRCodeSVG} from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import './userBalance.css';
+import { FiatLog } from '../../models';
+import { formatDate, mapFiatLogType } from '../../utils';
 
 export default function UserBalance() {
     const [balance, setBalance] = useState(0);
@@ -20,6 +25,21 @@ export default function UserBalance() {
     const [isPayModalVisible, setIsPayModalVisible] = useState(false);
     const [payUrl, setPayUrl] = useState('');
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
+
+    const [items, setItems] = useState<FiatLog[]>([]);
+    const [total, setTotal] = useState(0);
+    const [page, setPage] = useState(1);
+
+    const refreshItems = (currentPage: number) => {
+        setLoading(true);
+        userFiatLogs(currentPage).then(data => {
+            setItems(data.items);
+            setTotal(data.count);
+        }).then(() => {
+            setLoading(false);
+        });
+    }
 
     const onPay = async (values: any) => {
         let { amount } = values;
@@ -35,20 +55,59 @@ export default function UserBalance() {
         setIsPayModalVisible(true);
     }
 
+    const columns = [
+        {
+          title: 'ID',
+          dataIndex: 'id',
+        },
+        {
+          title: '金额(元)',
+          dataIndex: 'amount',
+          render: (text: number) => text / 100,
+        },
+        {
+          title: '类型',
+          dataIndex: 'type',
+          render: mapFiatLogType
+        },
+        {
+          title: '创建时间',
+          dataIndex: 'created_at',
+          key: 'created_at',
+          render: formatDate,
+        }
+      ];
+
     useEffect(() => {
         userBalance().then((res) => setBalance(res.balance));
     }, []);
 
+    useEffect(() => {
+        refreshItems(page);
+    }, [page]);
+
     return (
         <div>
             <RainbowBreadcrumb items={['设置', '用户中心']} />
-            <div className='content-body'>
+            <Card>
                 <h3>可用额度</h3>
-                <div>
+                <div style={{paddingBottom: '40px'}}>
                     <span className='user-balance'>¥ {balance / 100}</span>
                     <Button className='charge-btn' type='primary' onClick={() => setIsModalVisible(true)}>充值</Button>
                 </div>
-            </div>
+                <Table
+                    rowKey='id'
+                    dataSource={items}
+                    columns={columns}
+                    loading={loading}
+                    pagination={{
+                        total,
+                        current: page,
+                        showTotal: (total) => `共 ${total} 条`,
+                    }}
+                    onChange={(info: TablePaginationConfig) => { setPage(info.current as number); }}
+                />
+            </Card>
             <Modal title='余额充值' visible={isModalVisible} onOk={() => form.submit()} onCancel={() => setIsModalVisible(false)}>
                 <Form form={form} onFinish={onPay} initialValues={{type: 1}}>
                     <Form.Item name="amount" label="充值金额" rules={[{ required: true }]}>
@@ -66,7 +125,7 @@ export default function UserBalance() {
                 </Form>
             </Modal>
             <Modal  title='扫码支付' visible={isPayModalVisible} onOk={() => setIsPayModalVisible(false)} onCancel={() => setIsPayModalVisible(false)}>
-                <QRCodeSVG value={payUrl} />
+                <QRCodeSVG value={payUrl} style={{display: 'block', marginLeft: 'auto', marginRight: 'auto'}}/>
             </Modal>
         </div>
     );

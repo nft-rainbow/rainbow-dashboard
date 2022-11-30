@@ -1,20 +1,13 @@
-import { post } from '.';
+import { post, get } from '.';
 
-export interface Contract {
-  id: number;
-  chain_type: number;
-  chain_id: number;
-  address: string;
-  hash: string;
-  name: string;
-  symbol: string;
-  type: number;
-  owner_address: string;
-  base_uri: string;
-  created_at: string;
-  updated_at: string;
+export interface ContractFilter {
+    app_id?: number;
 }
 
 export async function deployContract(id: number | string, meta: object) {
     return await post(`/dashboard/apps/${id}/contracts`, meta);   
+}
+
+export async function listContracts(page = 1, limit = 10, filter: ContractFilter = {}) {
+    return await get(`/dashboard//contracts`, Object.assign({}, {page, limit}, filter));
 }

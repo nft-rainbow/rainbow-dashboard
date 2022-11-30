@@ -1,4 +1,9 @@
-
+interface BaseModel {
+    id: number;
+    created_at: string;
+    updated_at: string;
+    deleted_at?: string;
+}
 export interface User {
   id: number;
   email: string;
@@ -11,9 +16,28 @@ export interface User {
   kyc_msg?: string;
 }
 
+export interface Contract extends BaseModel {
+    chain_type: number;
+    chain_id: number;
+    address: string;
+    hash: string;
+    name: string;
+    symbol: string;
+    type: number;
+    owner_address: string;
+    base_uri: string;
+}
+
 export interface UserBalance {
     user_id: number;
     balance: number;
+}
+
+export interface FiatLog extends BaseModel {
+    user_id: number;
+    amount: number;
+    type: number;
+    meta: any;
 }
 
 export interface Company {
@@ -39,13 +63,10 @@ export interface ChainAccount {
   public_key: string;
 }
 
-export interface App {
-  id: number;
+export interface App extends BaseModel {
   name: string;
   intro: string;
   app_id: string;
   app_secret?: string;
   chain_type: number;
-  created_at: string;
-  updated_at: string;
 }

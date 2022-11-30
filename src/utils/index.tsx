@@ -18,7 +18,22 @@ export function mapAppType(appType: number) {
       default:
         return "数藏";
     }
-  }
+}
+
+export function mapFiatLogType(type: number) {
+    switch (type) {
+        case 1:
+            return "充值";
+        case 2:
+            return "提现";
+        case 3:
+            return "上链费用";
+        case 4:
+            return "API费用";
+        default:
+            return "其他";
+    }
+}
 
 export function formatDate(date: Date | string) {
   if (typeof date === "string") {
@@ -35,35 +50,26 @@ export function short(toShort: string) {
 }
 
 export function scanTxLink(chainType: number, chainId: number, txHash: string) {
-  switch (chainId) {
-    case 1:
-      return `https://testnet.confluxscan.io/transaction/${txHash}`;
-    case 1029:
-      return `https://confluxscan.io/transaction/${txHash}`;
-    default:
-      return `#`;
-  }
+    return `${scanHostFromChainId(chainId)}/transaction/${txHash}`;
 }
 
 export function scanNFTLink(chainType: number, chainId: number, contract: string, tokenId: number) {
-  switch (chainId) {
-    case 1:
-      return `https://testnet.confluxscan.io/nft/${contract}/${tokenId}`;
-    case 1029:
-      return `https://confluxscan.io/nft/${contract}/${tokenId}`;
-    default:
-      return `#`;
-  }
+    return `${scanHostFromChainId(chainId)}/nft/${contract}/${tokenId}`;
 }
 
 export function scanAddressLink(chainType: number, chainId: number, address: string) {
+    return `${scanHostFromChainId(chainId)}/address/${address}`;
+}
+
+// Only support Conflux mainnet and testnet
+function scanHostFromChainId(chainId: number) {
   switch (chainId) {
     case 1:
-      return `https://testnet.confluxscan.io/address/${address}`;
+      return "https://testnet.confluxscan.net";
     case 1029:
-      return `https://confluxscan.io/address/${address}`;
+      return "https://confluxscan.net";
     default:
-      return `#`;
+      return "#";
   }
 }
 

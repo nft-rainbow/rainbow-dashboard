@@ -21,6 +21,7 @@ import Company from './routes/company';
 import App from './routes/apps';
 import AppDetail from './routes/apps/detail';
 // import NotFound from './routes/404';
+import Contracts from './routes/contracts';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -40,6 +41,7 @@ root.render(
             <Route path="company" element={<Company />} />
             <Route path="apps" element={<App />} />
             <Route path="apps/:id" element={<AppDetail />} />
+            <Route path="contracts" element={<Contracts />} />
           </Route>
           {/* <Route path="*" element={<Navigate to="/panels" />} /> */}
         </Routes>

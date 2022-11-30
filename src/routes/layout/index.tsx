@@ -11,6 +11,7 @@ import {
   UsergroupAddOutlined,
   CodeOutlined,
   MoneyCollectOutlined,
+  AuditOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Dropdown, Space, Button, } from 'antd';
@@ -38,7 +39,8 @@ function getItem(
 const items: MenuItem[] = [
   getItem(<Link to="/panels">仪表盘</Link>, '1', <DashboardOutlined />),
   getItem(<Link to="/panels/apps">我的应用</Link>, '2', <AppstoreOutlined />),
-  getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">开发文档</a>, '3', <CodeOutlined />),
+  getItem(<Link to="/panels/contracts">智能合约</Link>, '3', <AuditOutlined />),
+  getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">开发文档</a>, '4', <CodeOutlined />),
 ];
 
 function menuKeyFromLocation(location: object): string {
@@ -46,6 +48,7 @@ function menuKeyFromLocation(location: object): string {
   const pathname = location.pathname;
   if (pathname === '/panels') return '1';
   if (pathname.startsWith('/panels/apps')) return '2';
+  if (pathname === '/panels/contracts') return '3';
   return '1';
 }
 
