@@ -27,8 +27,10 @@ export function mapFiatLogType(type: number) {
         case 2:
             return "提现";
         case 3:
-            return "上链费用";
+            return "燃气费用";
         case 4:
+            return "存储费用";
+        case 5:
             return "API费用";
         default:
             return "其他";
@@ -95,4 +97,26 @@ export function mapNFTType(type: number) {
     default:
       return "未知";
   }
+}
+
+export function mapChainNetwork(chainId: number) {
+    switch (chainId) {
+        case 1029:
+        return "conflux";
+        case 1:
+        return "conflux_test";
+        default:
+        return '';
+    }
+}
+
+export function mapChainNetworId(chainName: string) {
+    switch (chainName) {
+        case "conflux":
+        return 1029;
+        case "conflux_test":
+        return 1;
+        default:
+        return 0;
+    }
 }

@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { authHeader, methodUrl } from ".";
+import { authHeader, methodUrl, get } from ".";
 
 export async function uploadFile(file: any) {
   const url = methodUrl('/dashboard/misc/upload');
@@ -17,4 +17,8 @@ export async function uploadFileKyc(file: any) {
     const axiosConfig = authHeader();
     const { data } = await axios.post(url, formData, axiosConfig as AxiosRequestConfig);
     return data;
+}
+
+export async function cfxPrice(): Promise<number> {
+    return (await get('/dashboard/misc/cfxPrice')).price;
 }

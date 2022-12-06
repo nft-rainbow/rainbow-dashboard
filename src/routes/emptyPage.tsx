@@ -4,7 +4,7 @@ import {
     Card,
 } from "antd";
 
-export function Contracts() {
+export default function Contracts() {
     return (
         <>
             <RainbowBreadcrumb items={['合约列表']} />

@@ -54,13 +54,14 @@ export interface Company {
   kyc_msg?: string;
 }
 
-export interface ChainAccount {
+export interface ChainAccount extends BaseModel {
   id: number;
   chain_type: number;
   chain_id: number;
   app_id: number;
   address: string;
   public_key: string;
+  private_key: string;
 }
 
 export interface App extends BaseModel {
@@ -69,4 +70,13 @@ export interface App extends BaseModel {
   app_id: string;
   app_secret?: string;
   chain_type: number;
+}
+
+export interface SponsorInfo {
+    collateral_sponsor: string;
+    collateral_sponsor_balance: string;
+    gas_sponsor: string;
+    gas_sponsor_balance: string;
+    gas_upper_bound: string;
+    is_all_white_listed: boolean;
 }

@@ -12,7 +12,6 @@ import {
   easyMintUrl,
   getAppAccounts,
 } from '../../services/app';
-import { deployContract } from '../../services/contract'; 
 import { createPoap, listPoaps, Poap } from '../../services/poap';
 import { NFT } from '../../services';
 import {
@@ -78,7 +77,6 @@ export default function AppDetail() {
 
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [isMintModalVisible, setIsMintModalVisible] = useState(false);
-  const [isDeployModalVisible, setIsDeployModalVisible] = useState(false);
   const [isPoapModalVisible, setIsPoapModalVisible] = useState(false);
 
   const mainnetAccount = accounts.find(item => item.chain_id === 1029) || { address: "" };
@@ -93,19 +91,6 @@ export default function AppDetail() {
     });
   }
 
-  const onContractCreate = (values: any) => {
-    const meta = Object.assign({
-        is_sponsor_for_all_user: true,
-        owner_address: values.chain === 'conflux' ? mainnetAccount.address : testAccount.address,
-    }, values);
-    deployContract(id as string, meta).then((res) => {
-        setIsDeployModalVisible(false);
-        form.resetFields();
-    }).catch((err) => {
-        message.error(err.message);
-    });
-  }
-
   const onCreatePoap = (values: any) => {
     createPoap(id as string, values).then((res) => {
         setIsPoapModalVisible(false);
@@ -116,7 +101,6 @@ export default function AppDetail() {
   }
 
   const closeMintModal = () => setIsMintModalVisible(false);
-  const closeDeployModal = () => setIsDeployModalVisible(false);
   const closeDetailModal = () => setIsDetailModalVisible(false);
   const closePoapModal = () => setIsPoapModalVisible(false);
 
@@ -125,7 +109,6 @@ export default function AppDetail() {
   const extraOp = (
     <Space>
         <Button type='primary' onClick={() => setIsMintModalVisible(true)}>快捷铸造藏品</Button>
-        <Button type='primary' onClick={() => setIsDeployModalVisible(true)}>部署合约</Button>
         <Button type='primary' onClick={() => setIsPoapModalVisible(true)}>创建POAP</Button>
         <Button type='primary' onClick={() => setIsDetailModalVisible(true)}>查看AppKey</Button>
     </Space>
@@ -150,16 +133,13 @@ export default function AppDetail() {
           <TabPane tab="数字藏品" key="1">
             <AppNFTs id={idStr} />
           </TabPane>
-          <TabPane tab="合约" key="2">
-            <AppContracts id={idStr} />
-          </TabPane>
-          <TabPane tab="元数据" key="3">
+          <TabPane tab="元数据" key="2">
             <AppMetadatas id={idStr} />
           </TabPane>
-          <TabPane tab="文件" key="4">
+          <TabPane tab="文件" key="3">
             <AppFiles id={idStr} />
           </TabPane>
-          <TabPane tab="POAP" key="5">
+          <TabPane tab="POAP" key="4">
             <AppPoaps id={idStr} />
           </TabPane>
         </Tabs>
@@ -171,7 +151,7 @@ export default function AppDetail() {
         <p>主网账户: <Text code>{mainnetAccount.address}</Text></p>
         <p>测试网账户: <Text code>{testAccount.address}</Text></p>
       </Modal>
-      <Modal title='铸造藏品' visible={isMintModalVisible} onOk={() => form.submit()} onCancel={closeMintModal}>
+      <Modal title='快速铸造' visible={isMintModalVisible} onOk={() => form.submit()} onCancel={closeMintModal}>
         <Form {...formLayout} form={form} name="control-hooks" onFinish={onNftMint}>
           <Form.Item name="name" label="名字" rules={[{ required: true }]}>
             <Input />
@@ -190,28 +170,6 @@ export default function AppDetail() {
           </Form.Item>
           <Form.Item name="mint_to_address" label="接受地址" rules={[{ required: true }]}>
             <Input placeholder='树图链地址' />
-          </Form.Item>
-        </Form>
-      </Modal>
-      <Modal title='部署合约' visible={isDeployModalVisible} onOk={form.submit} onCancel={closeDeployModal}>
-        <Form {...formLayout} form={form} name="control-hooks" onFinish={onContractCreate}>
-          <Form.Item name="name" label="名字" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="symbol" label="Symbol" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="type" label="类型" rules={[{ required: true }]}>
-            <Select>
-                <Option value="erc721">ERC721</Option>
-                <Option value="erc1155">ERC1155</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item name="chain" label="网络" rules={[{ required: true }]}>
-            <Select>
-                <Option value="conflux">树图主网</Option>
-                <Option value="conflux_test">树图测试网</Option>
-            </Select>
           </Form.Item>
         </Form>
       </Modal>
@@ -359,86 +317,6 @@ function AppNFTs(props: { id: string }) {
         dataSource={items}
         columns={columns}
         loading={loading}
-        pagination={{
-          total,
-          current: page,
-          showTotal: (total) => `共 ${total} 条`,
-        }}
-        onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
-      />
-    </>
-  );
-}
-
-function AppContracts(props: { id: string }) {
-  const { id } = props;
-  const [items, setItems] = useState<Contract[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-
-  const columns = [
-    {
-      title: '区块链',
-      dataIndex: 'chain_type',
-      render: mapChainName,
-    },
-    {
-      title: 'ChainID',
-      dataIndex: 'chain_id',
-    },
-    {
-      title: '类型',
-      dataIndex: 'type',
-      render: mapNFTType
-    },
-    {
-      title: '名字',
-      dataIndex: 'name',
-    },
-    {
-      title: 'Symbol',
-      dataIndex: 'symbol',
-    },
-    {
-      title: '状态',
-      dataIndex: 'status',
-      render: (text: number) => mapSimpleStatus(text, ""),
-    },
-    {
-      title: '合约',
-      dataIndex: 'address',
-      render: (text: string, record: Contract) => <a target="_blank" rel="noreferrer" href={scanAddressLink(record.chain_type, record.chain_id, text)}>{short(text)}</a>,
-    },
-    {
-      title: '管理员',
-      dataIndex: 'owner_address',
-      render: (text: string, record: Contract) => <a target="_blank" rel="noreferrer" href={scanAddressLink(record.chain_type, record.chain_id, text)}>{short(text)}</a>,
-    },
-    {
-      title: '哈希',
-      dataIndex: 'hash',
-      render: (text: string, record: Contract) => <a target="_blank" rel="noreferrer" href={scanTxLink(record.chain_type, record.chain_id, text)}>{short(text)}</a>,
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'created_at',
-      render: formatDate,
-    },
-  ];
-
-  useEffect(() => {
-    getAppContracts(id as string, page, 10).then(res => {
-      setTotal(res.count);
-      setItems(res.items);
-    });
-  }, [id, page]);
-
-  return (
-    <>
-      <Table
-        rowKey='id'
-        dataSource={items}
-        columns={columns}
         pagination={{
           total,
           current: page,
@@ -602,4 +480,4 @@ function AppPoaps(props: { id: string }) {
         />
       </>
     );
-  }
+}

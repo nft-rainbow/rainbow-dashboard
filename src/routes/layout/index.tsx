@@ -48,7 +48,7 @@ function menuKeyFromLocation(location: object): string {
   const pathname = location.pathname;
   if (pathname === '/panels') return '1';
   if (pathname.startsWith('/panels/apps')) return '2';
-  if (pathname === '/panels/contracts') return '3';
+  if (pathname.startsWith('/panels/contracts')) return '3';
   return '1';
 }
 
