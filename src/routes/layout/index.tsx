@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, Link, useLocation } from "react-router-dom";
-import "./layout.css";
 import {
   DashboardOutlined,
   AppstoreOutlined,
@@ -14,10 +13,11 @@ import {
   AuditOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Layout, Menu, Dropdown, Space, Button, } from 'antd';
+import { Layout, Menu, Dropdown, Space, Button, ConfigProvider } from 'antd';
 import { SelectInfo } from 'rc-menu/lib/interface';
 import { useAuth } from '../../Auth';
 import { UserInfo } from '../../services/';
+import "./layout.css";
 const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -38,7 +38,7 @@ function getItem(
 
 const items: MenuItem[] = [
   getItem(<Link to="/panels">仪表盘</Link>, '1', <DashboardOutlined />),
-  getItem(<Link to="/panels/apps">我的应用</Link>, '2', <AppstoreOutlined />),
+  getItem(<Link to="/panels/apps">我的项目</Link>, '2', <AppstoreOutlined />),
   getItem(<Link to="/panels/contracts">智能合约</Link>, '3', <AuditOutlined />),
   getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">开发文档</a>, '4', <CodeOutlined />),
 ];
@@ -73,6 +73,14 @@ const App: React.FC = () => {
   }, [collapsed]);
 
   return (
+    <ConfigProvider
+        theme={{
+            token: {
+                colorPrimary: '#6953EF',
+                colorLink: '#6953EF',
+            },
+        }}
+    >
     <Layout id="rainbow-layout">
       <Sider collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)}>
         <div className="logo">
@@ -107,6 +115,7 @@ const App: React.FC = () => {
         <Footer className="site-layout-footer">©2022 NFTRainbow</Footer>
       </Layout>
     </Layout>
+    </ConfigProvider>
   );
 };
 

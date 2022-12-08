@@ -108,7 +108,7 @@ export default function UserBalance() {
                     onChange={(info: TablePaginationConfig) => { setPage(info.current as number); }}
                 />
             </Card>
-            <Modal title='余额充值' visible={isModalVisible} onOk={() => form.submit()} onCancel={() => setIsModalVisible(false)}>
+            <Modal title='余额充值' open={isModalVisible} onOk={() => form.submit()} onCancel={() => setIsModalVisible(false)}>
                 <Form form={form} onFinish={onPay} initialValues={{type: 1}}>
                     <Form.Item name="amount" label="充值金额" rules={[{ required: true }]}>
                         <Input />
@@ -124,7 +124,7 @@ export default function UserBalance() {
                     {/* <Checkbox onChange={() => {}}>我已了解：充值的款项只可用于NFTRainbow消费</Checkbox> */}
                 </Form>
             </Modal>
-            <Modal  title='扫码支付' visible={isPayModalVisible} onOk={() => setIsPayModalVisible(false)} onCancel={() => setIsPayModalVisible(false)}>
+            <Modal  title='扫码支付' open={isPayModalVisible} onOk={() => setIsPayModalVisible(false)} onCancel={() => setIsPayModalVisible(false)}>
                 <QRCodeSVG value={payUrl} style={{display: 'block', marginLeft: 'auto', marginRight: 'auto'}}/>
             </Modal>
         </div>

@@ -11,9 +11,8 @@ import {
   message
 } from "antd";
 import { Link } from "react-router-dom";
-import RainbowBreadcrumb from '../../components/Breadcrumb';
 import { getApps, createApp } from '../../services/app';
-import { mapChainName, formatDate, mapAppType } from '../../utils';
+import { mapChainName, formatDate } from '../../utils';
 import { App } from '../../models';
 
 function Apps() {
@@ -36,7 +35,7 @@ function Apps() {
 
   const columns = [
     {
-      title: '应用名',
+      title: '项目名称',
       dataIndex: 'name',
       render: (text: string, record: App) => <Link to={`/panels/apps/${record.id}`}>{text}</Link>
     },
@@ -46,25 +45,15 @@ function Apps() {
       render: mapChainName,
     },
     {
-      title: '类型',
-      dataIndex: 'type',
-      render: mapAppType
-    },
-    {
-      title: '操作',
-      key: 'action',
-      /* render: (text: number, record: App) => {
-        return <Button type='link' onClick={() => {setToViewAppId(record.id);setIsDetailModalVisible(true)}}>查看Key</Button>;
-      }, */
-      render: (text: number, record: App) => {
-        return <Link to={`/panels/apps/${record.id}`}>查看</Link>;
-      }
-    },
-    {
       title: '创建时间',
       dataIndex: 'created_at',
       key: 'created_at',
       render: formatDate,
+    },
+    {
+      title: '操作',
+      key: 'action',
+      render: (text: number, record: App) => <Link to={`/panels/apps/${record.id}`}>查看</Link>
     }
   ];
 
@@ -89,8 +78,7 @@ function Apps() {
 
   return (
     <>
-      <RainbowBreadcrumb items={['应用列表']} />
-      <Card extra={<Button onClick={() => setIsModalVisible(true)} type="primary">创建</Button>}>
+      <Card title='我的项目' extra={<Button onClick={() => setIsModalVisible(true)} type="primary">创建项目</Button>}>
         <Table
           rowKey='id'
           dataSource={apps}
@@ -104,7 +92,7 @@ function Apps() {
           onChange={(info: TablePaginationConfig) => { setPage(info.current as number); }}
         />
       </Card>
-      <Modal title="创建应用" visible={isModalVisible} onOk={createForm.submit} onCancel={handleCancel}>
+      <Modal title="创建项目" open={isModalVisible} onOk={createForm.submit} onCancel={handleCancel}>
         <Form
           name="basic"
           form={createForm}
@@ -116,11 +104,19 @@ function Apps() {
           autoComplete="off"
         >
           <Form.Item
-            label="应用名"
+            label="项目名称"
             name="name"
-            rules={[{ required: true, message: 'Please input app name!' }]}
+            rules={[{ required: true, message: '请输入项目名称' }]}
           >
             <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="项目介绍"
+            name="intro"
+            rules={[{ required: true, message: '请输入项目介绍' }]}
+          >
+            <Input.TextArea rows={4} />
           </Form.Item>
 
           <Form.Item
@@ -132,13 +128,7 @@ function Apps() {
               <Select.Option value="conflux">树图链</Select.Option>
             </Select>
           </Form.Item>
-          <Form.Item
-            label="简介"
-            name="intro"
-            rules={[{ required: true, message: 'Please input your password!' }]}
-          >
-            <Input.TextArea rows={4} />
-          </Form.Item>
+          
         </Form>
       </Modal>
     </>

@@ -39,7 +39,7 @@ export default function ContractSponsor() {
     const onSetSponsor = async (values: any) => {
         const addr = values.address;
         if (!address.isValidCfxAddress(addr)) {
-            message.warn('合约地址格式错误');
+            message.warning('合约地址格式错误');
             return;
         }
 
@@ -52,7 +52,7 @@ export default function ContractSponsor() {
         // @ts-ignore
         const gas = BigInt(values.gas) * 10n ** 9n;  // in GDrip
         if (gas < upperBound * BigInt(1000)) {
-            message.warn('Gas必须大于Gas上限的1000倍');
+            message.warning('Gas必须大于Gas上限的1000倍');
             return;
         }
 
@@ -60,7 +60,7 @@ export default function ContractSponsor() {
             const toCharge = (values.gas + values.storage) * 80;
             const balance = (await userBalance()).balance;
             if (balance < toCharge) {
-                message.warn('账户余额不足');
+                message.warning('账户余额不足');
                 return;
             }
         }
@@ -152,7 +152,7 @@ export default function ContractSponsor() {
                         </ul>
                     </Col>
                 </Row>
-                <Modal visible={isModalVisible} onOk={() => setIsModalVisible(false)} onCancel={() => setIsModalVisible(false)}>
+                <Modal open={isModalVisible} onOk={() => setIsModalVisible(false)} onCancel={() => setIsModalVisible(false)}>
                     <Result
                         status="success"
                         title="设置成功"

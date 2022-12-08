@@ -7,6 +7,7 @@ import {
   // Navigate,
 } from "react-router-dom";
 import './index.css';
+import 'antd/dist/reset.css';
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider, RequireAuth } from './Auth';
 

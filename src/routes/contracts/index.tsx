@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import RainbowBreadcrumb from '../../components/Breadcrumb';
 import {
     Card,
     Button,
@@ -60,7 +59,7 @@ export default function Contracts() {
             dataIndex: 'id',
         },
         {
-            title: '应用',
+            title: '项目',
             dataIndex: 'app_id',
             render: (app_id: number) => <Link to={`/panels/apps/${app_id}`}>{apps.find(item => item.id === app_id)?.name || app_id}</Link>
         },
@@ -115,6 +114,11 @@ export default function Contracts() {
           render: (text: string, record: Contract) => <a target="_blank" rel="noreferrer" href={scanTxLink(record.chain_type, record.chain_id, text)}>{short(text)}</a>,
         },
         {
+          title: '创建时间',
+          dataIndex: 'created_at',
+          render: formatDate,
+        },
+        {
           title: '操作',
           dataIndex: 'id',
           render: (id: number, record: Contract) => {
@@ -126,11 +130,6 @@ export default function Contracts() {
                     setIsSponsorModalVisible(true);
                 }}>查看代付</Button>);
             },
-        },
-        {
-          title: '创建时间',
-          dataIndex: 'created_at',
-          render: formatDate,
         },
     ];
 
@@ -168,19 +167,18 @@ export default function Contracts() {
 
     const extra = (
         <Space>
-            <Select value={appIdFilter} onChange={val => {console.log(val);setAppIdFilter(val)}}>
-                <Option value="0">全部应用</Option>
+            <Select value={appIdFilter} onChange={val => {setAppIdFilter(val)}}>
+                <Option value="0">全部项目</Option>
                 {apps.map((app) => <Option key={app.id} value={app.id}>{app.name}</Option>)}
             </Select>
-            <Button type="primary" onClick={() => setIsDeployModalVisible(true)}>创建</Button>
-            <Link to="/panels/contracts/sponsor"><Button type="primary">设置树图代付</Button></Link>
+            <Button type="primary" onClick={() => setIsDeployModalVisible(true)}>部署合约</Button>
+            <Link to="/panels/contracts/sponsor"><Button type="primary">树图设置代付</Button></Link>
         </Space>
     );
 
     return (
         <>
-            <RainbowBreadcrumb items={['合约列表']} />
-            <Card extra={extra}>
+            <Card title='智能合约' extra={extra}>
                 <Table
                     rowKey='id'
                     dataSource={items}
@@ -193,9 +191,9 @@ export default function Contracts() {
                     onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
                 />
             </Card>
-            <Modal title='部署合约' visible={isDeployModalVisible} onOk={form.submit} onCancel={() => setIsDeployModalVisible(false)}>
+            <Modal title='部署合约' open={isDeployModalVisible} onOk={form.submit} onCancel={() => setIsDeployModalVisible(false)}>
                 <Form {...formLayout} form={form} name="control-hooks" onFinish={onContractCreate}>
-                    <Form.Item name="app_id" label="所属应用" rules={[{ required: true }]}>
+                    <Form.Item name="app_id" label="所属项目" rules={[{ required: true }]}>
                         <Select>
                             {apps.map((app) => <Option key={app.id} value={app.id}>{app.name}</Option>)}
                         </Select>
@@ -232,7 +230,7 @@ export default function Contracts() {
                     </Form.Item>
                 </Form>
             </Modal>
-            <Modal title='合约赞助信息' visible={isSponsorModalVisible} onOk={() => setIsSponsorModalVisible(false)} onCancel={() => setIsSponsorModalVisible(false)}>
+            <Modal title='合约赞助信息' open={isSponsorModalVisible} onOk={() => setIsSponsorModalVisible(false)} onCancel={() => setIsSponsorModalVisible(false)}>
                 {
                     sponsorInfo ? (<div>
                         <p>合约地址: {(currentContract as Contract).address}</p>

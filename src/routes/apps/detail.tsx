@@ -120,7 +120,7 @@ export default function AppDetail() {
   useEffect(() => {
     getAppDetail(id as string).then(data => {
       setApp(data);
-      setBreadcrumbItems(["应用详情", data.name]);
+      setBreadcrumbItems(["项目详情", data.name]);
     });
   }, [id]);
 
@@ -143,14 +143,14 @@ export default function AppDetail() {
           </TabPane>
         </Tabs>
       </Card>
-      <Modal title='应用详情' visible={isDetailModalVisible} onOk={closeDetailModal} onCancel={closeDetailModal}>
+      <Modal title='应用详情' open={isDetailModalVisible} onOk={closeDetailModal} onCancel={closeDetailModal}>
         <p>AppId: <Text code>{(app as App).app_id}</Text></p>
         <p>AppSecret: <Text code>{(app as App).app_secret}</Text></p>
         <p>APIHost: <Text code>{SERVICE_HOST}</Text></p>
         <p>主网账户: <Text code>{mainnetAccount.address}</Text></p>
         <p>测试网账户: <Text code>{testAccount.address}</Text></p>
       </Modal>
-      <Modal title='快速铸造' visible={isMintModalVisible} onOk={() => form.submit()} onCancel={closeMintModal}>
+      <Modal title='快速铸造' open={isMintModalVisible} onOk={() => form.submit()} onCancel={closeMintModal}>
         <Form {...formLayout} form={form} name="control-hooks" onFinish={onNftMint}>
           <Form.Item name="name" label="名字" rules={[{ required: true }]}>
             <Input />
@@ -172,7 +172,7 @@ export default function AppDetail() {
           </Form.Item>
         </Form>
       </Modal>
-      <Modal title='创建POAP' visible={isPoapModalVisible} onOk={() => form.submit()} onCancel={closePoapModal}>
+      <Modal title='创建POAP' open={isPoapModalVisible} onOk={() => form.submit()} onCancel={closePoapModal}>
         <Form {...formLayout} form={form} name="control-hooks" onFinish={onCreatePoap}>
           <Form.Item name="title" label="标题" rules={[{ required: true }]}>
             <Input />

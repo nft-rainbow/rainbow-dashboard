@@ -42,7 +42,7 @@ export default function Panel() {
         </Col>
         <Col span={6}>
           <Card>
-            <Statistic title="应用" value={statistics.app_count} />
+            <Statistic title="项目" value={statistics.app_count} />
           </Card>
         </Col>
         <Col span={6}>
