@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import RainbowBreadcrumb from '../../components/Breadcrumb';
 import {
   getAppDetail,
-  getAppContracts,
   getAppNfts,
   getAppMetadatas,
   getAppFiles,
@@ -42,7 +41,7 @@ import {
   mapNFTType,
 } from '../../utils';
 import FileUpload from '../../components/FileUpload';
-import { ChainAccount, App, Contract } from '../../models';
+import { ChainAccount, App } from '../../models';
 import axios from 'axios';
 import { FileImageOutlined, ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 const { TabPane } = Tabs;
@@ -440,7 +439,7 @@ function AppPoaps(props: { id: string }) {
         {
             title: '合约',
             dataIndex: 'contract',
-            render: (text: string, record: Poap) => <a target="_blank" rel="noreferrer" href={"#"}>{text}</a>,
+            // render: (text: string, record: Poap) => <a target="_blank" rel="noreferrer" href={'#'}>{text}</a>,
         },
         {
             title: 'NextID',
