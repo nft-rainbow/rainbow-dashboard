@@ -10,6 +10,8 @@ import { userBalance } from '../../services/user';
 import { cfxPrice } from '../../services/misc';
 import { SponsorInfo } from '../../models/index';
 import { mapChainNetwork } from '../../utils/index';
+import JSBI from 'jsbi';
+const CFX_IN_GDRIP = JSBI.BigInt(1000000000);
 
 const layout = {
     labelCol: { span: 6 },
@@ -40,10 +42,10 @@ export default function ContractSponsor() {
         values.storage = parseInt(values.storage);
         values.gas_upper_bound = parseInt(values.gas_upper_bound);
 
-        const upperBound = BigInt(values.gas_upper_bound);
+        const upperBound = JSBI.BigInt(values.gas_upper_bound);
+        const gas = JSBI.multiply(JSBI.BigInt(values.gas), CFX_IN_GDRIP);  // in GDrip
         // @ts-ignore
-        const gas = BigInt(values.gas) * 10n ** 9n;  // in GDrip
-        if (gas < upperBound * BigInt(1000)) {
+        if (JSBI.lessThan(gas, JSBI.multiply(upperBound, JSBI.BigInt(1000)))) {
             message.warning('Gas必须大于Gas上限的1000倍');
             return;
         }
