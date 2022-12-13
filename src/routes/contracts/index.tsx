@@ -173,6 +173,7 @@ export default function Contracts() {
             </Select>
             <Button type="primary" onClick={() => setIsDeployModalVisible(true)}>部署合约</Button>
             <Link to="/panels/contracts/sponsor"><Button type="primary">树图设置代付</Button></Link>
+            {/* <Link to="/panels/contracts/deploy"><Button type="primary">新建合约</Button></Link> */}
         </Space>
     );
 

@@ -1,22 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { address, Drip } from 'js-conflux-sdk';
 import RainbowBreadcrumb from '../../components/Breadcrumb';
 import {
-    Card,
-    Form,
-    Input,
-    Button,
-    Row,
-    Col,
-    Divider,
-    message,
-    Result,
-    Modal,
+    Card, Form, Input, Button, Row,
+    Col, Divider, message, Result, Modal,
 } from "antd";
 import { getContractSponsor, setContractSponsor } from '../../services/contract';
 import { userBalance } from '../../services/user';
 import { cfxPrice } from '../../services/misc';
 import { SponsorInfo } from '../../models/index';
-import { address, Drip } from 'js-conflux-sdk';
 import { mapChainNetwork } from '../../utils/index';
 
 const layout = {

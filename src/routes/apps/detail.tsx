@@ -129,7 +129,7 @@ export default function AppDetail() {
       <RainbowBreadcrumb items={breadcrumbItems} />
       <Card>
         <Tabs defaultActiveKey="1" tabBarExtraContent={extraOp}>
-          <TabPane tab="数字藏品" key="1">
+          <TabPane tab="藏品铸造" key="1">
             <AppNFTs id={idStr} />
           </TabPane>
           <TabPane tab="元数据" key="2">
@@ -203,38 +203,36 @@ function AppNFTs(props: { id: string }) {
   // TODO: display metadata and picture
   const columns = [
     {
+        title: '序号',
+        dataIndex: 'id',
+    },
+    {
       title: '区块链',
       dataIndex: 'chain_type',
-      key: 'chain_type',
       render: mapChainName,
     },
     {
       title: 'ChainID',
       dataIndex: 'chain_id',
-      key: 'chain_id',
-    },
-    {
-      title: '合约',
-      dataIndex: 'contract',
-      key: 'contract',
-      render: (text: string, record: NFT) => <a target="_blank" rel="noreferrer" href={scanAddressLink(record.chain_type, record.chain_id, text)}>{short(text)}</a>,
     },
     {
       title: '类型',
       dataIndex: 'contract_type',
-      key: 'contract_type',
       render: mapNFTType,
+    },
+    {
+      title: '合约',
+      dataIndex: 'contract',
+      render: (text: string, record: NFT) => <a target="_blank" rel="noreferrer" href={scanAddressLink(record.chain_type, record.chain_id, text)}>{short(text)}</a>,
     },
     {
       title: '接受地址',
       dataIndex: 'mint_to',
-      key: 'mint_to',
       render: (text: string, record: NFT) => <a target="_blank" rel="noreferrer" href={scanAddressLink(record.chain_type, record.chain_id, text)}>{short(text)}</a>,
     },
     {
       title: 'TokenID',
       dataIndex: 'token_id',
-      key: 'token_id',
       render: (text: string, record: NFT, index: number) =>
         <>
           <a
@@ -258,26 +256,22 @@ function AppNFTs(props: { id: string }) {
         </>,
     },
     {
-      title: 'Mint数量',
+      title: '铸造数量',
       dataIndex: 'amount',
-      key: 'amount',
     },
     {
       title: '状态',
       dataIndex: 'status',
-      key: 'status',
       render: (text: number, record: NFT) => mapSimpleStatus(text, record.error),
     },
     {
       title: '哈希',
       dataIndex: 'hash',
-      key: 'hash',
       render: (text: string, record: NFT) => <a target="_blank" rel="noreferrer" href={scanTxLink(record.chain_type, record.chain_id, text)}>{short(text)}</a>,
     },
     {
       title: '创建时间',
       dataIndex: 'created_at',
-      key: 'created_at',
       render: formatDate,
     },
   ];

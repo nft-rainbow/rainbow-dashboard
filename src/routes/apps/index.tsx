@@ -35,6 +35,10 @@ function Apps() {
 
   const columns = [
     {
+      title: '序号',
+      dataIndex: 'id',
+    },
+    {
       title: '项目名称',
       dataIndex: 'name',
       render: (text: string, record: App) => <Link to={`/panels/apps/${record.id}`}>{text}</Link>
@@ -53,7 +57,7 @@ function Apps() {
     {
       title: '操作',
       key: 'action',
-      render: (text: number, record: App) => <Link to={`/panels/apps/${record.id}`}>查看</Link>
+      render: (text: number, record: App) => <Link to={`/panels/apps/${record.id}`}><Button type='primary' size='small'>查看</Button></Link>
     }
   ];
 
