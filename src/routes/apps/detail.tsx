@@ -146,7 +146,7 @@ export default function AppDetail() {
       <Modal title='应用详情' open={isDetailModalVisible} onOk={closeDetailModal} onCancel={closeDetailModal}>
         <p>AppId: <Text code>{(app as App).app_id}</Text></p>
         <p>AppSecret: <Text code>{(app as App).app_secret}</Text></p>
-        <p>APIHost: <Text code>{SERVICE_HOST}</Text></p>
+        <p>APIHost: <Text code>{SERVICE_HOST.replace('console', 'api')}</Text></p>
         <p>主网账户: <Text code>{mainnetAccount.address}</Text></p>
         <p>测试网账户: <Text code>{testAccount.address}</Text></p>
       </Modal>
