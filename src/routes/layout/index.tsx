@@ -14,7 +14,7 @@ import {
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Dropdown, Space, Button, ConfigProvider } from 'antd';
-import { SelectInfo } from 'rc-menu/lib/interface';
+// import { SelectInfo } from 'rc-menu/lib/interface';
 import { useAuth } from '../../Auth';
 import { UserInfo } from '../../services/';
 import "./layout.css";
@@ -86,14 +86,14 @@ const App: React.FC = () => {
         <div className="logo">
           <img src={logo} alt='logo' />
         </div>
-        <Menu
+        {/* <Menu
           theme="dark"
           defaultSelectedKeys={['1']}
           mode="inline"
           items={items}
           selectedKeys={selectedKeys}
           onSelect={(opts: SelectInfo) => setSelectedKeys([opts.key])}
-        />
+        /> */}
       </Sider>
       <Layout className="site-layout">
         <Header className="bg-white" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between' }}>

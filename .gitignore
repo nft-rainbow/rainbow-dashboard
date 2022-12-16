@@ -1,4 +1,9 @@
+# dependencies
 node_modules
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+
 src/config.ts
 tmp
 .DS_Store
