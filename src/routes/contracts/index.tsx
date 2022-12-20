@@ -55,22 +55,15 @@ export default function Contracts() {
 
     const columns = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-        },
-        {
             title: '项目',
             dataIndex: 'app_id',
-            render: (app_id: number) => <Link to={`/panels/apps/${app_id}`}>{apps.find(item => item.id === app_id)?.name || app_id}</Link>
+            render: (app_id: number) => <Link to={`/panels/apps/${app_id}`}>{apps.find(item => item.id === app_id)?.name || app_id}</Link>,
+            ellipsis: true,
         },
         {
           title: '区块链',
           dataIndex: 'chain_type',
-          render: mapChainName,
-        },
-        {
-          title: 'ChainID',
-          dataIndex: 'chain_id',
+          render: (text: number, record: Contract) => `${mapChainName(text)}${record.chain_id === 1029 ? '主网':'测试网'}`,
         },
         {
           title: '类型',
@@ -80,6 +73,7 @@ export default function Contracts() {
         {
           title: '名字',
           dataIndex: 'name',
+          ellipsis: true,
         },
         {
           title: 'Symbol',
@@ -172,7 +166,7 @@ export default function Contracts() {
                 {apps.map((app) => <Option key={app.id} value={app.id}>{app.name}</Option>)}
             </Select>
             <Button type="primary" onClick={() => setIsDeployModalVisible(true)}>部署合约</Button>
-            <Link to="/panels/contracts/sponsor"><Button type="primary">树图设置代付</Button></Link>
+            <Link to="/panels/contracts/sponsor"><Button type="primary">设置树图代付</Button></Link>
             {/* <Link to="/panels/contracts/deploy"><Button type="primary">新建合约</Button></Link> */}
         </Space>
     );

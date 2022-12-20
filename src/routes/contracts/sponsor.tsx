@@ -22,6 +22,8 @@ const tailLayout = {
     wrapperCol: { offset: 6, span: 18 },
 }
 
+// TODO: 消费金额给出提示
+
 export default function ContractSponsor() {
     const [form] = Form.useForm();
     const [sponsorInfo, setSponsorInfo] = useState<SponsorInfo|null>(null);
@@ -139,7 +141,7 @@ export default function ContractSponsor() {
                             <li>需要正确的设置合约赞助白名单, 代付才能生效</li>
                             <li>树图 CFX 与 GDrip 的转换关系为 1CFX=1000000000 GDrip (9个0)</li>
                             <li>燃气上限建议值为 100w GDrip, 燃气赞助金额需大于 1000 * gasUpperBound</li>
-                            <li>若合约之前自行设置了赞助(没有使用本服务), 无法再使用本服务设置</li>
+                            <li>若合约之前自行设置了赞助(未使用本服务), 无法再使用本服务设置</li>
                             <li><a target="_blank" href="https://confluxscan.net/address/cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaaegg2r16ar?tab=contract-viewer" rel="noreferrer">ConfluxScan 赞助商内置合约</a> </li>
                             <li><a target="_blank" href="https://developer.confluxnetwork.org/conflux-rust/internal_contract/internal_contract#sponsorwhitelistcontrol-contract" rel="noreferrer">Conflux 赞助机制官方文档</a> </li>
                             <li><a target="_blank" href="https://docs.nftrainbow.xyz/" rel="noreferrer">Rainbow 赞助机制介绍文档</a> </li>

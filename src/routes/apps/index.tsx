@@ -8,7 +8,7 @@ import {
   Input,
   Select,
   TablePaginationConfig,
-  message
+  message,
 } from "antd";
 import { Link } from "react-router-dom";
 import { getApps, createApp } from '../../services/app';
@@ -34,10 +34,6 @@ function Apps() {
   }
 
   const columns = [
-    {
-      title: '序号',
-      dataIndex: 'id',
-    },
     {
       title: '项目名称',
       dataIndex: 'name',

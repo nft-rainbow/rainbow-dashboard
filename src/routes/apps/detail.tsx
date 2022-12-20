@@ -45,7 +45,7 @@ import { ChainAccount, App } from '../../models';
 import axios from 'axios';
 import { FileImageOutlined, ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 const { TabPane } = Tabs;
-const { Text } = Typography;
+const { Text, Paragraph } = Typography;
 const { Option } = Select;
 
 const formLayout = {
@@ -91,6 +91,7 @@ export default function AppDetail() {
   }
 
   const onCreatePoap = (values: any) => {
+    values.total_amount = parseInt(values.total_amount);
     createPoap(id as string, values).then((res) => {
         setIsPoapModalVisible(false);
         form.resetFields();
@@ -144,11 +145,11 @@ export default function AppDetail() {
         </Tabs>
       </Card>
       <Modal title='应用详情' open={isDetailModalVisible} onOk={closeDetailModal} onCancel={closeDetailModal}>
-        <p>AppId: <Text code>{(app as App).app_id}</Text></p>
-        <p>AppSecret: <Text code>{(app as App).app_secret}</Text></p>
-        <p>APIHost: <Text code>{SERVICE_HOST.replace('console', 'api')}</Text></p>
-        <p>主网账户: <Text code>{mainnetAccount.address}</Text></p>
-        <p>测试网账户: <Text code>{testAccount.address}</Text></p>
+        <p>AppId: <Paragraph copyable code className='d-inline'>{(app as App).app_id}</Paragraph></p>
+        <p>AppSecret: <Paragraph copyable code className='d-inline'>{(app as App).app_secret}</Paragraph></p>
+        <p>APIHost: <Paragraph copyable code className='d-inline'>{SERVICE_HOST.replace('console', 'api')}</Paragraph></p>
+        <p>主网账户: <Paragraph copyable code className='d-inline'>{mainnetAccount.address}</Paragraph></p>
+        <p>测试网账户: <Paragraph copyable code className='d-inline'>{testAccount.address}</Paragraph></p>
       </Modal>
       <Modal title='快速铸造' open={isMintModalVisible} onOk={() => form.submit()} onCancel={closeMintModal}>
         <Form {...formLayout} form={form} name="control-hooks" onFinish={onNftMint}>
@@ -186,6 +187,9 @@ export default function AppDetail() {
           <Form.Item name="contract" label="合约地址" rules={[{ required: true }]}>
             <Input placeholder='树图链地址' />
           </Form.Item>
+          <Form.Item name="total_amount" label="发行总量" rules={[{ required: false }]}>
+            <Input placeholder='无总量限制留空即可' type='number'/>
+          </Form.Item>
         </Form>
       </Modal>
     </div>
@@ -202,10 +206,6 @@ function AppNFTs(props: { id: string }) {
 
   // TODO: display metadata and picture
   const columns = [
-    {
-        title: '序号',
-        dataIndex: 'id',
-    },
     {
       title: '区块链',
       dataIndex: 'chain_type',
@@ -434,6 +434,11 @@ function AppPoaps(props: { id: string }) {
             title: '合约',
             dataIndex: 'contract',
             // render: (text: string, record: Poap) => <a target="_blank" rel="noreferrer" href={'#'}>{text}</a>,
+        },
+        {
+            title: '发行数量',
+            dataIndex: 'total_amount',
+            render: (amount: number) => amount > 0 ? amount : '无限制',
         },
         {
             title: 'NextID',
