@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { 
+import React from 'react';
+import {
     Card, Form, Input, Button, Row, Col,
     Radio, Switch
 } from "antd";
@@ -69,7 +69,7 @@ export default function ContractDeployment() {
                         <Form.Item
                             label="Gas代付"
                             name="username"
-                            
+
                             rules={[{ required: true, message: 'Please input your username!' }]}
                         >
                             <Switch defaultChecked />
@@ -126,7 +126,7 @@ export default function ContractDeployment() {
                 >
                     <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} />
                 </Form.Item>
-                
+
                 <Row>
                     <Col span={11}>
                         <Form.Item
@@ -157,7 +157,7 @@ export default function ContractDeployment() {
                     <Button>部署正式网</Button>
                 </Col>
             </Row>
-            <div style={{height: '300px'}}>
+            <div style={{ height: '300px' }}>
 
             </div>
         </Form>

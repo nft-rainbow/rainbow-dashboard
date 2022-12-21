@@ -2,7 +2,7 @@
   "name": "rainbow-dashboard",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8080",
+  "proxy": "https://console.nftrainbow.cn",
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@testing-library/jest-dom": "^5.14.1",
@@ -16,7 +16,9 @@
     "axios": "^0.27.2",
     "js-conflux-sdk": "^2.1.8",
     "jsbi": "^4.3.0",
+    "px2vw": "^1.3.2",
     "qrcode.react": "^3.1.0",
+    "rc-menu": "^9.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "6",
@@ -49,6 +51,9 @@
     ]
   },
   "devDependencies": {
-    "http-proxy-middleware": "^2.0.6"
+    "autoprefixer": "^10.4.13",
+    "http-proxy-middleware": "^2.0.6",
+    "postcss": "^8.4.20",
+    "tailwindcss": "^3.2.4"
   }
 }

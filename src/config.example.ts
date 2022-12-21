@@ -1,2 +1,2 @@
 
-export const SERVICE_HOST = 'http://localhost:8080';
+export const SERVICE_HOST = 'https://console.nftrainbow.cn';
