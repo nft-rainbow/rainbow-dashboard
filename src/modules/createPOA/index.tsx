@@ -25,7 +25,7 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
         name="basic"
         form={createForm}
         labelCol={{ span: 6 }}
-        wrapperCol={{ span: 24 }}
+        wrapperCol={{ span: 18 }}
         onFinish={onFinish}
         initialValues={{ chain: 'conflux' }}
         onFinishFailed={onCancel}
@@ -95,7 +95,6 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
             <Form.Item
               label="发行数量"
               name="number"
-              rules={[{ required: true, message: '请输入发行数量' }]}
             >
               <Input disabled={numberDisabled} />
             </Form.Item>
