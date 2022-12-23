@@ -108,20 +108,21 @@ export default function Poaps() {
     ];
 
     const onContractCreate = async (values: any) => {
-        const accounts = await getAppAccounts(values.app_id);
-        const chainId = mapChainNetworId(values.chain);
-        const owner = accounts.find(item => item.chain_id === chainId)?.address;
-        if (!owner) { message.info('获取账户失败'); return; }
-        const meta = Object.assign({
-            is_sponsor_for_all_user: true,
-            owner_address: owner,
-        }, values);
-        deployContract(values.app_id as string, meta).then((res) => {
-            setIsActivityModalVisible(false);
-            form.resetFields();
-        }).catch((err) => {
-            message.error(err.message);
-        });
+        debugger
+        // const accounts = await getAppAccounts(values.app_id);
+        // const chainId = mapChainNetworId(values.chain);
+        // const owner = accounts.find(item => item.chain_id === chainId)?.address;
+        // if (!owner) { message.info('获取账户失败'); return; }
+        // const meta = Object.assign({
+        //     is_sponsor_for_all_user: true,
+        //     owner_address: owner,
+        // }, values);
+        // deployContract(values.app_id as string, meta).then((res) => {
+        //     setIsActivityModalVisible(false);
+        //     form.resetFields();
+        // }).catch((err) => {
+        //     message.error(err.message);
+        // });
     }
 
     useEffect(() => {

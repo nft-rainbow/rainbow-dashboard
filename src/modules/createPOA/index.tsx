@@ -14,16 +14,16 @@ import {
 import FileUpload from '../../components/FileUpload';
 
 const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, onOk, onCancel, onFinish }) => {
-  const [createForm] = Form.useForm();
+  const [form] = Form.useForm();
   const [dateDisabled, setDateDisabled] = useState(false);
   const [numberDisabled, setNumberDisabled] = useState(false);
   const [proofDisabled, setProofDisabled] = useState(false);
 
   return (
-    <Modal title="创建活动" open={open} onOk={onOk} onCancel={onCancel}>
+    <Modal title="创建活动" open={open} onOk={form.submit} onCancel={onCancel}>
       <Form
         name="basic"
-        form={createForm}
+        form={form}
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 18 }}
         onFinish={onFinish}
@@ -62,7 +62,7 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
           <Col span={10}>
             <Form.Item
               label="开始时间"
-              name="username"
+              name="startDate"
               rules={[{ required: true, message: 'Please input your username!' }]}
             >
               <DatePicker />
@@ -71,8 +71,7 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
           <Col span={10} offset={1}>
             <Form.Item
               label="结束时间"
-              name="username"
-              rules={[{ required: true, message: 'Please input your username!' }]}
+              name="endDate"
             >
               <DatePicker disabled={dateDisabled} />
             </Form.Item>
@@ -87,14 +86,14 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
             name="picture"
             rules={[{ required: true, message: '请上传图片' }]}
           >
-            <FileUpload onChange={(err: Error, file: any) => createForm.setFieldsValue({ file_url: file.url })} />
+            <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} />
           </Form.Item>
         </Col>
         <Row>
           <Col span={11}>
             <Form.Item
               label="发行数量"
-              name="number"
+              name='issueNumber'
             >
               <Input disabled={numberDisabled} />
             </Form.Item>
@@ -108,7 +107,6 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
             <Form.Item
               label="领取口令"
               name="proof"
-              rules={[{ required: false, message: 'Please input your username!' }]}
             >
               {proofDisabled && <Input />}
             </Form.Item>
@@ -119,7 +117,7 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
           </Col>
         </Row>
       </Form>
-    </Modal>
+    </Modal >
   )
 }
 
