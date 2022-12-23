@@ -2,14 +2,13 @@
   "name": "rainbow-dashboard",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://console.nftrainbow.cn",
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
-    "@testing-library/user-event": "^13.2.1",
-    "@types/jest": "^27.0.1",
-    "@types/node": "^16.7.13",
+    "@testing-library/user-event": "^14.4.3",
+    "@types/jest": "^29.2.4",
+    "@types/node": "^18.11.17",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "antd": "5.x",
@@ -23,14 +22,16 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "6",
     "react-scripts": "5.0.1",
+    "rollup-plugin-visualizer": "^5.8.3",
     "typescript": "^4.4.2",
-    "web-vitals": "^2.1.0"
+    "web-vitals": "^3.1.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "vite --host",
+    "build:tsc": "tsc && vite build",
+    "build": "vite build --mode development",
+    "build:production": "vite build",
+    "preview": "vite preview"
   },
   "eslintConfig": {
     "extends": [
@@ -51,9 +52,15 @@
     ]
   },
   "devDependencies": {
+    "@unocss/preset-icons": "^0.48.0",
+    "@unocss/preset-wind": "^0.48.0",
+    "@unocss/transformer-directives": "^0.48.0",
+    "@vitejs/plugin-react": "^3.0.0",
     "autoprefixer": "^10.4.13",
     "http-proxy-middleware": "^2.0.6",
     "postcss": "^8.4.20",
-    "tailwindcss": "^3.2.4"
+    "prettier": "latest",
+    "unocss": "^0.48.0",
+    "vite": "^4.0.3"
   }
 }

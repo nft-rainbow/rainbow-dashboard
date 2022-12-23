@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es2016",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "target": "ESNext",
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -18,9 +14,19 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "baseUrl": "./",
+    "paths": {
+      "@utils/*": ["./src/utils/*"],
+      "@modules/*": ["./src/modules/*"],
+      //TODO: CHANGE ROUTES INTO PAGES
+      "@pages/*": ["./src/routes/*"],
+      // "@store/*": ["./src/store/*"],
+      // "@hooks/*": ["./src/hooks/*"],
+      "@components/*": ["./src/components/*"],
+      "@service/*": ["./src/service/*"]
+    }
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
