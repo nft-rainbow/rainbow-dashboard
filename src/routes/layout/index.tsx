@@ -82,7 +82,19 @@ const App: React.FC = () => {
         }}
     >
     <Layout id="rainbow-layout">
-      <Sider collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)}>
+      <Sider 
+        collapsible
+        collapsed={collapsed}
+        onCollapse={value => setCollapsed(value)}
+        style={{
+            overflow: 'auto',
+            height: '100vh',
+            position: 'fixed',
+            left: 0,
+            top: 0,
+            bottom: 0,
+        }}
+      >
         <div className="logo">
           <img src={logo} alt='logo' />
         </div>
@@ -95,7 +107,7 @@ const App: React.FC = () => {
           onSelect={(opts: SelectInfo) => setSelectedKeys([opts.key])}
         />
       </Sider>
-      <Layout className="site-layout">
+      <Layout className="site-layout" style={{ marginLeft: 200 }}>
         <Header className="bg-white" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between' }}>
           <div><MenuFoldOutlined style={{ fontSize: '20px' }} onClick={() => setCollapsed(!collapsed)} /></div>
           <div>
