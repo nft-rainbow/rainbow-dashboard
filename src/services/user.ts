@@ -20,7 +20,6 @@ export async function userRegister (metadata: LoginMeta) {
 }
 
 export async function userLogin (metadata: LoginMeta) {
-  debugger
   const { data } = await axios.post(methodUrl('/dashboard/login'), metadata);
   return data;
 }

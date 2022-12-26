@@ -20,9 +20,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   let [user, setUser] = useState<UserInfo | null>(tryToGetLocalStorageUser());
   
   let signin = (newUser: LoginMeta, callback: ErrorCallback) => {
-    debugger
-    return userLogin(newUser).then((result: object) => {
-      debugger
+    return userLogin(newUser).then((result: object) => {      
       const user = {
         email: newUser.email,
         // @ts-ignore
@@ -30,7 +28,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // @ts-ignore
         tokenExpire: new Date(result.expire),
       };
-      debugger
 
       localStorage.setItem(USER_LOCALSTORAGE_KEY, JSON.stringify(user));
       setUser(user);

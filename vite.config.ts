@@ -1,11 +1,11 @@
 import { defineConfig } from 'vite';
 import path from 'path';
 import react from '@vitejs/plugin-react';
+import viteCompression from 'vite-plugin-compression'
 import Unocss from 'unocss/vite';
 import presetIcons from '@unocss/preset-icons';
 import presetWind from '@unocss/preset-wind';
 import transformerDirective from '@unocss/transformer-directives';
-import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
   server: {
@@ -26,6 +26,9 @@ export default defineConfig({
       ],
     }),
     react(),
+    viteCompression({
+      threshold: 1024000,
+    }),
   ],
   resolve: {
     alias: {
@@ -42,8 +45,5 @@ export default defineConfig({
     },
   },
   build: {
-    rollupOptions: {
-      plugins: [visualizer()],
-    },
   },
 });

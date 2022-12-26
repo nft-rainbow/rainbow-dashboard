@@ -112,7 +112,7 @@ const App: React.FC = () => {
           </div>
         </Header>
         <Content style={{ margin: '16px 16px' }}>
-          {/* <Outlet /> */}
+          <Outlet />
         </Content>
         <Footer className="site-layout-footer">©2022 NFTRainbow</Footer>
       </Layout>
