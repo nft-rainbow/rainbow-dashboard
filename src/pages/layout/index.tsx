@@ -15,7 +15,7 @@ import {
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Dropdown, Space, Button, ConfigProvider } from 'antd';
 import { SelectInfo } from 'rc-menu/lib/interface';
-import { useAuth } from '../../Auth';
+import { useAuth } from '../../router/Auth';
 import { UserInfo } from '../../services/';
 import "./layout.css";
 const { Header, Content, Footer, Sider } = Layout;
@@ -112,7 +112,7 @@ const App: React.FC = () => {
           </div>
         </Header>
         <Content style={{ margin: '16px 16px' }}>
-          <Outlet />
+          {/* <Outlet /> */}
         </Content>
         <Footer className="site-layout-footer">©2022 NFTRainbow</Footer>
       </Layout>

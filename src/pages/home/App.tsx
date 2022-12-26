@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Navigate } from "react-router-dom";
-import { AuthStatus } from '../../Auth';
+import { AuthStatus } from '../../router/Auth';
 
 function App() {
   // NOTE: currently we do not have home page

@@ -2,33 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import 'uno.css';
 import {
-  BrowserRouter,
-  Routes,
-  Route,
+  BrowserRouter
 } from "react-router-dom";
 import './index.css';
 import 'antd/dist/reset.css';
-import reportWebVitals from './reportWebVitals';
-import { AuthProvider, RequireAuth } from './Auth';
+import reportWebVitals from './router/reportWebVitals';
+import { AuthProvider } from './router/Auth';
+import AppRouter from './router';
 
-import Home from './routes/home/App';
-import Login from './routes/login';
-import Register from './routes/register';
-import DashboardLayout from './routes/layout';
-import Panel from './routes/panel';
-import User from './routes/users/user';
-import UserBalance from './routes/users/userBalance';
-import Company from './routes/company';
-import App from './routes/apps';
-import AppDetail from './routes/apps/detail';
-
-import Contracts from './routes/contracts';
-import ContractSponsor from './routes/contracts/sponsor'
-import ContractDeployment from './routes/contracts/new';
-
-import Poaps from './routes/poaps';
-
-// import NotFound from './routes/404';
+// import NotFound from './pages/404';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -38,24 +20,7 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/panels" element={<RequireAuth><DashboardLayout /></RequireAuth>}>
-            <Route index element={<Panel />} />
-            <Route path="user" element={<User />} />
-            <Route path="userBalance" element={<UserBalance />} />
-            <Route path="company" element={<Company />} />
-            <Route path="apps" element={<App />} />
-            <Route path="apps/:id" element={<AppDetail />} />
-            <Route path="contracts" element={<Contracts />} />
-            <Route path="contracts/sponsor" element={<ContractSponsor />} />
-            <Route path="contracts/deploy" element={<ContractDeployment />} />
-            <Route path="poaps" element={<Poaps />} />
-          </Route>
-          {/* <Route path="*" element={<Navigate to="/panels" />} /> */}
-        </Routes>
+        <AppRouter />
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>

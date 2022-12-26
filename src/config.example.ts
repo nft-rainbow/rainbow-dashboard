@@ -1,2 +1,2 @@
 
-export const SERVICE_HOST = 'https://console.nftrainbow.cn';
+export const SERVICE_HOST = 'https://localhost:5173/';

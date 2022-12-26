@@ -1,12 +1,12 @@
 import { createContext, useState, ReactNode, useContext } from "react";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
-import { userLogin, userLogout, LoginMeta } from "./services/user";
+import { userLogin, userLogout, LoginMeta } from "@services/user";
 import { 
   UserInfo,
   USER_LOCALSTORAGE_KEY,
   ErrorCallback,
   tryToGetLocalStorageUser
-} from "./services/";
+} from "@services"
 
 interface AuthContextType {
   user: UserInfo | null;
@@ -20,7 +20,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   let [user, setUser] = useState<UserInfo | null>(tryToGetLocalStorageUser());
   
   let signin = (newUser: LoginMeta, callback: ErrorCallback) => {
+    debugger
     return userLogin(newUser).then((result: object) => {
+      debugger
       const user = {
         email: newUser.email,
         // @ts-ignore
@@ -28,6 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // @ts-ignore
         tokenExpire: new Date(result.expire),
       };
+      debugger
 
       localStorage.setItem(USER_LOCALSTORAGE_KEY, JSON.stringify(user));
       setUser(user);
