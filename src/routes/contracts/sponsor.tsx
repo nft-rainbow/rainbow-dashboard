@@ -101,7 +101,7 @@ export default function ContractSponsor() {
                             </Form.Item>
                             <Form.Item 
                                 name="gas"
-                                label="燃气量(CFX)"
+                                label="燃气数量(CFX)"
                                 extra={sponsorInfo ? `余额: ${new Drip(sponsorInfo.gas_sponsor_balance).toCFX()} CFX` : null}
                                 rules={[{ required: true }]}
                             >
@@ -117,7 +117,7 @@ export default function ContractSponsor() {
                             </Form.Item>
                             <Form.Item 
                                 name="storage" 
-                                label="存储量(CFX)" 
+                                label="存储数量(CFX)" 
                                 rules={[{ required: true }]}
                                 extra={sponsorInfo ? `余额: ${new Drip(sponsorInfo.collateral_sponsor_balance).toCFX()} CFX` : null}
                             >
@@ -148,7 +148,7 @@ export default function ContractSponsor() {
                         </ul>
                     </Col>
                 </Row>
-                <Modal open={isModalVisible} onOk={() => setIsModalVisible(false)} onCancel={() => setIsModalVisible(false)}>
+                <Modal open={isModalVisible} onOk={() => setIsModalVisible(false)} onCancel={() => setIsModalVisible(false)} okText={'确认'} cancelText={'取消'}>
                     <Result
                         status="success"
                         title="设置成功"

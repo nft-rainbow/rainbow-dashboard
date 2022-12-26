@@ -11,8 +11,9 @@ import {
     message,
     Tooltip,
     Space,
-    Radio,
+    // Radio,
     Typography,
+    Switch,
 } from "antd";
 import { Contract, App, SponsorInfo } from '../../models';
 import {
@@ -52,6 +53,8 @@ export default function Contracts() {
     const [sponsorInfo, setSponsorInfo] = useState<SponsorInfo|null>(null);
     const [currentContract, setCurrentContract] = useState<Contract|null>(null);
     const [isSponsorModalVisible, setIsSponsorModalVisible] = useState(false);
+
+    const [tokensTransferableByUser, setTokensTransferableByUser] = useState(true);
 
     const columns = [
         {
@@ -132,9 +135,12 @@ export default function Contracts() {
         const chainId = mapChainNetworId(values.chain);
         const owner = accounts.find(item => item.chain_id === chainId)?.address;
         if (!owner) {message.info('获取账户失败');return;}
+        // default values
         const meta = Object.assign({
             is_sponsor_for_all_user: true,
             owner_address: owner,
+            tokens_transferable_by_admin: true,
+            tokens_transferable_by_user: tokensTransferableByUser,
         }, values);
         deployContract(values.app_id as string, meta).then((res) => {
             setIsDeployModalVisible(false);
@@ -186,32 +192,35 @@ export default function Contracts() {
                     onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
                 />
             </Card>
-            <Modal title='部署合约' open={isDeployModalVisible} onOk={form.submit} onCancel={() => setIsDeployModalVisible(false)}>
+            <Modal title='部署合约' open={isDeployModalVisible} onOk={form.submit} onCancel={() => setIsDeployModalVisible(false)} okText={'确认'} cancelText={'取消'}>
                 <Form {...formLayout} form={form} name="control-hooks" onFinish={onContractCreate}>
                     <Form.Item name="app_id" label="所属项目" rules={[{ required: true }]}>
                         <Select>
                             {apps.map((app) => <Option key={app.id} value={app.id}>{app.name}</Option>)}
                         </Select>
                     </Form.Item>
-                    <Form.Item name="name" label="名字" rules={[{ required: true }]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name="symbol" label="Symbol" rules={[{ required: true }]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name="type" label="类型" rules={[{ required: true }]}>
-                        <Select>
-                            <Option value="erc721">ERC721</Option>
-                            <Option value="erc1155">ERC1155</Option>
-                        </Select>
-                    </Form.Item>
-                    <Form.Item name="chain" label="网络" rules={[{ required: true }]}>
+                    <Form.Item name="chain" label="部署网络" rules={[{ required: true }]}>
                         <Select>
                             <Option value="conflux">树图主网</Option>
                             <Option value="conflux_test">树图测试网</Option>
                         </Select>
                     </Form.Item>
-                    <Form.Item name="tokens_transferable" label="管理员可转移" rules={[{ required: true }]}>
+                    <Form.Item name="type" label="合约类型" rules={[{ required: true }]}>
+                        <Select>
+                            <Option value="erc721">ERC721</Option>
+                            <Option value="erc1155">ERC1155</Option>
+                        </Select>
+                    </Form.Item>
+                    <Form.Item name="name" label="合约名称" rules={[{ required: true }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="symbol" label="通证标识" rules={[{ required: true }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item name="tokens_transferable_by_user" label="允许用户转移" rules={[{ required: false }]}>
+                        <Switch defaultChecked onChange={checked => setTokensTransferableByUser(checked)} />
+                    </Form.Item>
+                    {/* <Form.Item name="tokens_transferable" label="管理员可转移" rules={[{ required: true }]}>
                         <Radio.Group>
                             <Radio value={true}>是</Radio>
                             <Radio value={false}>否</Radio>
@@ -222,10 +231,10 @@ export default function Contracts() {
                             <Radio value={true}>是</Radio>
                             <Radio value={false}>否</Radio>
                         </Radio.Group>
-                    </Form.Item>
+                    </Form.Item> */}
                 </Form>
             </Modal>
-            <Modal title='合约赞助信息' open={isSponsorModalVisible} onOk={() => setIsSponsorModalVisible(false)} onCancel={() => setIsSponsorModalVisible(false)}>
+            <Modal title='合约赞助信息' open={isSponsorModalVisible} onOk={() => setIsSponsorModalVisible(false)} onCancel={() => setIsSponsorModalVisible(false)} okText={'确认'} cancelText={'取消'}>
                 {
                     sponsorInfo ? (<div>
                         <p>合约地址: {(currentContract as Contract).address}</p>
