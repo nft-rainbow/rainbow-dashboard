@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { SERVICE_HOST } from "../config";
 import { userRefreshToken } from "./user";
 export type { NFT } from './NFT';
 
@@ -21,8 +20,9 @@ export interface ErrorCallback {
   (error: Error | null): void;
 }
 
+const isLocalhost = globalThis.location.hostname === 'localhost' || globalThis.location.hostname === '127.0.0.1'
 export function methodUrl(method: string) {
-  return `${SERVICE_HOST}${method}`;
+  return `${isLocalhost ? '/api/' : '/'}${method.startsWith('/') ? method.slice(1) : method}`;
 }
 
 export async function authHeader() {
