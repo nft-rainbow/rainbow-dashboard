@@ -6,7 +6,7 @@ import {
   USER_LOCALSTORAGE_KEY,
   ErrorCallback,
   tryToGetLocalStorageUser
-} from "@services"
+} from "@services/index"
 
 interface AuthContextType {
   user: UserInfo | null;
