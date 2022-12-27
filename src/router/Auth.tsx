@@ -28,7 +28,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // @ts-ignore
         tokenExpire: new Date(result.expire),
       };
-
       localStorage.setItem(USER_LOCALSTORAGE_KEY, JSON.stringify(user));
       setUser(user);
       callback(null);

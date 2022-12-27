@@ -9,7 +9,6 @@ import transformerDirective from '@unocss/transformer-directives';
 
 export default ({ mode }) => {
   const env = loadEnv(mode, process.cwd());
-  console.log(env)
   return defineConfig({
     server: {
       proxy: {

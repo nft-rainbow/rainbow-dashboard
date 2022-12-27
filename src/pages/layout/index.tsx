@@ -67,7 +67,7 @@ const App: React.FC = () => {
     getItem(<Link to="/panels/userBalance">用户余额</Link>, '1', <MoneyCollectOutlined />),
     getItem(<Link to="/panels/user">用户设置</Link>, '2', <UserOutlined />),
     getItem(<Link to="/panels/company">企业认证</Link>, '3', <UsergroupAddOutlined />),
-    getItem(<span onClick={() => auth.signout(console.log)}>退出</span>, '4', <LogoutOutlined />),
+    getItem(<div onClick={() => auth.signout(console.log)}>退出</div>, '4', <LogoutOutlined />),
   ];
 
   useEffect(() => {
