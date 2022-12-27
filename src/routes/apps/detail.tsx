@@ -45,7 +45,7 @@ import { ChainAccount, App } from '../../models';
 import axios from 'axios';
 import { FileImageOutlined, ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 const { TabPane } = Tabs;
-const { Text, Paragraph } = Typography;
+const { Paragraph } = Typography;
 const { Option } = Select;
 
 const formLayout = {
@@ -144,14 +144,22 @@ export default function AppDetail() {
           </TabPane>
         </Tabs>
       </Card>
-      <Modal title='应用详情' open={isDetailModalVisible} onOk={closeDetailModal} onCancel={closeDetailModal}>
+      <Modal 
+        title='应用详情' 
+        open={isDetailModalVisible} 
+        onOk={closeDetailModal} 
+        onCancel={closeDetailModal} 
+        okText={'确认'} 
+        cancelText={'取消'}
+        footer={null}
+      >
         <p>AppId: <Paragraph copyable code className='d-inline'>{(app as App).app_id}</Paragraph></p>
         <p>AppSecret: <Paragraph copyable code className='d-inline'>{(app as App).app_secret}</Paragraph></p>
         <p>APIHost: <Paragraph copyable code className='d-inline'>{SERVICE_HOST.replace('console', 'api')}</Paragraph></p>
         <p>主网账户: <Paragraph copyable code className='d-inline'>{mainnetAccount.address}</Paragraph></p>
         <p>测试网账户: <Paragraph copyable code className='d-inline'>{testAccount.address}</Paragraph></p>
       </Modal>
-      <Modal title='快速铸造' open={isMintModalVisible} onOk={() => form.submit()} onCancel={closeMintModal}>
+      <Modal title='快速铸造' open={isMintModalVisible} onOk={() => form.submit()} onCancel={closeMintModal} okText={'确认'} cancelText={'取消'}>
         <Form {...formLayout} form={form} name="control-hooks" onFinish={onNftMint}>
           <Form.Item name="name" label="名字" rules={[{ required: true }]}>
             <Input />
@@ -173,7 +181,7 @@ export default function AppDetail() {
           </Form.Item>
         </Form>
       </Modal>
-      <Modal title='创建POAP' open={isPoapModalVisible} onOk={() => form.submit()} onCancel={closePoapModal}>
+      <Modal title='创建POAP' open={isPoapModalVisible} onOk={() => form.submit()} onCancel={closePoapModal} okText={'确认'} cancelText={'取消'}>
         <Form {...formLayout} form={form} name="control-hooks" onFinish={onCreatePoap}>
           <Form.Item name="title" label="标题" rules={[{ required: true }]}>
             <Input />

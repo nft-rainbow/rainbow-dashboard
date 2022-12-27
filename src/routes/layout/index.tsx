@@ -107,7 +107,7 @@ const App: React.FC = () => {
           onSelect={(opts: SelectInfo) => setSelectedKeys([opts.key])}
         />
       </Sider>
-      <Layout className="site-layout" style={{ marginLeft: 200 }}>
+      <Layout className="site-layout" style={{ marginLeft: collapsed ? 80 : 200 }}>
         <Header className="bg-white" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between' }}>
           <div><MenuFoldOutlined style={{ fontSize: '20px' }} onClick={() => setCollapsed(!collapsed)} /></div>
           <div>

@@ -234,7 +234,15 @@ export default function Contracts() {
                     </Form.Item> */}
                 </Form>
             </Modal>
-            <Modal title='合约赞助信息' open={isSponsorModalVisible} onOk={() => setIsSponsorModalVisible(false)} onCancel={() => setIsSponsorModalVisible(false)} okText={'确认'} cancelText={'取消'}>
+            <Modal 
+                title='合约赞助信息' 
+                open={isSponsorModalVisible} 
+                onOk={() => setIsSponsorModalVisible(false)} 
+                onCancel={() => setIsSponsorModalVisible(false)} 
+                okText={'确认'} 
+                cancelText={'取消'}
+                footer={null}
+            >
                 {
                     sponsorInfo ? (<div>
                         <p>合约地址: {(currentContract as Contract).address}</p>

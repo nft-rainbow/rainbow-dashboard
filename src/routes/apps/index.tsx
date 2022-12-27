@@ -92,7 +92,7 @@ function Apps() {
           onChange={(info: TablePaginationConfig) => { setPage(info.current as number); }}
         />
       </Card>
-      <Modal title="创建项目" open={isModalVisible} onOk={createForm.submit} onCancel={handleCancel}>
+      <Modal title="创建项目" open={isModalVisible} onOk={createForm.submit} onCancel={handleCancel} okText={'确认'} cancelText={'取消'}>
         <Form
           name="basic"
           form={createForm}
