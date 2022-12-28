@@ -89,7 +89,7 @@ export default function ContractSponsor() {
             <Card>
                 <Divider orientation="left">设置代付</Divider>
                 <Row>
-                    <Col span={9}>
+                    <Col xs={24} sm={24} md={22} lg={18} xl={14} xxl={10}>
                         <Form {...layout} form={form} name="control-hooks" onFinish={onSetSponsor}>
                             <Form.Item 
                                 name="address" 
@@ -133,7 +133,7 @@ export default function ContractSponsor() {
                 </Row>
                 <Divider orientation="left">代付说明</Divider>
                 <Row>
-                    <Col span={9}>
+                    <Col xs={24} sm={24} md={22} lg={18} xl={14} xxl={10}>
                         <ul>
                             <li>仅支持为树图链合约设置上链费用赞助</li>
                             <li>主网每单位(CFX)上链费用价格为 {price/100} CNY, 测试网免费</li>      

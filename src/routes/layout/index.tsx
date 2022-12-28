@@ -61,7 +61,7 @@ const App: React.FC = () => {
   const auth = useAuth();
   const user = auth.user as UserInfo;
 
-  const userMenuItems: MenuItem[] = [
+  const userMenuItems: MenuProps['items'] = [
     getItem(<Link to="/panels/userBalance">用户余额</Link>, '1', <MoneyCollectOutlined />),
     getItem(<Link to="/panels/user">用户设置</Link>, '2', <UserOutlined />),
     getItem(<Link to="/panels/company">企业认证</Link>, '3', <UsergroupAddOutlined />),
@@ -111,7 +111,7 @@ const App: React.FC = () => {
         <Header className="bg-white" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between' }}>
           <div><MenuFoldOutlined style={{ fontSize: '20px' }} onClick={() => setCollapsed(!collapsed)} /></div>
           <div>
-            <Dropdown overlay={<Menu items={userMenuItems} />}>
+            <Dropdown menu={{items: userMenuItems}}>
               <Button type='link' onClick={e => e.preventDefault()} href="#">
                 <Space>
                   {user.email}
