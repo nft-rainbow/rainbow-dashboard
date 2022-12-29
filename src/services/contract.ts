@@ -20,3 +20,7 @@ export async function getContractSponsor(addr: string, chain: string): Promise<S
 export async function setContractSponsor(addr: string, options: object) {
     return await post(`/dashboard/contracts/${addr}/sponsor`, options);
 }
+
+export async function getContractAutoSponsor(addr: string): Promise<object> {
+    return await get(`/dashboard/contracts/${addr}/autoSponsor`);
+}

@@ -15,6 +15,10 @@ import {
     Typography,
     Switch,
 } from "antd";
+import { ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
+import type { ColumnsType } from 'antd/es/table';
+import { Link } from "react-router-dom";
+import { Drip } from 'js-conflux-sdk';
 import { Contract, App, SponsorInfo } from '../../models';
 import {
     mapChainName,
@@ -26,11 +30,8 @@ import {
     mapChainNetwork,
     mapChainNetworId,
 } from '../../utils';
-import { ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
-import { listContracts, deployContract, ContractFilter, getContractSponsor } from '../../services/contract';
+import { listContracts, deployContract, ContractFilter, getContractSponsor, getContractAutoSponsor } from '../../services/contract';
 import { getAllApps, getAppAccounts } from '../../services/app';
-import { Link } from "react-router-dom";
-import { Drip } from 'js-conflux-sdk';
 const { Option } = Select;
 const { Paragraph } = Typography;
 
@@ -51,17 +52,20 @@ export default function Contracts() {
     const [appIdFilter, setAppIdFilter] = useState('0');
 
     const [sponsorInfo, setSponsorInfo] = useState<SponsorInfo|null>(null);
+    const [autoSponsorInfo, setAutoSponsorInfo] = useState<boolean>(false);
     const [currentContract, setCurrentContract] = useState<Contract|null>(null);
     const [isSponsorModalVisible, setIsSponsorModalVisible] = useState(false);
 
     const [tokensTransferableByUser, setTokensTransferableByUser] = useState(true);
 
-    const columns = [
+    const columns: ColumnsType<Contract> = [
         {
             title: '项目',
             dataIndex: 'app_id',
             render: (app_id: number) => <Link to={`/panels/apps/${app_id}`}>{apps.find(item => item.id === app_id)?.name || app_id}</Link>,
             ellipsis: true,
+            width: 150,
+            fixed: 'left',
         },
         {
           title: '区块链',
@@ -118,12 +122,17 @@ export default function Contracts() {
         {
           title: '操作',
           dataIndex: 'id',
+          width: 100,
+          fixed: 'right',
           render: (id: number, record: Contract) => {
                 if (!record.address) return null;
                 return (<Button type='primary' size='small' onClick={async () => {
                     setCurrentContract(record);
                     const _info = await getContractSponsor(record.address, mapChainNetwork(record.chain_id));
                     setSponsorInfo(_info);
+                    const autoSponsor = await getContractAutoSponsor(record.address);
+                    // @ts-ignore
+                    setAutoSponsorInfo(autoSponsor.auto_sponsor);
                     setIsSponsorModalVisible(true);
                 }}>查看代付</Button>);
             },
@@ -184,6 +193,7 @@ export default function Contracts() {
                     rowKey='id'
                     dataSource={items}
                     columns={columns}
+                    scroll={{ x: 1300 }}
                     pagination={{
                         total,
                         current: page,
@@ -252,9 +262,9 @@ export default function Contracts() {
                         <p>存储赞助商: {(sponsorInfo as SponsorInfo).gas_upper_bound === '0' ? null : (sponsorInfo as SponsorInfo).collateral_sponsor}</p>
                         <p>存储赞助余额: {new Drip((sponsorInfo as SponsorInfo).collateral_sponsor_balance).toCFX()} CFX</p>
                         <p>全部白名单: {(sponsorInfo as SponsorInfo).is_all_white_listed ? '开' : '关'}</p>
+                        <p>自动续费: {autoSponsorInfo ? '开' : '关'}</p>
                     </div>) : null
                 }
-                {/* TODO: {赞助机制详细介绍} */}
             </Modal>
         </>
     );

@@ -4,6 +4,7 @@ import RainbowBreadcrumb from '../../components/Breadcrumb';
 import {
     Card, Form, Input, Button, Row,
     Col, Divider, message, Result, Modal,
+    Switch, Space, Tooltip, Typography,
 } from "antd";
 import { getContractSponsor, setContractSponsor } from '../../services/contract';
 import { userBalance } from '../../services/user';
@@ -31,6 +32,7 @@ export default function ContractSponsor() {
     const [price, setPrice] = useState<number>(80);
 
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [autoSponsor, setAutoSponsor] = useState(false);
 
     const onSetSponsor = async (values: any) => {
         const addr = values.address;
@@ -43,6 +45,7 @@ export default function ContractSponsor() {
         values.gas = parseInt(values.gas);
         values.storage = parseInt(values.storage);
         values.gas_upper_bound = parseInt(values.gas_upper_bound);
+        values.auto_sponsor = autoSponsor;
 
         const upperBound = JSBI.BigInt(values.gas_upper_bound);
         const gas = JSBI.multiply(JSBI.BigInt(values.gas), CFX_IN_GDRIP);  // in GDrip
@@ -105,7 +108,7 @@ export default function ContractSponsor() {
                                 extra={sponsorInfo ? `余额: ${new Drip(sponsorInfo.gas_sponsor_balance).toCFX()} CFX` : null}
                                 rules={[{ required: true }]}
                             >
-                                <Input type="number" />
+                                <Input type="number" placeholder='建议设置为 1-5 CFX'/>
                             </Form.Item>
                             <Form.Item 
                                 name="gas_upper_bound" 
@@ -121,8 +124,21 @@ export default function ContractSponsor() {
                                 rules={[{ required: true }]}
                                 extra={sponsorInfo ? `余额: ${new Drip(sponsorInfo.collateral_sponsor_balance).toCFX()} CFX` : null}
                             >
-                                <Input type="number" />
+                                <Input type="number" placeholder='预估公式: NFT 铸造数量 * 0.7'/>
                             </Form.Item>
+                            <Form.Item 
+                                name="auto_sponsor" 
+                                label="自动续费" 
+                                rules={[{ required: false }]}
+                            >
+                                <Space>
+                                    <Switch onChange={checked => setAutoSponsor(checked)} />
+                                    <Tooltip title="燃气费不满足 1000 * gasUpperBound 自动补充 1CFX，存储费不满足 50CFX 时，自动补充 50CFX；请保证账户有足够余额">
+                                        <Typography.Link href="#API">说明</Typography.Link>
+                                    </Tooltip>
+                                </Space>
+                            </Form.Item>
+                            
                             <Form.Item {...tailLayout}>
                                 <Button type="primary" htmlType="submit">
                                     提交
@@ -135,6 +151,8 @@ export default function ContractSponsor() {
                 <Row>
                     <Col xs={24} sm={24} md={22} lg={18} xl={14} xxl={10}>
                         <ul>
+                            <li>平均一笔交易的燃气费(Gas)为 10-20w GDrip</li>
+                            <li>平均一笔铸造操作的存储费为 0.6-0.8 CFX</li>
                             <li>仅支持为树图链合约设置上链费用赞助</li>
                             <li>主网每单位(CFX)上链费用价格为 {price/100} CNY, 测试网免费</li>      
                             <li>代付赞助一旦设置, 无法返还</li>
