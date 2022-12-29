@@ -90,7 +90,7 @@ export default function UserBalance() {
         <div>
             <RainbowBreadcrumb items={['设置', '用户中心']} />
             <Card>
-                <h3>可用额度</h3>
+                <h3>当前余额</h3>
                 <div style={{paddingBottom: '40px'}}>
                     <span className='user-balance'>¥ {balance / 100}</span>
                     <Button className='charge-btn' type='primary' onClick={() => setIsModalVisible(true)}>充值</Button>
