@@ -104,11 +104,11 @@ export default function ContractSponsor() {
                             </Form.Item>
                             <Form.Item 
                                 name="gas"
-                                label="燃气数量(CFX)"
-                                extra={sponsorInfo ? `余额: ${new Drip(sponsorInfo.gas_sponsor_balance).toCFX()} CFX` : null}
+                                label="燃气数量(BL)"
+                                extra={sponsorInfo ? `余额: ${new Drip(sponsorInfo.gas_sponsor_balance).toCFX()} BL` : null}
                                 rules={[{ required: true }]}
                             >
-                                <Input type="number" placeholder='建议设置为 1-5 CFX'/>
+                                <Input type="number" placeholder='建议设置为 1-5 BL'/>
                             </Form.Item>
                             <Form.Item 
                                 name="gas_upper_bound" 
@@ -120,9 +120,9 @@ export default function ContractSponsor() {
                             </Form.Item>
                             <Form.Item 
                                 name="storage" 
-                                label="存储数量(CFX)" 
+                                label="存储数量(KB)" 
                                 rules={[{ required: true }]}
-                                extra={sponsorInfo ? `余额: ${new Drip(sponsorInfo.collateral_sponsor_balance).toCFX()} CFX` : null}
+                                extra={sponsorInfo ? `余额: ${new Drip(sponsorInfo.collateral_sponsor_balance).toCFX()} KB` : null}
                             >
                                 <Input type="number" placeholder='预估公式: NFT 铸造数量 * 0.7'/>
                             </Form.Item>
@@ -133,7 +133,7 @@ export default function ContractSponsor() {
                             >
                                 <Space>
                                     <Switch onChange={checked => setAutoSponsor(checked)} />
-                                    <Tooltip title="燃气费不满足 1000 * gasUpperBound 自动补充 1CFX，存储费不满足 50CFX 时，自动补充 50CFX；请保证账户有足够余额">
+                                    <Tooltip title="燃气费不满足 1000 * gasUpperBound 自动补充 1BL，存储费不满足 50KB 时，自动补充 50KB；请保证账户有足够余额">
                                         <Typography.Link href="#API">说明</Typography.Link>
                                     </Tooltip>
                                 </Space>
@@ -152,12 +152,12 @@ export default function ContractSponsor() {
                     <Col xs={24} sm={24} md={22} lg={18} xl={14} xxl={10}>
                         <ul>
                             <li>平均一笔交易的燃气费(Gas)为 10-20w GDrip</li>
-                            <li>平均一笔铸造操作的存储费为 0.6-0.8 CFX</li>
+                            <li>平均一笔铸造操作的存储用量为 0.6-0.8 KB</li>
                             <li>仅支持为树图链合约设置上链费用赞助</li>
-                            <li>主网每单位(CFX)上链费用价格为 {price/100} CNY, 测试网免费</li>      
+                            <li>主网每单位(KB)上链费用价格为 {price/100} CNY, 测试网免费</li>      
                             <li>代付赞助一旦设置, 无法返还</li>
                             <li>需要正确的设置合约赞助白名单, 代付才能生效</li>
-                            <li>树图 CFX 与 GDrip 的转换关系为 1CFX=1000000000 GDrip (9个0)</li>
+                            <li>树图 BL 与 GDrip 的转换关系为 1BL=1000000000 GDrip (9个0)</li>
                             <li>燃气上限建议值为 100w GDrip, 燃气赞助金额需大于 1000 * gasUpperBound</li>
                             <li>若合约之前自行设置了赞助(未使用本服务), 无法再使用本服务设置</li>
                             <li><a target="_blank" href="https://confluxscan.net/address/cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaaegg2r16ar?tab=contract-viewer" rel="noreferrer">ConfluxScan 赞助商内置合约</a> </li>
