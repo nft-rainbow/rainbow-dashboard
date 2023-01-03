@@ -104,7 +104,7 @@ export default function ContractSponsor() {
                             </Form.Item>
                             <Form.Item 
                                 name="gas"
-                                label="燃气数量(BL)"
+                                label="燃气(BL)"
                                 extra={sponsorInfo ? `余额: ${new Drip(sponsorInfo.gas_sponsor_balance).toCFX()} BL` : null}
                                 rules={[{ required: true }]}
                             >
@@ -120,7 +120,7 @@ export default function ContractSponsor() {
                             </Form.Item>
                             <Form.Item 
                                 name="storage" 
-                                label="存储数量(KB)" 
+                                label="存储(KB)" 
                                 rules={[{ required: true }]}
                                 extra={sponsorInfo ? `余额: ${new Drip(sponsorInfo.collateral_sponsor_balance).toCFX()} KB` : null}
                             >
