@@ -257,10 +257,10 @@ export default function Contracts() {
                     sponsorInfo ? (<div>
                         <p>合约地址: {(currentContract as Contract).address}</p>
                         <p>燃气赞助商: {(sponsorInfo as SponsorInfo).gas_upper_bound === '0' ? null : (sponsorInfo as SponsorInfo).gas_sponsor}</p>
-                        <p>燃气赞助余额: {new Drip((sponsorInfo as SponsorInfo).gas_sponsor_balance).toCFX()} CFX</p>
+                        <p>燃气赞助余额: {new Drip((sponsorInfo as SponsorInfo).gas_sponsor_balance).toCFX()} BL</p>
                         <p>燃气赞助上限: {new Drip((sponsorInfo as SponsorInfo).gas_upper_bound).toGDrip()} GDrip</p>
                         <p>存储赞助商: {(sponsorInfo as SponsorInfo).gas_upper_bound === '0' ? null : (sponsorInfo as SponsorInfo).collateral_sponsor}</p>
-                        <p>存储赞助余额: {new Drip((sponsorInfo as SponsorInfo).collateral_sponsor_balance).toCFX()} CFX</p>
+                        <p>存储赞助余额: {new Drip((sponsorInfo as SponsorInfo).collateral_sponsor_balance).toCFX()} KB</p>
                         <p>全部白名单: {(sponsorInfo as SponsorInfo).is_all_white_listed ? '开' : '关'}</p>
                         <p>自动续费: {autoSponsorInfo ? '开' : '关'}</p>
                     </div>) : null
