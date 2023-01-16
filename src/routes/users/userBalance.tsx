@@ -12,7 +12,7 @@ import {
     TablePaginationConfig,
     // Checkbox,
 } from 'antd';
-import { userBalance, userFiatLogs } from '../../services/user';
+import { userBalance, userFiatLogs, userBalanceRuntime } from '../../services/user';
 import { createWxPayOrder } from '../../services/pay';
 import { QRCodeSVG } from 'qrcode.react';
 import './userBalance.css';
@@ -79,7 +79,7 @@ export default function UserBalance() {
       ];
 
     useEffect(() => {
-        userBalance().then((res) => setBalance(res.balance));
+        userBalanceRuntime().then((res) => setBalance(res.balance));
     }, []);
 
     useEffect(() => {
@@ -95,6 +95,7 @@ export default function UserBalance() {
                     <span className='user-balance'>¥ {balance / 100}</span>
                     <Button className='charge-btn' type='primary' onClick={() => setIsModalVisible(true)}>充值</Button>
                 </div>
+                <p style={{color: 'gray'}}>部分费用(NFT铸造费用，接口调用费用)每日定时结算，消费明细展示会有延迟</p>
                 <Table
                     rowKey='id'
                     dataSource={items}
