@@ -62,7 +62,7 @@ export default function Contracts() {
         {
           title: 'ID',
           dataIndex: 'id',
-          width: 50,
+          width: 70,
           fixed: 'left',
         },
         {
