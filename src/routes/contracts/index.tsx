@@ -62,14 +62,14 @@ export default function Contracts() {
         {
           title: 'ID',
           dataIndex: 'id',
+          width: 50,
+          fixed: 'left',
         },
         {
             title: '项目',
             dataIndex: 'app_id',
             render: (app_id: number) => <Link to={`/panels/apps/${app_id}`}>{apps.find(item => item.id === app_id)?.name || app_id}</Link>,
             ellipsis: true,
-            width: 150,
-            fixed: 'left',
         },
         {
           title: '区块链',
