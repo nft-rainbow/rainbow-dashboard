@@ -41,7 +41,11 @@ export function formatDate(date: Date | string) {
   if (typeof date === "string") {
     date = new Date(date);
   }
-  return date.toLocaleString();
+  return `${date.getFullYear()}-${padLeftZero(date.getMonth() + 1)}-${padLeftZero(date.getDate())} ${padLeftZero(date.getHours())}:${padLeftZero(date.getMinutes())}:${padLeftZero(date.getSeconds())}`;
+}
+
+function padLeftZero(num: number) {
+  return num < 10 ? "0" + num : num;
 }
 
 export function short(toShort: string) {

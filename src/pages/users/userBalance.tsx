@@ -12,7 +12,7 @@ import {
     TablePaginationConfig,
     // Checkbox,
 } from 'antd';
-import { userBalance, userFiatLogs } from '../../services/user';
+import { userBalance, userFiatLogs, userBalanceRuntime } from '../../services/user';
 import { createWxPayOrder } from '../../services/pay';
 import { QRCodeSVG } from 'qrcode.react';
 import './userBalance.css';
@@ -79,7 +79,7 @@ export default function UserBalance() {
       ];
 
     useEffect(() => {
-        userBalance().then((res) => setBalance(res.balance));
+        userBalanceRuntime().then((res) => setBalance(res.balance));
     }, []);
 
     useEffect(() => {
@@ -90,11 +90,12 @@ export default function UserBalance() {
         <div>
             <RainbowBreadcrumb items={['设置', '用户中心']} />
             <Card>
-                <h3>可用额度</h3>
+                <h3>当前余额</h3>
                 <div style={{paddingBottom: '40px'}}>
                     <span className='user-balance'>¥ {balance / 100}</span>
                     <Button className='charge-btn' type='primary' onClick={() => setIsModalVisible(true)}>充值</Button>
                 </div>
+                <p style={{color: 'gray'}}>部分费用(NFT铸造费用，接口调用费用)每日定时结算，消费明细展示会有延迟</p>
                 <Table
                     rowKey='id'
                     dataSource={items}
@@ -108,7 +109,7 @@ export default function UserBalance() {
                     onChange={(info: TablePaginationConfig) => { setPage(info.current as number); }}
                 />
             </Card>
-            <Modal title='余额充值' open={isModalVisible} onOk={() => form.submit()} onCancel={() => setIsModalVisible(false)}>
+            <Modal title='余额充值' open={isModalVisible} onOk={() => form.submit()} onCancel={() => setIsModalVisible(false)} okText={'确认'} cancelText={'取消'}>
                 <Form form={form} onFinish={onPay} initialValues={{type: 1}}>
                     <Form.Item name="amount" label="充值金额" rules={[{ required: true }]}>
                         <Input />
@@ -124,8 +125,17 @@ export default function UserBalance() {
                     {/* <Checkbox onChange={() => {}}>我已了解：充值的款项只可用于NFTRainbow消费</Checkbox> */}
                 </Form>
             </Modal>
-            <Modal  title='扫码支付' open={isPayModalVisible} onOk={() => setIsPayModalVisible(false)} onCancel={() => setIsPayModalVisible(false)}>
+            <Modal 
+                title='扫码支付' 
+                open={isPayModalVisible} 
+                onOk={() => setIsPayModalVisible(false)} 
+                onCancel={() => setIsPayModalVisible(false)}
+                footer={null}
+            >
                 <QRCodeSVG value={payUrl} style={{display: 'block', marginLeft: 'auto', marginRight: 'auto'}}/>
+                <div style={{textAlign: "center", marginTop: '10px'}}>
+                    <span>支付完成后，请刷新页面</span>
+                </div>
             </Modal>
         </div>
     );

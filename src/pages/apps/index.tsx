@@ -8,7 +8,7 @@ import {
   Input,
   Select,
   TablePaginationConfig,
-  message
+  message,
 } from "antd";
 import { Link } from "react-router-dom";
 import { getApps, createApp } from '../../services/app';
@@ -34,10 +34,6 @@ function Apps() {
   }
 
   const columns = [
-    {
-      title: '序号',
-      dataIndex: 'id',
-    },
     {
       title: '项目名称',
       dataIndex: 'name',
@@ -96,7 +92,7 @@ function Apps() {
           onChange={(info: TablePaginationConfig) => { setPage(info.current as number); }}
         />
       </Card>
-      <Modal title="创建项目" open={isModalVisible} onOk={createForm.submit} onCancel={handleCancel}>
+      <Modal title="创建项目" open={isModalVisible} onOk={createForm.submit} onCancel={handleCancel} okText={'确认'} cancelText={'取消'}>
         <Form
           name="basic"
           form={createForm}

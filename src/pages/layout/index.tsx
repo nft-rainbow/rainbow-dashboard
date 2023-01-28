@@ -63,11 +63,11 @@ const App: React.FC = () => {
   const auth = useAuth();
   const user = auth.user as UserInfo;
 
-  const userMenuItems: MenuItem[] = [
+  const userMenuItems: MenuProps['items'] = [
     getItem(<Link to="/panels/userBalance">用户余额</Link>, '1', <MoneyCollectOutlined />),
     getItem(<Link to="/panels/user">用户设置</Link>, '2', <UserOutlined />),
     getItem(<Link to="/panels/company">企业认证</Link>, '3', <UsergroupAddOutlined />),
-    getItem(<div onClick={() => auth.signout(console.log)}>退出</div>, '4', <LogoutOutlined />),
+    getItem(<span onClick={() => auth.signout(console.log)}>退出登录</span>, '4', <LogoutOutlined />),
   ];
 
   useEffect(() => {
@@ -76,47 +76,59 @@ const App: React.FC = () => {
 
   return (
     <ConfigProvider
-        theme={{
-            token: {
-                colorPrimary: '#6953EF',
-                colorLink: '#6953EF',
-            },
-        }}
+      theme={{
+        token: {
+          colorPrimary: '#6953EF',
+          colorLink: '#6953EF',
+        },
+      }}
     >
-    <Layout id="rainbow-layout">
-      <Sider collapsible collapsed={collapsed} onCollapse={value => setCollapsed(value)}>
-        <div className="logo">
-          <img src={logo} alt='logo' />
-        </div>
-        <Menu
-          theme="dark"
-          defaultSelectedKeys={['1']}
-          mode="inline"
-          items={items}
-          selectedKeys={selectedKeys}
-          onSelect={(opts: SelectInfo) => setSelectedKeys([opts.key])}
-        />
-      </Sider>
-      <Layout className="site-layout">
-        <Header className="bg-white" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between' }}>
-          <div><MenuFoldOutlined style={{ fontSize: '20px' }} onClick={() => setCollapsed(!collapsed)} /></div>
-          <div>
-            <Dropdown overlay={<Menu items={userMenuItems} />}>
-              <Button type='link' onClick={e => e.preventDefault()} href="#">
-                <Space>
-                  {user.email}
-                  <DownOutlined />
-                </Space>
-              </Button>
-            </Dropdown>
+      <Layout id="rainbow-layout">
+        <Sider
+          collapsible
+          collapsed={collapsed}
+          onCollapse={value => setCollapsed(value)}
+          style={{
+            overflow: 'auto',
+            height: '100vh',
+            position: 'fixed',
+            left: 0,
+            top: 0,
+            bottom: 0,
+          }}
+        >
+          <div className="logo">
+            <img src={logo} alt='logo' />
           </div>
-        </Header>
-        <Content style={{ margin: '16px 16px' }}>
-          <Outlet />
-        </Content>
-        <Footer className="site-layout-footer">©2022 NFTRainbow</Footer>
+          <Menu
+            theme="dark"
+            defaultSelectedKeys={['1']}
+            mode="inline"
+            items={items}
+            selectedKeys={selectedKeys}
+            onSelect={(opts: SelectInfo) => setSelectedKeys([opts.key])}
+          />
+        </Sider>
+        <Layout className="site-layout" style={{ marginLeft: collapsed ? 80 : 200 }}>
+          <Header className="bg-white" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between' }}>
+            <div><MenuFoldOutlined style={{ fontSize: '20px' }} onClick={() => setCollapsed(!collapsed)} /></div>
+            <div>
+              <Dropdown menu={{ items: userMenuItems }}>
+                <Button type='link' onClick={e => e.preventDefault()} href="#">
+                  <Space>
+                    {user.email}
+                    <DownOutlined />
+                  </Space>
+                </Button>
+              </Dropdown>
+            </div>
+          </Header>
+          <Content style={{ margin: '16px 16px' }}>
+            <Outlet />
+          </Content>
+          <Footer className="site-layout-footer">©2022 NFTRainbow</Footer>
+        </Layout>
       </Layout>
-    </Layout>
     </ConfigProvider>
   );
 };
