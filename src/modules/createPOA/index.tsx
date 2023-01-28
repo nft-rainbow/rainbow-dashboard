@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Modal, ModalProps, ModalFuncProps, Form, FormProps, Input, Row, Col, Switch, DatePicker, Select, Popover } from 'antd';
-import { QuestionCircleTwoTone } from '@ant-design/icons';
+import { Modal, ModalProps, ModalFuncProps, Form, FormProps, Input, Switch, DatePicker, Select, Popover, InputNumber, type RadioChangeEvent, Radio } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import FileUpload from '../../components/FileUpload';
 
 const Content = (
@@ -15,7 +15,9 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
   const { RangePicker } = DatePicker;
   const [dateDisabled, setDateDisabled] = useState(false);
   const [numberDisabled, setNumberDisabled] = useState(false);
-  const [proofDisabled, setProofDisabled] = useState(false);
+  const [publicLimit, setPublicLimit] = useState(false);
+  const [passwordDisabled, setpasswordDisabled] = useState(false);
+  const [whitelistDisabled, setWhitelistDisabled] = useState(true);
 
   return (
     <Modal title="创建活动" open={open} onOk={form.submit} onCancel={onCancel} width={'30.5%'} style={{ top: '14px' }} bodyStyle={{ paddingTop: '16px' }}>
@@ -27,16 +29,18 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
           </Select>
         </Form.Item>
         <Form.Item label="合约地址" name="contractAddress" rules={[{ required: true, message: '请输入合约地址' }]}>
-          <Input />
+          <Input placeholder="请输入" />
         </Form.Item>
         <Form.Item label="活动名称" name="ActivityName" rules={[{ required: true, message: '请输入活动名称' }]}>
-          <Input />
+          <Input placeholder="请输入" />
         </Form.Item>
         <Form.Item label="活动描述" name="ActivityDescription" rules={[{ required: true, message: '请输入活动描述' }]}>
-          <Input />
+          <Input placeholder="请输入" />
         </Form.Item>
         <div className="mb-8px flex flex-row justify-between">
-          <label htmlFor="activityDate">活动日期：</label>
+          <label htmlFor="activityDate" className="ant-form-item-required" title="活动日期">
+            活动日期：
+          </label>
           <div>
             <Switch
               onClick={(checked, e) => {
@@ -47,40 +51,91 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
             <span className="ml-8px">不限制结束日期</span>
           </div>
         </div>
-        <Form.Item id="activityDate">
+        <Form.Item id="activityDate" rules={[{ required: true, message: '请输入活动日期' }]}>
           <RangePicker id="activityDate" showTime disabled={[false, dateDisabled]} />
         </Form.Item>
         <Form.Item label="上传图片：" rules={[{ required: true, message: '请上传图片' }]}>
-          <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} type="plus" />
-          <div className='mt-8px'>支持上传PNG、GIF、SVG、JPG、视频等格式，大小限制 5MB，推荐 1:1比例，如果图片是圆形，建议圆形图案正好在中间</div>
+          <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} type="plus" wrapperClass="block w-full" className="!w-392px" />
+          <div className="mt-8px text-12px font-400 text-#9B99A5 leading-17px">
+            支持上传PNG、GIF、SVG、JPG、视频等格式，大小限制 5MB，推荐 1:1比例，如果图片是圆形，建议圆形图案正好在中间
+          </div>
         </Form.Item>
-        <Form.Item label="发行数量" name="issueNumber">
-          <Input disabled={numberDisabled} />
-        </Form.Item>
-        <Switch
-          onChange={(checked) => {
-            setNumberDisabled(checked);
-          }}
-        />
-        <Form.Item label="领取口令" name="proof">
-          {proofDisabled && <Input />}
-        </Form.Item>
-        <Switch
-          onChange={(checked) => {
-            setProofDisabled(checked);
-          }}
-        />
-        <Form.Item label="白名单铸造：" name="whitelist">
-          {proofDisabled && <Input />}
-        </Form.Item>
-        <Popover content={Content} title="whitelist">
-          <QuestionCircleTwoTone />
-        </Popover>
-        <Switch
-          onChange={(checked) => {
-            setProofDisabled(checked);
-          }}
-        />
+        <div className="mb-8px flex flex-row justify-between">
+          <label htmlFor="issueNumber" className="ant-form-item-required" title="发行数量：">
+            发行数量：
+          </label>
+          <div>
+            <Switch
+              onClick={(checked, e) => {
+                e.preventDefault();
+                setNumberDisabled(checked);
+              }}
+            />
+            <span className="ml-8px">不限制发行数量</span>
+          </div>
+        </div>
+        {numberDisabled ? (
+          <div className="mb-24px w-full h-32px"></div>
+        ) : (
+          <Form.Item name="issueNumber" rules={[{ required: true, message: '请输入发行数量' }]}>
+            <Input placeholder="请输入" />
+          </Form.Item>
+        )}
+        <div className="mb-8px flex flex-row justify-between">
+          <label htmlFor="publicLimit" title="公开铸造上限：">
+            公开铸造上限：
+          </label>
+          <div>
+            <Radio.Group onChange={(e) => setPublicLimit(e.target.value)} value={publicLimit}>
+              <Radio value={false}>限制</Radio>
+              <Radio value={true}>不限制</Radio>
+            </Radio.Group>
+          </div>
+        </div>
+        {publicLimit ? (
+          <div className="mb-24px w-full h-32px"></div>
+        ) : (
+          <Form.Item name="publicLimit">
+            <InputNumber defaultValue={1} className="w-full" />
+          </Form.Item>
+        )}
+        <div className="mb-8px flex flex-row justify-between">
+          <label htmlFor="password" title="领取口令：">
+            领取口令：
+          </label>
+          <div>
+            <Switch
+              onClick={(checked, e) => {
+                e.preventDefault();
+                setWhitelistDisabled(checked);
+              }}
+            />
+          </div>
+        </div>
+        {passwordDisabled ? (
+          <div className="mb-24px w-full h-32px"></div>
+        ) : (
+          <Form.Item name="publicLimit">
+            <Input placeholder="请输入" className="w-full" />
+          </Form.Item>
+        )}
+        <div className="mb-8px flex flex-row justify-between">
+          <div>
+            白名单铸造：
+            <Popover content={Content} title="whitelist">
+              <QuestionCircleOutlined />
+            </Popover>
+          </div>
+          <div>
+            <span className="mr-8px text-12px font-400 text-#6953EF leading-20px">导入CSV</span>
+            <Switch
+              onClick={(checked, e) => {
+                e.preventDefault();
+                setWhitelistDisabled(!checked);
+              }}
+            />
+          </div>
+        </div>
       </Form>
     </Modal>
   );

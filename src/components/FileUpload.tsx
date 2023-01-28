@@ -19,7 +19,7 @@ export default function FileUpload(props: any) {
     },
   };
   return (
-    <Upload {...uploadProps}>
+    <Upload {...uploadProps} className={props.wrapperClass ?? ''}>
       <Button className={props.className ?? ''} icon={!!props.type && props.type == 'plus' ? <PlusOutlined /> : <UploadOutlined />}>
         {!!props.type && props.type == 'plus' ? '' : '上传'}
       </Button>
