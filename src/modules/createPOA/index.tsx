@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Modal, ModalProps, ModalFuncProps, Form, FormProps, Input, Switch, DatePicker, Select, Popover, InputNumber, type RadioChangeEvent, Radio } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import Papa from 'papaparse';
 import FileUpload from '../../components/FileUpload';
 
 const Content = (
@@ -18,6 +19,20 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
   const [publicLimit, setPublicLimit] = useState(false);
   const [passwordDisabled, setpasswordDisabled] = useState(false);
   const [whitelistDisabled, setWhitelistDisabled] = useState(true);
+
+  //TODO: this is a test codes to show the csv data, tobe deleted
+  const handleWhiltelistChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>((e) => {
+    if (!e.target?.files?.length) return;
+    let res = Papa.parse(e.target?.files[0], {
+      header: true,
+      skipEmptyLines: true,
+      complete: function (results) {
+        console.log(results.data);
+      },
+    });
+    debugger;
+    console.log('csv', res);
+  }, []);
 
   return (
     <Modal title="创建活动" open={open} onOk={form.submit} onCancel={onCancel} width={'30.5%'} style={{ top: '14px' }} bodyStyle={{ paddingTop: '16px' }}>
@@ -51,15 +66,15 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
             <span className="ml-8px">不限制结束日期</span>
           </div>
         </div>
-        <Form.Item id="activityDate" rules={[{ required: true, message: '请输入活动日期' }]}>
+        <Form.Item id="activityDate" name="activityDate" rules={[{ required: true, message: '请输入活动日期' }]}>
           <RangePicker id="activityDate" showTime disabled={[false, dateDisabled]} />
         </Form.Item>
-        <Form.Item label="上传图片：" rules={[{ required: true, message: '请上传图片' }]}>
+        <Form.Item label="上传图片：" name="pictures" rules={[{ required: false, message: '请上传图片' }]} className="mb-0">
           <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} type="plus" wrapperClass="block w-full" className="block" />
-          <div className="mt-8px text-12px font-400 text-#9B99A5 leading-17px">
-            支持上传PNG、GIF、SVG、JPG、视频等格式，大小限制 5MB，推荐 1:1比例，如果图片是圆形，建议圆形图案正好在中间
-          </div>
         </Form.Item>
+        <div className="mt-8px mb-24px text-12px font-400 text-#9B99A5 leading-17px">
+          支持上传PNG、GIF、SVG、JPG、视频等格式，大小限制 5MB，推荐 1:1比例，如果图片是圆形，建议圆形图案正好在中间
+        </div>
         <div className="mb-8px flex flex-row justify-between">
           <label htmlFor="issueNumber" className="ant-form-item-required" title="发行数量：">
             发行数量：
@@ -127,9 +142,11 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
             </Popover>
           </div>
           <div>
-            <label htmlFor="whitelist" className="mr-8px text-12px font-400 text-#6953EF leading-20px">
-              导入CSV
-            </label>
+            {!whitelistDisabled && (
+              <label htmlFor="whitelist" className="mr-8px text-12px font-400 text-#6953EF leading-20px">
+                导入CSV
+              </label>
+            )}
             <Switch
               onClick={(checked, e) => {
                 e.preventDefault();
@@ -142,7 +159,7 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
           <div className="mb-24px w-full h-32px"></div>
         ) : (
           <Form.Item name="whitelist" className="hidden">
-            <Input type="file" accept=".csv" id="whitelist" />
+            <Input type="file" accept=".csv" id="whitelist" onChange={handleWhiltelistChange} />
           </Form.Item>
         )}
       </Form>

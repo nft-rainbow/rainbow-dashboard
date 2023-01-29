@@ -3,7 +3,6 @@ import { UploadOutlined, PlusOutlined } from '@ant-design/icons';
 import { methodUrl, authHeaderSync } from '../services';
 
 export default function FileUpload(props: any) {
-  console.log('file', props);
   const action = props.private ? methodUrl('/dashboard/misc/upload/kyc') : methodUrl('/dashboard/misc/upload');
   const uploadProps = {
     name: 'file',
