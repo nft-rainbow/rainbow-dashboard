@@ -55,7 +55,7 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
           <RangePicker id="activityDate" showTime disabled={[false, dateDisabled]} />
         </Form.Item>
         <Form.Item label="上传图片：" rules={[{ required: true, message: '请上传图片' }]}>
-          <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} type="plus" wrapperClass="block w-full" className="!w-392px" />
+          <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} type="plus" wrapperClass="block w-full" className="block" />
           <div className="mt-8px text-12px font-400 text-#9B99A5 leading-17px">
             支持上传PNG、GIF、SVG、JPG、视频等格式，大小限制 5MB，推荐 1:1比例，如果图片是圆形，建议圆形图案正好在中间
           </div>
@@ -107,12 +107,12 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
             <Switch
               onClick={(checked, e) => {
                 e.preventDefault();
-                setWhitelistDisabled(checked);
+                setpasswordDisabled(checked);
               }}
             />
           </div>
         </div>
-        {passwordDisabled ? (
+        {!passwordDisabled ? (
           <div className="mb-24px w-full h-32px"></div>
         ) : (
           <Form.Item name="publicLimit">
@@ -136,6 +136,13 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
             />
           </div>
         </div>
+        {whitelistDisabled ? (
+          <div className="mb-24px w-full h-32px"></div>
+        ) : (
+          <Form.Item name="whitelist">
+            <Input type="file" accept=".csv" />
+          </Form.Item>
+        )}
       </Form>
     </Modal>
   );
