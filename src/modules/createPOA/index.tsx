@@ -127,7 +127,9 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
             </Popover>
           </div>
           <div>
-            <span className="mr-8px text-12px font-400 text-#6953EF leading-20px">导入CSV</span>
+            <label htmlFor="whitelist" className="mr-8px text-12px font-400 text-#6953EF leading-20px">
+              导入CSV
+            </label>
             <Switch
               onClick={(checked, e) => {
                 e.preventDefault();
@@ -139,8 +141,8 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
         {whitelistDisabled ? (
           <div className="mb-24px w-full h-32px"></div>
         ) : (
-          <Form.Item name="whitelist">
-            <Input type="file" accept=".csv" />
+          <Form.Item name="whitelist" className="hidden">
+            <Input type="file" accept=".csv" id="whitelist" />
           </Form.Item>
         )}
       </Form>
