@@ -63,9 +63,6 @@ export default function Panel() {
     <div>
       {user && user.status === 0 && user.id_no.length === 0 ? <Alert message="新用户请先至个人中心完善信息" type="info" showIcon /> : null}
       {user && user.status === 0 && user.id_no.length > 0 ? <Alert message="请耐心等待审核通过，我们会在2-3天完成审核。" type="info" showIcon /> : null}
-      <Alert message="Rainbow 将会从 2023.1.1 开始正式商用" type="info" action={
-        <a href="https://docs.nftrainbow.xyz/docs/price" target="_blank" rel="noreferrer">了解详情</a>
-      } />
       <Row gutter={16} style={{margin: '16px 0'}}>
         <Col span={6}>
           <Card>
