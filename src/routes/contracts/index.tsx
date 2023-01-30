@@ -160,7 +160,7 @@ export default function Contracts() {
             setIsDeployModalVisible(false);
             form.resetFields();
         }).catch((err) => {
-            message.error(err.message);
+            message.error(err.response.data.message);
         });
     }
 

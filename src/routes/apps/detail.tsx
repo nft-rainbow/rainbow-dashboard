@@ -87,7 +87,7 @@ export default function AppDetail() {
       setIsMintModalVisible(false);
       form.resetFields();
     }).catch((err) => {
-      message.error(err.message);
+      message.error(err.response.data.message);
     });
   }
 
@@ -97,7 +97,7 @@ export default function AppDetail() {
         setIsPoapModalVisible(false);
         form.resetFields();
     }).catch((err) => {
-       message.error(err.message); 
+       message.error(err.response.data.message); 
     });
   }
 
@@ -182,9 +182,11 @@ export default function AppDetail() {
             ({ getFieldValue }) => ({
                 validator: function(_, value) { 
                     const isValidAddr = address.isValidCfxAddress(value);
+                    if (!isValidAddr) return Promise.reject(new Error('地址格式错误'));
                     const prefix = getFieldValue('chain') === 'conflux' ? 'cfx' : 'cfxtest';
-                    const isValidPrefix = value.toLowerCase().startsWith(prefix);
-                    return (isValidAddr && isValidPrefix) ? Promise.resolve() : Promise.reject(new Error('地址格式错误'));
+                    const isValidPrefix = value.toLowerCase().split(':')[0] === prefix;
+                    if (!isValidPrefix) return Promise.reject(new Error('请输入正确网络的地址'));
+                    return Promise.resolve();
                 }
             })
           ]}>
