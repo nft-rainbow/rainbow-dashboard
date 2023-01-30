@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Modal, ModalProps, ModalFuncProps, Form, FormProps, Input, Switch, DatePicker, Select, Popover, InputNumber, Button, type RadioChangeEvent, Radio } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { useContractsStore } from '../../stores/contracts';
 import Papa from 'papaparse';
 import FileUpload from '../../components/FileUpload';
 
@@ -14,6 +15,7 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
   const [form] = Form.useForm();
   const { Option } = Select;
   const { RangePicker } = DatePicker;
+  const contracts = useContractsStore((state) => state.contracts);
   const [dateDisabled, setDateDisabled] = useState(false);
   const [numberDisabled, setNumberDisabled] = useState(false);
   const [publicLimit, setPublicLimit] = useState(false);
@@ -43,7 +45,13 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
           </Select>
         </Form.Item>
         <Form.Item label="合约地址" name="contractAddress" rules={[{ required: true, message: '请输入合约地址' }]}>
-          <Input placeholder="请输入" />
+          <Select>
+            {contracts.map((contract) => (
+              <Option key={contract.address} value={contract.address}>
+                {contract.address}
+              </Option>
+            ))}
+          </Select>
         </Form.Item>
         <Form.Item label="活动名称" name="ActivityName" rules={[{ required: true, message: '请输入活动名称' }]}>
           <Input placeholder="请输入" />
@@ -69,9 +77,14 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
           <RangePicker id="activityDate" showTime disabled={[false, dateDisabled]} />
         </Form.Item>
         <Form.Item label="上传图片：" name="pictures" rules={[{ required: false, message: '请上传图片' }]} className="mb-0">
-          <FileUpload onChange={(err: Error, file: any) => {
-            form.setFieldsValue({ pictures: file.url });
-          }} type="plus" wrapperClass="block w-full" className="block" />
+          <FileUpload
+            onChange={(err: Error, file: any) => {
+              form.setFieldsValue({ pictures: file.url });
+            }}
+            type="plus"
+            wrapperClass="block w-full"
+            className="block"
+          />
         </Form.Item>
         <div className="mt-8px mb-24px text-12px font-400 text-#9B99A5 leading-17px">
           支持上传PNG、GIF、SVG、JPG、视频等格式，大小限制 5MB，推荐 1:1比例，如果图片是圆形，建议圆形图案正好在中间
@@ -167,7 +180,7 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
           <Button type="primary" htmlType="submit">
             Submit
           </Button>
-        </Form.Item>      
+        </Form.Item>
       </Form>
     </Modal>
   );

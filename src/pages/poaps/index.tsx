@@ -168,19 +168,6 @@ export default function Poaps() {
         />
       </Card>
       <CreatePOA open={isActivityModalVisible} onOk={onContractCreate} onCancel={() => setIsActivityModalVisible(false)} onFinish={onContractCreate} />
-      {/* <Modal title='部署合约' open={isActivityModalVisible} onOk={form.submit} onCancel={() => setIsActivityModalVisible(false)}>
-                <Form {...formLayout} form={form} name="control-hooks" onFinish={onContractCreate}>
-                    <Form.Item name="name" label="名字" rules={[{ required: true }]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name="tokens_burnable" label="管理员可销毁" rules={[{ required: true }]}>
-                        <Radio.Group>
-                            <Radio value={true}>是</Radio>
-                            <Radio value={false}>否</Radio>
-                        </Radio.Group>
-                    </Form.Item>
-                </Form>
-            </Modal> */}
     </>
   );
 }
