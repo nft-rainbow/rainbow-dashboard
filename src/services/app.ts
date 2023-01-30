@@ -27,7 +27,7 @@ export async function getApps(page?: number, limit?: number) {
 }
 
 export async function getAllApps() {
-    return await get('/dashboard/apps/all/');
+    return await get('/dashboard/apps/all');
 }
 
 export async function createApp(metadata: any) {
@@ -51,7 +51,7 @@ export async function getAppMetadatas(id: number | string, page?: number, limit?
 }
 
 export async function getAppContracts(id: number | string, page?: number, limit?: number) {
-  return await get(`/dashboard/apps/${id}/contracts/`, {page, limit});
+  return await get(`/dashboard/apps/${id}/contracts`, {page, limit});
 }
 
 export async function getAppNfts(id: number | string, page?: number, limit?: number) {
