@@ -179,11 +179,14 @@ export default function AppDetail() {
           </Form.Item>
           <Form.Item name="mint_to_address" label="接受地址" rules={[
             { required: true, message: '请输入接受地址' },
-            {
+            ({ getFieldValue }) => ({
                 validator: function(_, value) { 
-                  return address.isValidCfxAddress(value) ? Promise.resolve() : Promise.reject(new Error('地址格式错误'));
+                    const isValidAddr = address.isValidCfxAddress(value);
+                    const prefix = getFieldValue('chain') === 'conflux' ? 'cfx' : 'cfxtest';
+                    const isValidPrefix = value.toLowerCase().startsWith(prefix);
+                    return (isValidAddr && isValidPrefix) ? Promise.resolve() : Promise.reject(new Error('地址格式错误'));
                 }
-            }
+            })
           ]}>
             <Input placeholder='树图链地址' />
           </Form.Item>
