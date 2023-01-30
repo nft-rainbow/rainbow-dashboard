@@ -1,12 +1,23 @@
 export function mapChainName(chainType: number) {
   switch (chainType) {
     case 1:
-      return "树图链";
+      return "Conflux";
     case 2:
       return "Ethereum";
     default:
-      return "其他";
+      return "Other";
   }
+}
+
+export function mapChainAndNetworkName(chainType: number, chainId: number) {
+    switch (chainType) {
+      case 1:
+        return chainId === 1029 ? 'conflux' : 'conflux_test';
+      case 2:
+        return "Ethereum";
+      default:
+        return "Other";
+    }
 }
 
 export function mapAppType(appType: number) {

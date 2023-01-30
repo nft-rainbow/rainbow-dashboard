@@ -44,6 +44,7 @@ import FileUpload from '../../components/FileUpload';
 import { ChainAccount, App } from '../../models';
 import axios from 'axios';
 import { FileImageOutlined, ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
+import { address } from 'js-conflux-sdk';
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
 const { Option } = Select;
@@ -176,7 +177,14 @@ export default function AppDetail() {
                 <Option value="conflux_test">树图测试网</Option>
             </Select>
           </Form.Item>
-          <Form.Item name="mint_to_address" label="接受地址" rules={[{ required: true }]}>
+          <Form.Item name="mint_to_address" label="接受地址" rules={[
+            { required: true, message: '请输入接受地址' },
+            {
+                validator: function(_, value) { 
+                  return address.isValidCfxAddress(value) ? Promise.resolve() : Promise.reject(new Error('地址格式错误'));
+                }
+            }
+          ]}>
             <Input placeholder='树图链地址' />
           </Form.Item>
         </Form>
@@ -270,7 +278,7 @@ function AppNFTs(props: { id: string }) {
     {
       title: '状态',
       dataIndex: 'status',
-      render: (text: number, record: NFT) => mapSimpleStatus(text, record.error),
+      render: (text: number, record: NFT) => mapSimpleStatus(text, dealError(record.error)),
     },
     {
       title: '哈希',
@@ -486,4 +494,17 @@ function AppPoaps(props: { id: string }) {
         />
       </>
     );
+}
+
+function dealError(message: string) {
+    if (message.match('NotEnoughCash') || message.match('discarded due to out of balance')) {
+        return '合约代付余额不足';
+    }
+    if (message.match('AccessControl')) {
+        return '操作权限错误';
+    }
+    if (message.match('ERC721: token already minted')) {
+        return '该 TokenId 已经被使用';
+    }
+    return message;
 }

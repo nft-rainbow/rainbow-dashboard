@@ -4,7 +4,6 @@ import {
   userStatistics, 
   UserStatistics,
   userProfile,
-  userBalance,
   userBalanceRuntime,
 } from '../services/user';
 import { User } from '../models';
@@ -81,7 +80,7 @@ export default function Panel() {
         </Col>
         <Col span={6}>
           <Card>
-            <Statistic title="接口调用量" value={statistics.request_count} />
+            <Statistic title="当月接口用量" value={statistics.request_count} />
           </Card>
         </Col>
       </Row>

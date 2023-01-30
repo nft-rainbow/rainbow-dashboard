@@ -29,6 +29,7 @@ import {
     mapNFTType,
     mapChainNetwork,
     mapChainNetworId,
+    mapChainAndNetworkName,
 } from '../../utils';
 import { listContracts, deployContract, ContractFilter, getContractSponsor, getContractAutoSponsor } from '../../services/contract';
 import { getAllApps, getAppAccounts } from '../../services/app';
@@ -74,7 +75,7 @@ export default function Contracts() {
         {
           title: '区块链',
           dataIndex: 'chain_type',
-          render: (text: number, record: Contract) => `${mapChainName(text)}${record.chain_id === 1029 ? '主网':'测试网'}`,
+          render: (text: number, record: Contract) => `${mapChainAndNetworkName(record.chain_type, record.chain_id)}`,
         },
         {
           title: '类型',

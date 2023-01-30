@@ -37,7 +37,7 @@ function Apps() {
     {
       title: '项目名称',
       dataIndex: 'name',
-      render: (text: string, record: App) => <Link to={`/panels/apps/${record.id}`}>{text}</Link>
+      ellipsis: true,
     },
     {
       title: '区块链',
