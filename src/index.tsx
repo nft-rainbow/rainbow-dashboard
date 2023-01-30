@@ -1,16 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import 'uno.css';
-import {
-  BrowserRouter
-} from "react-router-dom";
 import './index.css';
 import 'antd/dist/reset.css';
 import reportWebVitals from './router/reportWebVitals';
 import { AuthProvider } from './router/Auth';
 import AppRouter from './router';
-
-// import NotFound from './pages/404';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -18,11 +13,9 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <AppRouter />
-      </AuthProvider>
-    </BrowserRouter>
+    <AuthProvider>
+      <AppRouter />
+    </AuthProvider>
   </React.StrictMode>
 );
 
