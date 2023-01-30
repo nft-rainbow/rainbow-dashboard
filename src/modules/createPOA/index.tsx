@@ -30,7 +30,6 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
         console.log(results.data);
       },
     });
-    debugger;
     console.log('csv', res);
   }, []);
 

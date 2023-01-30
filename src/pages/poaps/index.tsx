@@ -98,7 +98,6 @@ export default function Poaps() {
 
   const onContractCreate = async (values: any) => {
     console.log('Create POA', values);
-    debugger
     // const accounts = await getAppAccounts(values.app_id);
     // const chainId = mapChainNetworId(values.chain);
     // const owner = accounts.find(item => item.chain_id === chainId)?.address;
