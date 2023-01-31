@@ -7,6 +7,7 @@ import { listContracts } from '@services/contract';
 import { shortenCfxAddress } from '../../utils/addressUtils';
 import { type contract, PopoverContent } from './constants';
 import useResetFormOnCloseModal from '../../hooks/useResetFormOnCloseModal';
+import './index.css';
 
 interface CreatePOAProps {
   open: boolean;
@@ -94,7 +95,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           <Input placeholder="请输入" />
         </Form.Item>
         <div className="mb-8px flex flex-row justify-between">
-          <label htmlFor="activityDate" className="ant-form-item-required" title="活动日期">
+          <label htmlFor="activityDate" className="required" title="活动日期">
             活动日期：
           </label>
           <div>
@@ -110,7 +111,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
         <Form.Item id="activityDate" name="activityDate" rules={[{ required: true, message: '请输入活动日期' }]}>
           <RangePicker id="activityDate" showTime placeholder={['开始日期', '结束日期']} disabled={[false, dateDisabled]} allowEmpty={[false, true]} />
         </Form.Item>
-        <Form.Item label="上传图片：" name="pictures" rules={[{ required: false, message: '请上传图片' }]} className="mb-0">
+        <Form.Item label="上传图片：" name="pictures" rules={[{ required: true, message: '请上传图片' }]} className="mb-0">
           <FileUpload
             onChange={(err: Error, file: any) => {
               form.setFieldsValue({ pictures: file.url });
@@ -124,7 +125,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           支持上传PNG、GIF、SVG、JPG、视频等格式，大小限制 5MB，推荐 1:1比例，如果图片是圆形，建议圆形图案正好在中间
         </div>
         <div className="mb-8px flex flex-row justify-between">
-          <label htmlFor="issueNumber" className="ant-form-item-required" title="发行数量：">
+          <label htmlFor="issueNumber" className="required" title="发行数量：">
             发行数量：
           </label>
           <div>
@@ -185,7 +186,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
         <div className="mb-8px flex flex-row justify-between">
           <div>
             白名单铸造：
-            <Popover content={PopoverContent} title="whitelist">
+            <Popover content={PopoverContent} placement="topLeft" trigger="hover">
               <QuestionCircleOutlined />
             </Popover>
           </div>
