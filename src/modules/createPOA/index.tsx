@@ -1,9 +1,33 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Modal, ModalProps, ModalFuncProps, Form, FormProps, Input, Switch, DatePicker, Select, Popover, InputNumber, Button, type RadioChangeEvent, Radio } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { useContractsStore } from '../../stores/contracts';
 import Papa from 'papaparse';
 import FileUpload from '../../components/FileUpload';
+import { listContracts } from '@services/contract';
+
+interface contract {
+  address: string;
+  app_id: number;
+  base_uri: string;
+  chain_id: number;
+  chain_type: number;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string;
+  hash: string;
+  id: number;
+  name: string;
+  type: number;
+  owner_address: string;
+  royalties_address: string;
+  status: number;
+  symbol: string;
+  tokens_burnable: true;
+  tokens_transferable_by_admin: true;
+  tokens_transferable_by_user: true;
+  transfer_cooldown_time: number;
+  tx_id: number;
+}
 
 const Content = (
   <div>
@@ -15,7 +39,7 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
   const [form] = Form.useForm();
   const { Option } = Select;
   const { RangePicker } = DatePicker;
-  const contracts = useContractsStore((state) => state.contracts);
+  const [contracts, setContracts] = useState<contract[]>([]);
   const [dateDisabled, setDateDisabled] = useState(false);
   const [numberDisabled, setNumberDisabled] = useState(false);
   const [publicLimit, setPublicLimit] = useState(false);
@@ -35,6 +59,16 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
     form.setFieldsValue({ whitelist: res });
   }, []);
 
+  useEffect(() => {
+    listContracts(1, 10)
+      .then((res) => {
+        setContracts(res.items);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   return (
     <Modal title="创建活动" open={open} onOk={form.submit} onCancel={onCancel} width={'30.5%'} style={{ top: '14px' }} bodyStyle={{ paddingTop: '16px' }}>
       <Form name="basic" form={form} layout="vertical" onFinish={(evt) => console.log(evt)} initialValues={{ chain: 'conflux' }} autoComplete="off">
@@ -46,11 +80,12 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
         </Form.Item>
         <Form.Item label="合约地址" name="contractAddress" rules={[{ required: true, message: '请输入合约地址' }]}>
           <Select>
-            {contracts.map((contract) => (
-              <Option key={contract.address} value={contract.address}>
-                {contract.address}
-              </Option>
-            ))}
+            {contracts &&
+              contracts.map((contract) => (
+                <Option key={contract.address} value={contract.address}>
+                  {contract.address}
+                </Option>
+              ))}
           </Select>
         </Form.Item>
         <Form.Item label="活动名称" name="ActivityName" rules={[{ required: true, message: '请输入活动名称' }]}>

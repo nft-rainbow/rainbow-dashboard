@@ -155,7 +155,7 @@ export default function Poaps() {
   return (
     <>
       <Card title="智能合约" extra={extra}>
-        <Table
+        {/* <Table
           rowKey="id"
           dataSource={items}
           columns={columns}
@@ -165,7 +165,7 @@ export default function Poaps() {
             showTotal: (total) => `共 ${total} 条`,
           }}
           onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
-        />
+        /> */}
       </Card>
       <CreatePOA open={isActivityModalVisible} onOk={onContractCreate} onCancel={() => setIsActivityModalVisible(false)} onFinish={onContractCreate} />
     </>

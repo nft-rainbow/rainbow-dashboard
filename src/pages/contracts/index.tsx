@@ -23,7 +23,6 @@ import { Contract, App, SponsorInfo } from '../../models';
 import { mapChainName, formatDate, short, scanTxLink, scanAddressLink, mapNFTType, mapChainNetwork, mapChainNetworId } from '../../utils';
 import { listContracts, deployContract, ContractFilter, getContractSponsor, getContractAutoSponsor } from '../../services/contract';
 import { getAllApps, getAppAccounts } from '../../services/app';
-import { useContractsStore } from '../../stores/contracts';
 const { Option } = Select;
 const { Paragraph } = Typography;
 
@@ -184,7 +183,6 @@ export default function Contracts() {
     if (appIdFilter !== '0') filter.app_id = parseInt(appIdFilter);
     listContracts(page, 10, filter).then((res) => {
       setTotal(res.count);
-      useContractsStore.setState({ contracts: res.Item });
       setItems(res.items);
     });
   }, [page, appIdFilter]);
