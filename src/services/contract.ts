@@ -10,7 +10,7 @@ export async function deployContract(id: number | string, meta: object) {
 }
 
 export async function listContracts(page = 1, limit = 10, filter: ContractFilter = {}) {
-    return await get(`/dashboard/contracts/`, Object.assign({}, {page, limit}, filter));
+    return await get(`/dashboard/contracts`, Object.assign({}, {page, limit}, filter));
 }
 
 export async function getContractSponsor(addr: string, chain: string): Promise<SponsorInfo> {
