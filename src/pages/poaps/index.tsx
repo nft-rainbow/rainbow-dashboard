@@ -5,7 +5,7 @@ import CreatePOA from '../../modules/createPOA';
 import { mapChainName, formatDate, short, scanTxLink, scanAddressLink, mapNFTType, mapChainNetworId } from '../../utils';
 import { ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 import { listContracts, deployContract, ContractFilter } from '../../services/contract';
-import { getAllApps, getAppAccounts } from '../../services/app';
+import { getAllApps } from '../../services/app';
 import { Link } from 'react-router-dom';
 const { Option } = Select;
 const { Paragraph } = Typography;
@@ -16,7 +16,6 @@ export default function Poaps() {
   const [page, setPage] = useState(1);
   const [apps, setApps] = useState<App[]>([]);
 
-  const [form] = Form.useForm();
   const [isActivityModalVisible, setIsActivityModalVisible] = useState(false);
 
   const [appIdFilter, setAppIdFilter] = useState('0');
@@ -96,22 +95,8 @@ export default function Poaps() {
     },
   ];
 
-  const onContractCreate = async (values: any) => {
-    console.log('Create POA', values);
-    // const accounts = await getAppAccounts(values.app_id);
-    // const chainId = mapChainNetworId(values.chain);
-    // const owner = accounts.find(item => item.chain_id === chainId)?.address;
-    // if (!owner) { message.info('获取账户失败'); return; }
-    // const meta = Object.assign({
-    //     is_sponsor_for_all_user: true,
-    //     owner_address: owner,
-    // }, values);
-    // deployContract(values.app_id as string, meta).then((res) => {
-    //     setIsActivityModalVisible(false);
-    //     form.resetFields();
-    // }).catch((err) => {
-    //     message.error(err.message);
-    // });
+  const hideModal = () => {
+    setIsActivityModalVisible(false);
   };
 
   useEffect(() => {
@@ -167,7 +152,7 @@ export default function Poaps() {
           onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
         /> */}
       </Card>
-      <CreatePOA open={isActivityModalVisible} onOk={onContractCreate} onCancel={() => setIsActivityModalVisible(false)} onFinish={onContractCreate} />
+      <CreatePOA open={isActivityModalVisible} onCancel={() => setIsActivityModalVisible(false)} hideModal={hideModal} />
     </>
   );
 }

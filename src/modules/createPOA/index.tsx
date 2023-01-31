@@ -1,44 +1,24 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Modal, ModalProps, ModalFuncProps, Form, FormProps, Input, Switch, DatePicker, Select, Popover, InputNumber, Button, type RadioChangeEvent, Radio } from 'antd';
+import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, Radio } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import Papa from 'papaparse';
 import FileUpload from '../../components/FileUpload';
 import { listContracts } from '@services/contract';
+import { shortenCfxAddress } from '../../utils/addressUtils';
+import { type contract, PopoverContent } from './constants';
+import useResetFormOnCloseModal from '../../hooks/useResetFormOnCloseModal';
 
-interface contract {
-  address: string;
-  app_id: number;
-  base_uri: string;
-  chain_id: number;
-  chain_type: number;
-  created_at: string;
-  updated_at: string;
-  deleted_at: string;
-  hash: string;
-  id: number;
-  name: string;
-  type: number;
-  owner_address: string;
-  royalties_address: string;
-  status: number;
-  symbol: string;
-  tokens_burnable: true;
-  tokens_transferable_by_admin: true;
-  tokens_transferable_by_user: true;
-  transfer_cooldown_time: number;
-  tx_id: number;
+interface CreatePOAProps {
+  open: boolean;
+  onCancel: () => void;
+  hideModal: () => void;
 }
 
-const Content = (
-  <div>
-    开启后，只允许导入的地址进行铸造，并且只允许铸造一定数量的藏品，例如地址为A,B,C，填写数量为1,2,3，则意味着A允许铸造1个藏品，B铸造2个，C铸造3个。注意使用英文逗号分隔。关闭即开放给所有地址进行铸造。
-  </div>
-);
-
-const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, onOk, onCancel, onFinish }) => {
+const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
   const [form] = Form.useForm();
   const { Option } = Select;
   const { RangePicker } = DatePicker;
+  useResetFormOnCloseModal({ form, open });
   const [contracts, setContracts] = useState<contract[]>([]);
   const [dateDisabled, setDateDisabled] = useState(false);
   const [numberDisabled, setNumberDisabled] = useState(false);
@@ -46,17 +26,36 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
   const [passwordDisabled, setpasswordDisabled] = useState(false);
   const [whitelistDisabled, setWhitelistDisabled] = useState(true);
 
-  // TODO: this is a test codes to show the csv data, tobe deleted
+  // const onContractCreate = async (values: any) => {
+  // const accounts = await getAppAccounts(values.app_id);
+  // const chainId = mapChainNetworId(values.chain);
+  // const owner = accounts.find(item => item.chain_id === chainId)?.address;
+  // if (!owner) { message.info('获取账户失败'); return; }
+  // const meta = Object.assign({
+  //     is_sponsor_for_all_user: true,
+  //     owner_address: owner,
+  // }, values);
+  // deployContract(values.app_id as string, meta).then((res) => {
+  //     setIsActivityModalVisible(false);
+  //     form.resetFields();
+  // }).catch((err) => {
+  //     message.error(err.message);
+  // });
+  // };
+
   const handleWhiltelistChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>((e) => {
     if (!e.target?.files?.length) return;
     let res = Papa.parse(e.target?.files[0], {
       header: true,
       skipEmptyLines: true,
-      complete: function (results) {
-        console.log(results.data);
-      },
+      complete: function () {},
     });
     form.setFieldsValue({ whitelist: res });
+  }, []);
+
+  const handleFinish = useCallback((values: any) => {
+    console.log(values);
+    hideModal();
   }, []);
 
   useEffect(() => {
@@ -71,19 +70,19 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
 
   return (
     <Modal title="创建活动" open={open} onOk={form.submit} onCancel={onCancel} width={'30.5%'} style={{ top: '14px' }} bodyStyle={{ paddingTop: '16px' }}>
-      <Form name="basic" form={form} layout="vertical" onFinish={(evt) => console.log(evt)} initialValues={{ chain: 'conflux' }} autoComplete="off">
+      <Form name="basic" form={form} layout="vertical" onFinish={handleFinish} initialValues={{ chain: 'conflux' }} autoComplete="off">
         <Form.Item name="chain" label="区块链" rules={[{ required: true }]}>
           <Select>
             <Option value="conflux">树图链</Option>
-            <Option value="conflux_test">树测试链</Option>
+            <Option value="conflux_test">树图测试链</Option>
           </Select>
         </Form.Item>
         <Form.Item label="合约地址" name="contractAddress" rules={[{ required: true, message: '请输入合约地址' }]}>
-          <Select>
+          <Select placeholder="请输入">
             {contracts &&
               contracts.map((contract) => (
                 <Option key={contract.address} value={contract.address}>
-                  {contract.address}
+                  {shortenCfxAddress(contract.address)}
                 </Option>
               ))}
           </Select>
@@ -109,7 +108,7 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
           </div>
         </div>
         <Form.Item id="activityDate" name="activityDate" rules={[{ required: true, message: '请输入活动日期' }]}>
-          <RangePicker id="activityDate" showTime disabled={[false, dateDisabled]} />
+          <RangePicker id="activityDate" showTime placeholder={['开始日期', '结束日期']} disabled={[false, dateDisabled]} allowEmpty={[false, true]} />
         </Form.Item>
         <Form.Item label="上传图片：" name="pictures" rules={[{ required: false, message: '请上传图片' }]} className="mb-0">
           <FileUpload
@@ -186,7 +185,7 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
         <div className="mb-8px flex flex-row justify-between">
           <div>
             白名单铸造：
-            <Popover content={Content} title="whitelist">
+            <Popover content={PopoverContent} title="whitelist">
               <QuestionCircleOutlined />
             </Popover>
           </div>
@@ -204,18 +203,11 @@ const CreatePOA: React.FC<ModalProps & ModalFuncProps & FormProps> = ({ open, on
             />
           </div>
         </div>
-        {whitelistDisabled ? (
-          <div className="mb-24px w-full h-32px"></div>
-        ) : (
+        {!whitelistDisabled && (
           <Form.Item name="whitelist" className="hidden">
             <Input type="file" accept=".csv" id="whitelist" onChange={handleWhiltelistChange} />
           </Form.Item>
         )}
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
       </Form>
     </Modal>
   );

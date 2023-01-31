@@ -11,7 +11,6 @@ import {
   message,
   Tooltip,
   Space,
-  // Radio,
   Typography,
   Switch,
 } from 'antd';
@@ -214,7 +213,6 @@ export default function Contracts() {
       <Link to="/panels/contracts/sponsor">
         <Button type="primary">设置树图代付</Button>
       </Link>
-      {/* <Link to="/panels/contracts/deploy"><Button type="primary">新建合约</Button></Link> */}
     </Space>
   );
 
