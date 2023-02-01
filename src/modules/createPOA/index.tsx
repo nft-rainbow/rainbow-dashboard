@@ -44,14 +44,19 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
   // });
   // };
 
-  const handleWhiltelistChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>((e) => {
+  const handleWhiltelistChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(async (e) => {
     if (!e.target?.files?.length) return;
-    let res = Papa.parse(e.target?.files[0], {
+    let res = await Papa.parse(e.target?.files[0], {
       header: true,
       skipEmptyLines: true,
-      complete: function () {},
+      complete: async function (results) {
+        console.log(results.data);
+        let res = await results.data.toString();
+        // let res = await JSON.stringify(results.data);
+        // form.setFieldsValue({ whitelist: res });
+      },
     });
-    form.setFieldsValue({ whitelist: res });
+    // console.log('test', res.data);
   }, []);
 
   const handleFinish = useCallback((values: any) => {
