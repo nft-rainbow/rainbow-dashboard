@@ -51,9 +51,8 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
       skipEmptyLines: true,
       complete: async function (results) {
         console.log(results.data);
-        let res = await results.data.toString();
-        // let res = await JSON.stringify(results.data);
-        // form.setFieldsValue({ whitelist: res });
+        let res = JSON.stringify(results.data);
+        form.setFieldsValue({ whitelist: res });
       },
     });
     // console.log('test', res.data);
@@ -197,7 +196,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           </div>
           <div>
             {!whitelistDisabled && (
-              <label htmlFor="whitelist" className="mr-8px text-12px font-400 text-#6953EF leading-20px">
+              <label htmlFor="whitelistUpload" className="mr-8px text-12px font-400 text-#6953EF leading-20px">
                 导入CSV
               </label>
             )}
@@ -210,9 +209,12 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           </div>
         </div>
         {!whitelistDisabled && (
-          <Form.Item name="whitelist" className="hidden">
-            <Input type="file" accept=".csv" id="whitelist" onChange={handleWhiltelistChange} />
-          </Form.Item>
+          <>
+            <Form.Item name="whitelist" className="hidden">
+              <Input />
+            </Form.Item>
+            <input type="file" accept=".csv" id="whitelistUpload" onChange={handleWhiltelistChange} className="!hidden" />
+          </>
         )}
       </Form>
     </Modal>
