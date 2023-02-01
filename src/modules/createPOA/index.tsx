@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, Radio } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import Papa from 'papaparse';
@@ -17,6 +17,7 @@ interface CreatePOAProps {
 
 const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
   const [form] = Form.useForm();
+  const csvRef = useRef;
   const { Option } = Select;
   const { RangePicker } = DatePicker;
   useResetFormOnCloseModal({ form, open });
@@ -55,12 +56,20 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
         form.setFieldsValue({ whitelist: res });
       },
     });
-    // console.log('test', res.data);
   }, []);
 
   const handleFinish = useCallback((values: any) => {
     console.log(values);
     hideModal();
+  }, []);
+
+  const handleCancel = useCallback(() => {
+    setDateDisabled(false);
+    setNumberDisabled(false);
+    setPublicLimit(false);
+    setpasswordDisabled(false);
+    setWhitelistDisabled(true);
+    onCancel();
   }, []);
 
   useEffect(() => {
@@ -74,7 +83,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
   }, []);
 
   return (
-    <Modal title="创建活动" open={open} onOk={form.submit} onCancel={onCancel} width={'30.5%'} style={{ top: '14px' }} bodyStyle={{ paddingTop: '16px' }}>
+    <Modal title="创建活动" open={open} onOk={form.submit} onCancel={handleCancel} width={'30.5%'} style={{ top: '14px' }} bodyStyle={{ paddingTop: '16px' }}>
       <Form name="basic" form={form} layout="vertical" onFinish={handleFinish} initialValues={{ chain: 'conflux' }} autoComplete="off">
         <Form.Item name="chain" label="区块链" rules={[{ required: true }]}>
           <Select>
@@ -104,6 +113,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           </label>
           <div>
             <Switch
+              checked={dateDisabled}
               onClick={(checked, e) => {
                 e.preventDefault();
                 setDateDisabled(checked);
@@ -134,6 +144,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           </label>
           <div>
             <Switch
+              checked={numberDisabled}
               onClick={(checked, e) => {
                 e.preventDefault();
                 setNumberDisabled(checked);
@@ -173,6 +184,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           </label>
           <div>
             <Switch
+              checked={passwordDisabled}
               onClick={(checked, e) => {
                 e.preventDefault();
                 setpasswordDisabled(checked);
@@ -201,6 +213,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
               </label>
             )}
             <Switch
+              checked={!whitelistDisabled}
               onClick={(checked, e) => {
                 e.preventDefault();
                 setWhitelistDisabled(!checked);
