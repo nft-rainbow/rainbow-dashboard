@@ -35,15 +35,15 @@ export async function createApp(metadata: any) {
 }
 
 export async function getAppDetail(id: number | string) {
-  return await get(`/dashboard/apps/${id}/`);
+  return await get(`/dashboard/apps/${id}`);
 }
 
 export async function updateApp(id: number | string, metadata: any) {
-  return await put(`/dashboard/apps/${id}/`, metadata);
+  return await put(`/dashboard/apps/${id}`, metadata);
 }
 
 export async function getAppFiles(id: number | string, page?: number, limit?: number) {
-  return await get(`/dashboard/apps/${id}/files/`, {page, limit});
+  return await get(`/dashboard/apps/${id}/files`, {page, limit});
 }
 
 export async function getAppMetadatas(id: number | string, page?: number, limit?: number) {
@@ -55,17 +55,17 @@ export async function getAppContracts(id: number | string, page?: number, limit?
 }
 
 export async function getAppNfts(id: number | string, page?: number, limit?: number) {
-  return await get(`/dashboard/apps/${id}/nft/`, {page, limit});
+  return await get(`/dashboard/apps/${id}/nft`, {page, limit});
 }
 
 export async function getAppNftsOfContract(id: number | string, address: string, page?: number, limit?: number) {
-  return await get(`/dashboard/apps/${id}/contracts/${address}/nft/`, {page, limit});
+  return await get(`/dashboard/apps/${id}/contracts/${address}/nft`, {page, limit});
 }
 
 export async function easyMintUrl(id: string, options: any) {
-  return await post(`/dashboard/apps/${id}/nft/`, options);
+  return await post(`/dashboard/apps/${id}/nft`, options);
 }
 
 export async function getAppAccounts(id: number | string): Promise<ChainAccount[]> {
-  return await get(`/dashboard/apps/${id}/accounts/`);
+  return await get(`/dashboard/apps/${id}/accounts`);
 }

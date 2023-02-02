@@ -22,7 +22,7 @@
       //TODO: CHANGE ROUTES INTO PAGES
       "@pages/*": ["./src/pages/*"],
       // "@store/*": ["./src/store/*"],
-      // "@hooks/*": ["./src/hooks/*"],
+      "@hooks/*": ["./src/hooks/*"],
       "@components/*": ["./src/components/*"],
       "@services/*": ["./src/services/*"],
       "@router/*": ["./src/router/*"],
