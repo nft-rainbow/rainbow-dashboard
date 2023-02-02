@@ -5,6 +5,7 @@ import Papa from 'papaparse';
 import FileUpload from '@components/FileUpload';
 import { PopoverContent, ExistRelationForbidden } from './constants';
 import { isCoexisted } from '@utils/index';
+import { parseCSV } from '@utils/csvUtils';
 import useResetFormOnCloseModal from '@hooks/useResetFormOnCloseModal';
 import './index.css';
 
@@ -28,15 +29,14 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
 
   const handleWhiltelistChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(async (e) => {
     if (!e.target?.files?.length) return;
-    Papa.parse(e.target?.files[0], {
-      header: true,
-      skipEmptyLines: true,
-      complete: async function (results) {
-        console.log(results.data);
-        let res = JSON.stringify(results.data);
+    const csvResPromise = parseCSV(e.target?.files[0]);
+    csvResPromise
+      .then((res) => {
         form.setFieldsValue({ whitelist: res });
-      },
-    });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   const handleFinish = useCallback((values: any) => {
