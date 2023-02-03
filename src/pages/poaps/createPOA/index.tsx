@@ -7,7 +7,7 @@ import { isCoexisted } from '@utils/index';
 import { parseCSV } from '@utils/csvUtils';
 import { handleFormSwitch, defaultSwitchers } from '@utils/createActivityHelper';
 import useResetFormOnCloseModal from '@hooks/useResetFormOnCloseModal';
-import './index.css';
+import './index.scss';
 
 interface CreatePOAProps {
   open: boolean;
@@ -55,7 +55,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
       wrapClassName="flex items-center"
       bodyStyle={{ paddingTop: '16px' }}
     >
-      <Form name="basic" form={form} layout="vertical" onFinish={handleFinish} initialValues={{ chain: 'conflux' }} autoComplete="off">
+      <Form id="createActivityForm" name="basic" form={form} layout="vertical" onFinish={handleFinish} initialValues={{ chain: 'conflux' }} autoComplete="off">
         <Form.Item name="chain" label="区块链" rules={[{ required: true }]}>
           <Select>
             <Option value="conflux">树图链</Option>
@@ -69,7 +69,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           <Input placeholder="请输入" />
         </Form.Item>
         <div className="mb-8px flex flex-row justify-between">
-          <label htmlFor="activityDate" className="required" title="活动日期">
+          <label htmlFor="activityDate" className="required text-14px leading-22px" title="活动日期">
             活动日期：
           </label>
           <div>
@@ -80,7 +80,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
                 dispatch({ type: 'set', name: 'dateDisabled', value: checked });
               }}
             />
-            <span className="ml-8px">不限制结束日期</span>
+            <span className="ml-8px text-14px leading-22px">不限制结束日期</span>
           </div>
         </div>
         <Form.Item id="activityDate" name="activityDate" rules={[{ required: true, message: '请输入活动日期' }]}>
@@ -118,7 +118,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           <div className="mb-24px w-full h-32px"></div>
         ) : (
           <Form.Item name="issueNumber" rules={[{ required: true, message: '请输入发行数量' }]}>
-            <Input placeholder="请输入" />
+            <Input placeholder="请输入" id="issueNumber" />
           </Form.Item>
         )}
         <div className="flex flex-row justify-between">
