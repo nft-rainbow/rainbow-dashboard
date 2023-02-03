@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useReducer } from 'react';
 import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, Radio } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import Papa from 'papaparse';
 import FileUpload from '@components/FileUpload';
 import { PopoverContent, ExistRelationForbidden } from './constants';
 import { isCoexisted } from '@utils/index';
 import { parseCSV } from '@utils/csvUtils';
+import { handleFormSwitch, defaultSwitchers } from '@utils/createActivityHelper';
 import useResetFormOnCloseModal from '@hooks/useResetFormOnCloseModal';
 import './index.css';
 
@@ -17,15 +17,10 @@ interface CreatePOAProps {
 
 const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
   const [form] = Form.useForm();
+  useResetFormOnCloseModal({ form, open });
   const { Option } = Select;
   const { RangePicker } = DatePicker;
-  useResetFormOnCloseModal({ form, open });
-  const [dateDisabled, setDateDisabled] = useState(false);
-  const [numberDisabled, setNumberDisabled] = useState(false);
-  const [publicLimitDisabled, setPublicLimitDisabled] = useState(false);
-  const [passwordDisabled, setpasswordDisabled] = useState(false);
-  const [whitelistDisabled, setWhitelistDisabled] = useState(true);
-  const [existRelationForbidden, setExistedRelationForbidden] = useState(false);
+  const [switchers, dispatch] = useReducer(handleFormSwitch, defaultSwitchers);
 
   const handleWhiltelistChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(async (e) => {
     if (!e.target?.files?.length) return;
@@ -45,11 +40,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
   }, []);
 
   const handleCancel = useCallback(() => {
-    setDateDisabled(false);
-    setNumberDisabled(false);
-    setPublicLimitDisabled(false);
-    setpasswordDisabled(false);
-    setWhitelistDisabled(true);
+    dispatch({ type: 'reset' });
     onCancel();
   }, []);
 
@@ -59,7 +50,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
       open={open}
       onOk={form.submit}
       onCancel={handleCancel}
-      width={'30.5%'}
+      width={'440px'}
       style={{ top: '0px', paddingBottom: '0px' }}
       wrapClassName="flex items-center"
       bodyStyle={{ paddingTop: '16px' }}
@@ -83,17 +74,17 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           </label>
           <div>
             <Switch
-              checked={dateDisabled}
+              checked={switchers.dateDisabled}
               onClick={(checked, e) => {
                 e.preventDefault();
-                setDateDisabled(checked);
+                dispatch({ type: 'set', name: 'dateDisabled', value: checked });
               }}
             />
             <span className="ml-8px">不限制结束日期</span>
           </div>
         </div>
         <Form.Item id="activityDate" name="activityDate" rules={[{ required: true, message: '请输入活动日期' }]}>
-          <RangePicker id="activityDate" showTime placeholder={['开始日期', '结束日期']} disabled={[false, dateDisabled]} allowEmpty={[false, true]} />
+          <RangePicker id="activityDate" showTime placeholder={['开始日期', '结束日期']} disabled={[false, switchers.dateDisabled]} allowEmpty={[false, true]} />
         </Form.Item>
         <Form.Item label="上传图片：" name="pictures" rules={[{ required: true, message: '请上传图片' }]} className="mb-0">
           <FileUpload
@@ -114,16 +105,16 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           </label>
           <div>
             <Switch
-              checked={numberDisabled}
+              checked={switchers.numberDisabled}
               onClick={(checked, e) => {
                 e.preventDefault();
-                setNumberDisabled(checked);
+                dispatch({ type: 'set', name: 'numberDisabled', value: checked });
               }}
             />
             <span className="ml-8px">不限制发行数量</span>
           </div>
         </div>
-        {numberDisabled ? (
+        {switchers.numberDisabled ? (
           <div className="mb-24px w-full h-32px"></div>
         ) : (
           <Form.Item name="issueNumber" rules={[{ required: true, message: '请输入发行数量' }]}>
@@ -136,21 +127,21 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           </label>
           <Radio.Group
             onChange={(e) => {
-              const res = isCoexisted(e.target.value, numberDisabled);
+              const res = isCoexisted(e.target.value, switchers.numberDisabled);
               if (res) {
-                setExistedRelationForbidden(true);
+                dispatch({ type: 'set', name: 'existRelationForbidden', value: true });
                 return;
               }
-              setPublicLimitDisabled(e.target.value);
+              dispatch({ type: 'set', name: 'publicLimitDisabled', value: e.target.value });
             }}
-            value={publicLimitDisabled}
+            value={switchers.publicLimitDisabled}
           >
             <Radio value={false}>限制</Radio>
             <Radio value={true}>不限制</Radio>
           </Radio.Group>
         </div>
-        {existRelationForbidden && <ExistRelationForbidden />}
-        {publicLimitDisabled ? (
+        {switchers.existRelationForbidden && <ExistRelationForbidden />}
+        {switchers.publicLimitDisabled ? (
           <div className="mb-24px w-full h-32px"></div>
         ) : (
           <Form.Item name="publicLimit">
@@ -163,15 +154,15 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           </label>
           <div>
             <Switch
-              checked={passwordDisabled}
+              checked={switchers.passwordDisabled}
               onClick={(checked, e) => {
                 e.preventDefault();
-                setpasswordDisabled(checked);
+                dispatch({ type: 'set', name: 'passwordDisabled', value: checked });
               }}
             />
           </div>
         </div>
-        {!passwordDisabled ? (
+        {!switchers.passwordDisabled ? (
           <div className="mb-24px w-full h-32px"></div>
         ) : (
           <Form.Item name="publicLimit">
@@ -186,21 +177,21 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
             </Popover>
           </div>
           <div>
-            {!whitelistDisabled && (
+            {!switchers.whitelistDisabled && (
               <label htmlFor="whitelistUpload" className="mr-8px text-12px font-400 text-#6953EF leading-20px">
                 导入CSV
               </label>
             )}
             <Switch
-              checked={!whitelistDisabled}
+              checked={!switchers.whitelistDisabled}
               onClick={(checked, e) => {
                 e.preventDefault();
-                setWhitelistDisabled(!checked);
+                dispatch({ type: 'set', name: 'whitelistDisabled', value: !checked });
               }}
             />
           </div>
         </div>
-        {!whitelistDisabled && (
+        {!switchers.whitelistDisabled && (
           <>
             <Form.Item name="whitelist" className="hidden">
               <Input />
