@@ -40,7 +40,8 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
     //TODO:app_id&id
     const params = formDataTranslate(values, 1, 1);
     try {
-      await createActivity(params);
+      console.log(params);
+      // await createActivity(params);
     } catch (err) {
       console.log(err);
     }
