@@ -14,7 +14,7 @@ export interface FormData {
   description: string;
   activityDate: Date[];
   activity_picture_url: string;
-  account: number;
+  amount: number;
   max_mint_count?: number;
   command?: string;
   white_list_infos?: [
@@ -75,7 +75,7 @@ export const formDataTranslate = (data: FormData, app_id: number, id: number) =>
   if (data.activityDate[1]) end_time = dateTraslate(new Date(data.activityDate[1]));
   return {
     activity_picture_url: data.activity_picture_url,
-    amount: data.account,
+    amount: data.amount ?? -1,
     app_id: app_id,
     chain_id: data.chain_id,
     description: data.description,

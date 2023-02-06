@@ -44,6 +44,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
     } catch (err) {
       console.log(err);
     }
+    dispatch({ type: 'reset' });
     hideModal();
   }, []);
 
@@ -164,7 +165,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
         {switchers.publicLimitDisabled ? (
           <div className="mb-24px w-full h-32px"></div>
         ) : (
-          <Form.Item name="max_mint_count">
+          <Form.Item name="max_mint_count" initialValue={1}>
             <InputNumber defaultValue={1} className="w-full" />
           </Form.Item>
         )}
