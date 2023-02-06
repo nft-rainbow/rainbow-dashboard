@@ -1,40 +1,19 @@
-import React, { useState, useCallback, useReducer } from 'react';
+import React, { useCallback, useReducer } from 'react';
 import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, Radio } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import FileUpload from '@components/FileUpload';
 import { PopoverContent, ExistRelationForbidden } from './constants';
+import { createActivity } from '@services/activity';
 import { isCoexisted } from '@utils/index';
-import { parseCSV } from '@utils/csvUtils';
-import { handleFormSwitch, defaultSwitchers } from '@utils/createActivityHelper';
+import { parseCSV, csvWhitelistFormat } from '@utils/csvUtils';
+import { handleFormSwitch, defaultSwitchers, formDataTranslate, type FormData } from '@utils/createActivityHelper';
 import useResetFormOnCloseModal from '@hooks/useResetFormOnCloseModal';
+import './index.scss';
 
 interface CreatePOAProps {
   open: boolean;
   onCancel: () => void;
   hideModal: () => void;
-}
-
-//TODO: to be edited after backend API is updated
-interface CreateActivityData {
-  activity_picture_url: string;
-  amount: number;
-  app_id: number;
-  chain_type?: number;
-  chain_id: number;
-  command?: string;
-  description: string;
-  end_time: 0;
-  id: 0;
-  max_mint_count: number;
-  name: string;
-  rainbow_user_id?: 0;
-  white_list_infos?: [
-    {
-      count: 0;
-      poapactivityConfigID?: 0;
-      user: string;
-    }
-  ];
 }
 
 const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
@@ -48,17 +27,23 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
     if (!e.target?.files?.length) return;
     const csvResPromise = parseCSV(e.target?.files[0]);
     csvResPromise
-      .then((res) => {
-        form.setFieldsValue({ whitelist: res });
+      .then((res: any) => {
+        const whiteListInfo = csvWhitelistFormat(res);
+        form.setFieldsValue({ white_list_infos: whiteListInfo });
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
 
-  const handleFinish = useCallback((values: CreateActivityData) => {
-    console.log(values);
-    debugger;
+  const handleFinish = useCallback(async (values: FormData) => {
+    //TODO:app_id&id
+    const params = formDataTranslate(values, 1, 1);
+    try {
+      await createActivity(params);
+    } catch (err) {
+      console.log(err);
+    }
     hideModal();
   }, []);
 
@@ -79,10 +64,14 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
       bodyStyle={{ paddingTop: '16px' }}
     >
       <Form id="createActivityForm" name="basic" form={form} layout="vertical" onFinish={handleFinish} initialValues={{ chain: 'conflux' }}>
-        <Form.Item name="chain_id" label="区块链" rules={[{ required: true }]}>
-          <Select defaultValue="1029">
-            <Option value="1029">树图链</Option>
-            <Option value="1">树图测试链</Option>
+        <Form.Item name="chain_id" label="区块链" rules={[{ required: true, message: '请选择区块链' }]} initialValue={1029}>
+          <Select defaultValue={1029}>
+            <Option value={1029} label="树图链">
+              树图链
+            </Option>
+            <Option value={1} label="树图测试链">
+              树图测试链
+            </Option>
           </Select>
         </Form.Item>
         <Form.Item name="name" label="活动名称" rules={[{ required: true, message: '请输入活动名称' }]}>
@@ -100,6 +89,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
               checked={switchers.dateDisabled}
               onClick={(checked, e) => {
                 e.preventDefault();
+                form.setFieldsValue({ activityDate: [null, null] });
                 dispatch({ type: 'set', name: 'dateDisabled', value: checked });
               }}
             />
@@ -107,7 +97,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           </div>
         </div>
         <Form.Item id="activityDate" name="activityDate" rules={[{ required: true, message: '请输入活动日期' }]}>
-          <RangePicker id="activityDate" showTime placeholder={['开始日期', '结束日期']} disabled={[false, !switchers.dateDisabled]} allowEmpty={[false, true]} />
+          <RangePicker id="activityDate" showTime placeholder={['开始日期', '结束日期']} disabled={[false, switchers.dateDisabled]} allowEmpty={[false, true]} />
         </Form.Item>
         <Form.Item label="上传图片：" name="activity_picture_url" rules={[{ required: true, message: '请上传图片' }]} className="mb-0">
           <FileUpload
@@ -123,7 +113,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           支持上传PNG、GIF、SVG、JPG、视频等格式，大小限制 5MB，推荐 1:1比例，如果图片是圆形，建议圆形图案正好在中间
         </div>
         <div className="mb-8px flex flex-row justify-between">
-          <label htmlFor="number" className="required" title="发行数量：">
+          <label htmlFor="account" className="required" title="发行数量：">
             发行数量：
           </label>
           <div>
@@ -131,6 +121,12 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
               checked={switchers.numberDisabled}
               onClick={(checked, e) => {
                 e.preventDefault();
+                const res = isCoexisted(checked, defaultSwitchers.publicLimitDisabled);
+                if (res) {
+                  dispatch({ type: 'set', name: 'publicLimitDisabled', value: false });
+                  dispatch({ type: 'set', name: 'existRelationForbidden', value: true });
+                  setTimeout(() => dispatch({ type: 'set', name: 'existRelationForbidden', value: false }), 1000);
+                }
                 dispatch({ type: 'set', name: 'numberDisabled', value: checked });
               }}
             />
@@ -140,12 +136,12 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
         {switchers.numberDisabled ? (
           <div className="mb-24px w-full h-32px"></div>
         ) : (
-          <Form.Item name="number" rules={[{ required: true, message: '请输入发行数量' }]}>
-            <Input placeholder="请输入" id="number" />
+          <Form.Item name="account" rules={[{ required: true, message: '请输入发行数量' }]}>
+            <Input placeholder="请输入" id="account" />
           </Form.Item>
         )}
         <div className="flex flex-row justify-between">
-          <label htmlFor="publicLimit" title="公开铸造上限：">
+          <label htmlFor="max_mint_count" title="公开铸造上限：">
             公开铸造上限：
           </label>
           <Radio.Group
@@ -164,11 +160,11 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
             <Radio value={true}>不限制</Radio>
           </Radio.Group>
         </div>
-        {switchers.existRelationForbidden && <ExistRelationForbidden />}
+        {switchers.existRelationForbidden ? <ExistRelationForbidden /> : <div className="h-[30px]"></div>}
         {switchers.publicLimitDisabled ? (
           <div className="mb-24px w-full h-32px"></div>
         ) : (
-          <Form.Item name="publicLimit">
+          <Form.Item name="max_mint_count">
             <InputNumber defaultValue={1} className="w-full" />
           </Form.Item>
         )}
@@ -217,7 +213,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
         </div>
         {!switchers.whitelistDisabled && (
           <>
-            <Form.Item name="whitelist" className="hidden">
+            <Form.Item name="white_list_infos" className="hidden">
               <Input />
             </Form.Item>
             <input type="file" accept=".csv" id="whitelistUpload" onChange={handleWhiltelistChange} className="!hidden" />
