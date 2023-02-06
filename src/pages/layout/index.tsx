@@ -40,7 +40,7 @@ const items: MenuItem[] = [
   getItem(<Link to="/panels">仪表盘</Link>, '1', <DashboardOutlined />),
   getItem(<Link to="/panels/apps">我的项目</Link>, '2', <AppstoreOutlined />),
   getItem(<Link to="/panels/contracts">智能合约</Link>, '3', <AuditOutlined />),
-  getItem(<Link to="/panels/poaps">POA活动</Link>, '4', <AuditOutlined />),
+  getItem(<Link to="/panels/poaps">活动</Link>, '4', <AuditOutlined />),
   getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">开发文档</a>, '5', <CodeOutlined />),
 ];
 

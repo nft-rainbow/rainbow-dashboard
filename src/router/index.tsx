@@ -18,7 +18,7 @@ import AppDetail from '@pages/apps/detail';
 import Contracts from '@pages/contracts';
 import ContractSponsor from '@pages/contracts/sponsor'
 import ContractDeployment from '@pages/contracts/new';
-import Poaps from '@pages/poaps';
+import Poaps from '@pages/activities';
 
 const AppRouter: React.FC = () => {
   return (
