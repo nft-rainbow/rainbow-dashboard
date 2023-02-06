@@ -1,14 +1,14 @@
-interface FormSwitcherState {
-  [key: string]: boolean;
+interface ResetSwitcherAction {
+  type: 'reset';
 }
 
-interface SwitcherAction {
-  type: string;
-  name?: string;
-  value?: boolean;
+interface SetSwitcherAction {
+  type: 'set';
+  name: Switcher;
+  value: boolean;
 }
 
-export const handleFormSwitch = (switchers: FormSwitcherState, action: SwitcherAction) => {
+export const handleFormSwitch = (switchers: Switchers, action: ResetSwitcherAction | SetSwitcherAction) => {
   switch (action.type) {
     case 'set': {
       switchers[action.name!] = action.value!;
@@ -19,16 +19,20 @@ export const handleFormSwitch = (switchers: FormSwitcherState, action: SwitcherA
       return { ...switchers };
     }
     default: {
-      throw Error('Unknown action: ' + action.type);
+      throw Error('Unknown action: ' + action);
     }
   }
 };
 
-export const defaultSwitchers: FormSwitcherState = {
+export const defaultSwitchers = {
   dateDisabled: false,
   numberDisabled: false,
   publicLimitDisabled: false,
   privateLimitDisabled: false,
+  passwordDisabled: true,
   whitelistDisabled: true,
   existRelationForbidden: false,
 };
+
+type Switcher = keyof typeof defaultSwitchers;
+type Switchers = typeof defaultSwitchers;

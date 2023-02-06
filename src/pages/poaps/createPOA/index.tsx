@@ -7,12 +7,34 @@ import { isCoexisted } from '@utils/index';
 import { parseCSV } from '@utils/csvUtils';
 import { handleFormSwitch, defaultSwitchers } from '@utils/createActivityHelper';
 import useResetFormOnCloseModal from '@hooks/useResetFormOnCloseModal';
-import './index.scss';
 
 interface CreatePOAProps {
   open: boolean;
   onCancel: () => void;
   hideModal: () => void;
+}
+
+//TODO: to be edited after backend API is updated
+interface CreateActivityData {
+  activity_picture_url: string;
+  amount: number;
+  app_id: number;
+  chain_type?: number;
+  chain_id: number;
+  command?: string;
+  description: string;
+  end_time: 0;
+  id: 0;
+  max_mint_count: number;
+  name: string;
+  rainbow_user_id?: 0;
+  white_list_infos?: [
+    {
+      count: 0;
+      poapactivityConfigID?: 0;
+      user: string;
+    }
+  ];
 }
 
 const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
@@ -34,8 +56,9 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
       });
   }, []);
 
-  const handleFinish = useCallback((values: any) => {
+  const handleFinish = useCallback((values: CreateActivityData) => {
     console.log(values);
+    debugger;
     hideModal();
   }, []);
 
@@ -55,17 +78,17 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
       wrapClassName="flex items-center"
       bodyStyle={{ paddingTop: '16px' }}
     >
-      <Form id="createActivityForm" name="basic" form={form} layout="vertical" onFinish={handleFinish} initialValues={{ chain: 'conflux' }} autoComplete="off">
-        <Form.Item name="chain" label="区块链" rules={[{ required: true }]}>
-          <Select>
-            <Option value="conflux">树图链</Option>
-            <Option value="conflux_test">树图测试链</Option>
+      <Form id="createActivityForm" name="basic" form={form} layout="vertical" onFinish={handleFinish} initialValues={{ chain: 'conflux' }}>
+        <Form.Item name="chain_id" label="区块链" rules={[{ required: true }]}>
+          <Select defaultValue="1029">
+            <Option value="1029">树图链</Option>
+            <Option value="1">树图测试链</Option>
           </Select>
         </Form.Item>
-        <Form.Item name="ActivityName" label="活动名称" rules={[{ required: true, message: '请输入活动名称' }]}>
+        <Form.Item name="name" label="活动名称" rules={[{ required: true, message: '请输入活动名称' }]}>
           <Input placeholder="请输入" />
         </Form.Item>
-        <Form.Item label="活动描述" name="ActivityDescription" rules={[{ required: true, message: '请输入活动描述' }]}>
+        <Form.Item label="活动描述" name="description" rules={[{ required: true, message: '请输入活动描述' }]}>
           <Input placeholder="请输入" />
         </Form.Item>
         <div className="mb-8px flex flex-row justify-between">
@@ -84,12 +107,12 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           </div>
         </div>
         <Form.Item id="activityDate" name="activityDate" rules={[{ required: true, message: '请输入活动日期' }]}>
-          <RangePicker id="activityDate" showTime placeholder={['开始日期', '结束日期']} disabled={[false, switchers.dateDisabled]} allowEmpty={[false, true]} />
+          <RangePicker id="activityDate" showTime placeholder={['开始日期', '结束日期']} disabled={[false, !switchers.dateDisabled]} allowEmpty={[false, true]} />
         </Form.Item>
-        <Form.Item label="上传图片：" name="pictures" rules={[{ required: true, message: '请上传图片' }]} className="mb-0">
+        <Form.Item label="上传图片：" name="activity_picture_url" rules={[{ required: true, message: '请上传图片' }]} className="mb-0">
           <FileUpload
             onChange={(err: Error, file: any) => {
-              form.setFieldsValue({ pictures: file.url });
+              form.setFieldsValue({ activity_picture_url: file.url });
             }}
             type="plus"
             wrapperClass="block w-full"
@@ -100,7 +123,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           支持上传PNG、GIF、SVG、JPG、视频等格式，大小限制 5MB，推荐 1:1比例，如果图片是圆形，建议圆形图案正好在中间
         </div>
         <div className="mb-8px flex flex-row justify-between">
-          <label htmlFor="issueNumber" className="required" title="发行数量：">
+          <label htmlFor="number" className="required" title="发行数量：">
             发行数量：
           </label>
           <div>
@@ -117,8 +140,8 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
         {switchers.numberDisabled ? (
           <div className="mb-24px w-full h-32px"></div>
         ) : (
-          <Form.Item name="issueNumber" rules={[{ required: true, message: '请输入发行数量' }]}>
-            <Input placeholder="请输入" id="issueNumber" />
+          <Form.Item name="number" rules={[{ required: true, message: '请输入发行数量' }]}>
+            <Input placeholder="请输入" id="number" />
           </Form.Item>
         )}
         <div className="flex flex-row justify-between">
@@ -130,6 +153,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
               const res = isCoexisted(e.target.value, switchers.numberDisabled);
               if (res) {
                 dispatch({ type: 'set', name: 'existRelationForbidden', value: true });
+                setTimeout(() => dispatch({ type: 'set', name: 'existRelationForbidden', value: false }), 1000);
                 return;
               }
               dispatch({ type: 'set', name: 'publicLimitDisabled', value: e.target.value });
@@ -149,23 +173,23 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           </Form.Item>
         )}
         <div className="mb-8px flex flex-row justify-between">
-          <label htmlFor="password" title="领取口令：">
+          <label htmlFor="command" title="领取口令：">
             领取口令：
           </label>
           <div>
             <Switch
-              checked={switchers.passwordDisabled}
+              checked={!switchers.passwordDisabled}
               onClick={(checked, e) => {
                 e.preventDefault();
-                dispatch({ type: 'set', name: 'passwordDisabled', value: checked });
+                dispatch({ type: 'set', name: 'passwordDisabled', value: !checked });
               }}
             />
           </div>
         </div>
-        {!switchers.passwordDisabled ? (
+        {switchers.passwordDisabled ? (
           <div className="mb-24px w-full h-32px"></div>
         ) : (
-          <Form.Item name="publicLimit">
+          <Form.Item name="command">
             <Input placeholder="请输入" className="w-full" />
           </Form.Item>
         )}
