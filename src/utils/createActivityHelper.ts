@@ -83,6 +83,8 @@ export const formDataTranslate = (data: FormData, app_id: number, id: number) =>
     end_time: end_time ?? -1,
     id: id,
     max_mint_count: data.max_mint_count ?? -1,
+    white_list_infos: data.white_list_infos,
+    command: data.command ?? '',
     name: data.name,
   };
 };

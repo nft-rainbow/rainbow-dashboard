@@ -4,7 +4,6 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import FileUpload from '@components/FileUpload';
 import { PopoverContent, ExistRelationForbidden } from './constants';
 import { createActivity } from '@services/activity';
-import { isCoexisted } from '@utils/index';
 import { parseCSV, csvWhitelistFormat } from '@utils/csvUtils';
 import { handleFormSwitch, defaultSwitchers, formDataTranslate, type FormData } from '@utils/createActivityHelper';
 import useResetFormOnCloseModal from '@hooks/useResetFormOnCloseModal';
@@ -41,7 +40,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
     const params = formDataTranslate(values, 1, 1);
     try {
       console.log(params);
-      // await createActivity(params);
+      await createActivity(params);
     } catch (err) {
       console.log(err);
     }
@@ -114,7 +113,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           支持上传PNG、GIF、SVG、JPG、视频等格式，大小限制 5MB，推荐 1:1比例，如果图片是圆形，建议圆形图案正好在中间
         </div>
         <div className="mb-8px flex flex-row justify-between">
-          <label htmlFor="account" className="required" title="发行数量：">
+          <label htmlFor="amount" className="required" title="发行数量：">
             发行数量：
           </label>
           <div>
@@ -122,8 +121,8 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
               checked={switchers.numberDisabled}
               onClick={(checked, e) => {
                 e.preventDefault();
-                const res = isCoexisted(checked, defaultSwitchers.publicLimitDisabled);
-                if (res) {
+                const relationAllowed = !checked && switchers.publicLimitDisabled;
+                if (relationAllowed) {
                   dispatch({ type: 'set', name: 'publicLimitDisabled', value: false });
                   dispatch({ type: 'set', name: 'existRelationForbidden', value: true });
                   setTimeout(() => dispatch({ type: 'set', name: 'existRelationForbidden', value: false }), 1000);
@@ -137,8 +136,8 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
         {switchers.numberDisabled ? (
           <div className="mb-24px w-full h-32px"></div>
         ) : (
-          <Form.Item name="account" rules={[{ required: true, message: '请输入发行数量' }]}>
-            <Input placeholder="请输入" id="account" />
+          <Form.Item name="amount" rules={[{ required: true, message: '请输入发行数量' }]}>
+            <Input placeholder="请输入" id="amount" />
           </Form.Item>
         )}
         <div className="flex flex-row justify-between">
@@ -147,7 +146,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           </label>
           <Radio.Group
             onChange={(e) => {
-              const res = isCoexisted(e.target.value, switchers.numberDisabled);
+              const res = !switchers.numberDisabled && e.target.value;
               if (res) {
                 dispatch({ type: 'set', name: 'existRelationForbidden', value: true });
                 setTimeout(() => dispatch({ type: 'set', name: 'existRelationForbidden', value: false }), 1000);

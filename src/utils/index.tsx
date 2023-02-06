@@ -127,4 +127,3 @@ export function mapChainNetworId(chainName: string) {
   }
 }
 
-export const isCoexisted = (x: boolean, y: boolean) => x && y;

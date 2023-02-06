@@ -28,4 +28,4 @@ export const PopoverContent = (
   </div>
 );
 
-export const ExistRelationForbidden = () => <div className="text-#ff4d4f mb-8px ">公开铸造上限与发行数量不可同时不限制</div>;
+export const ExistRelationForbidden = () => <div className="text-#ff4d4f mb-8px ">公开铸造上线不可小于发行数量</div>;

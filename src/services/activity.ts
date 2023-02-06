@@ -5,5 +5,5 @@ interface CreateActivityMeta extends CreateActivityData {
   id: number;
 }
 export const createActivity = async (meta: CreateActivityMeta) => {
-  return await post(`/dashboard/apps/poap/activity`, meta);
+  return await post(`/apps/poap/activity`, meta);
 };
