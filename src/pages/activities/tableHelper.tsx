@@ -1,6 +1,12 @@
 import { ActivityItem } from '../../models';
+import type { ColumnsType } from 'antd/es/table';
 import { Card, Button, Table, Form, Select, TablePaginationConfig, message, Tooltip } from 'antd';
 import { ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
+import ActivityLink from '@assets/icons/activityLink.svg';
+import AirDrop from '@assets/icons/airDrop.svg';
+import ManageActivity from '@assets/icons/manageActivity.svg';
+import ManageCollection from '@assets/icons/manageCollection.svg';
+import WebLink from '@assets/icons/webLink.svg';
 import { mapChainName, formatDate, short, scanTxLink, scanAddressLink, mapNFTType, mapChainNetworId } from '../../utils';
 export const Fackeddata: ActivityItem[] = [
   {
@@ -52,7 +58,27 @@ export const mapSimpleStatus = (status: number, error: string) => {
   }
 };
 
-export const columns = [
+export const activityOperations = () => (
+  <div className="flex flex-row">
+    <Tooltip title="管理活动">
+      <img src={ManageActivity} />
+    </Tooltip>
+    <Tooltip title="管理藏品">
+      <img src={ManageCollection} />
+    </Tooltip>
+    <Tooltip title="空投">
+      <img src={AirDrop} />
+    </Tooltip>
+    <Tooltip title="活动链接">
+      <img src={ActivityLink} />
+    </Tooltip>
+    <Tooltip title="网页搭建">
+      <img src={WebLink} />
+    </Tooltip>
+  </div>
+);
+
+export const columns: ColumnsType<ActivityItem> = [
   {
     title: '活动 ID',
     dataIndex: 'id',
@@ -86,5 +112,10 @@ export const columns = [
     title: '创建时间',
     dataIndex: 'create_time',
   },
+  {
+    title: '操作',
+    dataIndex: 'action',
+    fixed: 'right',
+    render: activityOperations,
+  },
 ];
-

@@ -39,6 +39,7 @@ export default function Poaps() {
       <Card title="活动" extra={extra}>
         <Table
           rowKey="id"
+          scroll={{x:1144}}
           dataSource={items}
           columns={columns}
           pagination={{

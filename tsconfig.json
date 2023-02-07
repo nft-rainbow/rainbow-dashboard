@@ -19,7 +19,7 @@
     "paths": {
       "@utils/*": ["./src/utils/*"],
       "@modules/*": ["./src/modules/*"],
-      //TODO: CHANGE ROUTES INTO PAGES
+      "@assets/*": ["./src/assets/*"],
       "@pages/*": ["./src/pages/*"],
       // "@store/*": ["./src/store/*"],
       "@hooks/*": ["./src/hooks/*"],
