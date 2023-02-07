@@ -60,19 +60,19 @@ export const mapSimpleStatus = (status: number, error: string) => {
 
 export const activityOperations = () => (
   <div className="flex flex-row">
-    <Tooltip title="管理活动">
+    <Tooltip title="管理活动" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
       <img src={ManageActivity} />
     </Tooltip>
-    <Tooltip title="管理藏品">
+    <Tooltip title="管理藏品" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
       <img src={ManageCollection} />
     </Tooltip>
-    <Tooltip title="空投">
+    <Tooltip title="空投" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
       <img src={AirDrop} />
     </Tooltip>
-    <Tooltip title="活动链接">
+    <Tooltip title="活动链接" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
       <img src={ActivityLink} />
     </Tooltip>
-    <Tooltip title="网页搭建">
+    <Tooltip title="网页搭建" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
       <img src={WebLink} />
     </Tooltip>
   </div>
@@ -115,6 +115,7 @@ export const columns: ColumnsType<ActivityItem> = [
   {
     title: '操作',
     dataIndex: 'action',
+    width: '177px',
     fixed: 'right',
     render: activityOperations,
   },
