@@ -87,7 +87,7 @@ export interface ActivityItem {
   chain_type: number;
   activity_name: string;
   activity_type: string;
-  start_time: string;
-  end_time?: string;
-  create_time: string;
+  start_time: number;
+  end_time?: number;
+  create_time: number;
 }

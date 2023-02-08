@@ -127,3 +127,27 @@ export function mapChainNetworId(chainName: string) {
   }
 }
 
+export const chainTypeToName = (chainType: number) => {
+  switch (chainType) {
+    case 1:
+      return '树图测试链';
+    case 1029:
+      return '树图链';
+    default:
+      return '其他';
+  }
+};
+
+export const timestampToDay = (timestamp: number) => {
+  if (!timestamp) return '';
+  const date = new Date(timestamp * 1000);
+  return `${date.getFullYear()}-${padLeftZero(date.getMonth() + 1)}-${padLeftZero(date.getDate())}`;
+};
+
+export const timestampToSecond = (timestamp: number) => {
+  if (!timestamp) return '';
+  const date = new Date(timestamp * 1000);
+  return `${date.getFullYear()}-${padLeftZero(date.getMonth() + 1)}-${padLeftZero(date.getDate())} ${padLeftZero(date.getHours())}:${padLeftZero(date.getMinutes())}:${padLeftZero(
+    date.getSeconds()
+  )}`;
+};

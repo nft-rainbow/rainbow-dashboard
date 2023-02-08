@@ -7,7 +7,7 @@ import AirDrop from '@assets/icons/airDrop.svg';
 import ManageActivity from '@assets/icons/manageActivity.svg';
 import ManageCollection from '@assets/icons/manageCollection.svg';
 import WebLink from '@assets/icons/webLink.svg';
-import { mapChainName, formatDate, short, scanTxLink, scanAddressLink, mapNFTType, mapChainNetworId } from '../../utils';
+import { chainTypeToName, timestampToDay, timestampToSecond } from '../../utils';
 export const Fackeddata: ActivityItem[] = [
   {
     id: 40665,
@@ -15,17 +15,17 @@ export const Fackeddata: ActivityItem[] = [
     chain_type: 1029,
     activity_name: 'crazy money',
     activity_type: '单个活动',
-    start_time: '2022-12-15',
-    create_time: '2022-11-10 14:30:00',
+    start_time: 1675841707,
+    create_time: 1675841707,
   },
   {
     id: 40603,
     contract_address: 'cfxtest:23333',
-    chain_type: 1029,
+    chain_type: 1,
     activity_name: 'MakeMeRich',
     activity_type: '单个活动',
-    start_time: '2022-12-15',
-    create_time: '2022-11-10 14:30:00',
+    start_time: 1675881999,
+    create_time: 1675881999,
   },
 ];
 
@@ -82,6 +82,8 @@ export const columns: ColumnsType<ActivityItem> = [
   {
     title: '活动 ID',
     dataIndex: 'id',
+    defaultSortOrder: 'descend',
+    sorter: (a, b) => a.id - b.id,
   },
   {
     title: '合约地址',
@@ -90,7 +92,9 @@ export const columns: ColumnsType<ActivityItem> = [
   {
     title: '区块链',
     dataIndex: 'chain_type',
-    render: mapChainName,
+    render: chainTypeToName,
+    defaultSortOrder: 'ascend',
+    sorter: (a, b) => a.chain_type - b.chain_type,
   },
   {
     title: '活动名称',
@@ -103,14 +107,20 @@ export const columns: ColumnsType<ActivityItem> = [
   {
     title: '开始时间',
     dataIndex: 'start_time',
+    render: (timestamp) => timestampToDay(timestamp),
+    defaultSortOrder: 'ascend',
+    sorter: (a, b) => b.start_time - a.start_time,
   },
   {
     title: '结束时间',
     dataIndex: 'end_time',
+    render: (timestamp) => timestampToDay(timestamp),
   },
   {
     title: '创建时间',
     dataIndex: 'create_time',
+    render: (timestamp) => timestampToSecond(timestamp),
+    sorter: (a, b) => b.create_time - a.create_time,
   },
   {
     title: '操作',
