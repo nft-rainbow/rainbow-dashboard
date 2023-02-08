@@ -5,6 +5,7 @@
   "publicPath": "./",
   "dependencies": {
     "@ant-design/icons": "^4.8.0",
+    "@ant-design/pro-components": "^2.3.53",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
@@ -18,6 +19,7 @@
     "js-conflux-sdk": "^2.1.8",
     "jsbi": "^4.3.0",
     "papaparse": "^5.3.2",
+    "pro-components": "link:@types/@ant-design/pro-components",
     "qrcode.react": "^3.1.0",
     "rc-menu": "^9.8.2",
     "react": "^18.2.0",

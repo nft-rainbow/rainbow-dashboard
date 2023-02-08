@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Button, Table, Form, Select, TablePaginationConfig, message, Tooltip, Space, Typography } from 'antd';
+// import ProTable, { ActionType } from '@ant-design/pro-table';
+import { ProTable, TableDropdown } from '@ant-design/pro-components';
 import { ActivityItem } from '../../models';
 import CreatePOA from './createActivities';
 import { Fackeddata, columns } from './tableHelper';
@@ -37,16 +39,16 @@ export default function Poaps() {
   return (
     <>
       <Card title="活动" extra={extra}>
-        <Table
+        <ProTable
           rowKey="id"
           scroll={{x:1144}}
           dataSource={items}
           columns={columns}
-          pagination={{
-            total,
-            current: page,
-            showTotal: (total) => `共 ${total} 条`,
-          }}
+          // pagination={{
+          //   total,
+          //   current: page,
+          //   showTotal: (total) => `共 ${total} 条`,
+          // }}
           onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
         />
       </Card>

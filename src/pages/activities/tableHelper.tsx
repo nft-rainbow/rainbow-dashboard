@@ -1,5 +1,6 @@
 import { ActivityItem } from '../../models';
 import type { ColumnsType } from 'antd/es/table';
+import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { Card, Button, Table, Form, Select, TablePaginationConfig, message, Tooltip } from 'antd';
 import { ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 import ActivityLink from '@assets/icons/activityLink.svg';
@@ -11,7 +12,7 @@ import { chainTypeToName, timestampToDay, timestampToSecond } from '../../utils'
 export const Fackeddata: ActivityItem[] = [
   {
     id: 40665,
-    contract_address: 'cfxtest:23333',
+    contract_address: 'cfxtest:233334',
     chain_type: 1029,
     activity_name: 'crazy money',
     activity_type: '单个活动',
@@ -20,7 +21,7 @@ export const Fackeddata: ActivityItem[] = [
   },
   {
     id: 40603,
-    contract_address: 'cfxtest:23333',
+    contract_address: 'cfxtest:233335',
     chain_type: 1,
     activity_name: 'MakeMeRich',
     activity_type: '单个活动',
@@ -78,23 +79,26 @@ export const activityOperations = () => (
   </div>
 );
 
-export const columns: ColumnsType<ActivityItem> = [
+export const columns: ProColumns<ActivityItem> = [
   {
     title: '活动 ID',
     dataIndex: 'id',
     defaultSortOrder: 'descend',
-    sorter: (a, b) => a.id - b.id,
+    sorter: (a: ActivityItem, b: ActivityItem) => a.id - b.id,
+    search: true,
   },
   {
     title: '合约地址',
     dataIndex: 'contract_address',
+    filterSearch: true,
+    onFilter: (value: string, record: ActivityItem) => record.contract_address.includes(value as string),
   },
   {
     title: '区块链',
     dataIndex: 'chain_type',
     render: chainTypeToName,
     defaultSortOrder: 'ascend',
-    sorter: (a, b) => a.chain_type - b.chain_type,
+    sorter: (a: ActivityItem, b: ActivityItem) => a.chain_type - b.chain_type,
   },
   {
     title: '活动名称',
@@ -107,20 +111,20 @@ export const columns: ColumnsType<ActivityItem> = [
   {
     title: '开始时间',
     dataIndex: 'start_time',
-    render: (timestamp) => timestampToDay(timestamp),
+    render: (timestamp: number) => timestampToDay(timestamp),
     defaultSortOrder: 'ascend',
-    sorter: (a, b) => b.start_time - a.start_time,
+    sorter: (a: ActivityItem, b: ActivityItem) => b.start_time - a.start_time,
   },
   {
     title: '结束时间',
     dataIndex: 'end_time',
-    render: (timestamp) => timestampToDay(timestamp),
+    render: (timestamp: number) => timestampToDay(timestamp),
   },
   {
     title: '创建时间',
     dataIndex: 'create_time',
-    render: (timestamp) => timestampToSecond(timestamp),
-    sorter: (a, b) => b.create_time - a.create_time,
+    render: (timestamp: number) => timestampToSecond(timestamp),
+    sorter: (a: ActivityItem, b: ActivityItem) => b.create_time - a.create_time,
   },
   {
     title: '操作',
