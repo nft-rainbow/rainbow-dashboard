@@ -1,7 +1,6 @@
 import { ActivityItem } from '../../models';
-import type { ColumnsType } from 'antd/es/table';
-import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { Card, Button, Table, Form, Select, TablePaginationConfig, message, Tooltip } from 'antd';
+import type { ProColumns } from '@ant-design/pro-components';
+import { Tooltip } from 'antd';
 import { ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 import ActivityLink from '@assets/icons/activityLink.svg';
 import AirDrop from '@assets/icons/airDrop.svg';
@@ -79,26 +78,24 @@ export const activityOperations = () => (
   </div>
 );
 
-export const columns: ProColumns<ActivityItem> = [
+export const columns: ProColumns<ActivityItem>[] = [
   {
     title: '活动 ID',
     dataIndex: 'id',
     defaultSortOrder: 'descend',
     sorter: (a: ActivityItem, b: ActivityItem) => a.id - b.id,
-    search: true,
   },
   {
     title: '合约地址',
     dataIndex: 'contract_address',
-    filterSearch: true,
-    onFilter: (value: string, record: ActivityItem) => record.contract_address.includes(value as string),
   },
   {
     title: '区块链',
     dataIndex: 'chain_type',
-    render: chainTypeToName,
+    render: (_, record) => chainTypeToName(record.chain_type),
     defaultSortOrder: 'ascend',
     sorter: (a: ActivityItem, b: ActivityItem) => a.chain_type - b.chain_type,
+    search: false,
   },
   {
     title: '活动名称',
@@ -107,24 +104,28 @@ export const columns: ProColumns<ActivityItem> = [
   {
     title: '活动类型',
     dataIndex: 'activity_type',
+    search: false,
   },
   {
     title: '开始时间',
     dataIndex: 'start_time',
-    render: (timestamp: number) => timestampToDay(timestamp),
+    render: (_, record) => timestampToDay(record.start_time),
     defaultSortOrder: 'ascend',
     sorter: (a: ActivityItem, b: ActivityItem) => b.start_time - a.start_time,
+    search: false,
   },
   {
     title: '结束时间',
     dataIndex: 'end_time',
-    render: (timestamp: number) => timestampToDay(timestamp),
+    render: (_, record) => timestampToDay(record.end_time),
+    search: false,
   },
   {
     title: '创建时间',
     dataIndex: 'create_time',
-    render: (timestamp: number) => timestampToSecond(timestamp),
+    render: (_, record) => timestampToSecond(record.create_time),
     sorter: (a: ActivityItem, b: ActivityItem) => b.create_time - a.create_time,
+    search: false,
   },
   {
     title: '操作',
@@ -132,5 +133,6 @@ export const columns: ProColumns<ActivityItem> = [
     width: '177px',
     fixed: 'right',
     render: activityOperations,
+    search: false,
   },
 ];

@@ -41,9 +41,10 @@ export default function Poaps() {
       <Card title="活动" extra={extra}>
         <ProTable
           rowKey="id"
-          scroll={{x:1144}}
+          scroll={{ x: 1144 }}
           dataSource={items}
           columns={columns}
+          search={{ span: 6 }}
           // pagination={{
           //   total,
           //   current: page,

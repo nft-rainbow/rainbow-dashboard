@@ -31,7 +31,7 @@ export async function getAllApps() {
 }
 
 export async function createApp(metadata: any) {
-  return await post('/dashboard/apps/', metadata);
+  return await post('/dashboard/apps', metadata);
 }
 
 export async function getAppDetail(id: number | string) {

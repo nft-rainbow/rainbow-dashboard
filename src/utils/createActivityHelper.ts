@@ -14,7 +14,7 @@ export interface FormData {
   description: string;
   activityDate: Date[];
   activity_picture_url: string;
-  amount: number;
+  amount: string;
   max_mint_count?: number;
   command?: string;
   white_list_infos?: [
@@ -36,7 +36,6 @@ export interface CreateActivityData {
   description: string;
   end_time?: number | null;
   start_time: number;
-  id: number;
   max_mint_count: number;
   name: string;
   rainbow_user_id?: number;
@@ -68,24 +67,25 @@ export const dateTraslate = (date: Date) => {
   return Math.floor(date.getTime() / 1000);
 };
 
-export const formDataTranslate = (data: FormData, app_id: number, id: number) => {
+export const formDataTranslate = (data: FormData, app_id: number) => {
   let start_time = null;
   let end_time = null;
   start_time = dateTraslate(new Date(data.activityDate[0]));
   if (data.activityDate[1]) end_time = dateTraslate(new Date(data.activityDate[1]));
+  //TODO: activiti_type is hardcoded
   return {
     activity_picture_url: data.activity_picture_url,
-    amount: data.amount ?? -1,
+    amount: parseInt(data.amount) ?? -1,
     app_id: app_id,
     chain_id: data.chain_id,
     description: data.description,
     start_time: start_time,
     end_time: end_time ?? -1,
-    id: id,
     max_mint_count: data.max_mint_count ?? -1,
     white_list_infos: data.white_list_infos,
     command: data.command ?? '',
     name: data.name,
+    activity_type: 'single',
   };
 };
 

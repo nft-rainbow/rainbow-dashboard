@@ -138,7 +138,7 @@ export const chainTypeToName = (chainType: number) => {
   }
 };
 
-export const timestampToDay = (timestamp: number) => {
+export const timestampToDay = (timestamp: number | undefined) => {
   if (!timestamp) return '';
   const date = new Date(timestamp * 1000);
   return `${date.getFullYear()}-${padLeftZero(date.getMonth() + 1)}-${padLeftZero(date.getDate())}`;

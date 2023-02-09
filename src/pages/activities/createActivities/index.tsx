@@ -37,7 +37,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
 
   const handleFinish = useCallback(async (values: FormData) => {
     //TODO:app_id&id
-    const params = formDataTranslate(values, 1, 1);
+    const params = formDataTranslate(values, 157);
     try {
       console.log(params);
       await createActivity(params);
