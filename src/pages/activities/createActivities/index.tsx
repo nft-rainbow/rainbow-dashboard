@@ -47,9 +47,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
   const handleFinish = useCallback(async (values: FormData) => {
     const params = formDataTranslate(values);
     try {
-      debugger;
       await createActivity(params);
-      debugger;
       dispatch({ type: 'reset' });
       hideModal();
     } catch (err) {
