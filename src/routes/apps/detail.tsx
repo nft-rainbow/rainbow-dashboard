@@ -140,9 +140,9 @@ export default function AppDetail() {
           <TabPane tab="文件" key="3">
             <AppFiles id={idStr} />
           </TabPane>
-          <TabPane tab="POAP" key="4">
+          {/* <TabPane tab="POAP" key="4">
             <AppPoaps id={idStr} />
-          </TabPane>
+          </TabPane> */}
         </Tabs>
       </Card>
       <Modal 
@@ -510,6 +510,9 @@ function dealError(message: string) {
     }
     if (message.match('ERC721: token already minted')) {
         return '该 TokenId 已经被使用';
+    }
+    if (message.match('NFT: URI different with previous')) {
+        return '1155合约，同 TokenId 的 URI 不一致';
     }
     return message;
 }
