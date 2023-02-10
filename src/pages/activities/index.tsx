@@ -4,12 +4,12 @@ import { Card, Button, Table, Form, Select, TablePaginationConfig, message, Tool
 import { ProTable, TableDropdown } from '@ant-design/pro-components';
 import { ActivityItem } from '../../models';
 import CreatePOA from './createActivities';
-import { Fackeddata, columns } from './tableHelper';
+import { columns } from './tableHelper';
 import { mapChainName, formatDate, short, scanTxLink, scanAddressLink, mapNFTType, mapChainNetworId } from '../../utils';
-import { listContracts, deployContract, ContractFilter } from '../../services/contract';
+import { getActivities, ActivityFilter } from '@services/activity';
 
 export default function Poaps() {
-  const [items, setItems] = useState<ActivityItem[]>(Fackeddata);
+  const [items, setItems] = useState<ActivityItem[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
 
@@ -19,14 +19,16 @@ export default function Poaps() {
     setIsActivityModalVisible(false);
   };
 
-  // useEffect(() => {
-  //   const filter: ContractFilter = {};
-  //   if (appIdFilter !== '0') filter.app_id = parseInt(appIdFilter);
-  //   listContracts(page, 10, filter).then((res) => {
-  //     setTotal(res.count);
-  //     setItems(res.items);
-  //   });
-  // }, [page, appIdFilter]);
+  useEffect(() => {
+    const filter: ActivityFilter = {};
+    // if (appIdFilter !== '0') filter.app_id = parseInt(appIdFilter);
+    getActivities(page, 10, filter).then((res) => {
+      debugger;
+      setTotal(res.count);
+      setItems(res.items);
+    });
+    // }, [page,appIdFilter]);
+  }, []);
 
   const extra = (
     <Space>

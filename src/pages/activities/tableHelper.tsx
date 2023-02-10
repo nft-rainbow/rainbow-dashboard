@@ -8,26 +8,6 @@ import ManageActivity from '@assets/icons/manageActivity.svg';
 import ManageCollection from '@assets/icons/manageCollection.svg';
 import WebLink from '@assets/icons/webLink.svg';
 import { chainTypeToName, timestampToDay, timestampToSecond } from '../../utils';
-export const Fackeddata: ActivityItem[] = [
-  {
-    id: 40665,
-    contract_address: 'cfxtest:233334',
-    chain_type: 1029,
-    activity_name: 'crazy money',
-    activity_type: '单个活动',
-    start_time: 1675841707,
-    create_time: 1675841707,
-  },
-  {
-    id: 40603,
-    contract_address: 'cfxtest:233335',
-    chain_type: 1,
-    activity_name: 'MakeMeRich',
-    activity_type: '单个活动',
-    start_time: 1675881999,
-    create_time: 1675881999,
-  },
-];
 
 export const mapSimpleStatus = (status: number, error: string) => {
   switch (status) {
