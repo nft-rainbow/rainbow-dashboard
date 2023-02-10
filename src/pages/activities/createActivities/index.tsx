@@ -3,7 +3,7 @@ import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, R
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { App } from '../../../models';
 import FileUpload from '@components/FileUpload';
-import { PopoverContent, ExistRelationForbidden } from './constants';
+import { PopoverContent, ExistRelationForbidden, ModalStyle, PictureReminder } from './constants';
 import { createActivity } from '@services/activity';
 import { getAllApps } from '@services/app';
 import { parseCSV, csvWhitelistFormat } from '@utils/csvUtils';
@@ -25,6 +25,12 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
   const { RangePicker } = DatePicker;
   const [switchers, dispatch] = useReducer(handleFormSwitch, defaultSwitchers);
 
+  const checkRelAllowed = useCallback((rule: any, value: number, callback: any) => {
+    const amount = form.getFieldValue('amount');
+    if (!switchers.numberDisabled && amount && amount < value) callback('公开铸造上限不能大于发行数量');
+    callback();
+  }, []);
+
   const handleWhiltelistChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(async (e) => {
     if (!e.target?.files?.length) return;
     const csvResPromise = parseCSV(e.target?.files[0]);
@@ -39,11 +45,11 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
   }, []);
 
   const handleFinish = useCallback(async (values: FormData) => {
-    //TODO:app_id&id
     const params = formDataTranslate(values);
     try {
-      console.log(params);
+      debugger;
       await createActivity(params);
+      debugger;
       dispatch({ type: 'reset' });
       hideModal();
     } catch (err) {
@@ -63,19 +69,10 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
   }, []);
 
   return (
-    <Modal
-      title="创建活动"
-      open={open}
-      onOk={form.submit}
-      onCancel={handleCancel}
-      width={'440px'}
-      style={{ top: '0px', paddingBottom: '0px' }}
-      wrapClassName="flex items-center"
-      bodyStyle={{ paddingTop: '16px' }}
-    >
+    <Modal title="创建活动" open={open} onOk={form.submit} onCancel={handleCancel} {...ModalStyle}>
       <Form id="createActivityForm" name="basic" form={form} layout="vertical" onFinish={handleFinish} initialValues={{ chain: 'conflux' }}>
         <Form.Item name="app_id" label="所属项目" rules={[{ required: true, message: '请选择项目' }]}>
-          <Select>
+          <Select placeholder="请选择项目">
             {apps.map((app) => (
               <Option key={app.id} value={app.id}>
                 {app.name}
@@ -125,9 +122,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
             className="block"
           />
         </Form.Item>
-        <div className="mt-8px mb-24px text-12px font-400 text-#9B99A5 leading-17px">
-          支持上传PNG、GIF、SVG、JPG、视频等格式，大小限制 5MB，推荐 1:1比例，如果图片是圆形，建议圆形图案正好在中间
-        </div>
+        <PictureReminder />
         <div className="mb-8px flex flex-row justify-between">
           <label htmlFor="amount" className="required" title="发行数量：">
             发行数量：
@@ -180,7 +175,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
         {switchers.publicLimitDisabled ? (
           <div className="mb-24px w-full h-32px"></div>
         ) : (
-          <Form.Item name="max_mint_count" initialValue={1}>
+          <Form.Item name="max_mint_count" initialValue={1} rules={[{ validator: checkRelAllowed, message: '公开铸造上限不可超过发行上限' }]}>
             <InputNumber defaultValue={1} className="w-full" />
           </Form.Item>
         )}

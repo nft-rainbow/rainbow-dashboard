@@ -28,4 +28,17 @@ export const PopoverContent = (
   </div>
 );
 
+export const PictureReminder: React.FC = () => (
+  <div className="mt-8px mb-24px text-12px font-400 text-#9B99A5 leading-17px">
+    支持上传PNG、GIF、SVG、JPG、视频等格式，大小限制 5MB，推荐 1:1比例，如果图片是圆形，建议圆形图案正好在中间
+  </div>
+);
+
+export const ModalStyle = {
+  width: '440px',
+  style: { top: '0px', paddingBottom: '0px' },
+  wrapClassName: 'flex items-center',
+  bodyStyle: { paddingTop: '16px' },
+};
+
 export const ExistRelationForbidden = () => <div className="text-#ff4d4f mb-8px ">公开铸造上线不可小于发行数量</div>;

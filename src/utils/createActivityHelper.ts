@@ -25,7 +25,6 @@ export interface FormData {
   ];
 }
 
-//TODO: to be edited after backend API is updated
 export interface CreateActivityData {
   activity_picture_url: string;
   amount: number;
