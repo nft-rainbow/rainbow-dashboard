@@ -1,8 +1,6 @@
 import { post } from '.';
 import { type CreateActivityData } from '@utils/createActivityHelper';
-interface CreateActivityMeta extends CreateActivityData {
-  app_id: number;
-}
-export const createActivity = async (meta: CreateActivityMeta) => {
+
+export const createActivity = async (meta: CreateActivityData) => {
   return await post(`/apps/poap/activity`, meta);
 };

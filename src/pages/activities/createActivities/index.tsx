@@ -1,9 +1,11 @@
-import React, { useCallback, useReducer } from 'react';
+import React, { useState, useEffect, useCallback, useReducer } from 'react';
 import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, Radio } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { App } from '../../../models';
 import FileUpload from '@components/FileUpload';
 import { PopoverContent, ExistRelationForbidden } from './constants';
 import { createActivity } from '@services/activity';
+import { getAllApps } from '@services/app';
 import { parseCSV, csvWhitelistFormat } from '@utils/csvUtils';
 import { handleFormSwitch, defaultSwitchers, formDataTranslate, type FormData } from '@utils/createActivityHelper';
 import useResetFormOnCloseModal from '@hooks/useResetFormOnCloseModal';
@@ -16,6 +18,7 @@ interface CreatePOAProps {
 }
 
 const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
+  const [apps, setApps] = useState<App[]>([]);
   const [form] = Form.useForm();
   useResetFormOnCloseModal({ form, open });
   const { Option } = Select;
@@ -37,20 +40,26 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
 
   const handleFinish = useCallback(async (values: FormData) => {
     //TODO:app_id&id
-    const params = formDataTranslate(values, 157);
+    const params = formDataTranslate(values);
     try {
       console.log(params);
       await createActivity(params);
+      dispatch({ type: 'reset' });
+      hideModal();
     } catch (err) {
       console.log(err);
     }
-    dispatch({ type: 'reset' });
-    hideModal();
   }, []);
 
   const handleCancel = useCallback(() => {
     dispatch({ type: 'reset' });
     onCancel();
+  }, []);
+
+  useEffect(() => {
+    getAllApps().then((res) => {
+      setApps(res);
+    });
   }, []);
 
   return (
@@ -65,14 +74,13 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
       bodyStyle={{ paddingTop: '16px' }}
     >
       <Form id="createActivityForm" name="basic" form={form} layout="vertical" onFinish={handleFinish} initialValues={{ chain: 'conflux' }}>
-        <Form.Item name="chain_id" label="区块链" rules={[{ required: true, message: '请选择区块链' }]} initialValue={1029}>
-          <Select defaultValue={1029}>
-            <Option value={1029} label="树图链">
-              树图链
-            </Option>
-            <Option value={1} label="树图测试链">
-              树图测试链
-            </Option>
+        <Form.Item name="app_id" label="所属项目" rules={[{ required: true, message: '请选择项目' }]}>
+          <Select>
+            {apps.map((app) => (
+              <Option key={app.id} value={app.id}>
+                {app.name}
+              </Option>
+            ))}
           </Select>
         </Form.Item>
         <Form.Item name="name" label="活动名称" rules={[{ required: true, message: '请输入活动名称' }]}>
@@ -107,7 +115,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
         <Form.Item id="activityDate" name="activityDate" rules={[{ required: true, message: '请输入活动日期' }]}>
           <RangePicker id="activityDate" showTime placeholder={['开始日期', '结束日期']} disabled={[false, switchers.dateDisabled]} allowEmpty={[false, true]} />
         </Form.Item>
-        <Form.Item label="上传图片：" name="activity_picture_url" rules={[{ required: true, message: '请上传图片' }]} className="mb-0">
+        <Form.Item label="活动封面：" name="activity_picture_url" rules={[{ required: true, message: '请上传活动封面' }]} className="mb-0">
           <FileUpload
             onChange={(err: Error, file: any) => {
               form.setFieldsValue({ activity_picture_url: file.url });

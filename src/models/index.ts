@@ -58,7 +58,7 @@ export interface ChainAccount extends BaseModel {
   id: number;
   chain_type: number;
   chain_id: number;
-  app_id: number;
+  app_id: string;
   address: string;
   public_key: string;
   private_key: string;

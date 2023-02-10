@@ -9,8 +9,8 @@ interface SetSwitcherAction {
 }
 
 export interface FormData {
-  chain_id: number;
   name: string;
+  app_id: string;
   description: string;
   activityDate: Date[];
   activity_picture_url: string;
@@ -29,9 +29,7 @@ export interface FormData {
 export interface CreateActivityData {
   activity_picture_url: string;
   amount: number;
-  app_id: number;
-  chain_type?: number;
-  chain_id: number;
+  app_id: string;
   command?: string;
   description: string;
   end_time?: number | null;
@@ -67,7 +65,7 @@ export const dateTraslate = (date: Date) => {
   return Math.floor(date.getTime() / 1000);
 };
 
-export const formDataTranslate = (data: FormData, app_id: number) => {
+export const formDataTranslate = (data: FormData) => {
   let start_time = null;
   let end_time = null;
   start_time = dateTraslate(new Date(data.activityDate[0]));
@@ -75,9 +73,8 @@ export const formDataTranslate = (data: FormData, app_id: number) => {
   //TODO: activiti_type is hardcoded
   return {
     activity_picture_url: data.activity_picture_url,
-    amount: parseInt(data.amount) ?? -1,
-    app_id: app_id,
-    chain_id: data.chain_id,
+    amount: parseInt(data.amount ?? '-1'),
+    app_id: data.app_id,
     description: data.description,
     start_time: start_time,
     end_time: end_time ?? -1,

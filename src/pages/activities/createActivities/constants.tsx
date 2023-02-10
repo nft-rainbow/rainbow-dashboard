@@ -1,6 +1,6 @@
 export interface contract {
   address: string;
-  app_id: number;
+  app_id: string;
   base_uri: string;
   chain_id: number;
   chain_type: number;
