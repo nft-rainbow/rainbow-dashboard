@@ -7,7 +7,8 @@ import AirDrop from '@assets/icons/airDrop.svg';
 import ManageActivity from '@assets/icons/manageActivity.svg';
 import ManageCollection from '@assets/icons/manageCollection.svg';
 import WebLink from '@assets/icons/webLink.svg';
-import { chainTypeToName, timestampToDay, timestampToSecond } from '../../utils';
+import { chainTypeToName, timestampToDay, timestampToSecond, turnTimestamp } from '../../utils';
+import { activityTypeTransform } from '@utils/activityHelper';
 
 export const mapSimpleStatus = (status: number, error: string) => {
   switch (status) {
@@ -72,18 +73,19 @@ export const columns: ProColumns<ActivityItem>[] = [
   {
     title: '区块链',
     dataIndex: 'chain_type',
-    render: (_, record) => chainTypeToName(record.chain_type),
+    render: (_, record) => chainTypeToName(record.chain_id),
     defaultSortOrder: 'ascend',
-    sorter: (a: ActivityItem, b: ActivityItem) => a.chain_type - b.chain_type,
+    sorter: (a: ActivityItem, b: ActivityItem) => a.chain_id - b.chain_id,
     search: false,
   },
   {
     title: '活动名称',
-    dataIndex: 'activity_name',
+    dataIndex: 'name',
   },
   {
     title: '活动类型',
     dataIndex: 'activity_type',
+    render: (_, record) => activityTypeTransform(record.activity_type),
     search: false,
   },
   {
@@ -102,9 +104,9 @@ export const columns: ProColumns<ActivityItem>[] = [
   },
   {
     title: '创建时间',
-    dataIndex: 'create_time',
-    render: (_, record) => timestampToSecond(record.create_time),
-    sorter: (a: ActivityItem, b: ActivityItem) => b.create_time - a.create_time,
+    dataIndex: 'created_at',
+    render: (_, record) => timestampToSecond(record.created_at),
+    sorter: (a: ActivityItem, b: ActivityItem) => turnTimestamp(b.created_at) - turnTimestamp(a.created_at),
     search: false,
   },
   {

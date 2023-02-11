@@ -97,3 +97,13 @@ export const defaultSwitchers = {
 
 type Switcher = keyof typeof defaultSwitchers;
 type Switchers = typeof defaultSwitchers;
+
+export const activityTypeDic = {
+  single: '单个活动',
+  bind: '盲盒活动',
+  poap: 'POAP活动',
+};
+
+export const activityTypeTransform = (type: 'single' | 'bind' | 'poap') => {
+  return activityTypeDic[type];
+};

@@ -7,7 +7,7 @@ import { PopoverContent, ExistRelationForbidden, ModalStyle, PictureReminder } f
 import { createActivity } from '@services/activity';
 import { getAllApps } from '@services/app';
 import { parseCSV, csvWhitelistFormat } from '@utils/csvUtils';
-import { handleFormSwitch, defaultSwitchers, formDataTranslate, type FormData } from '@utils/createActivityHelper';
+import { handleFormSwitch, defaultSwitchers, formDataTranslate, type FormData } from '@utils/activityHelper';
 import useResetFormOnCloseModal from '@hooks/useResetFormOnCloseModal';
 import './index.scss';
 

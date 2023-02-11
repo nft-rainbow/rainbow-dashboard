@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 export function mapChainName(chainType: number) {
   switch (chainType) {
     case 1:
@@ -139,15 +140,21 @@ export const chainTypeToName = (chainType: number) => {
 };
 
 export const timestampToDay = (timestamp: number | undefined) => {
-  if (!timestamp) return '';
+  if (!timestamp || timestamp === -1) return '--';
   const date = new Date(timestamp * 1000);
   return `${date.getFullYear()}-${padLeftZero(date.getMonth() + 1)}-${padLeftZero(date.getDate())}`;
 };
 
-export const timestampToSecond = (timestamp: number) => {
-  if (!timestamp) return '';
-  const date = new Date(timestamp * 1000);
+export const timestampToSecond = (preDate: string) => {
+  if (!preDate) return '--';
+  const date = new Date(dayjs().format(preDate));
   return `${date.getFullYear()}-${padLeftZero(date.getMonth() + 1)}-${padLeftZero(date.getDate())} ${padLeftZero(date.getHours())}:${padLeftZero(date.getMinutes())}:${padLeftZero(
     date.getSeconds()
   )}`;
+};
+
+export const turnTimestamp = (time: string) => {
+  if (!time) return -1;
+  const date = new Date(dayjs().format(time)).getTime();
+  return date;
 };

@@ -23,7 +23,6 @@ export default function Poaps() {
     const filter: ActivityFilter = {};
     // if (appIdFilter !== '0') filter.app_id = parseInt(appIdFilter);
     getActivities(page, 10, filter).then((res) => {
-      debugger;
       setTotal(res.count);
       setItems(res.items);
     });

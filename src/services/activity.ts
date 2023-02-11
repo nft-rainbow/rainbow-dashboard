@@ -1,5 +1,5 @@
 import { get, post } from '.';
-import { type CreateActivityData } from '@utils/createActivityHelper';
+import { type CreateActivityData } from '@utils/activityHelper';
 
 export interface ActivityFilter {
   activity_id?: number;

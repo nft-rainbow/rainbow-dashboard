@@ -84,10 +84,10 @@ export interface SponsorInfo {
 export interface ActivityItem {
   id: number;
   contract_address: string;
-  chain_type: number;
+  chain_id: number;
   activity_name: string;
-  activity_type: string;
+  activity_type: 'single' | 'bind' | 'poap';
   start_time: number;
   end_time?: number;
-  create_time: number;
+  created_at: string;
 }
