@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useReducer } from 'react';
 import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, Radio } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { App } from '../../../models';
+import LimitedInput from '@modules/limitedInput';
 import FileUpload from '@components/FileUpload';
 import { PopoverContent, ExistRelationForbidden, ModalStyle, PictureReminder } from './constants';
 import { createActivity } from '@services/activity';
@@ -89,7 +90,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
         <Form.Item name="name" label="活动名称" rules={[{ required: true, message: '请输入活动名称' }]}>
           <Input placeholder="请输入" />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           label="活动描述"
           name="description"
           rules={[
@@ -98,7 +99,8 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
           ]}
         >
           <Input placeholder="请输入" />
-        </Form.Item>
+        </Form.Item> */}
+        <LimitedInput form={form} id="description" label="活动描述" name="description" maxLength={100} message="请输入活动描述" />
         <div className="mb-8px flex flex-row justify-between">
           <label htmlFor="activityDate" className="required text-14px leading-22px" title="活动日期">
             活动日期：
