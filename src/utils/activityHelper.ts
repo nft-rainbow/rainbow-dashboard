@@ -1,3 +1,4 @@
+import { App } from '@models/index';
 interface ResetSwitcherAction {
   type: 'reset';
 }
@@ -10,7 +11,7 @@ interface SetSwitcherAction {
 
 export interface FormData {
   name: string;
-  app_id: string;
+  app_id: number;
   description: string;
   activityDate: Date[];
   activity_picture_url: string;
@@ -28,7 +29,7 @@ export interface FormData {
 export interface CreateActivityData {
   activity_picture_url: string;
   amount: number;
-  app_id: string;
+  app_id: number;
   command?: string;
   description: string;
   end_time?: number | null;
@@ -64,16 +65,17 @@ export const dateTraslate = (date: Date) => {
   return Math.floor(date.getTime() / 1000);
 };
 
-export const formDataTranslate = (data: FormData) => {
+export const formDataTranslate = (data: FormData, apps: App[]) => {
   let start_time = null;
   let end_time = null;
   start_time = dateTraslate(new Date(data.activityDate[0]));
   if (data.activityDate[1]) end_time = dateTraslate(new Date(data.activityDate[1]));
-  //TODO: activiti_type is hardcoded
+  const appIndex = apps.findIndex((app) => app.id === data.app_id);
   return {
     activity_picture_url: data.activity_picture_url,
     amount: parseInt(data.amount ?? '-1'),
     app_id: data.app_id,
+    chain_type: apps[appIndex].chain_type,
     description: data.description,
     start_time: start_time,
     end_time: end_time ?? -1,

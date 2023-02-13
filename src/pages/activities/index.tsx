@@ -46,6 +46,7 @@ export default function Poaps() {
           dataSource={items}
           columns={columns}
           search={{ span: 6 }}
+          options={false}
           // pagination={{
           //   total,
           //   current: page,

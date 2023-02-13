@@ -47,6 +47,7 @@ export default ({ mode }) => {
         '@pages': path.resolve(__dirname, './src/pages'),
         '@router': path.resolve(__dirname, './src/router'),
         // '@store': path.resolve(__dirname, 'src/store'),
+        '@models': path.resolve(__dirname, './src/models'),
         '@hooks': path.resolve(__dirname, './src/hooks'),
         '@components': path.resolve(__dirname, './src/components'),
         '@services': path.resolve(__dirname, './src/services'),

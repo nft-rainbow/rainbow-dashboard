@@ -45,19 +45,22 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
       });
   }, []);
 
-  const handleFinish = useCallback(async (values: FormData) => {
-    const params = formDataTranslate(values);
-    try {
-      setConfirmLoading(true);
-      await createActivity(params);
-      dispatch({ type: 'reset' });
-      hideModal();
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setConfirmLoading(false);
-    }
-  }, []);
+  const handleFinish = useCallback(
+    async (values: FormData) => {
+      const params = formDataTranslate(values, apps);
+      try {
+        setConfirmLoading(true);
+        await createActivity(params);
+        dispatch({ type: 'reset' });
+        hideModal();
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setConfirmLoading(false);
+      }
+    },
+    [apps]
+  );
 
   const handleCancel = useCallback(() => {
     dispatch({ type: 'reset' });

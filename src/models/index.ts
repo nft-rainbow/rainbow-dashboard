@@ -65,6 +65,7 @@ export interface ChainAccount extends BaseModel {
 }
 
 export interface App extends BaseModel {
+  chain_id: any;
   name: string;
   intro: string;
   app_id: string;
@@ -84,7 +85,7 @@ export interface SponsorInfo {
 export interface ActivityItem {
   id: number;
   contract_address: string;
-  chain_id: number;
+  chain_type: number;
   activity_name: string;
   activity_type: 'single' | 'bind' | 'poap';
   start_time: number;
