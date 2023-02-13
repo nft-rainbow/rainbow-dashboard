@@ -62,7 +62,7 @@ export const activityOperations = () => (
 export const columns: ProColumns<ActivityItem>[] = [
   {
     title: '活动 ID',
-    dataIndex: 'id',
+    dataIndex: 'activity_id',
     defaultSortOrder: 'descend',
     sorter: (a: ActivityItem, b: ActivityItem) => a.id - b.id,
   },

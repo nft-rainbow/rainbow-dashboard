@@ -6,7 +6,7 @@ import { ActivityItem } from '../../models';
 import CreatePOA from './createActivities';
 import { columns } from './tableHelper';
 import { mapChainName, formatDate, short, scanTxLink, scanAddressLink, mapNFTType, mapChainNetworId } from '../../utils';
-import { getActivities, ActivityFilter } from '@services/activity';
+import { getActivities, ActivityQuerier } from '@services/activity';
 
 export default function Poaps() {
   const [items, setItems] = useState<ActivityItem[]>([]);
@@ -20,13 +20,10 @@ export default function Poaps() {
   };
 
   useEffect(() => {
-    const filter: ActivityFilter = {};
-    // if (appIdFilter !== '0') filter.app_id = parseInt(appIdFilter);
-    getActivities(page, 10, filter).then((res) => {
+    getActivities({ page: page, limit: 10 }).then((res) => {
       setTotal(res.count);
       setItems(res.items);
     });
-    // }, [page,appIdFilter]);
   }, []);
 
   const extra = (
@@ -52,6 +49,19 @@ export default function Poaps() {
           //   current: page,
           //   showTotal: (total) => `共 ${total} 条`,
           // }}
+          request={async (params, sort, filter) => {
+            const name = (params.name as string) ?? '';
+            const activity_id = (params.activity_id as string) ?? '';
+            const contract_address = (params.contract_address as string) ?? '';
+            try {
+              const res = await getActivities({ name, activity_id, contract_address });
+              setTotal(res.count);
+              setItems(res.items);
+              return { success: true };
+            } catch {
+              return { success: false };
+            }
+          }}
           onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
         />
       </Card>
