@@ -36,13 +36,22 @@ export default function Poaps() {
 
   return (
     <>
-      <Card title="活动" extra={extra}>
+      <Card title="">
         <ProTable
           rowKey="id"
           scroll={{ x: 1144 }}
           dataSource={items}
           columns={columns}
-          search={{ span: 6 }}
+          search={{
+            span: 6,
+            optionRender: ({ searchText, resetText }, { form }) => [
+              <Button type="primary" onClick={() => form?.submit()}>
+                {searchText}
+              </Button>,
+              <Button onClick={() => form?.resetFields()}>{resetText}</Button>,
+              extra,
+            ],
+          }}
           options={false}
           // pagination={{
           //   total,
