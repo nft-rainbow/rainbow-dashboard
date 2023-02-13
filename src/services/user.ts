@@ -72,3 +72,7 @@ export async function userFiatLogs(page?: number, limit?: number) {
 export async function userBalanceRuntime(): Promise<UserBalance> {
     return await get('/dashboard/users/balance/runtime');
 }
+
+export async function userMintCountByMonth(): Promise<any> {
+    return await get('/dashboard/users/mintCountByMonth')
+}

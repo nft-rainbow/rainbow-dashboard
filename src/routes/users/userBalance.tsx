@@ -10,6 +10,8 @@ import {
     Card,
     Table,
     TablePaginationConfig,
+    Typography,
+    Tooltip,
     // Checkbox,
 } from 'antd';
 import { userBalance, userFiatLogs, userBalanceRuntime } from '../../services/user';
@@ -18,6 +20,13 @@ import { QRCodeSVG } from 'qrcode.react';
 import './userBalance.css';
 import { FiatLog } from '../../models';
 import { formatDate, mapFiatLogType } from '../../utils';
+const { Text } = Typography;
+
+const billText = `
+    1、目前支持通过联系 NFTRainbow 客服人员申请开具纸质增值税专用发票或电子普通发票。请您提供正确的交易编号及开票信息（名称、纳税人识别号、地址电话、开户行及账号）。平台将根据您提供的信息开具发票，如您填写有误，平台将不会受理重新开具发票的要求，请务必认真校对所填开票信息。
+    2、发票金额为实际支出并消费的订单金额，不含折扣、积分以及优惠券等方式支付的金额。
+    3、电子普通发票在申请后45个工作日内开具，如需纸质发票可自行下载打印。增值税专用发票在申请后60个工作日内开具并快递到付寄出。发票收件人电话请尽量填写可以联系到您的手机号码，以免影响您收票的时效性。
+    `;
 
 export default function UserBalance() {
     const [balance, setBalance] = useState(0);
@@ -92,8 +101,13 @@ export default function UserBalance() {
             <Card>
                 <h3>当前余额</h3>
                 <div style={{paddingBottom: '40px'}}>
-                    <span className='user-balance'>¥ {balance / 100}</span>
-                    <Button className='charge-btn' type='primary' onClick={() => setIsModalVisible(true)}>充值</Button>
+                    <Space>
+                        <span className='user-balance'>¥ {balance / 100}</span>
+                        <Button type='primary' onClick={() => setIsModalVisible(true)}>充值</Button>
+                        <Tooltip title={billText}>
+                            <Text type='secondary'>开票说明</Text>
+                        </Tooltip>
+                    </Space>
                 </div>
                 <p style={{color: 'gray'}}>部分费用(NFT铸造费用，接口调用费用)每日定时结算，消费明细展示会有延迟</p>
                 <Table

@@ -11,6 +11,7 @@ import {
   CodeOutlined,
   MoneyCollectOutlined,
   AuditOutlined,
+  LineChartOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Dropdown, Space, Button, ConfigProvider } from 'antd';
@@ -63,9 +64,10 @@ const App: React.FC = () => {
 
   const userMenuItems: MenuProps['items'] = [
     getItem(<Link to="/panels/userBalance">用户余额</Link>, '1', <MoneyCollectOutlined />),
-    getItem(<Link to="/panels/user">用户设置</Link>, '2', <UserOutlined />),
-    getItem(<Link to="/panels/company">企业认证</Link>, '3', <UsergroupAddOutlined />),
-    getItem(<span onClick={() => auth.signout(console.log)}>退出登录</span>, '4', <LogoutOutlined />),
+    getItem(<Link to="/panels/mintCountByMonth">铸造量统计</Link>, '2', <LineChartOutlined />),
+    getItem(<Link to="/panels/user">用户设置</Link>, '3', <UserOutlined />),
+    getItem(<Link to="/panels/company">企业认证</Link>, '4', <UsergroupAddOutlined />),
+    getItem(<span onClick={() => auth.signout(console.log)}>退出登录</span>, '5', <LogoutOutlined />),
   ];
 
   useEffect(() => {

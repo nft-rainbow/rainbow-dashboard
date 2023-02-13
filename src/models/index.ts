@@ -80,3 +80,8 @@ export interface SponsorInfo {
     gas_upper_bound: string;
     is_all_white_listed: boolean;
 }
+
+export interface MintCountByMonth {
+    count: number;
+    month: string;
+}

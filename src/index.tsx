@@ -25,6 +25,8 @@ import Contracts from './routes/contracts';
 import ContractSponsor from './routes/contracts/sponsor'
 import ContractDeployment from './routes/contracts/new';
 
+import MintCountByMonth from './routes/users/userMintsByMonth';
+
 // import NotFound from './routes/404';
 
 const root = ReactDOM.createRoot(
@@ -43,6 +45,7 @@ root.render(
             <Route index element={<Panel />} />
             <Route path="user" element={<User />} />
             <Route path="userBalance" element={<UserBalance />} />
+            <Route path="mintCountByMonth" element={<MintCountByMonth />} />
             <Route path="company" element={<Company />} />
             <Route path="apps" element={<App />} />
             <Route path="apps/:id" element={<AppDetail />} />
