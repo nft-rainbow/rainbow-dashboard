@@ -90,16 +90,6 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
         <Form.Item name="name" label="活动名称" rules={[{ required: true, message: '请输入活动名称' }]}>
           <Input placeholder="请输入" />
         </Form.Item>
-        {/* <Form.Item
-          label="活动描述"
-          name="description"
-          rules={[
-            { required: true, message: '请输入活动描述' },
-            { pattern: /^[\d\D]{0,50}$/g, message: '超出活动描述最大字数' },
-          ]}
-        >
-          <Input placeholder="请输入" />
-        </Form.Item> */}
         <LimitedInput form={form} id="description" label="活动描述" name="description" maxLength={100} message="请输入活动描述" />
         <div className="mb-8px flex flex-row justify-between">
           <label htmlFor="activityDate" className="required text-14px leading-22px" title="活动日期">

@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Routes,
-  Route,
-  Navigate,
-  BrowserRouter
-} from "react-router-dom";
+import { Routes, Route, Navigate, BrowserRouter } from 'react-router-dom';
 import { RequireAuth } from './Auth';
 import Login from '@pages/login';
 import Register from '@pages/register';
@@ -16,18 +11,26 @@ import Company from '@pages/company';
 import App from '@pages/apps';
 import AppDetail from '@pages/apps/detail';
 import Contracts from '@pages/contracts';
-import ContractSponsor from '@pages/contracts/sponsor'
+import ContractSponsor from '@pages/contracts/sponsor';
 import ContractDeployment from '@pages/contracts/new';
 import Poaps from '@pages/activities';
+import Asset from '@pages/activities/manageAssets';
 
 const AppRouter: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" >
+        <Route path="/">
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
-          <Route path="panels" element={<RequireAuth><DashboardLayout /></RequireAuth>}>
+          <Route
+            path="panels"
+            element={
+              <RequireAuth>
+                <DashboardLayout />
+              </RequireAuth>
+            }
+          >
             <Route index element={<Panel />} />
             <Route path="user" element={<User />} />
             <Route path="userBalance" element={<UserBalance />} />
@@ -38,14 +41,14 @@ const AppRouter: React.FC = () => {
             <Route path="contracts/sponsor" element={<ContractSponsor />} />
             <Route path="contracts/deploy" element={<ContractDeployment />} />
             <Route path="poaps" element={<Poaps />} />
+            <Route path="poaps/asset" element={<Asset />} />
           </Route>
           <Route path="/" element={<Navigate to="panels" />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Route>
       </Routes>
     </BrowserRouter>
-
-  )
-}
+  );
+};
 
 export default AppRouter;

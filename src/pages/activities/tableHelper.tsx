@@ -2,6 +2,7 @@ import { ActivityItem } from '../../models';
 import type { ProColumns } from '@ant-design/pro-components';
 import { Tooltip } from 'antd';
 import { ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
+import { Link } from 'react-router-dom';
 import ActivityLink from '@assets/icons/activityLink.svg';
 import AirDrop from '@assets/icons/airDrop.svg';
 import ManageActivity from '@assets/icons/manageActivity.svg';
@@ -44,9 +45,11 @@ export const activityOperations = () => (
     <Tooltip title="管理活动" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
       <img src={ManageActivity} />
     </Tooltip>
-    <Tooltip title="管理藏品" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
-      <img src={ManageCollection} />
-    </Tooltip>
+    <Link to="/panels/poaps/asset">
+      <Tooltip title="管理藏品" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
+        <img src={ManageCollection} />
+      </Tooltip>
+    </Link>
     <Tooltip title="空投" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
       <img src={AirDrop} />
     </Tooltip>
