@@ -26,6 +26,7 @@ import ContractSponsor from './routes/contracts/sponsor'
 import ContractDeployment from './routes/contracts/new';
 
 import MintCountByMonth from './routes/users/userMintsByMonth';
+import MetadataList from './routes/metadata';
 
 // import NotFound from './routes/404';
 
@@ -52,6 +53,7 @@ root.render(
             <Route path="contracts" element={<Contracts />} />
             <Route path="contracts/sponsor" element={<ContractSponsor />} />
             <Route path="contracts/deploy" element={<ContractDeployment />} />
+            <Route path="metadata" element={<MetadataList />} />
           </Route>
           {/* <Route path="*" element={<Navigate to="/panels" />} /> */}
         </Routes>

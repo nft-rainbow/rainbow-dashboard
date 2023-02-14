@@ -11,7 +11,7 @@ import {
   easyMintUrl,
   getAppAccounts,
 } from '../../services/app';
-import { createPoap, listPoaps, Poap } from '../../services/poap';
+import { createPoap } from '../../services/poap';
 import { NFT } from '../../services';
 import {
   Card,
@@ -350,18 +350,40 @@ function AppMetadatas(props: { id: string }) {
 
   const columns = [
     {
-      title: '名字',
-      dataIndex: ['name'],
+        title: 'ID',
+        dataIndex: 'id',
     },
     {
-      title: '操作',
-      dataIndex: ['image'],
-      render: (text: string, item: Metadata) => (<Space>
-        <a target="_blank" rel="noreferrer" href={item.image}>文件</a>
-        <a target="_blank" rel="noreferrer" href={item.uri}>Metadata</a>
-      </Space>),
+      title: 'Name(Hover Desc)',
+      dataIndex: 'name',
+      render: (text: string, record: Metadata) => <Tooltip title={record.description}>{text}</Tooltip>
+    },
+    {
+      title: '图片',
+      dataIndex: 'image',
+      render: (text: string) => <img src={text} width={50} alt='NFT'/>
+    },
+    {
+      title: 'MetadataId',
+      dataIndex: 'metadata_id',
+      render: (text: string, record: Metadata) => <a href={record.uri} target='_blank' rel="noreferrer">{short(text)}</a>
+    },
+    {
+        title: 'ExternalLink',
+        dataIndex: 'external_link',
+        render: (text: string) => text ? <a href={text} target='_blank' rel="noreferrer">查看</a> : null
+    },
+    {
+        title: 'AnimationUrl',
+        dataIndex: 'animation_url',
+        render: (text: string) => text ? <a href={text} target='_blank' rel="noreferrer">查看</a> : null
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'created_at',
+      render: formatDate
     }
-  ];
+];
 
   useEffect(() => {
     getAppMetadatas(id as string, page, 10).then(res => {
@@ -436,7 +458,7 @@ function AppFiles(props: { id: string }) {
   );
 }
 
-function AppPoaps(props: { id: string }) {
+/* function AppPoaps(props: { id: string }) {
     const { id } = props;
     const [items, setItems] = useState<Poap[]>([]);
     const [total, setTotal] = useState(0);
@@ -499,7 +521,7 @@ function AppPoaps(props: { id: string }) {
         />
       </>
     );
-}
+} */
 
 function dealError(message: string) {
     if (message.match('NotEnoughCash') || message.match('discarded due to out of balance')) {

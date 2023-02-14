@@ -35,6 +35,10 @@ function Apps() {
 
   const columns = [
     {
+        title: 'ID',
+        dataIndex: 'id',
+    },
+    {
       title: '项目名称',
       dataIndex: 'name',
       ellipsis: true,

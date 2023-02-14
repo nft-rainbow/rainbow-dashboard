@@ -85,3 +85,14 @@ export interface MintCountByMonth {
     count: number;
     month: string;
 }
+
+export interface Metadata extends BaseModel {
+    name: string;
+    description: string;
+    image: string;
+    external_link: string;
+    attributes: object[];
+    metadata_id: string;
+    uri: string;
+    animation_url: string;
+}
