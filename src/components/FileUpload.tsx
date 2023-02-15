@@ -1,6 +1,7 @@
 import { Upload, Button } from 'antd';
 import { UploadOutlined, PlusOutlined } from '@ant-design/icons';
 import { methodUrl, authHeaderSync } from '../services';
+import PictureReminder from '@components/PictureReminder';
 
 export default function FileUpload(props: any) {
   const action = props.private ? methodUrl('/dashboard/misc/upload/kyc') : methodUrl('/dashboard/misc/upload');
@@ -22,6 +23,7 @@ export default function FileUpload(props: any) {
       <Button className={props.className ?? ''} icon={!!props.type && props.type == 'plus' ? <PlusOutlined /> : <UploadOutlined />}>
         {!!props.type && props.type == 'plus' ? '' : '上传'}
       </Button>
+      {!!props.type && props.type == 'plus' && <PictureReminder />}
     </Upload>
   );
 }

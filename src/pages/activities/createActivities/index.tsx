@@ -4,7 +4,7 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { App } from '../../../models';
 import LimitedInput from '@modules/limitedInput';
 import FileUpload from '@components/FileUpload';
-import { PopoverContent, ExistRelationForbidden, ModalStyle, PictureReminder } from './constants';
+import { PopoverContent, ExistRelationForbidden, ModalStyle } from './constants';
 import { createActivity } from '@services/activity';
 import { getAllApps } from '@services/app';
 import { parseCSV, csvWhitelistFormat } from '@utils/csvUtils';
@@ -116,11 +116,10 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
               form.setFieldsValue({ activity_picture_url: file.url });
             }}
             type="plus"
-            wrapperClass="block w-full"
+            wrapperClass="block w-full !mb-24px"
             className="block"
           />
         </Form.Item>
-        <PictureReminder />
         <div className="mb-8px flex flex-row justify-between">
           <label htmlFor="amount" className="required" title="发行数量：">
             发行数量：
