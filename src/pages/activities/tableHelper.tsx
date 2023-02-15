@@ -40,12 +40,12 @@ export const mapSimpleStatus = (status: number, error: string) => {
   }
 };
 
-export const activityOperations = () => (
+export const activityOperations = (activity: ActivityItem) => (
   <div className="flex flex-row">
     <Tooltip title="管理活动" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
       <img src={ManageActivity} />
     </Tooltip>
-    <Link to="/panels/poaps/asset">
+    <Link to={`/panels/poaps/asset?`} state={{ ...activity }}>
       <Tooltip title="管理藏品" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
         <img src={ManageCollection} />
       </Tooltip>
@@ -117,7 +117,7 @@ export const columns: ProColumns<ActivityItem>[] = [
     dataIndex: 'action',
     width: '177px',
     fixed: 'right',
-    render: activityOperations,
+    render: (_, record) => activityOperations(record),
     search: false,
   },
 ];

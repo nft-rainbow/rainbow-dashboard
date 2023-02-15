@@ -1,4 +1,4 @@
-import { get, post } from '.';
+import { get, post, put } from '.';
 import { type CreateActivityData } from '@utils/activityHelper';
 
 export interface ActivityQuerier {
@@ -14,4 +14,8 @@ export const createActivity = async (meta: CreateActivityData) => {
 
 export const getActivities = async (query: ActivityQuerier) => {
   return await get(`/apps/poap/activity`, Object.assign({}, query));
+};
+
+export const updatePoap = async (acitvity_id: string, meta: object) => {
+  return await put(`/apps/poap/activity/${acitvity_id}`, meta);
 };

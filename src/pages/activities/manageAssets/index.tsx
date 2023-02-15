@@ -1,8 +1,15 @@
-import { useCallback } from 'react';
-import { Card, Button, Form, Input, Dropdown, DatePicker, type MenuProps } from 'antd';
+import { useState, useCallback, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Card, Button, Form, Input, Dropdown, DatePicker, Select, type MenuProps } from 'antd';
 import { DownOutlined, DeleteOutlined } from '@ant-design/icons';
+import { listContracts } from '@services/contract';
+import { updatePoap } from '@services/activity';
+import { ActivityItem } from '@models/index';
+import { assetsFormFormat } from '@utils/assetsFormHelper';
+import { Contract } from '@models/index';
 import FileUpload from '@components/FileUpload';
 import './index.scss';
+const { Option } = Select;
 const items: MenuProps['items'] = [
   {
     label: '文本',
@@ -16,28 +23,29 @@ const items: MenuProps['items'] = [
 interface CharacterItemProps {
   type: string;
   name: number;
+  id: number;
   remove: (index: number | number[]) => void;
 }
-const CharacterItem: React.FC<CharacterItemProps> = ({ type, name, remove }) => {
+const CharacterItem: React.FC<CharacterItemProps> = ({ type, name, id, remove }) => {
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row" key={`${name}-${id}`}>
       <>
         {type === 'text' && (
           <>
             <Form.Item noStyle name={[name, 'characterName']}>
               <Input placeholder="请输入特征名称" className="mr-16px" />
             </Form.Item>
-            <Form.Item noStyle name={[name, 'characterValue']}>
+            <Form.Item noStyle name={[name, 'value']}>
               <Input placeholder="请输入特征值" className="mr-18px" />
             </Form.Item>
           </>
         )}
         {type === 'date' && (
           <>
-            <Form.Item noStyle name={[name, 'characterDate']} className="mr-16px">
+            <Form.Item noStyle name={[name, 'characterName']} className="mr-16px">
               <Input placeholder="日期" />
             </Form.Item>
-            <Form.Item noStyle name={[name, 'characterDateTime']} className="mr-18px">
+            <Form.Item noStyle name={[name, 'value']} className="mr-18px">
               <DatePicker showTime />
             </Form.Item>
           </>
@@ -49,10 +57,29 @@ const CharacterItem: React.FC<CharacterItemProps> = ({ type, name, remove }) => 
 };
 
 const Asset: React.FC = () => {
+  const [contracts, setContracts] = useState<Contract[]>([]);
   const [form] = Form.useForm();
+  const { state } = useLocation();
+  const { activity_id, ...rest } = state;
   const { getFieldValue } = form;
-  const handleFinish = useCallback((data: any) => {
-    console.log('data', data);
+
+  const handleFinish = useCallback(async (data: any) => {
+    const formatData = assetsFormFormat(data, activity_id);
+    try {
+      await updatePoap(activity_id, { ...formatData, ...rest });
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
+  useEffect(() => {
+    listContracts().then((res) => {
+      let tempContracts: Contract[] = [];
+      res.items.map((e: Contract) => {
+        if (e.type === 1) tempContracts.push(e);
+      });
+      setContracts(tempContracts);
+    });
   }, []);
   return (
     <Card>
@@ -75,7 +102,13 @@ const Asset: React.FC = () => {
             <Input placeholder="2023烤仔守护神兔全家福" />
           </Form.Item>
           <Form.Item name="contract_address" label="合约地址" rules={[{ required: true, message: '请选择合约地址' }]}>
-            <Input placeholder="请选择" />
+            <Select placeholder="请选择">
+              {contracts.map((e) => (
+                <Option value={e.address} key={e.address}>
+                  {e.address}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
         </div>
         <Form.List name="characters">
@@ -92,7 +125,7 @@ const Asset: React.FC = () => {
               </div>
               <div className="grid grid-cols-2 gap-x-16px">
                 {fields.map((field, index) => (
-                  <CharacterItem type={getFieldValue(['characters', index, 'type'])} key={field.key} name={field.name} remove={remove} />
+                  <CharacterItem type={getFieldValue(['characters', index, 'type'])} id={index} name={field.name} remove={remove} key={index} />
                 ))}
               </div>
             </>

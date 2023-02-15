@@ -84,6 +84,7 @@ export interface SponsorInfo {
 
 export interface ActivityItem {
   id: number;
+  activity_id?: string;
   contract_address: string;
   chain_type: number;
   activity_name: string;

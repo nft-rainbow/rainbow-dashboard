@@ -109,3 +109,10 @@ export const activityTypeDic = {
 export const activityTypeTransform = (type: 'single' | 'bind' | 'poap') => {
   return activityTypeDic[type];
 };
+
+export const getActivityUrl=()=>{
+  const url = new URL(location.href);
+  const searchParams = new URLSearchParams(url.search);
+  const activity_id = searchParams.get('activity_id');
+  return activity_id;
+}
