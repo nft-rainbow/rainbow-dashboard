@@ -38,9 +38,9 @@ export function mapFiatLogType(type: number) {
         case 2:
             return "提现";
         case 3:
-            return "燃气费用";
+            return "购买燃气";
         case 4:
-            return "存储费用";
+            return "购买存储";
         case 5:
             return "API费用";
         default:
