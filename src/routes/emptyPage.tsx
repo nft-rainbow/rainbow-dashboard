@@ -3,7 +3,7 @@ import {
     Card,
 } from "antd";
 
-export default function Contracts() {
+export default function Page() {
     return (
         <>
             <Card title='合约列表'>

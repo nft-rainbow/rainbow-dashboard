@@ -38,6 +38,8 @@ export interface FiatLog extends BaseModel {
     amount: number;
     type: number;
     meta: any;
+    order_no: string;
+    balance: number;
 }
 
 export interface Company {

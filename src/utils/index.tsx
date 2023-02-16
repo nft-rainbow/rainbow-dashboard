@@ -106,9 +106,9 @@ export function mapSimpleStatus(status: number) {
 export function mapNFTType(type: number) {
   switch (type) {
     case 1:
-      return "ERC721";
+      return "erc721";
     case 2:
-      return "ERC1155";
+      return "erc1155";
     default:
       return "未知";
   }

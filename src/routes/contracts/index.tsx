@@ -57,6 +57,7 @@ export default function Contracts() {
     const [isSponsorModalVisible, setIsSponsorModalVisible] = useState(false);
 
     const [tokensTransferableByUser, setTokensTransferableByUser] = useState(true);
+    const [autoSponsor, setAutoSponsor] = useState(false);
 
     const columns: ColumnsType<Contract> = [
         {
@@ -109,11 +110,6 @@ export default function Contracts() {
           },
         },
         {
-          title: '管理员',
-          dataIndex: 'owner_address',
-          render: (text: string, record: Contract) => <a target="_blank" rel="noreferrer" href={scanAddressLink(record.chain_type, record.chain_id, text)}>{short(text)}</a>,
-        },
-        {
           title: '哈希',
           dataIndex: 'hash',
           render: (text: string, record: Contract) => <a target="_blank" rel="noreferrer" href={scanTxLink(record.chain_type, record.chain_id, text)}>{short(text)}</a>,
@@ -154,6 +150,7 @@ export default function Contracts() {
             owner_address: owner,
             tokens_transferable_by_admin: true,
             tokens_transferable_by_user: tokensTransferableByUser,
+            auto_sponsor: autoSponsor,
         }, values);
         deployContract(values.app_id as string, meta).then((res) => {
             setIsDeployModalVisible(false);
@@ -232,6 +229,9 @@ export default function Contracts() {
                     </Form.Item>
                     <Form.Item name="tokens_transferable_by_user" label="允许用户转移" rules={[{ required: false }]}>
                         <Switch defaultChecked onChange={checked => setTokensTransferableByUser(checked)} />
+                    </Form.Item>
+                    <Form.Item name="auto_sponsor" label="自动设置代付" rules={[{ required: false }]}>
+                        <Switch onChange={checked => setAutoSponsor(checked)} />
                     </Form.Item>
                     {/* <Form.Item name="tokens_transferable" label="管理员可转移" rules={[{ required: true }]}>
                         <Radio.Group>
