@@ -87,6 +87,7 @@ export interface ActivityItem {
   activity_id?: string;
   contract_address: string;
   chain_type: number;
+  activity_id: string;
   activity_name: string;
   activity_type: 'single' | 'bind' | 'poap';
   start_time: number;

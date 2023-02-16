@@ -56,9 +56,11 @@ export const activityOperations = (activity: ActivityItem) => (
     <Tooltip title="活动链接" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
       <img src={ActivityLink} />
     </Tooltip>
-    <Tooltip title="网页搭建" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
-      <img src={WebLink} />
-    </Tooltip>
+    <Link to={`/panels/poaps/building/${activity.activity_id}`}>
+      <Tooltip title="网页搭建" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
+        <img src={WebLink} />
+      </Tooltip>
+    </Link>
   </div>
 );
 
