@@ -15,6 +15,7 @@ import ContractSponsor from '@pages/contracts/sponsor';
 import ContractDeployment from '@pages/contracts/new';
 import Poaps from '@pages/activities';
 import Asset from '@pages/activities/manageAssets';
+import Building from '@pages/activities/Building';
 
 const AppRouter: React.FC = () => {
   return (
@@ -42,6 +43,7 @@ const AppRouter: React.FC = () => {
             <Route path="contracts/deploy" element={<ContractDeployment />} />
             <Route path="poaps" element={<Poaps />} />
             <Route path="poaps/asset" element={<Asset />} />
+            <Route path="poaps/building/:activityId" element={<Building />} />
           </Route>
           <Route path="/" element={<Navigate to="panels" />} />
           <Route path="*" element={<Navigate to="/" />} />

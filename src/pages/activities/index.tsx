@@ -12,7 +12,6 @@ export default function Poaps() {
   const [items, setItems] = useState<ActivityItem[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-
   const [isActivityModalVisible, setIsActivityModalVisible] = useState(false);
 
   const hideModal = () => {
