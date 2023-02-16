@@ -78,6 +78,7 @@ export default function AppDetail() {
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [isMintModalVisible, setIsMintModalVisible] = useState(false);
   const [isPoapModalVisible, setIsPoapModalVisible] = useState(false);
+  const [refreshNftList, setRefreshNftList] = useState(0);
 
   const mainnetAccount = accounts.find(item => item.chain_id === 1029) || { address: "" };
   const testAccount = accounts.find(item => item.chain_id === 1) || { address: "" };
@@ -86,6 +87,7 @@ export default function AppDetail() {
     easyMintUrl(id as string, values).then((res) => {
       setIsMintModalVisible(false);
       form.resetFields();
+      setRefreshNftList(refreshNftList+1);
     }).catch((err) => {
       message.error(err.response.data.message);
     });
@@ -109,6 +111,7 @@ export default function AppDetail() {
 
   const extraOp = (
     <Space>
+        <Button type='dashed' onClick={() => setRefreshNftList(refreshNftList+1)}>刷新</Button>
         <Button type='primary' onClick={() => setIsMintModalVisible(true)}>快捷铸造藏品</Button>
         <Button type='primary' onClick={() => setIsPoapModalVisible(true)}>创建POAP</Button>
         <Button type='primary' onClick={() => setIsDetailModalVisible(true)}>查看AppKey</Button>
@@ -132,13 +135,13 @@ export default function AppDetail() {
       <Card>
         <Tabs defaultActiveKey="1" tabBarExtraContent={extraOp}>
           <TabPane tab="藏品铸造" key="1">
-            <AppNFTs id={idStr} />
+            <AppNFTs id={idStr} refreshTrigger={refreshNftList}/>
           </TabPane>
           <TabPane tab="元数据" key="2">
-            <AppMetadatas id={idStr} />
+            <AppMetadatas id={idStr} refreshTrigger={refreshNftList}/>
           </TabPane>
           <TabPane tab="文件" key="3">
-            <AppFiles id={idStr} />
+            <AppFiles id={idStr} refreshTrigger={refreshNftList}/>
           </TabPane>
           {/* <TabPane tab="POAP" key="4">
             <AppPoaps id={idStr} />
@@ -217,8 +220,8 @@ export default function AppDetail() {
   );
 }
 
-function AppNFTs(props: { id: string }) {
-  const { id } = props;
+function AppNFTs(props: { id: string, refreshTrigger: number }) {
+  const { id, refreshTrigger = 0 } = props;
   const [items, setItems] = useState<NFT[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -305,7 +308,7 @@ function AppNFTs(props: { id: string }) {
     }).then(() => {
       setLoading(false);
     });
-  }, [id, page]);
+  }, [id, page, refreshTrigger]);
 
   // SJR: click button to load one image
   const showNFTImage = (metadataUri: string, index: number) => {
@@ -342,8 +345,8 @@ function AppNFTs(props: { id: string }) {
   );
 }
 
-function AppMetadatas(props: { id: string }) {
-  const { id } = props;
+function AppMetadatas(props: { id: string, refreshTrigger: number }) {
+  const { id, refreshTrigger = 0 } = props;
   const [items, setItems] = useState<Metadata[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -390,7 +393,7 @@ function AppMetadatas(props: { id: string }) {
       setTotal(res.count);
       setItems(res.items);
     });
-  }, [id, page]);
+  }, [id, page, refreshTrigger]);
 
   return (
     <>
@@ -409,8 +412,8 @@ function AppMetadatas(props: { id: string }) {
   );
 }
 
-function AppFiles(props: { id: string }) {
-  const { id } = props;
+function AppFiles(props: { id: string, refreshTrigger: number }) {
+  const { id, refreshTrigger = 0 } = props;
   const [items, setItems] = useState<File[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -439,7 +442,7 @@ function AppFiles(props: { id: string }) {
       setTotal(res.count);
       setItems(res.items);
     });
-  }, [id, page]);
+  }, [id, page, refreshTrigger]);
 
   return (
     <>

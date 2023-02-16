@@ -10,6 +10,7 @@ import {
     Input,
     Space,
     Select,
+    Image,
 } from "antd";
 import {
     MinusCircleOutlined,
@@ -55,7 +56,8 @@ export default function Contracts() {
         {
             title: '图片',
             dataIndex: 'image',
-            render: (text: string) => <img src={text} width={50} alt='NFT'/>
+            width: 150,
+            render: (text: string) => <Image src={text} alt='NFT'/>
         },
         {
             title: 'MetadataId',
