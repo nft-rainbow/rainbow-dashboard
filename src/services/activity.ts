@@ -19,4 +19,4 @@ export const getActivities = async (query: ActivityQuerier) => {
 export const updatePoap = async (acitvity_id: string, meta: object) => {
   return await put(`/apps/poap/activity/${acitvity_id}`, meta);
 };
-export const getActivityById = async (activity_id?: string) => (activity_id ? await get(`/apps/poap/activity/${activity_id}`) : false);
+export const getActivityById = async (activity_id?: string) => (activity_id ? get(`/apps/poap/activity/${activity_id}`) : false);

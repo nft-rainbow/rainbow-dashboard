@@ -10,6 +10,7 @@ import { assetsFormFormat } from '@utils/assetsFormHelper';
 import { Contract } from '@models/index';
 import FileUpload from '@components/FileUpload';
 import './index.scss';
+import { format } from 'path';
 const { Option } = Select;
 const items: MenuProps['items'] = [
   {
@@ -65,17 +66,20 @@ const Asset: React.FC = () => {
   // const { activity_id, contract_id, contract_type, ...rest } = state;
   const { getFieldValue } = form;
 
-  const handleFinish = useCallback(async (formData: any) => {
-    const { contract_id: contractId, contract_type, ...rest } = data;
-    const activity_id = activityId ?? '';
-    const formatData = assetsFormFormat(formData, activity_id);
-    const { contract_id, ...formatDatarest } = formatData;
-    try {
-      await updatePoap(activity_id, { contract_id, ...formatDatarest, ...rest });
-    } catch (err) {
-      console.log(err);
-    }
-  }, []);
+  const handleFinish = useCallback(
+    async (formData: any) => {
+      const { contract_id: contractId, contract_type, ...rest } = data;
+      const activity_id = activityId ?? '';
+      const formatData = assetsFormFormat(formData, activity_id);
+      const { nft_configs } = formatData;
+      try {
+        await updatePoap(activity_id, { ...formatData, ...rest, nft_configs });
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [data, activityId]
+  );
 
   useEffect(() => {
     listContracts().then((res) => {

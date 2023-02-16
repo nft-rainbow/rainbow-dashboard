@@ -30,9 +30,13 @@ export const assetsFormFormat = (data: AssetsFormHelper, activity_id: string) =>
   });
   return {
     activity_id,
-    image_url,
-    name,
     contract_id,
-    metadata_attributes,
+    nft_configs: [
+      {
+        name,
+        image_url,
+        metadata_attributes,
+      },
+    ],
   };
 };
