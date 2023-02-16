@@ -17,12 +17,12 @@ export interface PoapActivityConfig {
 export interface AssetsFormHelper {
   image_url: string;
   name: string;
-  contract_address: string;
+  contract_id: string;
   characters: Character[];
 }
 
 export const assetsFormFormat = (data: AssetsFormHelper, activity_id: string) => {
-  const { characters, image_url, name, contract_address } = data;
+  const { characters, image_url, name, contract_id } = data;
   let metadata_attributes: MetadataAttribute[] = [];
   characters.forEach((characters) => {
     if (!characters.value) return;
@@ -32,7 +32,7 @@ export const assetsFormFormat = (data: AssetsFormHelper, activity_id: string) =>
     activity_id,
     image_url,
     name,
-    contract_address,
+    contract_id,
     metadata_attributes,
   };
 };

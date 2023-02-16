@@ -60,13 +60,14 @@ const Asset: React.FC = () => {
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [form] = Form.useForm();
   const { state } = useLocation();
-  const { activity_id, ...rest } = state;
+  const { activity_id, contract_id, contract_type, ...rest } = state;
   const { getFieldValue } = form;
 
   const handleFinish = useCallback(async (data: any) => {
     const formatData = assetsFormFormat(data, activity_id);
+    const { contract_id, ...formatDatarest } = formatData;
     try {
-      await updatePoap(activity_id, { ...formatData, ...rest });
+      await updatePoap(activity_id, { contract_id, ...formatDatarest, ...rest });
     } catch (err) {
       console.log(err);
     }
@@ -101,10 +102,10 @@ const Asset: React.FC = () => {
           <Form.Item name="name" label="藏品名称：" rules={[{ required: true, message: '请输入藏品名称' }]}>
             <Input placeholder="2023烤仔守护神兔全家福" />
           </Form.Item>
-          <Form.Item name="contract_address" label="合约地址" rules={[{ required: true, message: '请选择合约地址' }]}>
+          <Form.Item name="contract_id" label="合约地址" rules={[{ required: true, message: '请选择合约地址' }]}>
             <Select placeholder="请选择">
               {contracts.map((e) => (
-                <Option value={e.address} key={e.address}>
+                <Option label={e.address} value={e.id} key={e.address}>
                   {e.address}
                 </Option>
               ))}
