@@ -45,7 +45,7 @@ export const activityOperations = (activity: ActivityItem) => (
     <Tooltip title="管理活动" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
       <img src={ManageActivity} />
     </Tooltip>
-    <Link to={`/panels/poaps/asset?`} state={{ ...activity }}>
+    <Link to={`/panels/poaps/asset/${activity.activity_id}`}>
       <Tooltip title="管理藏品" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
         <img src={ManageCollection} />
       </Tooltip>

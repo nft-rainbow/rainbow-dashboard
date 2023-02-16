@@ -42,7 +42,7 @@ const AppRouter: React.FC = () => {
             <Route path="contracts/sponsor" element={<ContractSponsor />} />
             <Route path="contracts/deploy" element={<ContractDeployment />} />
             <Route path="poaps" element={<Poaps />} />
-            <Route path="poaps/asset" element={<Asset />} />
+            <Route path="poaps/asset/:activityId" element={<Asset />} />
             <Route path="poaps/building/:activityId" element={<Building />} />
           </Route>
           <Route path="/" element={<Navigate to="panels" />} />

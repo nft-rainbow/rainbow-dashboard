@@ -1,9 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import useSWR from 'swr';
 import { Card, Button, Form, Input, Dropdown, DatePicker, Select, type MenuProps } from 'antd';
 import { DownOutlined, DeleteOutlined } from '@ant-design/icons';
 import { listContracts } from '@services/contract';
-import { updatePoap } from '@services/activity';
+import { updatePoap, getActivityById } from '@services/activity';
 import { ActivityItem } from '@models/index';
 import { assetsFormFormat } from '@utils/assetsFormHelper';
 import { Contract } from '@models/index';
@@ -59,12 +60,15 @@ const CharacterItem: React.FC<CharacterItemProps> = ({ type, name, id, remove })
 const Asset: React.FC = () => {
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [form] = Form.useForm();
-  const { state } = useLocation();
-  const { activity_id, contract_id, contract_type, ...rest } = state;
+  const { activityId } = useParams<{ activityId: string }>();
+  const { data, error } = useSWR(`api/apps/poap/activity/${activityId}`, () => getActivityById(activityId));
+  // const { activity_id, contract_id, contract_type, ...rest } = state;
   const { getFieldValue } = form;
 
-  const handleFinish = useCallback(async (data: any) => {
-    const formatData = assetsFormFormat(data, activity_id);
+  const handleFinish = useCallback(async (formData: any) => {
+    const { contract_id: contractId, contract_type, ...rest } = data;
+    const activity_id = activityId ?? '';
+    const formatData = assetsFormFormat(formData, activity_id);
     const { contract_id, ...formatDatarest } = formatData;
     try {
       await updatePoap(activity_id, { contract_id, ...formatDatarest, ...rest });
