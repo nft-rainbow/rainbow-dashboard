@@ -6,7 +6,7 @@ import { ActivityItem } from '../../models';
 import CreatePOA from './createActivities';
 import { columns } from './tableHelper';
 import { mapChainName, formatDate, short, scanTxLink, scanAddressLink, mapNFTType, mapChainNetworId } from '../../utils';
-import { getActivities, ActivityQuerier } from '@services/activity';
+import { getActivities, ActivityQuerier, createActivity } from '@services/activity';
 
 export default function Poaps() {
   const [items, setItems] = useState<ActivityItem[]>([]);
@@ -27,28 +27,28 @@ export default function Poaps() {
   }, []);
 
   const extra = (
-    <Space>
-      <Button type="primary" onClick={() => setIsActivityModalVisible(true)}>
-        创建活动
-      </Button>
-    </Space>
+    <Button type="primary" onClick={() => setIsActivityModalVisible(true)} key="create-activity">
+      创建活动
+    </Button>
   );
 
   return (
     <>
       <Card title="">
         <ProTable
-          rowKey="id"
+          rowKey="activity_id"
           scroll={{ x: 1144 }}
           dataSource={items}
           columns={columns}
           search={{
             span: 6,
             optionRender: ({ searchText, resetText }, { form }) => [
-              <Button type="primary" onClick={() => form?.submit()}>
+              <Button type="primary" onClick={() => form?.submit()} key={searchText}>
                 {searchText}
               </Button>,
-              <Button onClick={() => form?.resetFields()}>{resetText}</Button>,
+              <Button onClick={() => form?.resetFields()} key={resetText}>
+                {resetText}
+              </Button>,
               extra,
             ],
           }}
