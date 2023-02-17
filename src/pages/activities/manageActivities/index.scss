@@ -6,7 +6,7 @@
   content: '*';
 }
 
-#manageActivityForm {
+#createActivityForm {
   .ant-upload {
     width: 100%;
     .ant-btn {
@@ -19,7 +19,7 @@
       width: 100%;
     }
   }
-  .ant-upload-list-item {
+  .ant-upload-list-item{
     margin-top: 0px;
   }
 }

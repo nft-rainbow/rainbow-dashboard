@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { ActivityItem } from '../../models';
 import type { ProColumns } from '@ant-design/pro-components';
 import { Tooltip } from 'antd';
@@ -11,6 +12,7 @@ import WebLink from '@assets/icons/webLink.svg';
 import { chainTypeToName, timestampToDay, timestampToSecond, turnTimestamp } from '../../utils';
 import { shortenCfxAddress } from '@utils/addressUtils';
 import { activityTypeTransform } from '@utils/activityHelper';
+import ManageActivityModual from './manageActivities';
 
 export const mapSimpleStatus = (status: number, error: string) => {
   switch (status) {
@@ -41,29 +43,46 @@ export const mapSimpleStatus = (status: number, error: string) => {
   }
 };
 
-export const activityOperations = (activity: ActivityItem) => (
-  <div className="flex flex-row">
-    <Tooltip title="管理活动" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
-      <img src={ManageActivity} />
-    </Tooltip>
-    <Link to={`/panels/poaps/asset/${activity.activity_id}`}>
-      <Tooltip title="管理藏品" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
-        <img src={ManageCollection} />
+export const ActivityManageIcon: React.FC<{ activity: ActivityItem }> = ({ activity }) => {
+  const [isManageActModalVisible, setIsManageActModalVisible] = useState(false);
+
+  const hideModal = () => {
+    setIsManageActModalVisible(false);
+  };
+
+  return (
+    <div onClick={(e) => setIsManageActModalVisible(true)} key={activity.activity_id}>
+      <Tooltip title="管理活动" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
+        <img src={ManageActivity} />
       </Tooltip>
-    </Link>
-    <Tooltip title="空投" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
-      <img src={AirDrop} />
-    </Tooltip>
-    <Tooltip title="活动链接" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
-      <img src={ActivityLink} />
-    </Tooltip>
-    <Link to={`/panels/poaps/building/${activity.activity_id}`}>
-      <Tooltip title="网页搭建" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
-        <img src={WebLink} />
+      <ManageActivityModual open={isManageActModalVisible} hideModal={hideModal} onCancel={hideModal} activity={activity} />
+    </div>
+  );
+};
+
+export const activityOperations: React.FC<ActivityItem> = (activity: ActivityItem) => {
+  return (
+    <div className="flex flex-row">
+      <ActivityManageIcon activity={activity} />
+      <Link to={`/panels/poaps/asset/${activity.activity_id}`}>
+        <Tooltip title="管理藏品" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
+          <img src={ManageCollection} />
+        </Tooltip>
+      </Link>
+      <Tooltip title="空投" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
+        <img src={AirDrop} />
       </Tooltip>
-    </Link>
-  </div>
-);
+      <Tooltip title="活动链接" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
+        <img src={ActivityLink} />
+      </Tooltip>
+      <Link to={`/panels/poaps/building/${activity.activity_id}`}>
+        <Tooltip title="网页搭建" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
+          <img src={WebLink} />
+        </Tooltip>
+      </Link>
+    </div>
+  );
+};
 
 export const columns: ProColumns<ActivityItem>[] = [
   {

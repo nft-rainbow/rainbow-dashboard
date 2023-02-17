@@ -84,13 +84,24 @@ export interface SponsorInfo {
 
 export interface ActivityItem {
   id: number;
+  name: string;
+  max_mint_count?: number;
+  description: string;
   activity_id?: string;
+  activity_picture_url: string;
+  amount: number;
   contract_address: string;
   chain_type: number;
-  activity_id: string;
+  app_id: number;
   activity_name: string;
   activity_type: 'single' | 'bind' | 'poap';
   start_time: number;
   end_time?: number;
   created_at: string;
+  white_list_infos?: [
+    {
+      count: number;
+      user: string;
+    }
+  ];
 }
