@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Button, Table, Form, Select, TablePaginationConfig, message, Tooltip, Space, Typography } from 'antd';
-// import ProTable, { ActionType } from '@ant-design/pro-table';
-import { ProTable, TableDropdown } from '@ant-design/pro-components';
+import { Card, Button, Table, Form, Select, TablePaginationConfig} from 'antd';
+import { ProTable } from '@ant-design/pro-components';
 import { ActivityItem } from '../../models';
 import CreatePOA from './createActivities';
 import { columns } from './tableHelper';
-import { mapChainName, formatDate, short, scanTxLink, scanAddressLink, mapNFTType, mapChainNetworId } from '../../utils';
 import { getActivities, ActivityQuerier, createActivity } from '@services/activity';
 
 export default function Poaps() {

@@ -9,6 +9,7 @@ import ManageActivity from '@assets/icons/manageActivity.svg';
 import ManageCollection from '@assets/icons/manageCollection.svg';
 import WebLink from '@assets/icons/webLink.svg';
 import { chainTypeToName, timestampToDay, timestampToSecond, turnTimestamp } from '../../utils';
+import { shortenCfxAddress } from '@utils/addressUtils';
 import { activityTypeTransform } from '@utils/activityHelper';
 
 export const mapSimpleStatus = (status: number, error: string) => {
@@ -74,6 +75,7 @@ export const columns: ProColumns<ActivityItem>[] = [
   {
     title: '合约地址',
     dataIndex: 'contract_address',
+    render: (_, record) => (record.contract_address ? <Tooltip title={record.contract_address}>{shortenCfxAddress(record.contract_address)} </Tooltip> : '--'),
   },
   {
     title: '区块链',
