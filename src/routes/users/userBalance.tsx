@@ -102,12 +102,12 @@ export default function UserBalance() {
         {
           title: '金额(元)',
           dataIndex: 'amount',
-          render: (text: number) => text > 0 ? <Text type='success'>{text / 100}</Text> : <Text type='danger'>{text / 100}</Text>,
+          render: (text: number) => text > 0 ? <Text type='success'>{(text / 100).toFixed(2)}</Text> : <Text type='danger'>(text / 100).toFixed(2)</Text>,
         },
         {
           title: '余额(元)',
           dataIndex: 'balance',
-          render: (text: number) => text / 100,
+          render: (text: number) => (text / 100).toFixed(2),
         },
         {
           title: '地址',
