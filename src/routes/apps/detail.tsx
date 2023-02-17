@@ -91,8 +91,8 @@ export default function AppDetail() {
       return;
     }
     let setTo = chain==='conflux' ? mainnetAccount().address : testAccount().address;
-    form.setFieldsValue({"mint_to_address": setTo})
-  }, [])
+    form.setFieldsValue({"mint_to_address": setTo || '??'})
+  }, [accounts])
 
   const onNftMint = (values: any) => {
     easyMintUrl(id as string, values).then((res) => {
@@ -130,6 +130,7 @@ export default function AppDetail() {
 
   useEffect(() => {
     getAppAccounts(id as string).then(data => setAccounts(data));
+    form.setFieldValue("group", "1")
   }, [id]);
 
   useEffect(() => {
@@ -179,11 +180,11 @@ export default function AppDetail() {
           <Form.Item name="name" label="名字" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="description" label="描述" rules={[{ required: false }]}>
+          <Form.Item name="description" label="描述" rules={[{ required: true }]}>
             <Input.TextArea rows={4} />
           </Form.Item>
           <Form.Item name="file_url" label="图片" rules={[{ required: true }]}>
-            <FileUpload accept={".png,.jpg,.svg,.mp3,.mp4"} listType="picture" maxCount={1} onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} />
+            <FileUpload accept={".png,.jpg,.svg,.mp3,.mp4,.gif,stp,.max,.fbx,.obj,.x3d,.vrml,.3ds,3mf,.stl,.dae"} listType="picture" maxCount={1} onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} />
           </Form.Item>
           <Form.Item name="chain" label="网络" rules={[{ required: true }]}>
             <Radio.Group>
@@ -191,8 +192,8 @@ export default function AppDetail() {
                 <Radio.Button value="conflux_test">树图测试网</Radio.Button>
             </Radio.Group>
           </Form.Item>
-          <Form.Item name={"group"}>
-            <Input.Group compact><Form.Item label="接受地址" name="mint_to_address" rules={[
+          <Form.Item name={"group"} label="接受地址">
+            <Input.Group compact style={{display:'flex'}}><Form.Item name="mint_to_address" style={{flexGrow:1, border: '0px solid black'}} rules={[
               {required: true, message: '请输入接受地址'},
               ({getFieldValue}) => ({
                 validator: function (_, value) {
@@ -204,10 +205,10 @@ export default function AppDetail() {
                   return Promise.resolve();
                 }
               })
-            ]}><Input style={{ width: '800' }} placeholder='树图链地址'/>
+            ]}><Input style={{flexGrow: 1}} placeholder='树图链地址'/>
             </Form.Item>
               <Button type={"text"} onClick={fillMintTo} style={{color: "gray"}}>
-                <Tooltip title={"使用App账户地址"} ><UserOutlined/></Tooltip>
+                <Tooltip title={"使用App账户地址"} mouseEnterDelay={1}><UserOutlined/></Tooltip>
               </Button></Input.Group>
           </Form.Item>
           <Form.Item wrapperCol={{offset:4, span: 18}}>
@@ -386,7 +387,8 @@ function AppMetadatas(props: { id: string, refreshTrigger: number }) {
     {
       title: '图片',
       dataIndex: 'image',
-      render: (text: string) => <img src={text} width={50} alt='NFT'/>
+      width: 180,
+      render: (text: string) => <Image src={text} alt='NFT'/>
     },
     {
       title: 'MetadataId',
