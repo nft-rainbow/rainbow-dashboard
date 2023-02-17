@@ -4,8 +4,10 @@ import { methodUrl, authHeaderSync } from '../services';
 
 export default function FileUpload(props: any) {
     const action = props.private ? methodUrl("/dashboard/misc/upload/kyc") : methodUrl("/dashboard/misc/upload");
+    const {accept, maxCount, showUploadList, listType} = props;
     const uploadProps = {
         name: 'file',
+        accept, maxCount, showUploadList, listType,
         action,
         headers: authHeaderSync(),
         onChange(info: any) {

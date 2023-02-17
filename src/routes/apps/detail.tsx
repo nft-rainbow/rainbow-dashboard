@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import { useParams } from 'react-router-dom';
 import RainbowBreadcrumb from '../../components/Breadcrumb';
 import {
@@ -28,7 +28,7 @@ import {
   message,
   Image,
   Popover,
-  Select,
+  Select, Radio, Row, Col,
 } from 'antd';
 import { SERVICE_HOST } from '../../config';
 import {
@@ -45,6 +45,7 @@ import { ChainAccount, App } from '../../models';
 import axios from 'axios';
 import { FileImageOutlined, ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 import { address } from 'js-conflux-sdk';
+import {UserOutlined} from "@ant-design/icons/lib";
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
 const { Option } = Select;
@@ -80,13 +81,22 @@ export default function AppDetail() {
   const [isPoapModalVisible, setIsPoapModalVisible] = useState(false);
   const [refreshNftList, setRefreshNftList] = useState(0);
 
-  const mainnetAccount = accounts.find(item => item.chain_id === 1029) || { address: "" };
-  const testAccount = accounts.find(item => item.chain_id === 1) || { address: "" };
+  const mainnetAccount = ()=>accounts.find(item => item.chain_id === 1029) || { address: "" };
+  const testAccount = ()=>accounts.find(item => item.chain_id === 1) || { address: "" };
+  const [messageApi, contextHolder] = message.useMessage();
+  const fillMintTo = useCallback(()=>{
+    const chain = form.getFieldValue("chain")
+    if (!chain) {
+      messageApi.info('请选择网络!');
+      return;
+    }
+    let setTo = chain==='conflux' ? mainnetAccount().address : testAccount().address;
+    form.setFieldsValue({"mint_to_address": setTo})
+  }, [])
 
   const onNftMint = (values: any) => {
     easyMintUrl(id as string, values).then((res) => {
       setIsMintModalVisible(false);
-      form.resetFields();
       setRefreshNftList(refreshNftList+1);
     }).catch((err) => {
       message.error(err.response.data.message);
@@ -131,6 +141,7 @@ export default function AppDetail() {
 
   return (
     <div className="App">
+      {contextHolder}
       <RainbowBreadcrumb items={breadcrumbItems} />
       <Card>
         <Tabs defaultActiveKey="1" tabBarExtraContent={extraOp}>
@@ -160,40 +171,51 @@ export default function AppDetail() {
         <p>AppId: <Paragraph copyable code className='d-inline'>{(app as App).app_id}</Paragraph></p>
         <p>AppSecret: <Paragraph copyable code className='d-inline'>{(app as App).app_secret}</Paragraph></p>
         <p>APIHost: <Paragraph copyable code className='d-inline'>{SERVICE_HOST.replace('console', 'api')}</Paragraph></p>
-        <p>主网账户: <Paragraph copyable code className='d-inline'>{mainnetAccount.address}</Paragraph></p>
-        <p>测试网账户: <Paragraph copyable code className='d-inline'>{testAccount.address}</Paragraph></p>
+        <p>主网账户: <Paragraph copyable code className='d-inline'>{mainnetAccount().address}</Paragraph></p>
+        <p>测试网账户: <Paragraph copyable code className='d-inline'>{testAccount().address}</Paragraph></p>
       </Modal>
-      <Modal title='快速铸造' open={isMintModalVisible} onOk={() => form.submit()} onCancel={closeMintModal} okText={'确认'} cancelText={'取消'}>
+      <Modal title='快速铸造' open={isMintModalVisible} onOk={() => form.submit()} onCancel={closeMintModal} cancelButtonProps={{hidden: true}} okButtonProps={{hidden: true}}>
         <Form {...formLayout} form={form} name="control-hooks" onFinish={onNftMint}>
           <Form.Item name="name" label="名字" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="description" label="描述" rules={[{ required: true }]}>
+          <Form.Item name="description" label="描述" rules={[{ required: false }]}>
             <Input.TextArea rows={4} />
           </Form.Item>
           <Form.Item name="file_url" label="图片" rules={[{ required: true }]}>
-            <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} />
+            <FileUpload accept={".png,.jpg,.svg,.mp3,.mp4"} listType="picture" maxCount={1} onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} />
           </Form.Item>
           <Form.Item name="chain" label="网络" rules={[{ required: true }]}>
-            <Select>
-                <Option value="conflux">树图主网</Option>
-                <Option value="conflux_test">树图测试网</Option>
-            </Select>
+            <Radio.Group>
+                <Radio.Button value="conflux">树图主网</Radio.Button>
+                <Radio.Button value="conflux_test">树图测试网</Radio.Button>
+            </Radio.Group>
           </Form.Item>
-          <Form.Item name="mint_to_address" label="接受地址" rules={[
-            { required: true, message: '请输入接受地址' },
-            ({ getFieldValue }) => ({
-                validator: function(_, value) { 
-                    const isValidAddr = address.isValidCfxAddress(value);
-                    if (!isValidAddr) return Promise.reject(new Error('地址格式错误'));
-                    const prefix = getFieldValue('chain') === 'conflux' ? 'cfx' : 'cfxtest';
-                    const isValidPrefix = value.toLowerCase().split(':')[0] === prefix;
-                    if (!isValidPrefix) return Promise.reject(new Error('请输入正确网络的地址'));
-                    return Promise.resolve();
+          <Form.Item name={"group"}>
+            <Input.Group compact><Form.Item label="接受地址" name="mint_to_address" rules={[
+              {required: true, message: '请输入接受地址'},
+              ({getFieldValue}) => ({
+                validator: function (_, value) {
+                  const isValidAddr = address.isValidCfxAddress(value);
+                  if (!isValidAddr) return Promise.reject(new Error('地址格式错误'));
+                  const prefix = getFieldValue('chain') === 'conflux' ? 'cfx' : 'cfxtest';
+                  const isValidPrefix = value.toLowerCase().split(':')[0] === prefix;
+                  if (!isValidPrefix) return Promise.reject(new Error('请输入正确网络的地址'));
+                  return Promise.resolve();
                 }
-            })
-          ]}>
-            <Input placeholder='树图链地址' />
+              })
+            ]}><Input style={{ width: '800' }} placeholder='树图链地址'/>
+            </Form.Item>
+              <Button type={"text"} onClick={fillMintTo} style={{color: "gray"}}>
+                <Tooltip title={"使用App账户地址"} ><UserOutlined/></Tooltip>
+              </Button></Input.Group>
+          </Form.Item>
+          <Form.Item wrapperCol={{offset:4, span: 18}}>
+            <Row gutter={24}>
+              <Col span={6}><Button htmlType={"reset"}>重置</Button></Col>
+              <Col span={6}><Button htmlType={"button"} type={"dashed"} onClick={()=>setIsMintModalVisible(false)}>取消</Button></Col>
+              <Col span={6}><Button htmlType={"submit"} type={"primary"}>确认</Button></Col>
+            </Row>
           </Form.Item>
         </Form>
       </Modal>
