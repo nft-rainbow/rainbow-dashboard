@@ -101,7 +101,7 @@ export default function UserBalance() {
         },
         {
           title: '金额(元)',
-          dataIndex: 'amount',
+          dataIndex: 'amount', // check
           render: (text: number) => text > 0 ? <Text type='success'>{(text / 100).toFixed(2)}</Text> : <Text type='danger'>{(text / 100).toFixed(2)}</Text>,
         },
         {
