@@ -14,10 +14,12 @@ import { Link } from "react-router-dom";
 import { getApps, createApp } from '../../services/app';
 import { mapChainName, formatDate } from '../../utils';
 import { App } from '../../models';
+import AppDetail from "./detail";
 
 function Apps() {
   const [apps, setApps] = useState<App[]>([]);
   const [total, setTotal] = useState(0);
+  const [defaultAppId, setDefaultAppId] = useState('');
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -28,6 +30,12 @@ function Apps() {
     getApps(currentPage).then(data => {
       setApps(data.items);
       setTotal(data.count);
+      if (data.count === 1) {
+        setDefaultAppId(data.items[0].id)
+      } else if (data.count === 0) {
+        createForm.setFieldsValue({name:"默认项目", intro:"默认项目", chain:'conflux'})
+        setIsModalVisible(true)
+      }
     }).then(() => {
       setLoading(false);
     });
@@ -83,6 +91,9 @@ function Apps() {
 
   return (
     <>
+      {defaultAppId.toString().length > 0 && <Card title={'默认项目'}>
+        {defaultAppId.toString().length > 0 && <AppDetail appId={defaultAppId}/>}
+      </Card>}
       <Card title='我的项目' extra={<Button onClick={() => setIsModalVisible(true)} type="primary">创建项目</Button>}>
         <Table
           rowKey='id'

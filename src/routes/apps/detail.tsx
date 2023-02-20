@@ -69,8 +69,9 @@ const mapSimpleStatus = (status: number, error: string) => {
   }
 }
 
-export default function AppDetail() {
-  const { id } = useParams();
+export default function AppDetail(props: {appId?: string}) {
+  const { id: paramId } = useParams();
+  const id = paramId || props.appId;
   const [app, setApp] = useState<App | {}>({});
   const [breadcrumbItems, setBreadcrumbItems] = useState<string[]>(["应用详情"]);
   const [form] = Form.useForm();

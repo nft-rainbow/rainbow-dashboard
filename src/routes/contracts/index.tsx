@@ -44,6 +44,8 @@ export default function Contracts() {
     const [items, setItems] = useState<Contract[]>([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [refreshIt, setRefreshIt] = useState(0);
     const [apps, setApps] = useState<App[]>([]);
 
     const [form] = Form.useForm();
@@ -93,7 +95,7 @@ export default function Contracts() {
         {
           title: '状态',
           dataIndex: 'status',
-          render: (text: number) => mapSimpleStatus(text, ""),
+          render: (text: number, row: any) => mapSimpleStatus(text, row['error']),
         },
         {
           title: '合约',
@@ -166,11 +168,14 @@ export default function Contracts() {
     useEffect(() => {
         const filter: ContractFilter = {};
         if (appIdFilter !== '0') filter.app_id = parseInt(appIdFilter);
+        setLoading(true);
         listContracts(page, 10, filter).then(res => {
           setTotal(res.count);
           setItems(res.items);
+        }).finally(()=>{
+          setLoading(false);
         });
-    }, [page, appIdFilter]);
+    }, [page, appIdFilter, refreshIt]);
 
     useEffect(() => {
         getAllApps().then(res => {
@@ -184,6 +189,7 @@ export default function Contracts() {
                 <Option value="0">全部项目</Option>
                 {apps.map((app) => <Option key={app.id} value={app.id}>{app.name}</Option>)}
             </Select>
+            <Button type="dashed" onClick={() => setRefreshIt(refreshIt+1)}>刷新</Button>
             <Button type="primary" onClick={() => setIsDeployModalVisible(true)}>部署合约</Button>
             <Link to="/panels/contracts/sponsor"><Button type="primary">设置树图代付</Button></Link>
         </Space>
@@ -193,6 +199,7 @@ export default function Contracts() {
         <>
             <Card title='智能合约' extra={extra}>
                 <Table
+                    loading={loading}
                     rowKey='id'
                     dataSource={items}
                     columns={columns}
