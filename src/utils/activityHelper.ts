@@ -83,7 +83,8 @@ export const formDataTranslate = (data: FormData, apps: App[]) => {
     white_list_infos: data.white_list_infos,
     command: data.command ?? '',
     name: data.name,
-    activity_type: 'single',
+    activity_type: 1,
+    app_name: apps[appIndex].name,
   };
 };
 
@@ -110,9 +111,9 @@ export const activityTypeTransform = (type: 'single' | 'bind' | 'poap') => {
   return activityTypeDic[type];
 };
 
-export const getActivityUrl=()=>{
+export const getActivityUrl = () => {
   const url = new URL(location.href);
   const searchParams = new URLSearchParams(url.search);
   const activity_id = searchParams.get('activity_id');
   return activity_id;
-}
+};

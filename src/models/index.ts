@@ -94,7 +94,7 @@ export interface ActivityItem {
   chain_type: number;
   app_id: number;
   activity_name: string;
-  activity_type: 'single' | 'bind' | 'poap';
+  activity_type: number;
   start_time: number;
   end_time?: number;
   created_at: string;
