@@ -51,12 +51,19 @@ export const ActivityManageIcon: React.FC<{ activity: ActivityItem }> = ({ activ
   };
 
   return (
-    <div onClick={(e) => setIsManageActModalVisible(true)} key={activity.activity_id}>
-      <Tooltip title="管理活动" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
-        <img src={ManageActivity} />
-      </Tooltip>
+    <>
+      <div
+        onClick={(e) => {
+          setIsManageActModalVisible(true);
+        }}
+        key={activity.activity_id}
+      >
+        <Tooltip title="管理活动" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
+          <img src={ManageActivity} />
+        </Tooltip>
+      </div>
       <ManageActivityModual open={isManageActModalVisible} hideModal={hideModal} onCancel={hideModal} activity={activity} />
-    </div>
+    </>
   );
 };
 

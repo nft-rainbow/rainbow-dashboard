@@ -88,14 +88,17 @@ export interface ActivityItem {
   max_mint_count?: number;
   description: string;
   activity_id?: string;
+  app_name: string;
   activity_picture_url: string;
   amount: number;
   contract_address: string;
+  contract_id?: string;
   chain_type: number;
+  command?: string;
   app_id: number;
   activity_name: string;
   activity_type: number;
-  start_time: number;
+  start_time: string;
   end_time?: number;
   created_at: string;
   white_list_infos?: [

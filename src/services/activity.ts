@@ -19,7 +19,7 @@ export interface NftConfig {
 export interface PoapActivityConfig extends CreateActivityData {
   activity_id: string;
   contract_id: string;
-  nft_configs: NftConfig[];
+  nft_configs?: NftConfig[];
 }
 
 export const createActivity = async (meta: CreateActivityData) => {

@@ -1,16 +1,13 @@
-import React, { useState, useEffect, useCallback, useReducer, Suspense } from 'react';
-import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
-import useSWR from 'swr';
+import React, { useState, useCallback, useReducer } from 'react';
 import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, Radio } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { ActivityItem } from '../../../models';
 import LimitedInput from '@modules/limitedInput';
 import FileUpload from '@components/FileUpload';
 import { PopoverContent, ExistRelationForbidden, ModalStyle } from './constants';
-import { createActivity } from '@services/activity';
-import { getAppDetail } from '@services/app';
 import { parseCSV, csvWhitelistFormat } from '@utils/csvUtils';
-import { handleFormSwitch, defaultSwitchers, formDataTranslate, type FormData } from '@utils/activityHelper';
+import { handleFormSwitch, updateformDataTranslate, timestampToDate, type Switchers, type FormData } from '@utils/activityHelper';
+import { updatePoap } from '@services/activity';
 import './index.scss';
 
 interface CreatePOAProps {
@@ -20,17 +17,17 @@ interface CreatePOAProps {
   activity: ActivityItem;
 }
 
-const AppName: React.FC<{ activity_id: number }> = ({ activity_id }) => {
-//   const { data: appName, error } = useSWR(`api/apps/${activity_id}`, () => getAppDetail(activity_id));
-let appName=undefined;
-  return <div>{appName}</div>;
-};
-
 const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activity }) => {
-  console.log('activity', activity);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [form] = Form.useForm();
-  //   //   useResetFormOnCloseModal({ form, open });
+  const defaultSwitchers: Switchers = {
+    dateDisabled: !!activity.end_time,
+    numberDisabled: activity.amount === -1,
+    publicLimitDisabled: activity.max_mint_count === -1,
+    passwordDisabled: !!activity.command,
+    whitelistDisabled: !!activity.white_list_infos,
+    existRelationForbidden: false,
+  };
   const { Option } = Select;
   const { RangePicker } = DatePicker;
   const [switchers, dispatch] = useReducer(handleFormSwitch, defaultSwitchers);
@@ -57,17 +54,17 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
 
   const handleFinish = useCallback(async (values: FormData) => {
     console.log(values);
-    //   const params = formDataTranslate(values, apps);
-    //   try {
-    //     setConfirmLoading(true);
-    //     await createActivity(params);
-    //     dispatch({ type: 'reset' });
-    //     hideModal();
-    //   } catch (err) {
-    //     console.log(err);
-    //   } finally {
-    //     setConfirmLoading(false);
-    //   }
+    const params = updateformDataTranslate(activity, values);
+    try {
+      setConfirmLoading(true);
+      await updatePoap(params);
+      dispatch({ type: 'reset' });
+      hideModal();
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setConfirmLoading(false);
+    }
   }, []);
 
   const handleCancel = useCallback(() => {
@@ -76,38 +73,20 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
     onCancel();
   }, []);
 
-  useEffect(() => {
-    console.log('app_id', activity.app_id);
-    // form.setFieldsValue({
-    //   app_id: activity.app_id,
-    //   name: activity.name,
-    //   description: activity.description,
-    //   activityDate: [activity.start_time, activity.end_time],
-    //   amount: activity.amount,
-    //   public_limit: activity.max_mint_count,
-    //   white_list_infos: activity.white_list_infos,
-    // });
-  }, []);
-
   return (
     <Modal title="管理活动" open={open} onOk={form.submit} onCancel={handleCancel} {...ModalStyle} confirmLoading={confirmLoading}>
       <Form id="manageActivityForm" name="basic" form={form} layout="vertical" onFinish={handleFinish} initialValues={{ chain: 'conflux' }}>
         <Form.Item name="app_id" label="所属项目" initialValue={activity.app_id}>
           <Select placeholder="请选择项目" disabled={true}>
             <Option key={activity.app_id} value={activity.app_id}>
-              {/* {!error && appName} */}
-              <ErrorBoundary fallbackRender={(fallbackProps) => <span>获取项目名称失败</span>}>
-                <Suspense fallback={<div>获取项目名称中……›</div>}>
-                  <AppName activity_id={activity.app_id} />
-                </Suspense>
-              </ErrorBoundary>
+              {activity.app_name}
             </Option>
           </Select>
         </Form.Item>
-        <Form.Item name="name" label="活动名称" rules={[{ required: true, message: '请输入活动名称' }]}>
-          <Input placeholder="请输入" />
+        <Form.Item name="name" label="活动名称" rules={[{ required: true, message: '请输入活动名称' }]} initialValue={activity.name}>
+          <Input defaultValue={activity.name} />
         </Form.Item>
-        <LimitedInput form={form} id="description" label="活动描述" name="description" maxLength={100} message="请输入活动描述" />
+        <LimitedInput form={form} id="description" label="活动描述" name="description" maxLength={100} message="请输入活动描述" initialValue={activity.description} />
         <div className="mb-8px flex flex-row justify-between">
           <label htmlFor="activityDate" className="required text-14px leading-22px" title="活动日期">
             活动日期：
@@ -124,10 +103,28 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
             <span className="ml-8px text-14px leading-22px">不限制结束日期</span>
           </div>
         </div>
-        <Form.Item id="activityDate" name="activityDate" rules={[{ required: true, message: '请输入活动日期' }]}>
-          <RangePicker id="activityDate" showTime placeholder={['开始日期', '结束日期']} disabled={[false, switchers.dateDisabled]} allowEmpty={[false, true]} />
+        <Form.Item
+          id="activityDate"
+          name="activityDate"
+          rules={[{ required: true, message: '请输入活动日期' }]}
+          initialValue={[timestampToDate(parseInt(activity.start_time)), activity.end_time ? timestampToDate(activity.end_time) : null]}
+        >
+          <RangePicker
+            defaultValue={[timestampToDate(parseInt(activity.start_time)), activity.end_time ? timestampToDate(activity.end_time) : null]}
+            id="activityDate"
+            showTime
+            placeholder={['开始日期', '结束日期']}
+            disabled={[false, switchers.dateDisabled]}
+            allowEmpty={[false, true]}
+          />
         </Form.Item>
-        <Form.Item label="活动封面：" name="activity_picture_url" rules={[{ required: true, message: '请上传活动封面' }]} className="mb-0">
+        <Form.Item
+          label="活动封面："
+          name="activity_picture_url"
+          rules={[{ required: true, message: '请上传活动封面' }]}
+          className="mb-0"
+          initialValue={activity.activity_picture_url}
+        >
           <FileUpload
             onChange={(err: Error, file: any) => {
               form.setFieldsValue({ activity_picture_url: file.url });
@@ -161,8 +158,8 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
         {switchers.numberDisabled ? (
           <div className="mb-24px w-full h-32px"></div>
         ) : (
-          <Form.Item name="amount" rules={[{ required: true, message: '请输入发行数量' }]}>
-            <Input placeholder="请输入" id="amount" />
+          <Form.Item name="amount" rules={[{ required: true, message: '请输入发行数量' }]} initialValue={activity.amount}>
+            <Input placeholder="请输入" id="amount" defaultValue={activity.amount} />
           </Form.Item>
         )}
         <div className="flex flex-row justify-between">
@@ -189,8 +186,8 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
         {switchers.publicLimitDisabled ? (
           <div className="mb-24px w-full h-32px"></div>
         ) : (
-          <Form.Item name="max_mint_count" initialValue={1} rules={[{ validator: checkRelAllowed, message: '公开铸造上限不可超过发行上限' }]}>
-            <InputNumber defaultValue={1} className="w-full" />
+          <Form.Item name="max_mint_count" initialValue={activity.max_mint_count} rules={[{ validator: checkRelAllowed, message: '公开铸造上限不可超过发行上限' }]}>
+            <InputNumber defaultValue={activity.max_mint_count} className="w-full" />
           </Form.Item>
         )}
         <div className="mb-8px flex flex-row justify-between">
@@ -210,8 +207,8 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
         {switchers.passwordDisabled ? (
           <div className="mb-24px w-full h-32px"></div>
         ) : (
-          <Form.Item name="command">
-            <Input placeholder="请输入" className="w-full" />
+          <Form.Item name="command" initialValue={activity.command}>
+            <Input placeholder="请输入" className="w-full" defaultValue={activity.command} />
           </Form.Item>
         )}
         <div className="mb-8px flex flex-row justify-between">
@@ -238,7 +235,7 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
         </div>
         {!switchers.whitelistDisabled && (
           <>
-            <Form.Item name="white_list_infos" className="hidden">
+            <Form.Item name="white_list_infos" className="hidden" initialValue={activity.white_list_infos}>
               <Input />
             </Form.Item>
             <input type="file" accept=".csv" id="whitelistUpload" onChange={handleWhiltelistChange} className="!hidden" />
