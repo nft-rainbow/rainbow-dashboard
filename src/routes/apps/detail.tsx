@@ -45,7 +45,7 @@ import { ChainAccount, App } from '../../models';
 import axios from 'axios';
 import { FileImageOutlined, ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 import { address } from 'js-conflux-sdk';
-import {UserOutlined} from "@ant-design/icons/lib";
+import {LinkOutlined, UserOutlined} from "@ant-design/icons/lib";
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
 const { Option } = Select;
@@ -96,6 +96,15 @@ export default function AppDetail(props: {appId?: string}) {
   }, [accounts])
 
   const onNftMint = (values: any) => {
+    const {file_url, file_link} = values;
+    console.log(file_link, file_url)
+    if (!file_url && !file_link) {
+      messageApi.warning("请上传图片或者填入图片链接");
+      return;
+    }
+    if (!file_url && file_link) {
+      values.file_url = file_link;
+    }
     easyMintUrl(id as string, values).then((res) => {
       setIsMintModalVisible(false);
       setRefreshNftList(refreshNftList+1);
@@ -184,8 +193,21 @@ export default function AppDetail(props: {appId?: string}) {
           <Form.Item name="description" label="描述" rules={[{ required: true }]}>
             <Input.TextArea rows={4} />
           </Form.Item>
-          <Form.Item name="file_url" label="图片" rules={[{ required: true }]}>
+          <Form.Item name="file_url" label="上传图片" rules={[{ required: false }]}>
             <FileUpload accept={".png,.jpg,.svg,.mp3,.mp4,.gif,stp,.max,.fbx,.obj,.x3d,.vrml,.3ds,3mf,.stl,.dae"} listType="picture" maxCount={1} onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} />
+          </Form.Item>
+          <Form.Item wrapperCol={{offset: 4}}>或者填写</Form.Item>
+          <Form.Item name="file_link_group" label="网络图片" rules={[{ required: false }]}>
+            <Input.Group compact style={{display: 'flex'}}>
+              <Form.Item name="file_link" style={{flexGrow: 1}}>
+                <Input  style={{flexGrow: 1}}/>
+              </Form.Item>
+              <Button type={"text"} onClick={()=>{
+                form.setFieldValue('file_link','https://console.nftrainbow.cn/nftrainbow-logo-light.png')
+              }} style={{color: "gray"}}>
+                <Tooltip title={"使用测试图片"} mouseEnterDelay={1}><LinkOutlined /></Tooltip>
+              </Button>
+            </Input.Group>
           </Form.Item>
           <Form.Item name="chain" label="网络" rules={[{ required: true }]}>
             <Radio.Group>
@@ -194,23 +216,26 @@ export default function AppDetail(props: {appId?: string}) {
             </Radio.Group>
           </Form.Item>
           <Form.Item name={"group"} label="接受地址">
-            <Input.Group compact style={{display:'flex'}}><Form.Item name="mint_to_address" style={{flexGrow:1, border: '0px solid black'}} rules={[
-              {required: true, message: '请输入接受地址'},
-              ({getFieldValue}) => ({
-                validator: function (_, value) {
-                  const isValidAddr = address.isValidCfxAddress(value);
-                  if (!isValidAddr) return Promise.reject(new Error('地址格式错误'));
-                  const prefix = getFieldValue('chain') === 'conflux' ? 'cfx' : 'cfxtest';
-                  const isValidPrefix = value.toLowerCase().split(':')[0] === prefix;
-                  if (!isValidPrefix) return Promise.reject(new Error('请输入正确网络的地址'));
-                  return Promise.resolve();
-                }
-              })
-            ]}><Input style={{flexGrow: 1}} placeholder='树图链地址'/>
-            </Form.Item>
+            <Input.Group compact style={{display:'flex'}}>
+              <Form.Item name="mint_to_address" style={{flexGrow:1, border: '0px solid black'}} rules={[
+                {required: true, message: '请输入接受地址'},
+                ({getFieldValue}) => ({
+                  validator: function (_, value) {
+                    const isValidAddr = address.isValidCfxAddress(value);
+                    if (!isValidAddr) return Promise.reject(new Error('地址格式错误'));
+                    const prefix = getFieldValue('chain') === 'conflux' ? 'cfx' : 'cfxtest';
+                    const isValidPrefix = value.toLowerCase().split(':')[0] === prefix;
+                    if (!isValidPrefix) return Promise.reject(new Error('请输入正确网络的地址'));
+                    return Promise.resolve();
+                  }
+                })
+              ]}>
+                <Input style={{flexGrow: 1}} placeholder='树图链地址'/>
+              </Form.Item>
               <Button type={"text"} onClick={fillMintTo} style={{color: "gray"}}>
                 <Tooltip title={"使用App账户地址"} mouseEnterDelay={1}><UserOutlined/></Tooltip>
-              </Button></Input.Group>
+              </Button>
+            </Input.Group>
           </Form.Item>
           <Form.Item wrapperCol={{offset:4, span: 18}}>
             <Row gutter={24}>
