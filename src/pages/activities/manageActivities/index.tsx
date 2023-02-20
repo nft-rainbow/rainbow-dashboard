@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback, useReducer } from 'react';
+import React, { useState, useEffect, useCallback, useReducer, Suspense } from 'react';
+import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import useSWR from 'swr';
 import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, Radio } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
@@ -19,6 +20,12 @@ interface CreatePOAProps {
   activity: ActivityItem;
 }
 
+const AppName: React.FC<{ activity_id: number }> = ({ activity_id }) => {
+//   const { data: appName, error } = useSWR(`api/apps/${activity_id}`, () => getAppDetail(activity_id));
+let appName=undefined;
+  return <div>{appName}</div>;
+};
+
 const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activity }) => {
   console.log('activity', activity);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -27,7 +34,7 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
   const { Option } = Select;
   const { RangePicker } = DatePicker;
   const [switchers, dispatch] = useReducer(handleFormSwitch, defaultSwitchers);
-  const { data: appName, error } = useSWR(`api/apps/${activity.app_id}`, () => getAppDetail(activity?.app_id));
+  //   const { data: appName, error } = useSWR(`api/apps/${activity.app_id}`, () => getAppDetail(activity?.app_id));
 
   const checkRelAllowed = useCallback((rule: any, value: number, callback: any) => {
     const amount = form.getFieldValue('amount');
@@ -71,15 +78,15 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
 
   useEffect(() => {
     console.log('app_id', activity.app_id);
-    form.setFieldsValue({
-      app_id: activity.app_id,
-      name: activity.name,
-      description: activity.description,
-      activityDate: [activity.start_time, activity.end_time],
-      amount: activity.amount,
-      public_limit: activity.max_mint_count,
-      white_list_infos: activity.white_list_infos,
-    });
+    // form.setFieldsValue({
+    //   app_id: activity.app_id,
+    //   name: activity.name,
+    //   description: activity.description,
+    //   activityDate: [activity.start_time, activity.end_time],
+    //   amount: activity.amount,
+    //   public_limit: activity.max_mint_count,
+    //   white_list_infos: activity.white_list_infos,
+    // });
   }, []);
 
   return (
@@ -88,7 +95,12 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
         <Form.Item name="app_id" label="所属项目" initialValue={activity.app_id}>
           <Select placeholder="请选择项目" disabled={true}>
             <Option key={activity.app_id} value={activity.app_id}>
-              {!error && appName}
+              {/* {!error && appName} */}
+              <ErrorBoundary fallbackRender={(fallbackProps) => <span>获取项目名称失败</span>}>
+                <Suspense fallback={<div>获取项目名称中……›</div>}>
+                  <AppName activity_id={activity.app_id} />
+                </Suspense>
+              </ErrorBoundary>
             </Option>
           </Select>
         </Form.Item>
