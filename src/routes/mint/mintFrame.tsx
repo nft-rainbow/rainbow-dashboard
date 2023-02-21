@@ -1,14 +1,31 @@
-import {Layout} from "antd";
+import {Layout, Tabs, TabsProps} from "antd";
 import {Content} from "antd/es/layout/layout";
 import React from "react";
+import MintManual from "./mintManual";
+import Test from "./test";
 
 export default function MintFrame() {
 	// prop:{contract:string, name:string, symbol:string}
+	const items: TabsProps['items'] = [
+		{
+			key: '1',
+			label: `铸造1个`,
+			children: `?`,
+		},
+		{
+			key: '20',
+			label: `铸造多个`,
+			children: <Test/>,
+		},
+		{
+			key: '30',
+			label: `导入`,
+			children: `导入`,
+		}
+	];
 	return (
 		<>
-			<Layout>
-				<Content style={{alignContent: 'middle'}}>程序化接口（API）已上线，请查阅相关文档。UI即将上线，敬请期待！</Content>
-			</Layout>
+			<Tabs defaultActiveKey="1" items={items}/>
 		</>
 	)
 }
