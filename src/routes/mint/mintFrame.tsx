@@ -25,7 +25,7 @@ export default function MintFrame() {
 	];
 	return (
 		<>
-			<Tabs defaultActiveKey="1" items={items}/>
+			<Tabs defaultActiveKey="2" items={items}/>
 		</>
 	)
 }
