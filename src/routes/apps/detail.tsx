@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import { useParams } from 'react-router-dom';
 import RainbowBreadcrumb from '../../components/Breadcrumb';
 import {
@@ -28,7 +28,7 @@ import {
   message,
   Image,
   Popover,
-  Select,
+  Select, Radio, Row, Col,
 } from 'antd';
 import { SERVICE_HOST } from '../../config';
 import {
@@ -45,6 +45,8 @@ import { ChainAccount, App } from '../../models';
 import axios from 'axios';
 import { FileImageOutlined, ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 import { address } from 'js-conflux-sdk';
+import {LinkOutlined, QuestionCircleOutlined, UserOutlined} from "@ant-design/icons/lib";
+import {CheckboxChangeEvent} from "antd/es/checkbox";
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
 const { Option } = Select;
@@ -68,8 +70,9 @@ const mapSimpleStatus = (status: number, error: string) => {
   }
 }
 
-export default function AppDetail() {
-  const { id } = useParams();
+export default function AppDetail(props: {appId?: string}) {
+  const { id: paramId } = useParams();
+  const id = paramId || props.appId;
   const [app, setApp] = useState<App | {}>({});
   const [breadcrumbItems, setBreadcrumbItems] = useState<string[]>(["应用详情"]);
   const [form] = Form.useForm();
@@ -78,16 +81,41 @@ export default function AppDetail() {
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [isMintModalVisible, setIsMintModalVisible] = useState(false);
   const [isPoapModalVisible, setIsPoapModalVisible] = useState(false);
+  const [refreshNftList, setRefreshNftList] = useState(0);
+  const [useUpload, setUseUpload] = useState(true);
+  const [minting, setMinting] = useState(false);
 
-  const mainnetAccount = accounts.find(item => item.chain_id === 1029) || { address: "" };
-  const testAccount = accounts.find(item => item.chain_id === 1) || { address: "" };
+  const mainnetAccount = ()=>accounts.find(item => item.chain_id === 1029) || { address: "" };
+  const testAccount = ()=>accounts.find(item => item.chain_id === 1) || { address: "" };
+  const [messageApi, contextHolder] = message.useMessage();
+  const fillMintTo = useCallback(()=>{
+    const chain = form.getFieldValue("chain")
+    if (!chain) {
+      messageApi.info('请选择网络!');
+      return;
+    }
+    let setTo = chain==='conflux' ? mainnetAccount().address : testAccount().address;
+    form.setFieldsValue({"mint_to_address": setTo || '??'})
+  }, [accounts])
 
   const onNftMint = (values: any) => {
+    const {file_url, file_link} = values;
+    console.log(file_link, file_url)
+    if (!file_url && !file_link) {
+      messageApi.warning("请上传图片或者填入图片链接");
+      return;
+    }
+    if (!file_url && file_link) {
+      values.file_url = file_link;
+    }
+    setMinting(true);
     easyMintUrl(id as string, values).then((res) => {
       setIsMintModalVisible(false);
-      form.resetFields();
+      setRefreshNftList(refreshNftList+1);
     }).catch((err) => {
       message.error(err.response.data.message);
+    }).finally(()=>{
+      setMinting(false)
     });
   }
 
@@ -109,14 +137,16 @@ export default function AppDetail() {
 
   const extraOp = (
     <Space>
-        <Button type='primary' onClick={() => setIsMintModalVisible(true)}>快捷铸造藏品</Button>
-        <Button type='primary' onClick={() => setIsPoapModalVisible(true)}>创建POAP</Button>
+        <Button type='dashed' onClick={() => setRefreshNftList(refreshNftList+1)}>刷新</Button>
+        <Button type='primary' onClick={() => setIsMintModalVisible(true)}>快捷铸造藏品 <Tooltip title={"快捷铸造使用的是平台内置合约，所有人共用。"}><QuestionCircleOutlined /></Tooltip></Button>
+        {/*<Button type='primary' onClick={() => setIsPoapModalVisible(true)}>创建POAP</Button>*/}
         <Button type='primary' onClick={() => setIsDetailModalVisible(true)}>查看AppKey</Button>
     </Space>
   );
 
   useEffect(() => {
     getAppAccounts(id as string).then(data => setAccounts(data));
+    form.setFieldValue("group", "1")
   }, [id]);
 
   useEffect(() => {
@@ -128,17 +158,18 @@ export default function AppDetail() {
 
   return (
     <div className="App">
+      {contextHolder}
       <RainbowBreadcrumb items={breadcrumbItems} />
       <Card>
         <Tabs defaultActiveKey="1" tabBarExtraContent={extraOp}>
           <TabPane tab="藏品铸造" key="1">
-            <AppNFTs id={idStr} />
+            <AppNFTs id={idStr} refreshTrigger={refreshNftList}/>
           </TabPane>
           <TabPane tab="元数据" key="2">
-            <AppMetadatas id={idStr} />
+            <AppMetadatas id={idStr} refreshTrigger={refreshNftList}/>
           </TabPane>
           <TabPane tab="文件" key="3">
-            <AppFiles id={idStr} />
+            <AppFiles id={idStr} refreshTrigger={refreshNftList}/>
           </TabPane>
           {/* <TabPane tab="POAP" key="4">
             <AppPoaps id={idStr} />
@@ -157,10 +188,10 @@ export default function AppDetail() {
         <p>AppId: <Paragraph copyable code className='d-inline'>{(app as App).app_id}</Paragraph></p>
         <p>AppSecret: <Paragraph copyable code className='d-inline'>{(app as App).app_secret}</Paragraph></p>
         <p>APIHost: <Paragraph copyable code className='d-inline'>{SERVICE_HOST.replace('console', 'api')}</Paragraph></p>
-        <p>主网账户: <Paragraph copyable code className='d-inline'>{mainnetAccount.address}</Paragraph></p>
-        <p>测试网账户: <Paragraph copyable code className='d-inline'>{testAccount.address}</Paragraph></p>
+        <p>主网账户: <Paragraph copyable code className='d-inline'>{mainnetAccount().address}</Paragraph></p>
+        <p>测试网账户: <Paragraph copyable code className='d-inline'>{testAccount().address}</Paragraph></p>
       </Modal>
-      <Modal title='快速铸造' open={isMintModalVisible} onOk={() => form.submit()} onCancel={closeMintModal} okText={'确认'} cancelText={'取消'}>
+      <Modal title='快速铸造' open={isMintModalVisible} onOk={() => form.submit()} onCancel={closeMintModal} cancelButtonProps={{hidden: true}} okButtonProps={{hidden: true}}>
         <Form {...formLayout} form={form} name="control-hooks" onFinish={onNftMint}>
           <Form.Item name="name" label="名字" rules={[{ required: true }]}>
             <Input />
@@ -168,29 +199,69 @@ export default function AppDetail() {
           <Form.Item name="description" label="描述" rules={[{ required: true }]}>
             <Input.TextArea rows={4} />
           </Form.Item>
-          <Form.Item name="file_url" label="图片" rules={[{ required: true }]}>
-            <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} />
+          <Form.Item name={"img_group"} label="图片">
+            <Input.Group>
+                <Radio.Group value={useUpload ? 'upload' : 'input'} style={{marginRight: '8px'}} onChange={(e: CheckboxChangeEvent) => {
+                  setUseUpload(e.target.value === 'upload')
+                }}>
+                  <Radio.Button value="upload">本地文件</Radio.Button>
+                  <Radio.Button value="input">网络链接</Radio.Button>
+                </Radio.Group>
+
+                {useUpload && <Form.Item name="file_url" noStyle rules={[{required: false}]}>
+                  <FileUpload
+                              accept={".png,.jpg,.svg,.mp3,.mp4,.gif,stp,.max,.fbx,.obj,.x3d,.vrml,.3ds,3mf,.stl,.dae"}
+                              listType="picture" maxCount={1}
+                              onChange={(err: Error, file: any) => form.setFieldsValue({file_url: file.url})}/>
+                </Form.Item>}
+
+                {!useUpload &&
+                <Input.Group style={{display: 'flex', marginTop:'8px'}}>
+                  <Form.Item name="file_link" noStyle style={{flexGrow: 1}}>
+                    <Input style={{flexGrow: 1}}/>
+                  </Form.Item>
+                  <Button type={"text"} onClick={() => {
+                    form.setFieldValue('file_link', 'https://console.nftrainbow.cn/nftrainbow-logo-light.png')
+                  }} style={{color: "gray"}}>
+                    <Tooltip title={"使用测试图片"} mouseEnterDelay={0.1}><LinkOutlined/></Tooltip>
+                  </Button></Input.Group>
+                }
+            </Input.Group>
           </Form.Item>
           <Form.Item name="chain" label="网络" rules={[{ required: true }]}>
-            <Select>
-                <Option value="conflux">树图主网</Option>
-                <Option value="conflux_test">树图测试网</Option>
-            </Select>
+            <Radio.Group>
+                <Radio.Button value="conflux">树图主网</Radio.Button>
+                <Radio.Button value="conflux_test">树图测试网</Radio.Button>
+            </Radio.Group>
           </Form.Item>
-          <Form.Item name="mint_to_address" label="接受地址" rules={[
-            { required: true, message: '请输入接受地址' },
-            ({ getFieldValue }) => ({
-                validator: function(_, value) { 
+          <Form.Item name={"group"} label="接受地址">
+            <Input.Group compact style={{display:'flex'}}>
+              <Form.Item name="mint_to_address" style={{flexGrow:1, border: '0px solid black'}} rules={[
+                {required: true, message: '请输入接受地址'},
+                ({getFieldValue}) => ({
+                  validator: function (_, value) {
                     const isValidAddr = address.isValidCfxAddress(value);
                     if (!isValidAddr) return Promise.reject(new Error('地址格式错误'));
                     const prefix = getFieldValue('chain') === 'conflux' ? 'cfx' : 'cfxtest';
                     const isValidPrefix = value.toLowerCase().split(':')[0] === prefix;
                     if (!isValidPrefix) return Promise.reject(new Error('请输入正确网络的地址'));
                     return Promise.resolve();
-                }
-            })
-          ]}>
-            <Input placeholder='树图链地址' />
+                  }
+                })
+              ]}>
+                <Input style={{flexGrow: 1}} placeholder='树图链地址'/>
+              </Form.Item>
+              <Button type={"text"} onClick={fillMintTo} style={{color: "gray"}}>
+                <Tooltip title={"使用App账户地址"} mouseEnterDelay={1}><UserOutlined/></Tooltip>
+              </Button>
+            </Input.Group>
+          </Form.Item>
+          <Form.Item wrapperCol={{offset:4, span: 18}}>
+            <Row gutter={24}>
+              <Col span={6}><Button htmlType={"reset"}>重置</Button></Col>
+              <Col span={6}><Button htmlType={"button"} type={"dashed"} onClick={()=>setIsMintModalVisible(false)}>取消</Button></Col>
+              <Col span={6}><Button htmlType={"submit"} type={"primary"} disabled={minting} loading={minting}>确认</Button></Col>
+            </Row>
           </Form.Item>
         </Form>
       </Modal>
@@ -217,8 +288,8 @@ export default function AppDetail() {
   );
 }
 
-function AppNFTs(props: { id: string }) {
-  const { id } = props;
+function AppNFTs(props: { id: string, refreshTrigger: number }) {
+  const { id, refreshTrigger = 0 } = props;
   const [items, setItems] = useState<NFT[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -305,7 +376,7 @@ function AppNFTs(props: { id: string }) {
     }).then(() => {
       setLoading(false);
     });
-  }, [id, page]);
+  }, [id, page, refreshTrigger]);
 
   // SJR: click button to load one image
   const showNFTImage = (metadataUri: string, index: number) => {
@@ -342,8 +413,8 @@ function AppNFTs(props: { id: string }) {
   );
 }
 
-function AppMetadatas(props: { id: string }) {
-  const { id } = props;
+function AppMetadatas(props: { id: string, refreshTrigger: number }) {
+  const { id, refreshTrigger = 0 } = props;
   const [items, setItems] = useState<Metadata[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -361,7 +432,8 @@ function AppMetadatas(props: { id: string }) {
     {
       title: '图片',
       dataIndex: 'image',
-      render: (text: string) => <img src={text} width={50} alt='NFT'/>
+      width: 180,
+      render: (text: string) => <Image src={text} alt='NFT'/>
     },
     {
       title: 'MetadataId',
@@ -390,7 +462,7 @@ function AppMetadatas(props: { id: string }) {
       setTotal(res.count);
       setItems(res.items);
     });
-  }, [id, page]);
+  }, [id, page, refreshTrigger]);
 
   return (
     <>
@@ -409,8 +481,8 @@ function AppMetadatas(props: { id: string }) {
   );
 }
 
-function AppFiles(props: { id: string }) {
-  const { id } = props;
+function AppFiles(props: { id: string, refreshTrigger: number }) {
+  const { id, refreshTrigger = 0 } = props;
   const [items, setItems] = useState<File[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -439,7 +511,7 @@ function AppFiles(props: { id: string }) {
       setTotal(res.count);
       setItems(res.items);
     });
-  }, [id, page]);
+  }, [id, page, refreshTrigger]);
 
   return (
     <>

@@ -27,6 +27,7 @@ import ContractDeployment from './routes/contracts/new';
 
 import MintCountByMonth from './routes/users/userMintsByMonth';
 import MetadataList from './routes/metadata';
+import MintFrame from "./routes/mint/mintFrame";
 
 // import NotFound from './routes/404';
 
@@ -50,6 +51,7 @@ root.render(
             <Route path="company" element={<Company />} />
             <Route path="apps" element={<App />} />
             <Route path="apps/:id" element={<AppDetail />} />
+            <Route path="mint/:id" element={<MintFrame />} />
             <Route path="contracts" element={<Contracts />} />
             <Route path="contracts/sponsor" element={<ContractSponsor />} />
             <Route path="contracts/deploy" element={<ContractDeployment />} />
