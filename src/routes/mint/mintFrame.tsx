@@ -7,7 +7,7 @@ export default function MintFrame() {
 	return (
 		<>
 			<Layout>
-				<Content style={{alignContent: 'middle'}}>即将上线，敬请期待！</Content>
+				<Content style={{alignContent: 'middle'}}>程序化接口（API）已上线，请查阅相关文档。UI即将上线，敬请期待！</Content>
 			</Layout>
 		</>
 	)
