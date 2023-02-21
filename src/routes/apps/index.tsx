@@ -8,7 +8,7 @@ import {
   Input,
   Select,
   TablePaginationConfig,
-  message,
+  message, Space,
 } from "antd";
 import { Link } from "react-router-dom";
 import { getApps, createApp } from '../../services/app';
@@ -90,7 +90,7 @@ function Apps() {
   }, [page]);
 
   return (
-    <>
+    <Space direction={"vertical"}>
       {defaultAppId.toString().length > 0 && <Card title={'默认项目'}>
         {defaultAppId.toString().length > 0 && <AppDetail appId={defaultAppId}/>}
       </Card>}
@@ -147,7 +147,7 @@ function Apps() {
           
         </Form>
       </Modal>
-    </>
+    </Space>
   );
 }
 

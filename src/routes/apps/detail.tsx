@@ -45,7 +45,8 @@ import { ChainAccount, App } from '../../models';
 import axios from 'axios';
 import { FileImageOutlined, ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 import { address } from 'js-conflux-sdk';
-import {LinkOutlined, UserOutlined} from "@ant-design/icons/lib";
+import {LinkOutlined, QuestionCircleOutlined, UserOutlined} from "@ant-design/icons/lib";
+import {CheckboxChangeEvent} from "antd/es/checkbox";
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
 const { Option } = Select;
@@ -81,6 +82,8 @@ export default function AppDetail(props: {appId?: string}) {
   const [isMintModalVisible, setIsMintModalVisible] = useState(false);
   const [isPoapModalVisible, setIsPoapModalVisible] = useState(false);
   const [refreshNftList, setRefreshNftList] = useState(0);
+  const [useUpload, setUseUpload] = useState(true);
+  const [minting, setMinting] = useState(false);
 
   const mainnetAccount = ()=>accounts.find(item => item.chain_id === 1029) || { address: "" };
   const testAccount = ()=>accounts.find(item => item.chain_id === 1) || { address: "" };
@@ -105,11 +108,14 @@ export default function AppDetail(props: {appId?: string}) {
     if (!file_url && file_link) {
       values.file_url = file_link;
     }
+    setMinting(true);
     easyMintUrl(id as string, values).then((res) => {
       setIsMintModalVisible(false);
       setRefreshNftList(refreshNftList+1);
     }).catch((err) => {
       message.error(err.response.data.message);
+    }).finally(()=>{
+      setMinting(false)
     });
   }
 
@@ -132,8 +138,8 @@ export default function AppDetail(props: {appId?: string}) {
   const extraOp = (
     <Space>
         <Button type='dashed' onClick={() => setRefreshNftList(refreshNftList+1)}>刷新</Button>
-        <Button type='primary' onClick={() => setIsMintModalVisible(true)}>快捷铸造藏品</Button>
-        <Button type='primary' onClick={() => setIsPoapModalVisible(true)}>创建POAP</Button>
+        <Button type='primary' onClick={() => setIsMintModalVisible(true)}>快捷铸造藏品 <Tooltip title={"快捷铸造使用的是平台内置合约，所有人共用。"}><QuestionCircleOutlined /></Tooltip></Button>
+        {/*<Button type='primary' onClick={() => setIsPoapModalVisible(true)}>创建POAP</Button>*/}
         <Button type='primary' onClick={() => setIsDetailModalVisible(true)}>查看AppKey</Button>
     </Space>
   );
@@ -193,20 +199,33 @@ export default function AppDetail(props: {appId?: string}) {
           <Form.Item name="description" label="描述" rules={[{ required: true }]}>
             <Input.TextArea rows={4} />
           </Form.Item>
-          <Form.Item name="file_url" label="上传图片" rules={[{ required: false }]}>
-            <FileUpload accept={".png,.jpg,.svg,.mp3,.mp4,.gif,stp,.max,.fbx,.obj,.x3d,.vrml,.3ds,3mf,.stl,.dae"} listType="picture" maxCount={1} onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} />
-          </Form.Item>
-          <Form.Item wrapperCol={{offset: 4}}>或者填写</Form.Item>
-          <Form.Item name="file_link_group" label="网络图片" rules={[{ required: false }]}>
-            <Input.Group compact style={{display: 'flex'}}>
-              <Form.Item name="file_link" style={{flexGrow: 1}}>
-                <Input  style={{flexGrow: 1}}/>
-              </Form.Item>
-              <Button type={"text"} onClick={()=>{
-                form.setFieldValue('file_link','https://console.nftrainbow.cn/nftrainbow-logo-light.png')
-              }} style={{color: "gray"}}>
-                <Tooltip title={"使用测试图片"} mouseEnterDelay={1}><LinkOutlined /></Tooltip>
-              </Button>
+          <Form.Item name={"img_group"} label="图片">
+            <Input.Group>
+                <Radio.Group value={useUpload ? 'upload' : 'input'} style={{marginRight: '8px'}} onChange={(e: CheckboxChangeEvent) => {
+                  setUseUpload(e.target.value === 'upload')
+                }}>
+                  <Radio.Button value="upload">本地文件</Radio.Button>
+                  <Radio.Button value="input">网络链接</Radio.Button>
+                </Radio.Group>
+
+                {useUpload && <Form.Item name="file_url" noStyle rules={[{required: false}]}>
+                  <FileUpload
+                              accept={".png,.jpg,.svg,.mp3,.mp4,.gif,stp,.max,.fbx,.obj,.x3d,.vrml,.3ds,3mf,.stl,.dae"}
+                              listType="picture" maxCount={1}
+                              onChange={(err: Error, file: any) => form.setFieldsValue({file_url: file.url})}/>
+                </Form.Item>}
+
+                {!useUpload &&
+                <Input.Group style={{display: 'flex', marginTop:'8px'}}>
+                  <Form.Item name="file_link" noStyle style={{flexGrow: 1}}>
+                    <Input style={{flexGrow: 1}}/>
+                  </Form.Item>
+                  <Button type={"text"} onClick={() => {
+                    form.setFieldValue('file_link', 'https://console.nftrainbow.cn/nftrainbow-logo-light.png')
+                  }} style={{color: "gray"}}>
+                    <Tooltip title={"使用测试图片"} mouseEnterDelay={0.1}><LinkOutlined/></Tooltip>
+                  </Button></Input.Group>
+                }
             </Input.Group>
           </Form.Item>
           <Form.Item name="chain" label="网络" rules={[{ required: true }]}>
@@ -241,7 +260,7 @@ export default function AppDetail(props: {appId?: string}) {
             <Row gutter={24}>
               <Col span={6}><Button htmlType={"reset"}>重置</Button></Col>
               <Col span={6}><Button htmlType={"button"} type={"dashed"} onClick={()=>setIsMintModalVisible(false)}>取消</Button></Col>
-              <Col span={6}><Button htmlType={"submit"} type={"primary"}>确认</Button></Col>
+              <Col span={6}><Button htmlType={"submit"} type={"primary"} disabled={minting} loading={minting}>确认</Button></Col>
             </Row>
           </Form.Item>
         </Form>
