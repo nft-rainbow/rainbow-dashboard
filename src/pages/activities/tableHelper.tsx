@@ -13,6 +13,7 @@ import { chainTypeToName, timestampToDay, timestampToSecond, turnTimestamp } fro
 import { shortenCfxAddress } from '@utils/addressUtils';
 import { activityTypeTransform } from '@utils/activityHelper';
 import ManageActivityModual from './manageActivities';
+import ClaimLinkModual from './activityLink';
 
 export const mapSimpleStatus = (status: number, error: string) => {
   switch (status) {
@@ -67,6 +68,25 @@ export const ActivityManageIcon: React.FC<{ activity: ActivityItem }> = ({ activ
   );
 };
 
+export const ClaimLinkIcon: React.FC<{ activity: ActivityItem }> = ({ activity }) => {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <div
+        onClick={(e) => {
+          setOpen(true);
+        }}
+        key={activity.activity_id}
+      >
+        <Tooltip title="活动链接" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
+          <img src={ActivityLink} />
+        </Tooltip>
+      </div>
+      <ClaimLinkModual open={open} onCancle={() => setOpen(false)} activity={activity} />
+    </>
+  );
+};
+
 export const activityOperations: React.FC<ActivityItem> = (activity: ActivityItem) => {
   return (
     <div className="flex flex-row">
@@ -79,9 +99,7 @@ export const activityOperations: React.FC<ActivityItem> = (activity: ActivityIte
       <Tooltip title="空投" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
         <img src={AirDrop} />
       </Tooltip>
-      <Tooltip title="活动链接" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
-        <img src={ActivityLink} />
-      </Tooltip>
+      <ClaimLinkIcon activity={activity} />
       <Link to={`/panels/poaps/building/${activity.activity_id}`}>
         <Tooltip title="网页搭建" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
           <img src={WebLink} />
@@ -124,9 +142,9 @@ export const columns: ProColumns<ActivityItem>[] = [
   {
     title: '开始时间',
     dataIndex: 'start_time',
-    render: (_, record) => timestampToDay(record.start_time),
+    render: (_, record) => timestampToDay(parseInt(record.start_time)),
     defaultSortOrder: 'ascend',
-    sorter: (a: ActivityItem, b: ActivityItem) => b.start_time - a.start_time,
+    sorter: (a: ActivityItem, b: ActivityItem) => parseInt(b.start_time) - parseInt(a.start_time),
     search: false,
   },
   {
