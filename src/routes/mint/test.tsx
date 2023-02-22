@@ -1,5 +1,6 @@
 import React, {useCallback, useState} from 'react';
-import {Button, Checkbox, Col, Form, Input, InputNumber, Popconfirm, Row, Table, Typography} from 'antd';
+import {Button, Checkbox, Col, Form, Input, InputNumber, Popconfirm, Row, Space, Table, Typography} from 'antd';
+import MintFormFields from "./mintFormFields";
 
 interface Item {
 	key: string;
@@ -50,7 +51,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
 					rules={[
 						{
 							required: true,
-							message: `Please Input ${title}!`,
+							message: `请输入 ${title}!`,
 						},
 					]}
 				>
@@ -108,8 +109,8 @@ const Test: React.FC = () => {
 		}
 	};
 
-	const buildCols = useCallback(()=> {
-		console.log(`buildCols`)
+	const buildCols = useCallback((...args: any[])=> {
+		console.log(`buildCols`, args)
 		const columns = [
 			{
 				title: '图片',
@@ -120,7 +121,7 @@ const Test: React.FC = () => {
 			{
 				title: '名称',
 				dataIndex: 'name',
-				width: '25%',
+				width: '15%',
 				editable: true,
 			},
 			{
@@ -132,7 +133,7 @@ const Test: React.FC = () => {
 			{
 				title: '接受地址',
 				dataIndex: 'address',
-				width: '40%',
+				width: '15%',
 				editable: true,
 			},
 			{
@@ -143,21 +144,21 @@ const Test: React.FC = () => {
 					return editable ? (
 						<span>
             <Typography.Link onClick={() => save(record.key)} style={{marginRight: 8}}>
-              Save
+              保存
             </Typography.Link>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>Cancel</a>
-            </Popconfirm>
+            <Typography.Link onClick={cancel}>
+              取消
+            </Typography.Link>
           </span>
 					) : (
-						<>
+						<Space>
 							<Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-								Edit
+								编辑
 							</Typography.Link>
 							<Typography.Link disabled={editingKey !== ''} onClick={() => remove(record)}>
 								删除
 							</Typography.Link>
-						</>
+						</Space>
 					);
 				},
 			},
@@ -193,33 +194,48 @@ const Test: React.FC = () => {
 		setData(arr);
 		console.log(`length`, data.length)
 	}
+	const batchMint = ()=>{
+		console.log(`batch mint`)
+	}
 	return (
 		<>
-			<Row>
-				<Col>元数据选项</Col>
+			<Row gutter={5}>
+				<Col span={2}>元数据选项：</Col>
 				<Col><Checkbox checked={useCols.sameImage} onClick={()=>setUseCols({...useCols, sameImage: !useCols.sameImage})}>图片相同</Checkbox></Col>
 				<Col><Checkbox checked={useCols.sameName} onClick={()=>setUseCols({...useCols, sameName: !useCols.sameName})}>名字相同</Checkbox></Col>
 				<Col><Checkbox checked={useCols.sameDesc} onClick={()=>setUseCols({...useCols, sameDesc: !useCols.sameDesc})}>描述相同</Checkbox></Col>
 				<Col><Checkbox checked={useCols.sameAddress} onClick={()=>setUseCols({...useCols, sameAddress: !useCols.sameAddress})}>接受人相同</Checkbox></Col>
 			</Row>
+			<MintFormFields withImage={useCols.sameImage}
+			                withDesc={useCols.sameDesc}
+			                withAddress={useCols.sameAddress}
+			                withName={useCols.sameName}/>
+
 			[{data.length}]
 			<Button onClick={changeRow}>添加一行</Button>
-		<Form form={form} component={false}>
-			<Table
-				components={{
-					body: {
-						cell: EditableCell,
-					},
-				}}
-				bordered
-				dataSource={data}
-				columns={buildCols()}
-				rowClassName="editable-row"
-				pagination={{
-					onChange: cancel,
-				}}
-			/>
-		</Form>
+
+			<Form form={form} component={false}>
+				<Table
+					components={{
+						body: {
+							cell: EditableCell,
+						},
+					}}
+					bordered
+					dataSource={data}
+					columns={buildCols()}
+					rowClassName="editable-row"
+					pagination={false}
+				/>
+			</Form>
+			<Row gutter={3}>
+				<Col span={1}></Col>
+				<Col span={1}>
+					<Button htmlType={"submit"} type={"primary"} onClick={batchMint}>开始铸造</Button>
+				</Col>
+				<Col span={1}></Col>
+			</Row>
+			{JSON.stringify(data)}
 		</>
 	);
 };
