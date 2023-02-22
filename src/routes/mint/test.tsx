@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {Button, Checkbox, Col, Form, Input, InputNumber, Popconfirm, Row, Space, Table, Typography} from 'antd';
 import MintFormFields from "./mintFormFields";
 
@@ -69,6 +69,7 @@ const Test: React.FC = () => {
 	const [data, setData] = useState(originData);
 	const [useCols, setUseCols] = useState({sameName: false, sameImage: false, sameDesc: false, sameAddress: false,})
 	const [editingKey, setEditingKey] = useState('');
+	const [tableCols, setTableCols] = useState([] as any[]);
 
 	const isEditing = (record: Item) => record.key === editingKey;
 
@@ -109,7 +110,7 @@ const Test: React.FC = () => {
 		}
 	};
 
-	const buildCols = useCallback((...args: any[])=> {
+	const buildColsRaw = (...args: any[])=> {
 		console.log(`buildCols`, args)
 		const columns = [
 			{
@@ -188,7 +189,13 @@ const Test: React.FC = () => {
 			};
 		});
 		return mergedColumns;
-	}, [useCols]);
+	};
+	// useCallback(buildColsRaw, [useCols.sameName]);
+	// const fixedCols = buildColsRaw();
+	useEffect(()=>{
+		const cols = buildColsRaw()
+		setTableCols(cols);
+	}, [useCols, editingKey])
 	const changeRow = ()=>{
 		const arr = [...data, {key: Date.now().toString(), image: '', name: '', address:'', desc:''}]
 		setData(arr);
@@ -223,7 +230,7 @@ const Test: React.FC = () => {
 					}}
 					bordered
 					dataSource={data}
-					columns={buildCols()}
+					columns={tableCols}
 					rowClassName="editable-row"
 					pagination={false}
 				/>
