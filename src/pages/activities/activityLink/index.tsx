@@ -11,8 +11,8 @@ const ActivityLinkModualContent: React.FC<{ activity: ActivityItem }> = ({ activ
   return (
     <div className="flex flex-col items-center font-medium">
       <div className="mt-[24px] mb-[8px] text-[20px] leading-[28px]">{activity.name}</div>
-      <QRCode value={`https://api.nftrainbow.cn/${activity.activity_id}`} className="mb-[8px]" size={248} />
-      <div className="text-[14px] leading-[22px] text-[#9B99A5]">https://api.nftrainbow.cn/{activity.activity_id}</div>
+      <QRCode value={`https://apps.nftrainbow.cn/?activity_id=${activity.activity_id}`} className="mb-[8px]" size={248} />
+      <div className="text-[14px] leading-[22px] text-[#9B99A5]">https://apps.nftrainbow.cn/?activity_id={activity.activity_id}</div>
     </div>
   );
 };
