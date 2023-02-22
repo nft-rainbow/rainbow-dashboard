@@ -155,7 +155,7 @@ const Asset: React.FC = () => {
               disabled={inTransaction}
               type="submit"
               value="保存"
-              className={cx('w-188px bg-#6953EF color-#FFFFFF rounded-2px', inTransaction ? 'hover:cursor-pointer' : 'hover:cursor-not-allowed')}
+              className={cx('w-188px bg-#6953EF color-#FFFFFF rounded-2px', inTransaction ? 'hover:cursor-not-allowed' : 'hover:cursor-pointer')}
             />
           </div>
         </Form>
