@@ -110,8 +110,6 @@ const Test: React.FC = () => {
 		}
 	};
 
-	const buildColsRaw = (...args: any[])=> {
-		console.log(`buildCols`, args)
 		const columns = [
 			{
 				title: '图片',
@@ -188,14 +186,7 @@ const Test: React.FC = () => {
 				}),
 			};
 		});
-		return mergedColumns;
-	};
-	// useCallback(buildColsRaw, [useCols.sameName]);
-	// const fixedCols = buildColsRaw();
-	useEffect(()=>{
-		const cols = buildColsRaw()
-		setTableCols(cols);
-	}, [useCols, editingKey])
+
 	const changeRow = ()=>{
 		const arr = [...data, {key: Date.now().toString(), image: '', name: '', address:'', desc:''}]
 		setData(arr);
@@ -230,7 +221,7 @@ const Test: React.FC = () => {
 					}}
 					bordered
 					dataSource={data}
-					columns={tableCols}
+					columns={mergedColumns}
 					rowClassName="editable-row"
 					pagination={false}
 				/>
