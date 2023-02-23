@@ -106,7 +106,7 @@ export const updateformDataTranslate = (activity: ActivityItem, data: FormData) 
     amount: parseInt(data.amount ?? '-1'),
     app_id: data.app_id,
     activity_id: activity.activity_id ?? '',
-    contract_id: activity.contract_id,
+    contract_id: activity.contract_id ?? 0,
     chain_type: activity.chain_type,
     description: data.description,
     start_time: start_time,

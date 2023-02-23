@@ -12,3 +12,7 @@ tmp
 .DS_Store
 build
 *.log
+
+#env variables
+.env.development
+.env.production
