@@ -1,6 +1,21 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Checkbox, Col, Form, Input, InputNumber, Popconfirm, Row, Space, Table, Typography} from 'antd';
+import {
+	Button,
+	Checkbox,
+	Col,
+	Form,
+	FormInstance,
+	Input,
+	InputNumber,
+	Popconfirm,
+	Row,
+	Space,
+	Table, Tooltip,
+	Typography
+} from 'antd';
 import MintFormFields from "./mintFormFields";
+import FileUpload from "../../components/FileUpload";
+import {QuestionCircleOutlined, QuestionOutlined} from "@ant-design/icons/lib";
 
 interface Item {
 	key: string;
@@ -24,10 +39,11 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
 	editing: boolean;
 	dataIndex: string;
 	title: any;
-	inputType: 'number' | 'text';
+	inputType: 'number' | 'text' | 'file';
 	record: Item;
 	index: number;
 	children: React.ReactNode;
+	form: FormInstance
 }
 
 const EditableCell: React.FC<EditableCellProps> = ({
@@ -36,11 +52,13 @@ const EditableCell: React.FC<EditableCellProps> = ({
 	                                                   title,
 	                                                   inputType,
 	                                                   record,
-	                                                   index,
+	                                                   index, form,
 	                                                   children,
 	                                                   ...restProps
                                                    }) => {
-	const inputNode = inputType === 'number' ? <InputNumber /> : <Input />;
+	const inputNode = inputType === 'file' ?
+		<FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ [dataIndex]: file.url })} />
+		:(inputType === 'number' ? <InputNumber /> : <Input />);
 
 	return (
 		<td {...restProps}>
@@ -69,7 +87,6 @@ const Test: React.FC = () => {
 	const [data, setData] = useState(originData);
 	const [useCols, setUseCols] = useState({sameName: false, sameImage: false, sameDesc: false, sameAddress: false,})
 	const [editingKey, setEditingKey] = useState('');
-	const [tableCols, setTableCols] = useState([] as any[]);
 
 	const isEditing = (record: Item) => record.key === editingKey;
 
@@ -179,9 +196,9 @@ const Test: React.FC = () => {
 				...col,
 				onCell: (record: Item) => ({
 					record,
-					inputType: col.dataIndex === 'age' ? 'number' : 'text',
+					inputType: col.dataIndex === 'image' ? 'file' : 'text',
 					dataIndex: col.dataIndex,
-					title: col.title,
+					title: col.title, form,
 					editing: isEditing(record),
 				}),
 			};
@@ -197,35 +214,43 @@ const Test: React.FC = () => {
 	}
 	return (
 		<>
-			<Row gutter={5}>
-				<Col span={2}>元数据选项：</Col>
-				<Col><Checkbox checked={useCols.sameImage} onClick={()=>setUseCols({...useCols, sameImage: !useCols.sameImage})}>图片相同</Checkbox></Col>
-				<Col><Checkbox checked={useCols.sameName} onClick={()=>setUseCols({...useCols, sameName: !useCols.sameName})}>名字相同</Checkbox></Col>
-				<Col><Checkbox checked={useCols.sameDesc} onClick={()=>setUseCols({...useCols, sameDesc: !useCols.sameDesc})}>描述相同</Checkbox></Col>
-				<Col><Checkbox checked={useCols.sameAddress} onClick={()=>setUseCols({...useCols, sameAddress: !useCols.sameAddress})}>接受人相同</Checkbox></Col>
-			</Row>
+			<Form labelCol={{ span: 1 }}
+			      wrapperCol={{ span: 16 }}>
+				<Form.Item label={"选项"}
+				>
+				<Space>
+					<Checkbox checked={useCols.sameImage} onClick={()=>setUseCols({...useCols, sameImage: !useCols.sameImage})}>图片相同</Checkbox>
+					<Checkbox checked={useCols.sameName} onClick={()=>setUseCols({...useCols, sameName: !useCols.sameName})}>名字相同</Checkbox>
+					<Checkbox checked={useCols.sameDesc} onClick={()=>setUseCols({...useCols, sameDesc: !useCols.sameDesc})}>描述相同</Checkbox>
+					<Checkbox checked={useCols.sameAddress} onClick={()=>setUseCols({...useCols, sameAddress: !useCols.sameAddress})}>接受地址相同</Checkbox>
+					<Tooltip title={"相同的字段不会出现在表格里"}><QuestionCircleOutlined /></Tooltip>
+				</Space>
+				</Form.Item>
+			</Form>
 			<MintFormFields withImage={useCols.sameImage}
 			                withDesc={useCols.sameDesc}
 			                withAddress={useCols.sameAddress}
 			                withName={useCols.sameName}/>
 
-			[{data.length}]
-			<Button onClick={changeRow}>添加一行</Button>
+			{mergedColumns.length > 1 && <>
+				<Button onClick={changeRow} style={{margin: '8px'}}>+ 添加一行</Button>
+				当前[{data.length}]行
 
-			<Form form={form} component={false}>
-				<Table
-					components={{
-						body: {
-							cell: EditableCell,
-						},
-					}}
-					bordered
-					dataSource={data}
-					columns={mergedColumns}
-					rowClassName="editable-row"
-					pagination={false}
-				/>
-			</Form>
+				<Form form={form} component={false}>
+					<Table
+						components={{
+							body: {
+								cell: EditableCell,
+							},
+						}}
+						bordered
+						dataSource={data}
+						columns={mergedColumns}
+						rowClassName="editable-row"
+						pagination={false}
+					/>
+				</Form>
+			</>}
 			<Row gutter={3}>
 				<Col span={1}></Col>
 				<Col span={1}>

@@ -21,12 +21,14 @@ export default function MintFormFields(props:{withImage: boolean, withName: bool
 		<Form
 			name="complex-form" form={form}
 			onFinish={onFinish}
-			labelCol={{ span: 4 }}
+			labelCol={{ span: 1 }}
 			wrapperCol={{ span: 16 }}
-			style={{ maxWidth: 600 }}
 		>
-			{props.withImage && <Form.Item name={"img_group"} label="图片">
-				<Input.Group>
+			{props.withImage &&
+			<Form.Item label="图片" style={{marginBottom: 0}}>
+				<Form.Item
+					style={{display: 'inline-block'}}
+				>
 					<Radio.Group value={useUpload ? 'upload' : 'input'} style={{marginRight: '8px'}}
 					             onChange={(e: CheckboxChangeEvent) => {
 						             setUseUpload(e.target.value === 'upload')
@@ -34,40 +36,45 @@ export default function MintFormFields(props:{withImage: boolean, withName: bool
 						<Radio.Button value="upload">本地文件</Radio.Button>
 						<Radio.Button value="input">网络链接</Radio.Button>
 					</Radio.Group>
-
-					{useUpload && <Form.Item name="file_url" noStyle rules={[{required: false}]}>
-						<FileUpload
-							accept={".png,.jpg,.svg,.mp3,.mp4,.gif,stp,.max,.fbx,.obj,.x3d,.vrml,.3ds,3mf,.stl,.dae"}
-							listType="picture" maxCount={1}
-							onChange={(err: Error, file: any) => form.setFieldsValue({file_url: file.url})}/>
-					</Form.Item>}
-
-					{!useUpload &&
-					<div style={{display: 'flex', marginTop: '8px'}}>
-						<Form.Item name="file_link" noStyle style={{flexGrow: 1}}>
-							<Input style={{flexGrow: 1}}/>
-						</Form.Item>
-						<Button type={"text"} onClick={() => {
-							form.setFieldValue('file_link', 'https://console.nftrainbow.cn/nftrainbow-logo-light.png')
-						}} style={{color: "gray"}}>
-							<Tooltip title={"使用测试图片"} mouseEnterDelay={0.1}><LinkOutlined/></Tooltip>
-						</Button></div>
-					}
-				</Input.Group>
-			</Form.Item>}
+				</Form.Item>
+				{useUpload && <Form.Item
+					name="file_url"
+					style={{display: 'inline-block'}}
+				>
+					<FileUpload
+						accept={".png,.jpg,.svg,.mp3,.mp4,.gif,stp,.max,.fbx,.obj,.x3d,.vrml,.3ds,3mf,.stl,.dae"}
+						listType="picture" maxCount={1}
+						onChange={(err: Error, file: any) => form.setFieldsValue({file_url: file.url})}/>
+				</Form.Item>}
+				{!useUpload && <Form.Item
+					name="file_link"
+					style={{
+						display: 'inline-block',
+						width: 'calc(60% - 8px)',
+						border: '0px solid red'
+					}}
+				>
+					<Input placeholder=""/>
+				</Form.Item>}
+				{!useUpload && <Form.Item
+					style={{display: 'inline-block'}}
+				>
+					<Button type={"text"} onClick={() => {
+						form.setFieldValue('file_link', 'https://console.nftrainbow.cn/nftrainbow-logo-light.png')
+					}} style={{color: "gray"}}>
+						<Tooltip title={"使用测试图片"} mouseEnterDelay={0.1}><LinkOutlined/></Tooltip>
+					</Button>
+				</Form.Item>}
+			</Form.Item>
+			}
 			{props.withName && <Form.Item label="名字">
-				<Space>
 					<Form.Item
 						name="name"
 						noStyle
-						rules={[{required: true, message: 'Username is required'}]}
+						rules={[{required: true, message: ''}]}
 					>
-						<Input style={{width: 160}} placeholder="Please input"/>
+						<Input style={{width: '50%'}} placeholder=""/>
 					</Form.Item>
-					<Tooltip title="Useful information">
-						<Typography.Link href="#API">Need Help?</Typography.Link>
-					</Tooltip>
-				</Space>
 			</Form.Item>}
 			{props.withDesc && <Form.Item name="description" label="描述" rules={[{ required: false }]}>
 				<Input.TextArea rows={4} />

@@ -1,7 +1,6 @@
 import {Layout, Tabs, TabsProps} from "antd";
 import {Content} from "antd/es/layout/layout";
 import React from "react";
-import MintManual from "./mintManual";
 import Test from "./test";
 
 export default function MintFrame() {
