@@ -1,6 +1,7 @@
 import { Upload, Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { methodUrl, authHeaderSync } from '../services';
+import React from "react";
 
 export default function FileUpload(props: any) {
     const action = props.private ? methodUrl("/dashboard/misc/upload/kyc") : methodUrl("/dashboard/misc/upload");

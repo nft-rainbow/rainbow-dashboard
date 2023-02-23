@@ -15,7 +15,10 @@ import {
 } from 'antd';
 import MintFormFields from "./mintFormFields";
 import FileUpload from "../../components/FileUpload";
-import {QuestionCircleOutlined, QuestionOutlined} from "@ant-design/icons/lib";
+import {PictureOutlined, QuestionCircleOutlined, QuestionOutlined} from "@ant-design/icons/lib";
+import ImportImages from "./ImportImages";
+import UploadDir from "./uploadDirectory";
+import DragUpload from "./dragUpload";
 
 interface Item {
 	key: string;
@@ -55,7 +58,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
 		<>
 			{(cbUrl()) && <Image src={cbUrl()}/>}
 			<FileUpload accept={".png,.jpg,.svg,.mp3,.mp4,.gif,stp,.max,.fbx,.obj,.x3d,.vrml,.3ds,3mf,.stl,.dae"}
-			            maxSize={1}
+			            maxCounat={1}
 				onChange={(err: Error, file: any) => {
 				console.log(`set file : `, dataIndex, file.url)
 				form.setFieldsValue({ [dataIndex]: file.url })
@@ -210,11 +213,12 @@ const Test: React.FC = () => {
 				}),
 			};
 		});
-
-	const changeRow = ()=>{
-		const arr = [...data, {key: Date.now().toString(), file_url: '', name: '', address:'', desc:''}]
-		setData(arr);
-		console.log(`length`, data.length)
+	useEffect(()=>{
+		console.log(`data length`, data.length)
+	}, [data])
+	const addRow = (url='', name='')=>{
+		let newElement = {key: Date.now().toString(), file_url: url, name, address:'', desc:''};
+		setData(preArr=>[...preArr, newElement]);
 	}
 	const batchMint = ()=>{
 		console.log(`batch mint`)
@@ -240,8 +244,11 @@ const Test: React.FC = () => {
 			                withName={useCols.sameName}/>
 
 			{mergedColumns.length > 1 && <>
-				<Button onClick={changeRow} style={{margin: '8px'}}>+ 添加一行</Button>
-				当前[{data.length}]行
+				<Space>
+					<Button onClick={()=>addRow()} style={{margin: '8px'}}>+ 添加一行</Button>
+					当前[{data.length}]行
+					<DragUpload onSuccess={({url}: { url: string }, name: string) => addRow(url, name)}/>
+				</Space>
 
 				<Form form={form} component={false}>
 					<Table
