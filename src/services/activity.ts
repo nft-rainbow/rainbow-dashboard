@@ -18,7 +18,7 @@ export interface NftConfig {
 
 export interface PoapActivityConfig extends CreateActivityData {
   activity_id: string;
-  contract_id: string;
+  contract_id?: number;
   nft_configs?: NftConfig[];
 }
 
@@ -32,6 +32,6 @@ export const getActivities = async (query: ActivityQuerier) => {
 
 export const updatePoap = async (meta: PoapActivityConfig) => {
   const { activity_id, ...rest } = meta;
-  return await put(`/apps/poap/activity/${activity_id}`, rest);
+  return await put(`/apps/poap/activity/${activity_id}`, { ...rest, activity_id });
 };
 export const getActivityById = async (activity_id?: string) => (activity_id ? get(`/apps/poap/activity/${activity_id}`) : false);

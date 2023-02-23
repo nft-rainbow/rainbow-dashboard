@@ -92,7 +92,7 @@ export interface ActivityItem {
   activity_picture_url: string;
   amount: number;
   contract_address: string;
-  contract_id?: string;
+  contract_id?: number;
   chain_type: number;
   command?: string;
   app_id: number;
