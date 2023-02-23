@@ -11,7 +11,7 @@ import {
 	Row,
 	Space,
 	Table, Tooltip,
-	Typography
+	Typography, Image,
 } from 'antd';
 import MintFormFields from "./mintFormFields";
 import FileUpload from "../../components/FileUpload";
@@ -19,22 +19,14 @@ import {QuestionCircleOutlined, QuestionOutlined} from "@ant-design/icons/lib";
 
 interface Item {
 	key: string;
-	image: string;
+	file_url: string;
 	name: string;
 	desc: string;
 	address: string;
 }
 
 const originData: Item[] = [];
-for (let i = 0; i < 1; i++) {
-	originData.push({
-		key: i.toString(),
-		image: '1',
-		name: `Edrward ${i}`,
-		desc: `Desc ${i}`,
-		address: `London Park no. ${i}`,
-	});
-}
+
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
 	editing: boolean;
 	dataIndex: string;
@@ -56,8 +48,20 @@ const EditableCell: React.FC<EditableCellProps> = ({
 	                                                   children,
 	                                                   ...restProps
                                                    }) => {
+	const url = ()=> form?.getFieldValue(dataIndex);
+	const [trigger, setTrigger] = useState(0)
+	const cbUrl = useCallback(url, [trigger])
 	const inputNode = inputType === 'file' ?
-		<FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ [dataIndex]: file.url })} />
+		<>
+			{(cbUrl()) && <Image src={cbUrl()}/>}
+			<FileUpload accept={".png,.jpg,.svg,.mp3,.mp4,.gif,stp,.max,.fbx,.obj,.x3d,.vrml,.3ds,3mf,.stl,.dae"}
+			            maxSize={1}
+				onChange={(err: Error, file: any) => {
+				console.log(`set file : `, dataIndex, file.url)
+				form.setFieldsValue({ [dataIndex]: file.url })
+				setTrigger(trigger+1)
+			}} />
+		</>
 		:(inputType === 'number' ? <InputNumber /> : <Input />);
 
 	return (
@@ -105,20 +109,20 @@ const Test: React.FC = () => {
 
 	const save = async (key: React.Key) => {
 		try {
-			const row = (await form.validateFields()) as Item;
+			const newInput = (await form.validateFields()) as Item;
 
 			const newData = [...data];
 			const index = newData.findIndex((item) => key === item.key);
 			if (index > -1) {
-				const item = newData[index];
+				const oldRow = newData[index];
 				newData.splice(index, 1, {
-					...item,
-					...row,
+					...oldRow,
+					...newInput,
 				});
 				setData(newData);
 				setEditingKey('');
 			} else {
-				newData.push(row);
+				newData.push(newInput);
 				setData(newData);
 				setEditingKey('');
 			}
@@ -130,9 +134,12 @@ const Test: React.FC = () => {
 		const columns = [
 			{
 				title: '图片',
-				dataIndex: 'image',
+				dataIndex: 'file_url',
 				width: '15%',
 				editable: true,
+				render: (url:string)=>{
+					return url ? <Image src={url}/> : ''
+				}
 			},
 			{
 				title: '名称',
@@ -149,11 +156,11 @@ const Test: React.FC = () => {
 			{
 				title: '接受地址',
 				dataIndex: 'address',
-				width: '15%',
 				editable: true,
 			},
 			{
 				title: '操作',
+				width: '15%',
 				dataIndex: 'operation',
 				render: (_: any, record: Item) => {
 					const editable = isEditing(record);
@@ -181,7 +188,7 @@ const Test: React.FC = () => {
 		].filter(c=>{
 			switch (c.dataIndex) {
 				case 'name': return !useCols.sameName;
-				case 'image': return !useCols.sameImage;
+				case 'file_url': return !useCols.sameImage;
 				case 'desc': return !useCols.sameDesc;
 				case 'address': return !useCols.sameAddress;
 				default: return true;
@@ -196,7 +203,7 @@ const Test: React.FC = () => {
 				...col,
 				onCell: (record: Item) => ({
 					record,
-					inputType: col.dataIndex === 'image' ? 'file' : 'text',
+					inputType: col.dataIndex === 'file_url' ? 'file' : 'text',
 					dataIndex: col.dataIndex,
 					title: col.title, form,
 					editing: isEditing(record),
@@ -205,7 +212,7 @@ const Test: React.FC = () => {
 		});
 
 	const changeRow = ()=>{
-		const arr = [...data, {key: Date.now().toString(), image: '', name: '', address:'', desc:''}]
+		const arr = [...data, {key: Date.now().toString(), file_url: '', name: '', address:'', desc:''}]
 		setData(arr);
 		console.log(`length`, data.length)
 	}
@@ -216,9 +223,9 @@ const Test: React.FC = () => {
 		<>
 			<Form labelCol={{ span: 1 }}
 			      wrapperCol={{ span: 16 }}>
-				<Form.Item label={"选项"}
-				>
+				<Form.Item label={"选项"}>
 				<Space>
+					{/*ugly code here :( */}
 					<Checkbox checked={useCols.sameImage} onClick={()=>setUseCols({...useCols, sameImage: !useCols.sameImage})}>图片相同</Checkbox>
 					<Checkbox checked={useCols.sameName} onClick={()=>setUseCols({...useCols, sameName: !useCols.sameName})}>名字相同</Checkbox>
 					<Checkbox checked={useCols.sameDesc} onClick={()=>setUseCols({...useCols, sameDesc: !useCols.sameDesc})}>描述相同</Checkbox>
