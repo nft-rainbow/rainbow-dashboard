@@ -1,7 +1,7 @@
 import {Layout, Tabs, TabsProps} from "antd";
 import {Content} from "antd/es/layout/layout";
 import React from "react";
-import Test from "./test";
+import MintTable from "./mintTable";
 
 export default function MintFrame() {
 	// prop:{contract:string, name:string, symbol:string}
@@ -14,7 +14,7 @@ export default function MintFrame() {
 		{
 			key: '20',
 			label: `铸造`,
-			children: <Test/>,
+			children: <MintTable/>,
 		},
 		// {
 		// 	key: '30',

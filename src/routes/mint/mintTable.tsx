@@ -94,7 +94,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
 	);
 };
 
-const Test: React.FC = () => {
+const MintTable: React.FC = () => {
 	const [form] = Form.useForm();
 	const [data, setData] = useState(originData);
 	const [useCols, setUseCols] = useState({sameName: false, sameImage: false, sameDesc: false, sameAddress: false,})
@@ -297,4 +297,4 @@ const Test: React.FC = () => {
 	);
 };
 
-export default Test;
+export default MintTable;
