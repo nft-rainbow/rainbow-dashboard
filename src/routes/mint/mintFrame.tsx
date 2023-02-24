@@ -24,6 +24,7 @@ export default function MintFrame() {
 	];
 	return (
 		<>
+			<p>TODO 当前合约信息</p>
 			<Tabs defaultActiveKey="20" items={items}/>
 		</>
 	)

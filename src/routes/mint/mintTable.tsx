@@ -288,7 +288,9 @@ const MintTable: React.FC = () => {
 			{/*<Row gutter={3}>*/}
 			{/*	<Col span={1}></Col>*/}
 			{/*	<Col span={1}>*/}
-			{/*		<Button htmlType={"submit"} type={"primary"} onClick={batchMint}>开始铸造</Button>*/}
+					<Button style={{marginTop:'8px'}} htmlType={"submit"} type={"primary"} onClick={()=>{
+						message.info(`尚未接入后端接口`)
+					}}>开始铸造</Button>
 			{/*	</Col>*/}
 			{/*	<Col span={1}></Col>*/}
 			{/*</Row>*/}
