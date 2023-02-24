@@ -179,7 +179,7 @@ export default function UserBalance() {
             <Card>
                 <div style={{width: '200px', float: 'left'}}>
                     <span style={{display: 'block',color: 'gray', fontSize: '14px'}}>账户余额</span>
-                    <span className='user-balance'>¥ {balance / 100}</span>
+                    <span className='user-balance'>¥ {(balance / 100).toFixed(2)}</span>
                 </div>
                 <div style={{width: '100px', float: 'right'}}>
                     <Tooltip title={billText}>
