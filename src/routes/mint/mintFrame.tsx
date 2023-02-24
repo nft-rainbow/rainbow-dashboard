@@ -6,21 +6,21 @@ import Test from "./test";
 export default function MintFrame() {
 	// prop:{contract:string, name:string, symbol:string}
 	const items: TabsProps['items'] = [
-		{
-			key: '1',
-			label: `铸造1个`,
-			children: `?`,
-		},
+		// {
+		// 	key: '1',
+		// 	label: `铸造1个`,
+		// 	children: `?`,
+		// },
 		{
 			key: '20',
-			label: `铸造多个`,
+			label: `铸造`,
 			children: <Test/>,
 		},
-		{
-			key: '30',
-			label: `导入`,
-			children: `导入`,
-		}
+		// {
+		// 	key: '30',
+		// 	label: `导入`,
+		// 	children: `导入`,
+		// }
 	];
 	return (
 		<>

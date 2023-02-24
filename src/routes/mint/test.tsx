@@ -11,7 +11,7 @@ import {
 	Row,
 	Space,
 	Table, Tooltip,
-	Typography, Image,
+	Typography, Image, message,
 } from 'antd';
 import MintFormFields from "./mintFormFields";
 import FileUpload from "../../components/FileUpload";
@@ -19,6 +19,7 @@ import {PictureOutlined, QuestionCircleOutlined, QuestionOutlined} from "@ant-de
 import ImportImages from "./ImportImages";
 import UploadDir from "./uploadDirectory";
 import DragUpload from "./dragUpload";
+import ParseLocalFile from "./parseLocalFile";
 
 interface Item {
 	key: string;
@@ -60,7 +61,11 @@ const EditableCell: React.FC<EditableCellProps> = ({
 			<FileUpload accept={".png,.jpg,.svg,.mp3,.mp4,.gif,stp,.max,.fbx,.obj,.x3d,.vrml,.3ds,3mf,.stl,.dae"}
 			            maxCounat={1}
 				onChange={(err: Error, file: any) => {
-				console.log(`set file : `, dataIndex, file.url)
+					if (err) {
+						message.error(`上传图片出错: ${err}`);
+						return;
+					}
+				console.log(`set file : `, dataIndex, file.url);
 				form.setFieldsValue({ [dataIndex]: file.url })
 				setTrigger(trigger+1)
 			}} />
@@ -141,7 +146,7 @@ const Test: React.FC = () => {
 				width: '15%',
 				editable: true,
 				render: (url:string)=>{
-					return url ? <Image src={url}/> : ''
+					return url ? <Image alt={url} src={url}/> : ''
 				}
 			},
 			{
@@ -220,6 +225,19 @@ const Test: React.FC = () => {
 		let newElement = {key: Date.now().toString(), file_url: url, name, address:'', desc:''};
 		setData(preArr=>[...preArr, newElement]);
 	}
+	const handleImportData = (arr:any[]) => {
+		const map = {"图片链接":"file_url","名字":"name","描述":"desc","接受地址":"address"};
+		const newArr = arr.map((row, idx)=>{
+			const item = {key: `${idx}`};
+			Object.keys(map).forEach(k=>{
+				//@ts-ignore
+				item[map[k]] = row[k];
+			})
+			return item;
+		})
+		console.log(`converted`, newArr)
+		setData(newArr as Item[]);
+	}
 	const batchMint = ()=>{
 		console.log(`batch mint`)
 	}
@@ -247,6 +265,8 @@ const Test: React.FC = () => {
 				<Space>
 					<Button onClick={()=>addRow()} style={{margin: '8px'}}>+ 添加一行</Button>
 					当前[{data.length}]行
+					<ParseLocalFile handleData={handleImportData}/>
+					<Button type={"link"}><a href={"/mint_template.xlsx"} style={{color: "gray"}}>下载模板</a></Button>
 					<DragUpload onSuccess={({url}: { url: string }, name: string) => addRow(url, name)}/>
 				</Space>
 
@@ -265,14 +285,14 @@ const Test: React.FC = () => {
 					/>
 				</Form>
 			</>}
-			<Row gutter={3}>
-				<Col span={1}></Col>
-				<Col span={1}>
-					<Button htmlType={"submit"} type={"primary"} onClick={batchMint}>开始铸造</Button>
-				</Col>
-				<Col span={1}></Col>
-			</Row>
-			{JSON.stringify(data)}
+			{/*<Row gutter={3}>*/}
+			{/*	<Col span={1}></Col>*/}
+			{/*	<Col span={1}>*/}
+			{/*		<Button htmlType={"submit"} type={"primary"} onClick={batchMint}>开始铸造</Button>*/}
+			{/*	</Col>*/}
+			{/*	<Col span={1}></Col>*/}
+			{/*</Row>*/}
+			{/*{JSON.stringify(data)}*/}
 		</>
 	);
 };

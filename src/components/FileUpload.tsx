@@ -16,7 +16,7 @@ export default function FileUpload(props: any) {
                 const data = info.file.response;
                 props.onChange(null, data);
             } else if (info.file.status === 'error') {
-                props.onChange(new Error('Upload failed.'));
+                props.onChange(new Error(`Upload failed. ${info.file.error}`));
             }
         },
     };
