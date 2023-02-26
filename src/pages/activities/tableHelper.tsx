@@ -63,7 +63,7 @@ export const ActivityManageIcon: React.FC<{ activity: ActivityItem }> = ({ activ
           <img src={ManageActivity} />
         </Tooltip>
       </div>
-      <ManageActivityModual open={isManageActModalVisible} hideModal={hideModal} onCancel={hideModal} activity={activity} />
+      {isManageActModalVisible && <ManageActivityModual open={isManageActModalVisible} hideModal={hideModal} onCancel={hideModal} activity={activity} />}
     </>
   );
 };
