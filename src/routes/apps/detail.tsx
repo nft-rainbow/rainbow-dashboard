@@ -45,7 +45,7 @@ import { ChainAccount, App, NFT } from '../../models';
 import axios from 'axios';
 import { FileImageOutlined, ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 import { address } from 'js-conflux-sdk';
-import {LinkOutlined, QuestionCircleOutlined, UserOutlined} from "@ant-design/icons/lib";
+import { LinkOutlined, QuestionCircleOutlined, UserOutlined, InfoCircleOutlined } from "@ant-design/icons/lib";
 import {CheckboxChangeEvent} from "antd/es/checkbox";
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
@@ -351,7 +351,7 @@ function AppNFTs(props: { id: string, refreshTrigger: number, setRefreshTrigger:
       dataIndex: 'amount',
     },
     {
-      title: '状态',
+      title: (<><span>状态</span> <a href="https://docs.nftrainbow.xyz/api-reference/common-errors" target="_blank" rel="noreferrer" ><InfoCircleOutlined /></a></>),
       dataIndex: 'status',
       render: (text: number, record: NFT) => mapSimpleStatus(text, dealError(record.error)),
     },
