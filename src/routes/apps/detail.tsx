@@ -12,7 +12,7 @@ import {
   getAppAccounts,
 } from '../../services/app';
 import { createPoap } from '../../services/poap';
-import { NFT } from '../../services';
+import { reMintNFT } from '../../services/NFT';
 import {
   Card,
   Tabs,
@@ -28,7 +28,7 @@ import {
   message,
   Image,
   Popover,
-  Select, Radio, Row, Col,
+  Radio, Row, Col,
 } from 'antd';
 import { SERVICE_HOST } from '../../config';
 import {
@@ -41,7 +41,7 @@ import {
   mapNFTType,
 } from '../../utils';
 import FileUpload from '../../components/FileUpload';
-import { ChainAccount, App } from '../../models';
+import { ChainAccount, App, NFT } from '../../models';
 import axios from 'axios';
 import { FileImageOutlined, ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 import { address } from 'js-conflux-sdk';
@@ -49,7 +49,6 @@ import {LinkOutlined, QuestionCircleOutlined, UserOutlined} from "@ant-design/ic
 import {CheckboxChangeEvent} from "antd/es/checkbox";
 const { TabPane } = Tabs;
 const { Paragraph } = Typography;
-const { Option } = Select;
 
 const formLayout = {
   labelCol: { span: 4 },
@@ -147,7 +146,7 @@ export default function AppDetail(props: {appId?: string}) {
   useEffect(() => {
     getAppAccounts(id as string).then(data => setAccounts(data));
     form.setFieldValue("group", "1")
-  }, [id]);
+  }, [id, form]);
 
   useEffect(() => {
     getAppDetail(id as string).then(data => {
@@ -163,7 +162,7 @@ export default function AppDetail(props: {appId?: string}) {
       <Card>
         <Tabs defaultActiveKey="1" tabBarExtraContent={extraOp}>
           <TabPane tab="藏品铸造" key="1">
-            <AppNFTs id={idStr} refreshTrigger={refreshNftList}/>
+            <AppNFTs id={idStr} refreshTrigger={refreshNftList} setRefreshTrigger={setRefreshNftList}/>
           </TabPane>
           <TabPane tab="元数据" key="2">
             <AppMetadatas id={idStr} refreshTrigger={refreshNftList}/>
@@ -288,8 +287,8 @@ export default function AppDetail(props: {appId?: string}) {
   );
 }
 
-function AppNFTs(props: { id: string, refreshTrigger: number }) {
-  const { id, refreshTrigger = 0 } = props;
+function AppNFTs(props: { id: string, refreshTrigger: number, setRefreshTrigger: (v: number) => void }) {
+  const { id, refreshTrigger = 0, setRefreshTrigger } = props;
   const [items, setItems] = useState<NFT[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -365,6 +364,16 @@ function AppNFTs(props: { id: string, refreshTrigger: number }) {
       title: '创建时间',
       dataIndex: 'created_at',
       render: formatDate,
+    },
+    {
+      title: '操作',
+      dataIndex: 'id',
+      render: (id: number, item: NFT) => {
+        return (item.status === 2 && item.error.match('NotEnoughCash')) ? <Button size='small' type='primary' onClick={async () => {
+            await reMintNFT(id);
+            setRefreshTrigger(refreshTrigger+1);
+        }}>重新铸造</Button> : null
+      },
     },
   ];
 

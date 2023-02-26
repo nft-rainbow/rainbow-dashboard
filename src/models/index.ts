@@ -1,4 +1,4 @@
-interface BaseModel {
+export interface BaseModel {
     id: number;
     created_at: string;
     updated_at: string;
@@ -98,3 +98,15 @@ export interface Metadata extends BaseModel {
     uri: string;
     animation_url: string;
 }
+
+export interface NFT extends BaseModel {
+    chain_type: number;
+    chain_id: number;
+    token_id: number;
+    contract: string;
+    mint_to: string;
+    error: string;
+    hash: string;
+    status: number;
+    token_uri: string;
+  }
