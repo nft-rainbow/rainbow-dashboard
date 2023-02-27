@@ -16,9 +16,10 @@ interface CreatePOAProps {
   open: boolean;
   onCancel: () => void;
   hideModal: () => void;
+  activityType: number;
 }
 
-const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
+const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activityType }) => {
   const [apps, setApps] = useState<App[]>([]);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [form] = Form.useForm();
@@ -48,7 +49,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
 
   const handleFinish = useCallback(
     async (values: FormData) => {
-      const params = formDataTranslate(values, apps);
+      const params = formDataTranslate(values, apps, activityType);
       try {
         setConfirmLoading(true);
         await createActivity(params);

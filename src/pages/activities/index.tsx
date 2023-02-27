@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Button, Table, Form, Select, TablePaginationConfig} from 'antd';
+import { Card, Button, TablePaginationConfig, type MenuProps, Dropdown } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
 import { ActivityItem } from '../../models';
 import CreatePOA from './createActivities';
 import { columns } from './tableHelper';
 import { getActivities, ActivityQuerier, createActivity } from '@services/activity';
 
+const dropItems: MenuProps['items'] = [
+  { label: '盲盒活动', key: 1 },
+  { label: '单个活动', key: 2 },
+];
 export default function Poaps() {
   const [items, setItems] = useState<ActivityItem[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
+  const [activityType, setActivityType] = useState(1);
   const [isActivityModalVisible, setIsActivityModalVisible] = useState(false);
 
   const hideModal = () => {
@@ -24,9 +30,25 @@ export default function Poaps() {
   }, []);
 
   const extra = (
-    <Button type="primary" onClick={() => setIsActivityModalVisible(true)} key="create-activity">
-      创建活动
-    </Button>
+    // <Button type="primary" onClick={() => setIsActivityModalVisible(true)} key="create-activity">
+    //   创建活动
+    // </Button>
+    <Dropdown
+      key="create-activity"
+      trigger={['click']}
+      menu={{
+        items: dropItems,
+        onClick: (e) => {
+          setActivityType(parseInt(e.key));
+          setIsActivityModalVisible(true);
+        },
+      }}
+    >
+      <div className="h-[32px] flex items-center justify-center px-[4px] border border-solid border-[#6953EF] text-[#6953EF] rounded-[6px]">
+        创建活动
+        <DownOutlined />
+      </div>
+    </Dropdown>
   );
 
   return (
@@ -50,11 +72,11 @@ export default function Poaps() {
             ],
           }}
           options={false}
-          // pagination={{
-          //   total,
-          //   current: page,
-          //   showTotal: (total) => `共 ${total} 条`,
-          // }}
+          pagination={{
+            total,
+            current: page,
+            showTotal: (total) => `共 ${total} 条`,
+          }}
           request={async (params, sort, filter) => {
             const name = (params.name as string) ?? '';
             const activity_id = (params.activity_id as string) ?? '';
@@ -71,7 +93,7 @@ export default function Poaps() {
           onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
         />
       </Card>
-      <CreatePOA open={isActivityModalVisible} onCancel={() => setIsActivityModalVisible(false)} hideModal={hideModal} />
+      <CreatePOA activityType={activityType} open={isActivityModalVisible} onCancel={() => setIsActivityModalVisible(false)} hideModal={hideModal} />
     </>
   );
 }

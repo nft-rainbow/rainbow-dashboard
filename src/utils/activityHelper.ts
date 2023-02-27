@@ -73,7 +73,7 @@ export const timestampToDate = (timestamp: number) => {
   return timeDate;
 };
 
-export const formDataTranslate = (data: FormData, apps: App[]) => {
+export const formDataTranslate = (data: FormData, apps: App[], activityType: number) => {
   let start_time = null;
   let end_time = null;
   start_time = dateTraslate(new Date(data.activityDate[0]));
@@ -91,7 +91,7 @@ export const formDataTranslate = (data: FormData, apps: App[]) => {
     white_list_infos: data.white_list_infos,
     command: data.command ?? '',
     name: data.name,
-    activity_type: 1,
+    activity_type: activityType,
     app_name: apps[appIndex].name,
   };
 };
