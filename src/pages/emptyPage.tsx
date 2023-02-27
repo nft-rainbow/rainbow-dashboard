@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import RainbowBreadcrumb from '../components/Breadcrumb';
 import {
     Card,
 } from "antd";
 
-export default function Contracts() {
+export default function Page() {
     return (
         <>
-            <RainbowBreadcrumb items={['合约列表']} />
-            <Card>
+            <Card title='合约列表'>
                 
             </Card>
         </>

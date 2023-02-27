@@ -11,6 +11,8 @@ import {
   CodeOutlined,
   MoneyCollectOutlined,
   AuditOutlined,
+  LineChartOutlined,
+  NodeIndexOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Layout, Menu, Dropdown, Space, Button, ConfigProvider } from 'antd';
@@ -41,7 +43,8 @@ const items: MenuItem[] = [
   getItem(<Link to="/panels/apps">我的项目</Link>, '2', <AppstoreOutlined />),
   getItem(<Link to="/panels/contracts">智能合约</Link>, '3', <AuditOutlined />),
   getItem(<Link to="/panels/poaps">活动</Link>, '4', <AuditOutlined />),
-  getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">开发文档</a>, '5', <CodeOutlined />),
+  getItem(<Link to="/panels/metadata">元数据</Link>, '5', <NodeIndexOutlined />),
+  getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">开发文档</a>, '6', <CodeOutlined />),
 ];
 
 function menuKeyFromLocation(location: object): string {
@@ -51,6 +54,7 @@ function menuKeyFromLocation(location: object): string {
   if (pathname.startsWith('/panels/apps')) return '2';
   if (pathname.startsWith('/panels/contracts')) return '3';
   if (pathname.startsWith('/panels/poaps')) return '4';
+  if (pathname.startsWith('/panels/metadata')) return '5';
   return '1';
 }
 
@@ -65,9 +69,10 @@ const App: React.FC = () => {
 
   const userMenuItems: MenuProps['items'] = [
     getItem(<Link to="/panels/userBalance">用户余额</Link>, '1', <MoneyCollectOutlined />),
-    getItem(<Link to="/panels/user">用户设置</Link>, '2', <UserOutlined />),
-    getItem(<Link to="/panels/company">企业认证</Link>, '3', <UsergroupAddOutlined />),
-    getItem(<span onClick={() => auth.signout(console.log)}>退出登录</span>, '4', <LogoutOutlined />),
+    getItem(<Link to="/panels/mintCountByMonth">铸造量统计</Link>, '2', <LineChartOutlined />),
+    getItem(<Link to="/panels/user">用户设置</Link>, '3', <UserOutlined />),
+    getItem(<Link to="/panels/company">企业认证</Link>, '4', <UsergroupAddOutlined />),
+    getItem(<span onClick={() => auth.signout(console.log)}>退出登录</span>, '5', <LogoutOutlined />),
   ];
 
   useEffect(() => {
