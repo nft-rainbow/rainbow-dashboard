@@ -2,12 +2,23 @@ import dayjs from 'dayjs';
 export function mapChainName(chainType: number) {
   switch (chainType) {
     case 1:
-      return '树图链';
+      return "Conflux";
     case 2:
       return 'Ethereum';
     default:
-      return '其他';
+      return "Other";
   }
+}
+
+export function mapChainAndNetworkName(chainType: number, chainId: number) {
+    switch (chainType) {
+      case 1:
+        return chainId === 1029 ? 'conflux' : 'conflux_test';
+      case 2:
+        return "Ethereum";
+      default:
+        return "Other";
+    }
 }
 
 export function mapAppType(appType: number) {
@@ -22,20 +33,20 @@ export function mapAppType(appType: number) {
 }
 
 export function mapFiatLogType(type: number) {
-  switch (type) {
-    case 1:
-      return '充值';
-    case 2:
-      return '提现';
-    case 3:
-      return '燃气费用';
-    case 4:
-      return '存储费用';
-    case 5:
-      return 'API费用';
-    default:
-      return '其他';
-  }
+    switch (type) {
+        case 1:
+            return "充值";
+        case 2:
+            return "提现";
+        case 3:
+            return "购买燃气";
+        case 4:
+            return "购买存储";
+        case 5:
+            return "API费用";
+        default:
+            return "其他";
+    }
 }
 
 export function formatDate(date: Date | string) {
@@ -98,9 +109,9 @@ export function mapSimpleStatus(status: number) {
 export function mapNFTType(type: number) {
   switch (type) {
     case 1:
-      return 'ERC721';
+      return "erc721";
     case 2:
-      return 'ERC1155';
+      return "erc1155";
     default:
       return '未知';
   }

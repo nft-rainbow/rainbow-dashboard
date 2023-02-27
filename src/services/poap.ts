@@ -1,9 +1,7 @@
 import { post, get } from '.';
+import { BaseModel } from '../models/';
 
-export interface Poap {
-    id: number;
-    created_at: string;
-    updated_at: string;
+export interface Poap extends BaseModel {
     user_id: number;
     app_id: number;
     contract_id: number;

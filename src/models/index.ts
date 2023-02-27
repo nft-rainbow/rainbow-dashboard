@@ -1,8 +1,8 @@
-interface BaseModel {
-  id: number;
-  created_at: string;
-  updated_at: string;
-  deleted_at?: string;
+export interface BaseModel {
+    id: number;
+    created_at: string;
+    updated_at: string;
+    deleted_at?: string;
 }
 export interface User {
   id: number;
@@ -34,10 +34,12 @@ export interface UserBalance {
 }
 
 export interface FiatLog extends BaseModel {
-  user_id: number;
-  amount: number;
-  type: number;
-  meta: any;
+    user_id: number;
+    amount: number;
+    type: number;
+    meta: any;
+    order_no: string;
+    balance: number;
 }
 
 export interface Company {
@@ -108,3 +110,31 @@ export interface ActivityItem {
     }
   ];
 }
+
+export interface MintCountByMonth {
+    count: number;
+    month: string;
+}
+
+export interface Metadata extends BaseModel {
+    name: string;
+    description: string;
+    image: string;
+    external_link: string;
+    attributes: object[];
+    metadata_id: string;
+    uri: string;
+    animation_url: string;
+}
+
+export interface NFT extends BaseModel {
+    chain_type: number;
+    chain_id: number;
+    token_id: number;
+    contract: string;
+    mint_to: string;
+    error: string;
+    hash: string;
+    status: number;
+    token_uri: string;
+  }
