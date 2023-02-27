@@ -1,8 +1,9 @@
-import React, {useCallback, useState} from 'react';
-import {Button, Form, Input, Radio, Select, Space, Tooltip, Typography} from 'antd';
+import React, {FormEventHandler, useCallback, useEffect, useState} from 'react';
+import {Button, Form, FormInstance, Input, message, Radio, Select, Space, Tooltip, Typography} from 'antd';
 import {CheckboxChangeEvent} from "antd/es/checkbox";
 import FileUpload from "../../components/FileUpload";
 import {LinkOutlined, UserOutlined} from "@ant-design/icons/lib";
+import {getAppAccounts} from "../../services/app";
 
 const { Option } = Select;
 
@@ -10,11 +11,19 @@ const onFinish = (values: any) => {
 	console.log('Received values of form: ', values);
 };
 
-export default function MintFormFields(props:{withImage: boolean, withName: boolean, withDesc: boolean, withAddress: boolean}) {
-	const [form] = Form.useForm();
+export default function MintFormFields(props:{withImage: boolean, withName: boolean, withDesc: boolean,
+	withAddress: boolean, form:FormInstance, appId:string, chainId:number}) {
+	const {form, appId, chainId} = props;
 	const [useUpload, setUseUpload] = useState(true);
+	const [myAccount, setMyAccount] = useState('fetching')
+	useEffect(()=>{
+		getAppAccounts(appId).then(accounts=>{
+			const acc = accounts.find(item => item.chain_id === chainId)?.address || "";
+			setMyAccount(acc);
+		})
+	}, [appId])
 	const fillMintTo = ()=>{
-		form.setFieldsValue({"mint_to_address": 'TODO'})
+		form.setFieldsValue({"mint_to_address": myAccount})
 		console.log(`form values`, form.getFieldsValue())
 	}
 	return (
@@ -28,6 +37,7 @@ export default function MintFormFields(props:{withImage: boolean, withName: bool
 			<Form.Item label="图片" style={{marginBottom: 0}}>
 				<Form.Item
 					style={{display: 'inline-block'}}
+					name={'useUpload'}
 				>
 					<Radio.Group value={useUpload ? 'upload' : 'input'} style={{marginRight: '8px'}}
 					             onChange={(e: CheckboxChangeEvent) => {
@@ -44,7 +54,7 @@ export default function MintFormFields(props:{withImage: boolean, withName: bool
 					<FileUpload
 						accept={".png,.jpg,.svg,.mp3,.mp4,.gif,stp,.max,.fbx,.obj,.x3d,.vrml,.3ds,3mf,.stl,.dae"}
 						listType="picture" maxCount={1}
-						onChange={(err: Error, file: any) => form.setFieldsValue({file_url: file.url})}/>
+						onChange={(err: Error, file: any) => form.setFieldsValue({file_url: file.url, file_link:''})}/>
 				</Form.Item>}
 				{!useUpload && <Form.Item
 					name="file_link"
@@ -60,7 +70,8 @@ export default function MintFormFields(props:{withImage: boolean, withName: bool
 					style={{display: 'inline-block'}}
 				>
 					<Button type={"text"} onClick={() => {
-						form.setFieldValue('file_link', 'https://console.nftrainbow.cn/nftrainbow-logo-light.png')
+						form.setFieldsValue({'file_url':'',
+							'file_link': 'https://console.nftrainbow.cn/nftrainbow-logo-light.png'})
 					}} style={{color: "gray"}}>
 						<Tooltip title={"使用测试图片"} mouseEnterDelay={0.1}><LinkOutlined/></Tooltip>
 					</Button>
@@ -77,7 +88,7 @@ export default function MintFormFields(props:{withImage: boolean, withName: bool
 					</Form.Item>
 			</Form.Item>}
 			{props.withDesc && <Form.Item name="description" label="描述" rules={[{ required: false }]}>
-				<Input.TextArea rows={4} />
+				<Input.TextArea style={{width: '50%'}} rows={2} />
 			</Form.Item>}
 			{props.withAddress && <Form.Item name='group_mint_to' label="接受人">
 				<Input.Group compact>
@@ -95,4 +106,22 @@ export default function MintFormFields(props:{withImage: boolean, withName: bool
 			</Form.Item>}
 		</Form>
 	);
+}
+
+export function checkMintInput(form:FormInstance) {
+	const {file_link, file_url,name,description, mint_to_address, useUpload} = form.getFieldsValue();
+	const url = useUpload === 'upload' ? file_url : file_link;
+	if (!url) {
+		message.info(`请设置图片`)
+		return;
+	}
+	if (!name) {
+		message.info(`请填写名称`)
+		return;
+	}
+	if (!mint_to_address) {
+		message.info(`请填写接受地址`)
+		return;
+	}
+	return {file_url: url, name, description: description||'', mint_to_address}
 }

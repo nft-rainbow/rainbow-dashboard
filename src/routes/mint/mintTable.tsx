@@ -94,8 +94,10 @@ const EditableCell: React.FC<EditableCellProps> = ({
 	);
 };
 
-const MintTable: React.FC = () => {
+function MintTable(props:{appId:string, chainId:number, controlForm:boolean}) {
+	const {appId, chainId, controlForm} = props;
 	const [form] = Form.useForm();
+	const [headForm] = Form.useForm();
 	const [data, setData] = useState(originData);
 	const [useCols, setUseCols] = useState({sameName: false, sameImage: false, sameDesc: false, sameAddress: false,})
 	const [editingKey, setEditingKey] = useState('');
@@ -243,20 +245,28 @@ const MintTable: React.FC = () => {
 	}
 	return (
 		<>
-			<Form labelCol={{ span: 1 }}
-			      wrapperCol={{ span: 16 }}>
+			{controlForm && <Form labelCol={{span: 1}}
+			       wrapperCol={{span: 16}}>
 				<Form.Item label={"选项"}>
-				<Space>
-					{/*ugly code here :( */}
-					<Checkbox checked={useCols.sameImage} onClick={()=>setUseCols({...useCols, sameImage: !useCols.sameImage})}>图片相同</Checkbox>
-					<Checkbox checked={useCols.sameName} onClick={()=>setUseCols({...useCols, sameName: !useCols.sameName})}>名字相同</Checkbox>
-					<Checkbox checked={useCols.sameDesc} onClick={()=>setUseCols({...useCols, sameDesc: !useCols.sameDesc})}>描述相同</Checkbox>
-					<Checkbox checked={useCols.sameAddress} onClick={()=>setUseCols({...useCols, sameAddress: !useCols.sameAddress})}>接受地址相同</Checkbox>
-					<Tooltip title={"相同的字段不会出现在表格里"}><QuestionCircleOutlined /></Tooltip>
-				</Space>
+					<Space>
+						{/*ugly code here :( */}
+						<Checkbox checked={useCols.sameImage} onClick={() => setUseCols({
+							...useCols,
+							sameImage: !useCols.sameImage
+						})}>图片相同</Checkbox>
+						<Checkbox checked={useCols.sameName}
+						          onClick={() => setUseCols({...useCols, sameName: !useCols.sameName})}>名字相同</Checkbox>
+						<Checkbox checked={useCols.sameDesc}
+						          onClick={() => setUseCols({...useCols, sameDesc: !useCols.sameDesc})}>描述相同</Checkbox>
+						<Checkbox checked={useCols.sameAddress} onClick={() => setUseCols({
+							...useCols,
+							sameAddress: !useCols.sameAddress
+						})}>接受地址相同</Checkbox>
+						<Tooltip title={"勾选为相同的字段可在表单中填写，不会出现在表格里"}><QuestionCircleOutlined/></Tooltip>
+					</Space>
 				</Form.Item>
-			</Form>
-			<MintFormFields withImage={useCols.sameImage}
+			</Form>}
+			<MintFormFields withImage={useCols.sameImage} form={headForm}  appId={appId} chainId={chainId}
 			                withDesc={useCols.sameDesc}
 			                withAddress={useCols.sameAddress}
 			                withName={useCols.sameName}/>
