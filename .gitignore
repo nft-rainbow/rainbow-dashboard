@@ -16,3 +16,4 @@ build
 #env variables
 .env.development
 .env.production
+.env
