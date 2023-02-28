@@ -16,6 +16,7 @@ import ContractDeployment from '@pages/contracts/new';
 import Poaps from '@pages/activities';
 import Asset from '@pages/activities/manageAssets';
 import Building from '@pages/activities/Building';
+import MintFrame from "@pages/mint/mintFrame";
 
 const AppRouter: React.FC = () => {
   return (
@@ -38,6 +39,8 @@ const AppRouter: React.FC = () => {
             <Route path="company" element={<Company />} />
             <Route path="apps" element={<App />} />
             <Route path="apps/:id" element={<AppDetail />} />
+            <Route path="mint/:id" element={<MintFrame />} />
+            <Route path="contracts" element={<Contracts />} />
             <Route path="contracts" element={<Contracts />} />
             <Route path="contracts/sponsor" element={<ContractSponsor />} />
             <Route path="contracts/deploy" element={<ContractDeployment />} />

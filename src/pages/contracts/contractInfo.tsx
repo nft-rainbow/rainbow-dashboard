@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getContractInfo} from "../../services/app";
+import {getContractInfo} from "@services/app";
 import {Contract} from "../../models";
 import {Card, Col, Row, Typography} from "antd";
 import {mapChainAndNetworkName, mapSimpleStatus} from "../../utils";

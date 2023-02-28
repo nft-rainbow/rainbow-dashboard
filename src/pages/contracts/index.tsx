@@ -115,21 +115,24 @@ export default function Contracts() {
       render: (id: number, record: Contract) => {
         if (!record.address) return null;
         return (
-          <Button
-            type="primary"
-            size="small"
-            onClick={async () => {
-              setCurrentContract(record);
-              const _info = await getContractSponsor(record.address, mapChainNetwork(record.chain_id));
-              setSponsorInfo(_info);
-              const autoSponsor = await getContractAutoSponsor(record.address);
-              // @ts-ignore
-              setAutoSponsorInfo(autoSponsor.auto_sponsor);
-              setIsSponsorModalVisible(true);
-            }}
-          >
-            查看代付
-          </Button>
+          <>
+            <Button
+              type="primary"
+              size="small"
+              onClick={async () => {
+                setCurrentContract(record);
+                const _info = await getContractSponsor(record.address, mapChainNetwork(record.chain_id));
+                setSponsorInfo(_info);
+                const autoSponsor = await getContractAutoSponsor(record.address);
+                // @ts-ignore
+                setAutoSponsorInfo(autoSponsor.auto_sponsor);
+                setIsSponsorModalVisible(true);
+              }}
+            >
+              查看代付
+            </Button>
+            <Link to={`/panels/mint/${record.id}`}>铸造</Link>
+          </>
         );
       },
     },

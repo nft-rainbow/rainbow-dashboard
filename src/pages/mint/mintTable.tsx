@@ -13,13 +13,14 @@ import {
 	Table, Tooltip,
 	Typography, Image, message,
 } from 'antd';
-import MintFormFields from "./mintFormFields";
+import MintFormFields, {checkMintInput} from "./mintFormFields";
 import FileUpload from "../../components/FileUpload";
 import {PictureOutlined, QuestionCircleOutlined, QuestionOutlined} from "@ant-design/icons/lib";
 import ImportImages from "./ImportImages";
 import UploadDir from "./uploadDirectory";
 import DragUpload from "./dragUpload";
 import ParseLocalFile from "./parseLocalFile";
+import {utils, writeFileXLSX} from "xlsx";
 
 interface Item {
 	key: string;
@@ -240,12 +241,37 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean}) {
 		console.log(`converted`, newArr)
 		setData(newArr as Item[]);
 	}
+	const exportData = ()=>{
+		const values = checkMintInput(headForm, {withAddress: useCols.sameAddress,
+			withDesc: useCols.sameDesc, withName: useCols.sameName, withImage: useCols.sameImage});
+		if (!values) {
+			return;
+		}
+		const {file_url, name, description, mint_to_address} = values;
+		const colNames = ["图片链接","名字","描述","接受地址"]
+		const aoa = [colNames];
+		data.forEach(row=>{
+			const arr = [
+				useCols.sameImage ? file_url : row.file_url,
+				useCols.sameName ? name : row.name,
+				useCols.sameDesc ? description : row.desc,
+				useCols.sameAddress ? mint_to_address : row.address
+			]
+			aoa.push(arr);
+		})
+		const ws = utils.aoa_to_sheet(aoa)
+		// const ws = utils.json_to_sheet(exportArr);
+		const wb = utils.book_new();
+		utils.book_append_sheet(wb, ws, "mint");
+		const dt = new Date();
+		writeFileXLSX(wb, `export_mints_${dt.getMonth()+1}_${dt.getDate()}.xlsx`);
+	}
 	const batchMint = ()=>{
 		console.log(`batch mint`)
 	}
 	return (
 		<>
-			{controlForm && <Form labelCol={{span: 1}}
+			{controlForm && <Form labelCol={{span: 2}}
 			       wrapperCol={{span: 16}}>
 				<Form.Item label={"选项"}>
 					<Space>
@@ -277,7 +303,10 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean}) {
 					当前[{data.length}]行
 					<ParseLocalFile handleData={handleImportData}/>
 					<Button type={"link"}><a href={"/mint_template.xlsx"} style={{color: "gray"}}>下载模板</a></Button>
-					<DragUpload onSuccess={({url}: { url: string }, name: string) => addRow(url, name)}/>
+					{!useCols.sameImage && <DragUpload onSuccess={({url}: { url: string }, name: string) => addRow(url, name)}/>}
+					<Tooltip title={"通过批量导入图片，再导出，可以获得图片URL和名称的对应关系，完善信息后，即可再次导入。"}>
+						<Button onClick={exportData} type={"link"}>导出</Button>
+					</Tooltip>
 				</Space>
 
 				<Form form={form} component={false}>
