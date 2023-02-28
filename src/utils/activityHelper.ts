@@ -132,10 +132,15 @@ export const defaultSwitchers = {
 type Switcher = keyof typeof defaultSwitchers;
 export type Switchers = typeof defaultSwitchers;
 
-export const activityTypeDic = ['单个活动', '盲盒活动', 'POAP活动'];
+export const activityTypeDic = ['盲盒活动', '单个活动', 'POAP活动'];
+export const activityTypeDicEn = ['blind', 'single', 'poap'];
 
 export const activityTypeTransform = (type: number) => {
   return activityTypeDic[type - 1];
+};
+
+export const activityTypeTransformEn = (type: number) => {
+  return activityTypeDicEn[type - 1];
 };
 
 export const getActivityUrl = () => {

@@ -15,7 +15,7 @@ export default function Poaps() {
   const [items, setItems] = useState<ActivityItem[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [activityType, setActivityType] = useState(1);
+  const [activityType, setActivityType] = useState(-1);
   const [isActivityModalVisible, setIsActivityModalVisible] = useState(false);
 
   const hideModal = () => {
@@ -30,9 +30,6 @@ export default function Poaps() {
   }, []);
 
   const extra = (
-    // <Button type="primary" onClick={() => setIsActivityModalVisible(true)} key="create-activity">
-    //   创建活动
-    // </Button>
     <Dropdown
       key="create-activity"
       trigger={['click']}
