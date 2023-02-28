@@ -79,7 +79,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activi
 
   return (
     <Modal title="创建活动" open={open} onOk={form.submit} onCancel={handleCancel} {...ModalStyle} confirmLoading={confirmLoading}>
-      <Form id="createActivityForm" name="basic" form={form} layout="vertical" onFinish={handleFinish} initialValues={{ chain: 'conflux' }}>
+      <Form id="createActivityForm" name="createActivityForm" form={form} layout="vertical" onFinish={handleFinish} initialValues={{ chain: 'conflux' }}>
         <Form.Item name="app_id" label="所属项目" rules={[{ required: true, message: '请选择项目' }]}>
           <Select placeholder="请选择项目">
             {apps.map((app) => (
