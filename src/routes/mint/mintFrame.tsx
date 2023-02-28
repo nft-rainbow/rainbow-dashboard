@@ -13,7 +13,7 @@ export default function MintFrame() {
 	const { id: paramId = ''} = useParams();
 	const items: TabsProps['items'] = [
 		{
-			key: '1',			label: `单个铸造`,
+			key: '10',			label: `单个铸造`,
 			children: <MintSingle appId={contract.app_id} contract={contract}/>,
 		},
 		{
@@ -37,7 +37,7 @@ export default function MintFrame() {
 		<Space direction={'vertical'}>
 			<ContractInfo id={paramId} reportContract={setContract}/>
 			<Card bodyStyle={{paddingTop:'8px'}}>
-				<Tabs defaultActiveKey="20" items={items}/>
+				<Tabs defaultActiveKey="10" items={items}/>
 			</Card>
 		</Space>
 	)
