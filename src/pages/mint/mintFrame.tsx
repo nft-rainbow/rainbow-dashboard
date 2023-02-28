@@ -6,6 +6,7 @@ import {MintSingle} from "./mintSingle";
 import {ContractInfo} from "../contracts/contractInfo";
 import {useParams} from "react-router-dom";
 import {Contract} from "../../models";
+import {AppNFTs} from "@pages/apps/MintTasks";
 
 export default function MintFrame() {
 	// prop:{contract:string, name:string, symbol:string}
@@ -26,15 +27,18 @@ export default function MintFrame() {
 		},
 		{
 			key: '40',			label: `铸造历史`,
-			children: `铸造历史`,
+			children: <AppNFTs id={contract.app_id} refreshTrigger={0} setRefreshTrigger={()=>{}} />,
 		},
-		{
-			key: '50',			label: `使用帮助`,
-			children: `帮助文案`,
-		}
+		// {
+		// 	key: '50',			label: `使用帮助`,
+		// 	children: `帮助文案`,
+		// }
 	];
+	if (!contract.app_id) {
+		// return "载入中..."
+	}
 	return (
-		<Space direction={'vertical'}>
+		<Space direction={'vertical'} style={{flexGrow:1, border: "0px solid green",}}>
 			<ContractInfo id={paramId} reportContract={setContract}/>
 			<Card bodyStyle={{paddingTop:'8px'}}>
 				<Tabs defaultActiveKey="10" items={items}/>

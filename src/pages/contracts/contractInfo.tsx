@@ -15,7 +15,7 @@ export function ContractInfo(props: { id: string, reportContract:(c:Contract)=>v
 	}, [props.id])
 	return (
 		<>
-			<Card title={"合约信息"} style={{width:'100%'}}>
+			<Card title={"合约信息"} style={{flexGrow:1, border: "1px dot blue"}}>
 				<Row gutter={12}>
 					<Col><Text type="secondary">合约名称</Text></Col><Col>{contract.name}</Col>
 					<Col><Text type="secondary">通证标识</Text></Col><Col>{contract.symbol}</Col>

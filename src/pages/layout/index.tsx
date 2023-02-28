@@ -53,6 +53,7 @@ function menuKeyFromLocation(location: object): string {
   if (pathname === '/panels') return '1';
   if (pathname.startsWith('/panels/apps')) return '2';
   if (pathname.startsWith('/panels/contracts')) return '3';
+  if (pathname.startsWith('/panels/mint')) return '3';
   if (pathname.startsWith('/panels/poaps')) return '4';
   if (pathname.startsWith('/panels/metadata')) return '5';
   return '1';
@@ -128,7 +129,7 @@ const App: React.FC = () => {
               </Dropdown>
             </div>
           </Header>
-          <Content style={{ margin: '16px 16px' }}>
+          <Content style={{ margin: '16px 16px', display: 'flex' }}>
             <Outlet />
           </Content>
           <Footer className="site-layout-footer">©2022 NFTRainbow</Footer>

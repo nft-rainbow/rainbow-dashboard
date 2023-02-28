@@ -207,7 +207,7 @@ export default function Contracts() {
 
   return (
     <>
-      <Card title="智能合约" extra={extra}>
+      <Card title="智能合约" extra={extra} style={{flexGrow:1}}>
         <Table
           rowKey="id"
           dataSource={items}

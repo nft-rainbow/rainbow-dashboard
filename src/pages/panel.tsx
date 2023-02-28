@@ -59,7 +59,7 @@ export default function Panel() {
   }, []);
 
   return (
-    <div>
+    <div style={{flexGrow: 1}}>
       {user && user.status === 0 && user.id_no.length === 0 ? <Alert message="新用户请先至个人中心完善信息" type="info" showIcon /> : null}
       {user && user.status === 0 && user.id_no.length > 0 ? <Alert message="请耐心等待审核通过，我们会在2-3天完成审核。" type="info" showIcon /> : null}
       <Row gutter={16} style={{margin: '16px 0'}}>
