@@ -1,10 +1,11 @@
 import MintFormFields, {checkMintInput} from "./mintFormFields";
 import React, {FormEventHandler, useEffect, useState} from "react";
-import {Button, Form, message} from "antd";
+import {Button, Form, message, Tooltip} from "antd";
 import {easyMintUrl, getMintTask} from "../../services/app";
 import {Contract, NFT} from "../../models";
 import {mapChainAndNetworkName} from "../../utils";
 import set = Reflect.set;
+import {QuestionCircleOutlined, QuestionOutlined} from "@ant-design/icons/lib";
 
 export function MintSingle(props: { appId: any, contract: Contract }) {
 	const {contract, appId} = props;
@@ -71,6 +72,9 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 				        mint();
 			        }}>{mintLoading ? "铸造中" : "开始铸造"}</Button>
 			<>
+				{mintLoading &&
+					<Tooltip title={"铸造任务会在后台执行，请耐心等待"}><QuestionCircleOutlined  style={{marginLeft: '8px'}} /></Tooltip>
+				}
 				{/*任务ID {taskId} 状态 [{task.status}]*/}
 			</>
 		</>

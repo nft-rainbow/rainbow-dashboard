@@ -166,13 +166,13 @@ export default function AppDetail(props: { appId?: string }) {
         <p>
           主网账户:{' '}
           <Paragraph copyable code className="d-inline">
-            {mainnetAccount.address}
+            {mainnetAccount().address}
           </Paragraph>
         </p>
         <p>
           测试网账户:{' '}
           <Paragraph copyable code className="d-inline">
-            {testAccount.address}
+            {testAccount().address}
           </Paragraph>
         </p>
       </Modal>

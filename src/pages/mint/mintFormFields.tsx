@@ -2,7 +2,7 @@ import React, {FormEventHandler, useCallback, useEffect, useState} from 'react';
 import {Button, Form, FormInstance, Input, message, Radio, Select, Space, Tooltip, Typography, Upload} from 'antd';
 import {CheckboxChangeEvent} from "antd/es/checkbox";
 import FileUpload from "../../components/FileUpload";
-import {LinkOutlined, UploadOutlined, UserOutlined} from "@ant-design/icons/lib";
+import {LinkOutlined, QuestionCircleOutlined, UploadOutlined, UserOutlined} from "@ant-design/icons/lib";
 import {Image} from "antd"
 import {getAppAccounts} from "@services/app";
 
@@ -43,7 +43,7 @@ export default function MintFormFields(props:{withImage: boolean, withName: bool
 			wrapperCol={{ span: 16 }}
 		>
 			{props.withImage &&
-			<Form.Item name={"file_group"} label="图片URL" style={{marginBottom: previewUrl ? '0px' : '24px', border: '0px solid red'}}>
+			<Form.Item name={"file_group"} label="图片链接" style={{marginBottom: previewUrl ? '0px' : '24px', border: '0px solid red'}}>
 				<Space>
 				<Form.Item
 					name="file_url" noStyle
@@ -89,6 +89,7 @@ export default function MintFormFields(props:{withImage: boolean, withName: bool
 					</Upload>
 				</Form.Item>
 					{uploadPercent > 0 && <Text type={"secondary"}>{uploadPercent.toFixed(2)}%</Text>}
+					<Tooltip title={"通过上传文件可以自动生成图片链接，也可以手动填入已有的图片链接。"}><QuestionCircleOutlined/></Tooltip>
 				</Space>
 				{previewUrl && <div style={{display: 'block', marginBottom:'8px', marginTop:'8px'}}>
 					<Image width={"200px"} src={previewUrl}/>
