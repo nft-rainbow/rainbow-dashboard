@@ -37,6 +37,13 @@ export default function MintFormFields(props: {
 		form.setFieldsValue({"mint_to_address": myAccount})
 		console.log(`form values`, form.getFieldsValue())
 	}
+	const normFile = (e: any) => {
+		// Upload component requires this function
+		if (Array.isArray(e)) {
+			return e;
+		}
+		return e?.fileList;
+	};
 	return (
 		<Form
 			name="complex-form" form={form}
@@ -65,7 +72,7 @@ export default function MintFormFields(props: {
 					</Button>
 
 					<Form.Item
-						name="file_url_upload" valuePropName="fileList"
+						name="file_url_upload" valuePropName="fileList" getValueFromEvent={normFile}
 						style={{border: '0px solid red', display: 'inline-block', marginBottom: '0px'}}
 					>
 						<Upload name={"file"} action={methodUrl("/dashboard/misc/upload")} showUploadList={false}
