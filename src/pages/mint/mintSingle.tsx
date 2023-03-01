@@ -19,7 +19,7 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 		if (!taskId) {
 			return;
 		}
-		getMintTask(appId, taskId).then(res=>{
+		getMintTask(taskId).then(res=>{
 			setTask(res);
 			if (res.status == 0) {
 				setTimeout(()=>setTick(tick+1), 1_000)

@@ -10,6 +10,7 @@ import {AppNFTs} from "@pages/apps/MintTasks";
 
 export default function MintFrame() {
 	// prop:{contract:string, name:string, symbol:string}
+	const [refreshNftList, setRefreshNftList] = useState(0);
 	const [contract,setContract] = useState({app_id: ''} as Contract);
 	const { id: paramId = ''} = useParams();
 	const items: TabsProps['items'] = [
@@ -27,7 +28,9 @@ export default function MintFrame() {
 		},
 		{
 			key: '40',			label: `铸造历史`,
-			children: <AppNFTs id={contract.app_id} refreshTrigger={0} setRefreshTrigger={()=>{}} />,
+			children: <AppNFTs id={contract.app_id} refreshTrigger={refreshNftList} setRefreshTrigger={setRefreshNftList}
+			                   showRefresh={true}
+				/>,
 		},
 		// {
 		// 	key: '50',			label: `使用帮助`,

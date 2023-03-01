@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {NFT} from "@models/index";
 import {formatDate, mapChainName, mapNFTType, scanAddressLink, scanNFTLink, scanTxLink, short} from "@utils/index";
-import {Button, Image, Popover, Table, TablePaginationConfig, Tooltip} from "antd";
+import {Button, Image, Popover, Space, Table, TablePaginationConfig, Tooltip} from "antd";
 import {
 	CheckCircleTwoTone,
 	ClockCircleTwoTone,
@@ -13,8 +13,8 @@ import {reMintNFT} from "@services/NFT";
 import {getAppNfts} from "@services/app";
 import axios from "axios";
 
-export function AppNFTs(props: { id: string; refreshTrigger: number; setRefreshTrigger: (v: number) => void }) {
-	const { id, refreshTrigger = 0, setRefreshTrigger } = props;
+export function AppNFTs(props: { id: string; refreshTrigger: number; setRefreshTrigger: (v: number) => void, showRefresh?: boolean }) {
+	const { id, refreshTrigger, setRefreshTrigger, showRefresh } = props;
 	const [items, setItems] = useState<NFT[]>([]);
 	const [total, setTotal] = useState(0);
 	const [page, setPage] = useState(1);
@@ -129,7 +129,7 @@ export function AppNFTs(props: { id: string; refreshTrigger: number; setRefreshT
 				setTotal(res.count);
 				setItems(res.items);
 			})
-			.then(() => {
+			.finally(() => {
 				setLoading(false);
 			});
 	}, [id, page, refreshTrigger]);
@@ -147,10 +147,11 @@ export function AppNFTs(props: { id: string; refreshTrigger: number; setRefreshT
 		}
 	};
 
-	useEffect(() => {}, [images]);
+	// useEffect(() => {}, [images]);
 
 	return (
-		<>
+		<Space direction={"vertical"}>
+			{showRefresh && <Button type={"dashed"} onClick={()=>setRefreshTrigger(refreshTrigger + 1)}>刷新</Button>}
 			<Table
 				rowKey="id"
 				dataSource={items}
@@ -163,7 +164,7 @@ export function AppNFTs(props: { id: string; refreshTrigger: number; setRefreshT
 				}}
 				onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
 			/>
-		</>
+		</Space>
 	);
 }
 

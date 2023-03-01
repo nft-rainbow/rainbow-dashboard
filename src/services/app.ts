@@ -65,8 +65,8 @@ export async function getAppNftsOfContract(id: number | string, address: string,
 export async function easyMintUrl(id: string, options: any) {
   return await post(`/dashboard/apps/${id}/nft`, options);
 }
-export async function getMintTask(appId:any, id: string|number) : Promise<NFT> {
-  return await get(`/dashboard/apps/${appId}/mintTask?taskId=${id}`);
+export async function getMintTask(id: string|number) : Promise<NFT> {
+  return await get(`/dashboard/mints/${id}`);
 }
 export async function getAppAccounts(id: number | string): Promise<ChainAccount[]> {
   return await get(`/dashboard/apps/${id}/accounts`);
