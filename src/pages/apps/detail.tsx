@@ -312,6 +312,7 @@ export default function AppDetail(props: { appId?: string }) {
           </Form.Item>
         </Form>
       </Modal>
+      <Form form={form} name="nothing_but_suppress_antd_warning"/>
     </div>
   );
 }

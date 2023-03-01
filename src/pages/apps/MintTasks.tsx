@@ -150,8 +150,8 @@ export function AppNFTs(props: { id: string; refreshTrigger: number; setRefreshT
 	// useEffect(() => {}, [images]);
 
 	return (
-		<Space direction={"vertical"}>
-			{showRefresh && <Button type={"dashed"} onClick={()=>setRefreshTrigger(refreshTrigger + 1)}>刷新</Button>}
+		<>
+			{showRefresh && <Button className={"mb-8"} type={"dashed"} onClick={()=>setRefreshTrigger(refreshTrigger + 1)}>刷新</Button>}
 			<Table
 				rowKey="id"
 				dataSource={items}
@@ -164,7 +164,7 @@ export function AppNFTs(props: { id: string; refreshTrigger: number; setRefreshT
 				}}
 				onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
 			/>
-		</Space>
+		</>
 	);
 }
 
