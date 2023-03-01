@@ -4,7 +4,26 @@ import RainbowBreadcrumb from '../../components/Breadcrumb';
 import { getAppDetail, getAppNfts, getAppMetadatas, getAppFiles, File, Metadata, easyMintUrl, getAppAccounts } from '../../services/app';
 import { createPoap } from '../../services/poap';
 import { reMintNFT } from '../../services/NFT';
-import { Card, Tabs, Table, TablePaginationConfig, Tooltip, Space, Button, Modal, Typography, Form, Input, message, Image, Popover, Radio, Row, Col } from 'antd';
+import {
+  Card,
+  Tabs,
+  Table,
+  TablePaginationConfig,
+  Tooltip,
+  Space,
+  Button,
+  Modal,
+  Typography,
+  Form,
+  Input,
+  message,
+  Image,
+  Popover,
+  Radio,
+  Row,
+  Col,
+  TabsProps
+} from 'antd';
 import { mapChainName, formatDate, short, scanTxLink, scanNFTLink, scanAddressLink, mapNFTType } from '../../utils';
 import FileUpload from '../../components/FileUpload';
 import { ChainAccount, App, NFT } from '../../models';
@@ -123,25 +142,18 @@ export default function AppDetail(props: { appId?: string }) {
       setBreadcrumbItems(['项目详情', data.name]);
     });
   }, [id]);
-
+  const tabs : TabsProps['items'] = [
+    {key: '1', label:'藏品铸造',
+      children:<AppNFTs id={idStr} refreshTrigger={refreshNftList} setRefreshTrigger={setRefreshNftList} />},
+    {key: '2', label:'元数据', children:<AppMetadatas id={idStr} refreshTrigger={refreshNftList} />},
+    {key: '3', label:'文件', children:<AppFiles id={idStr} refreshTrigger={refreshNftList} />},
+  ]
   return (
     <div className="App">
       {contextHolder}
       <RainbowBreadcrumb items={breadcrumbItems} />
       <Card>
-        <Tabs defaultActiveKey="1" tabBarExtraContent={extraOp}>
-          <TabPane tab="藏品铸造" key="1">
-            <AppNFTs id={idStr} refreshTrigger={refreshNftList} setRefreshTrigger={setRefreshNftList} />
-          </TabPane>
-          <TabPane tab="元数据" key="2">
-            <AppMetadatas id={idStr} refreshTrigger={refreshNftList} />
-          </TabPane>
-          <TabPane tab="文件" key="3">
-            <AppFiles id={idStr} refreshTrigger={refreshNftList} />
-          </TabPane>
-          {/* <TabPane tab="POAP" key="4">
-            <AppPoaps id={idStr} />
-          </TabPane> */}
+        <Tabs defaultActiveKey="1" items={tabs} tabBarExtraContent={extraOp}>
         </Tabs>
       </Card>
       <Modal title="应用详情" open={isDetailModalVisible} onOk={closeDetailModal} onCancel={closeDetailModal} okText={'确认'} cancelText={'取消'} footer={null}>
