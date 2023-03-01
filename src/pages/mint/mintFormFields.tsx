@@ -47,14 +47,11 @@ export default function MintFormFields(props: {
 			{props.withImage &&
 			<Form.Item name={"file_group"} label="图片链接"
 			           style={{marginBottom: previewUrl ? '0px' : '24px', border: '0px solid red'}}>
+				<Space direction={"vertical"}>
 				<Space>
-					<Form.Item
-						name="file_url" noStyle
-						style={{
-							// display: 'inline-block',
-							width: 'calc(90% - 8px)',
-							border: '0px solid red'
-						}}
+					<Form.Item name="file_url" noStyle
+						style={{// display: 'inline-block',
+							width: 'calc(90% - 8px)',border: '0px solid red'}}
 					>
 						<Input placeholder=""/>
 					</Form.Item>
@@ -68,7 +65,7 @@ export default function MintFormFields(props: {
 					</Button>
 
 					<Form.Item
-						name="file_url_upload"
+						name="file_url_upload" valuePropName="fileList"
 						style={{border: '0px solid red', display: 'inline-block', marginBottom: '0px'}}
 					>
 						<Upload name={"file"} action={methodUrl("/dashboard/misc/upload")} showUploadList={false}
@@ -94,9 +91,12 @@ export default function MintFormFields(props: {
 					{uploadPercent > 0 && <Text type={"secondary"}>{uploadPercent.toFixed(2)}%</Text>}
 					<Tooltip title={"通过上传文件可以自动生成图片链接，也可以手动填入已有的图片链接。"}><QuestionCircleOutlined/></Tooltip>
 				</Space>
-				{previewUrl && <div style={{display: 'block', marginBottom: '8px', marginTop: '8px'}}>
-					<Image width={"200px"} src={previewUrl}/>
-				</div>}
+					{previewUrl &&
+					<div style={{display: 'block', marginBottom: '8px', marginTop: '0px'}}>
+						<Image width={"200px"} src={previewUrl}/>
+					</div>
+					}
+				</Space>
 			</Form.Item>
 			}
 
@@ -108,11 +108,15 @@ export default function MintFormFields(props: {
 				>
 					<Input style={{width: '50%'}} placeholder=""/>
 				</Form.Item>
-			</Form.Item>}
+			</Form.Item>
+			}
+
 			{props.withDesc && <Form.Item name="description" label="描述" rules={[{required: false}]}>
 				<Input.TextArea style={{width: '50%'}} rows={2}/>
-			</Form.Item>}
-			{props.withAddress && <Form.Item name='group_mint_to' label="接受人">
+			</Form.Item>
+			}
+
+			{props.withAddress && <Form.Item name='group_mint_to' label="接受地址">
 				<Input.Group compact>
 					<Form.Item
 						name='mint_to_address'
@@ -125,7 +129,8 @@ export default function MintFormFields(props: {
 						<Tooltip title={"使用App账户地址"} mouseEnterDelay={1}><UserOutlined/></Tooltip>
 					</Button>
 				</Input.Group>
-			</Form.Item>}
+			</Form.Item>
+			}
 		</Form>
 	);
 }
