@@ -50,7 +50,6 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activi
   const handleFinish = useCallback(
     async (values: FormData) => {
       const params = formDataTranslate(values, apps, activityType);
-      debugger;
       try {
         setConfirmLoading(true);
         await createActivity(params);
