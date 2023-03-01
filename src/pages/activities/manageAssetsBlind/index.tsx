@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import RainbowBreadcrumb from '@components/Breadcrumb';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Card, Button, Form, Modal, Select, Input, DatePicker, MenuProps, Dropdown } from 'antd';
-import cx from 'clsx';
 import { ModalStyle } from '../createActivities/constants';
 import { listContracts } from '@services/contract';
 import { Contract } from '@models/index';
@@ -29,25 +28,25 @@ interface CharacterItemProps {
 }
 const CharacterItem: React.FC<CharacterItemProps> = ({ type, name, id, remove }) => {
   return (
-    <div className="flex flex-row" key={`${name}-${id}`}>
+    <div className="grid grid-cols-[41.8%_41.8%_8%] gap-x-[16px]" key={`${name}-${id}`}>
       <>
         {type === 'text' && (
           <>
             <Form.Item noStyle name={[name, 'characterName']}>
-              <Input placeholder="请输入特征名称" className="mr-16px" />
+              <Input placeholder="请输入特征名称" />
             </Form.Item>
             <Form.Item noStyle name={[name, 'value']}>
-              <Input placeholder="请输入特征值" className="mr-18px" />
+              <Input placeholder="请输入特征值" />
             </Form.Item>
           </>
         )}
         {type === 'date' && (
           <>
             <Form.Item noStyle name={[name, 'characterName']}>
-              <Input placeholder="日期" className="mr-16px" />
+              <Input placeholder="日期" />
             </Form.Item>
             <Form.Item noStyle name={[name, 'value']}>
-              <DatePicker showTime className="mr-18px" />
+              <DatePicker showTime placeholder="请选择日期" />
             </Form.Item>
           </>
         )}
@@ -72,7 +71,21 @@ const AddAssetsModal: React.FC<AddAssetsModalProps> = ({ open, onCancel }) => {
   }, []);
 
   return (
-    <Modal title="添加藏品" open={open} onCancel={onCancel} onOk={form.submit} {...ModalStyle}>
+    <Modal
+      title="添加藏品"
+      open={open}
+      {...ModalStyle}
+      footer={[
+        <div className="w-full flex flex-row justify-between">
+          <Button key="cancel" onClick={onCancel} className="grow">
+            取消
+          </Button>
+          <Button type="primary" key="addAsset" onClick={form.submit} className="grow">
+            添加
+          </Button>
+        </div>,
+      ]}
+    >
       <Form
         id="addAssetsBoard"
         name="addAssetsBoard"
@@ -96,7 +109,7 @@ const AddAssetsModal: React.FC<AddAssetsModalProps> = ({ open, onCancel }) => {
         </Form.Item>
         <Form.List name="characters">
           {(fields, { add, remove }) => (
-            <>
+            <div className="mb-[24px]">
               <div className="mb-8px flex flex-row justify-between">
                 <label>特征设置：</label>
                 <Dropdown trigger={['click']} menu={{ items: characterItms, onClick: (e) => add({ type: e.key }) }}>
@@ -106,12 +119,12 @@ const AddAssetsModal: React.FC<AddAssetsModalProps> = ({ open, onCancel }) => {
                   </a>
                 </Dropdown>
               </div>
-              <div className="grid grid-cols-2 gap-x-16px gap-y-16px">
+              <div className="flex flex-col gap-y-[16px]">
                 {fields.map((field, index) => (
                   <CharacterItem type={getFieldValue(['characters', index, 'type'])} id={index} name={field.name} remove={remove} key={index} />
                 ))}
               </div>
-            </>
+            </div>
           )}
         </Form.List>
       </Form>
