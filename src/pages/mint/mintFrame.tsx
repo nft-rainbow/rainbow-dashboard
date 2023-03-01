@@ -20,11 +20,11 @@ export default function MintFrame() {
 		},
 		{
 			key: '20',			label: `批量铸造`,
-			children: <MintTable appId={contract.app_id||''} chainId={contract.chain_id} controlForm={false}/>,
+			children: <MintTable appId={contract.app_id||''} chainId={contract.chain_id} controlForm={false} contract={contract}/>,
 		},
 		{
 			key: '30',			label: `高级模式`,
-			children: <MintTable appId={contract.app_id||''} chainId={contract.chain_id} controlForm={true}/>,
+			children: <MintTable appId={contract.app_id||''} chainId={contract.chain_id} controlForm={true} contract={contract}/>,
 		},
 		{
 			key: '40',			label: `铸造历史`,

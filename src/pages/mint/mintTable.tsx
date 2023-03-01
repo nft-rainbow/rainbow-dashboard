@@ -21,6 +21,9 @@ import UploadDir from "./uploadDirectory";
 import DragUpload from "./dragUpload";
 import ParseLocalFile from "./parseLocalFile";
 import {utils, writeFileXLSX} from "xlsx";
+import {mapChainAndNetworkName} from "@utils/index";
+import {batchMint, easyMintUrl} from "@services/app";
+import {Contract} from "@models/index";
 
 interface Item {
 	key: string;
@@ -95,13 +98,16 @@ const EditableCell: React.FC<EditableCellProps> = ({
 	);
 };
 
-function MintTable(props:{appId:string, chainId:number, controlForm:boolean}) {
-	const {appId, chainId, controlForm} = props;
+function MintTable(props:{appId:string, chainId:number, controlForm:boolean, contract: Contract }) {
+	const {appId, chainId, controlForm, contract} = props;
 	const [form] = Form.useForm();
 	const [headForm] = Form.useForm();
 	const [data, setData] = useState(originData);
 	const [useCols, setUseCols] = useState({sameName: false, sameImage: false, sameDesc: false, sameAddress: false,})
 	const [editingKey, setEditingKey] = useState('');
+	const [mintLoading, setMintLoading] = useState(false);
+	const [exporting, setExporting] = useState(false);
+	const [step, setStep] = useState('edit' as 'edit'|'submit'|'done');
 
 	const isEditing = (record: Item) => record.key === editingKey;
 
@@ -142,85 +148,85 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean}) {
 		}
 	};
 
-		const columns = [
-			{
-				title: '图片',
-				dataIndex: 'file_url',
-				width: '15%',
-				editable: true,
-				render: (url:string)=>{
-					return url ? <Image alt={url} src={url}/> : ''
-				}
-			},
-			{
-				title: '名称',
-				dataIndex: 'name',
-				width: '15%',
-				editable: true,
-			},
-			{
-				title: '描述',
-				dataIndex: 'desc',
-				width: '25%',
-				editable: true,
-			},
-			{
-				title: '接受地址',
-				dataIndex: 'address',
-				editable: true,
-			},
-			{
-				title: '操作',
-				width: '15%',
-				dataIndex: 'operation',
-				render: (_: any, record: Item) => {
-					const editable = isEditing(record);
-					return editable ? (
-						<span>
-            <Typography.Link onClick={() => save(record.key)} style={{marginRight: 8}}>
-              保存
-            </Typography.Link>
-            <Typography.Link onClick={cancel}>
-              取消
-            </Typography.Link>
-          </span>
-					) : (
-						<Space>
-							<Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
-								编辑
-							</Typography.Link>
-							<Typography.Link disabled={editingKey !== ''} onClick={() => remove(record)}>
-								删除
-							</Typography.Link>
-						</Space>
-					);
-				},
-			},
-		].filter(c=>{
-			switch (c.dataIndex) {
-				case 'name': return !useCols.sameName;
-				case 'file_url': return !useCols.sameImage;
-				case 'desc': return !useCols.sameDesc;
-				case 'address': return !useCols.sameAddress;
-				default: return true;
+	const columns = [
+		{
+			title: '图片',
+			dataIndex: 'file_url',
+			width: '15%',
+			editable: true,
+			render: (url:string)=>{
+				return url ? <Image alt={url} src={url}/> : ''
 			}
-		});
+		},
+		{
+			title: '名称',
+			dataIndex: 'name',
+			width: '15%',
+			editable: true,
+		},
+		{
+			title: '描述',
+			dataIndex: 'desc',
+			width: '25%',
+			editable: true,
+		},
+		{
+			title: '接受地址',
+			dataIndex: 'address',
+			editable: true,
+		},
+		{
+			title: '操作',
+			width: '15%',
+			dataIndex: 'operation',
+			render: (_: any, record: Item) => {
+				const editable = isEditing(record);
+				return editable ? (
+					<span>
+        <Typography.Link onClick={() => save(record.key)} style={{marginRight: 8}}>
+          保存
+        </Typography.Link>
+        <Typography.Link onClick={cancel}>
+          取消
+        </Typography.Link>
+      </span>
+				) : (
+					<Space>
+						<Typography.Link disabled={editingKey !== ''} onClick={() => edit(record)}>
+							编辑
+						</Typography.Link>
+						<Typography.Link disabled={editingKey !== ''} onClick={() => remove(record)}>
+							删除
+						</Typography.Link>
+					</Space>
+				);
+			},
+		},
+	].filter(c=>{
+		switch (c.dataIndex) {
+			case 'name': return !useCols.sameName;
+			case 'file_url': return !useCols.sameImage;
+			case 'desc': return !useCols.sameDesc;
+			case 'address': return !useCols.sameAddress;
+			default: return true;
+		}
+	});
 
-		const mergedColumns = columns.map((col) => {
-			if (!col.editable) {
-				return col;
-			}
-			return {
-				...col,
-				onCell: (record: Item) => ({
-					record,
-					inputType: col.dataIndex === 'file_url' ? 'file' : 'text',
-					dataIndex: col.dataIndex,
-					title: col.title, form,
-					editing: isEditing(record),
-				}),
-			};
-		});
+	const mergedColumns = columns.map((col) => {
+		if (!col.editable) {
+			return col;
+		}
+		return {
+			...col,
+			onCell: (record: Item) => ({
+				record,
+				inputType: col.dataIndex === 'file_url' ? 'file' : 'text',
+				dataIndex: col.dataIndex,
+				title: col.title, form,
+				editing: isEditing(record),
+			}),
+		};
+	});
 	useEffect(()=>{
 		console.log(`data length`, data.length)
 	}, [data])
@@ -247,6 +253,10 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean}) {
 		if (!values) {
 			return;
 		}
+		if (exporting) {
+			return;
+		}
+		setExporting(true);
 		const {file_url, name, description, mint_to_address} = values;
 		const colNames = ["图片链接","名字","描述","接受地址"]
 		const aoa = [colNames];
@@ -265,9 +275,42 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean}) {
 		utils.book_append_sheet(wb, ws, "mint");
 		const dt = new Date();
 		writeFileXLSX(wb, `export_mints_${dt.getMonth()+1}_${dt.getDate()}.xlsx`);
+		setExporting(false)
 	}
-	const batchMint = ()=>{
-		console.log(`batch mint`)
+	const mint = () => {
+		const values = checkMintInput(form, {withImage: useCols.sameImage, withName: useCols.sameName,
+			withDesc: useCols.sameDesc, withAddress: useCols.sameAddress})
+		if (!values) {
+			return;
+		}
+		const arr = [] as any[];
+		const {file_url, name, description, mint_to_address} = values;
+		const chain = mapChainAndNetworkName(contract.chain_type, contract.chain_id)
+		data.forEach(row=>{
+			const nft = {
+				file_url: useCols.sameImage ? file_url : row.file_url,
+				name: useCols.sameName ? name : row.name,
+				description: useCols.sameDesc ? description : row.desc,
+				mint_to_address: useCols.sameAddress ? mint_to_address : row.address,
+				contract_address: contract.address,
+				chain,
+			}
+			arr.push(nft)
+		})
+		setMintLoading(true)
+		batchMint(props.appId.toString(), arr)
+			.then((res) => {
+				message.info(`铸造任务提交成功！`)
+				setStep('done')
+			})
+			.catch(e => {
+				const msg = e.response?.data?.message || e.toString()
+				message.error(`铸造失败:${msg}`)
+				console.log(`error is`, e)
+				setMintLoading(false)
+			}).finally(() => {
+				setMintLoading(false)
+		})
 	}
 	return (
 		<>
@@ -307,6 +350,7 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean}) {
 					<Tooltip title={"通过批量导入图片，再导出，可以获得图片URL和名称的对应关系，完善信息后，即可再次导入。"}>
 						<Button onClick={exportData} type={"link"}>导出</Button>
 					</Tooltip>
+					<Button type={'link'} onClick={()=>setData([])}>清空</Button>
 				</Space>
 
 				<Form form={form} component={false}>
@@ -324,18 +368,25 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean}) {
 					/>
 				</Form>
 			</>}
-			{/*<Row gutter={3}>*/}
-			{/*	<Col span={1}></Col>*/}
-			{/*	<Col span={1}>*/}
-					<Button style={{marginTop:'8px'}} htmlType={"submit"} type={"primary"} onClick={()=>{
-						message.info(`尚未接入后端接口`)
-					}}>开始铸造</Button>
-			{/*	</Col>*/}
-			{/*	<Col span={1}></Col>*/}
-			{/*</Row>*/}
-			{/*{JSON.stringify(data)}*/}
+			{ step === 'edit' &&
+				<Button loading={mintLoading} style={{marginTop:'8px'}} htmlType={"submit"} type={"primary"} onClick={mint}>开始铸造</Button>
+			}
+			{ step === 'done'  &&
+			(<Space style={{marginTop:'8px'}} >
+				<Typography.Text type={"success"}>铸造任务提交成功！请在铸造历史中查看结果。</Typography.Text>
+				<Button onClick={()=>{
+					setData([])
+					setStep('edit')
+				}}>清空数据</Button>
+				<Button type={'link'} onClick={()=>{
+					exportData();
+					setStep('edit')
+				}}>导出数据</Button>
+				<Button type={"primary"} onClick={()=>setStep('edit')}>我知道了</Button>
+			</Space>)
+			}
 		</>
 	);
-};
+}
 
 export default MintTable;
