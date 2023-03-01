@@ -12,7 +12,7 @@ export default ({ mode }) => {
   return defineConfig({
     server: {
       proxy: {
-        '^/(api|dashboard)/.*': {
+        '^/api/.*': {
           target: `${env.VITE_ServiceHost}/`,
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ''),
