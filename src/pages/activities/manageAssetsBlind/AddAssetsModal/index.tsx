@@ -56,29 +56,39 @@ const CharacterItem: React.FC<CharacterItemProps> = ({ type, name, id, remove })
 
 interface AddAssetsModalProps {
   open: boolean;
+  id?: string;
   onCancel: () => void;
-  onFinishAdding: (assetItem: AssetItem) => void;
+  onFinishAdding?: (assetItem: AssetItem) => void;
+  onFinishEdit?: (assetItem: AssetItem, id: string) => void;
 }
 
-const AddAssetsModal: React.FC<AddAssetsModalProps> = ({ open, onCancel, onFinishAdding }) => {
+const AddAssetsModal: React.FC<AddAssetsModalProps> = ({ open, id, onCancel, onFinishAdding, onFinishEdit }) => {
   const [form] = Form.useForm();
   const { getFieldValue } = form;
   useResetFormOnCloseModal({ form, open });
 
-  const handleFinish = useCallback(async (data: any) => {
-    const { characters, name, image_url } = data;
-    if (!characters) {
-      onFinishAdding({ ...data, key: uniqueId() });
-      onCancel();
-      return;
-    }
-    let tempChars: Character[] = [];
-    characters.forEach((char: Character) => {
-      if (char.value) tempChars.push(char);
-    });
-    onFinishAdding({ characters: tempChars, key: uniqueId(), name: name, image_url: image_url });
-    onCancel();
-  }, []);
+  const handleFinish = useCallback(
+    async (data: any) => {
+      const { characters, name, image_url } = data;
+      if (onFinishAdding) {
+        if (!characters) {
+          onFinishAdding({ ...data, key: uniqueId() });
+          onCancel();
+          return;
+        }
+        let tempChars: Character[] = [];
+        characters.forEach((char: Character) => {
+          if (char.value) tempChars.push(char);
+        });
+        onFinishAdding({ characters: tempChars, key: uniqueId(), name: name, image_url: image_url });
+        onCancel();
+      } else if (onFinishEdit && id) {
+        onFinishEdit({ ...data, key: id }, id);
+        onCancel();
+      }
+    },
+    [id]
+  );
 
   return (
     <Modal
