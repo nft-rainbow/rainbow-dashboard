@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { InboxOutlined } from '@ant-design/icons';
 import type { UploadProps } from 'antd';
 import {message, Space, Tooltip, Upload} from 'antd';
-import {authHeaderSync} from "../../services";
+import {authHeaderSync, methodUrl} from "../../services";
 import CompoundedSpace from "antd/es/space";
 import {PictureOutlined} from "@ant-design/icons/lib";
 import SliderTooltip from "antd/es/slider/SliderTooltip";
@@ -22,7 +22,7 @@ function DragUpload(props:{onSuccess:any}) {
 		name: 'file',
 		multiple: true,
 		headers: authHeaderSync(),
-		action: '/dashboard/misc/upload',
+		action: methodUrl('/dashboard/misc/upload'),
 		onDrop(e) {
 			console.log('Dropped files', e.dataTransfer.files);
 		},

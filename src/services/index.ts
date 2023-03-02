@@ -20,7 +20,9 @@ export interface ErrorCallback {
   (error: Error | null): void;
 }
 
-const isLocalhost = globalThis.location.hostname === 'localhost' || globalThis.location.hostname === '127.0.0.1'
+const isLocalhost = globalThis.location.hostname === 'localhost'
+    || globalThis.location.hostname === '127.0.0.1'
+    || globalThis.location.hostname.match(/\d+\.\d+\.\d+\.\d+/)
 export function methodUrl(method: string) {
   return `${isLocalhost ? '/api/' : '/'}${method.startsWith('/') ? method.slice(1) : method}`;
 }

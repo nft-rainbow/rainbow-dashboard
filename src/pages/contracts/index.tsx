@@ -21,6 +21,7 @@ export default function Contracts() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [apps, setApps] = useState<App[]>([]);
+  const [refreshIt, setRefreshIt] = useState(0);
 
   const [form] = Form.useForm();
   const [isDeployModalVisible, setIsDeployModalVisible] = useState(false);
@@ -159,7 +160,8 @@ export default function Contracts() {
     deployContract(values.app_id as string, meta)
       .then((res) => {
         setIsDeployModalVisible(false);
-        form.resetFields();
+        setRefreshIt(refreshIt+1);
+        // form.resetFields();
       })
       .catch((err) => {
         message.error(err.message);
@@ -173,7 +175,7 @@ export default function Contracts() {
       setTotal(res.count);
       setItems(res.items);
     });
-  }, [page, appIdFilter]);
+  }, [page, appIdFilter, refreshIt]);
 
   useEffect(() => {
     getAllApps().then((res) => {
@@ -183,6 +185,7 @@ export default function Contracts() {
 
   const extra = (
     <Space>
+      <Button type="dashed" onClick={() => setRefreshIt(refreshIt+1)}>刷新</Button>
       <Select
         value={appIdFilter}
         onChange={(val) => {
