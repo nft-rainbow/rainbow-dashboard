@@ -27,7 +27,7 @@ export default function Poaps() {
       setTotal(res.count);
       setItems(res.items);
     });
-  }, []);
+  }, [isActivityModalVisible]);
 
   const extra = (
     <Dropdown

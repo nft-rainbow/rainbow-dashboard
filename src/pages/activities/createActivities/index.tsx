@@ -61,7 +61,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activi
         setConfirmLoading(false);
       }
     },
-    [apps]
+    [apps, activityType]
   );
 
   const handleCancel = useCallback(() => {
