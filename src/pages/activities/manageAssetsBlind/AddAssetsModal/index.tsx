@@ -5,6 +5,7 @@ import { ModalStyle } from '../../createActivities/constants';
 import { AssetItem, Character } from '@models/index';
 import FileUpload from '@components/FileUpload';
 import useResetFormOnCloseModal from '@hooks/useResetFormOnCloseModal';
+import { useAddItem, useEditItem } from '@stores/ActivityItemsBlind';
 import './index.scss';
 import { DeleteOutlined, DownOutlined } from '@ant-design/icons';
 
@@ -57,22 +58,23 @@ const CharacterItem: React.FC<CharacterItemProps> = ({ type, name, id, remove })
 interface AddAssetsModalProps {
   open: boolean;
   id?: string;
+  type: 'edit' | 'add';
   onCancel: () => void;
-  onFinishAdding?: (assetItem: AssetItem) => void;
-  onFinishEdit?: (assetItem: AssetItem, id: string) => void;
 }
 
-const AddAssetsModal: React.FC<AddAssetsModalProps> = ({ open, id, onCancel, onFinishAdding, onFinishEdit }) => {
+const AddAssetsModal: React.FC<AddAssetsModalProps> = ({ open, type, id, onCancel }) => {
   const [form] = Form.useForm();
   const { getFieldValue } = form;
+  const addItem = useAddItem();
+  const editItem = useEditItem();
   useResetFormOnCloseModal({ form, open });
 
   const handleFinish = useCallback(
     async (data: any) => {
       const { characters, name, image_url } = data;
-      if (onFinishAdding) {
+      if (type === 'add') {
         if (!characters) {
-          onFinishAdding({ ...data, key: uniqueId() });
+          addItem({ ...data, key: uniqueId() });
           onCancel();
           return;
         }
@@ -80,10 +82,10 @@ const AddAssetsModal: React.FC<AddAssetsModalProps> = ({ open, id, onCancel, onF
         characters.forEach((char: Character) => {
           if (char.value) tempChars.push(char);
         });
-        onFinishAdding({ characters: tempChars, key: uniqueId(), name: name, image_url: image_url });
+        addItem({ characters: tempChars, key: uniqueId(), name: name, image_url: image_url });
         onCancel();
-      } else if (onFinishEdit && id) {
-        onFinishEdit({ ...data, key: id }, id);
+      } else {
+        editItem({ ...data, key: id }, id as string);
         onCancel();
       }
     },

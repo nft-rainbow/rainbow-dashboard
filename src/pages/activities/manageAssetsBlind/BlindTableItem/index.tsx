@@ -2,16 +2,17 @@ import { useState } from 'react';
 import { AssetItem } from '@models/index';
 import { Input, Form, Image } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
+import { useDeleteItem } from '@stores/ActivityItemsBlind';
 import AddAssetsModal from '../AddAssetsModal';
 import Edit from '@assets/icons/edit.svg';
+import './index.scss';
 interface BlindTableItemProp {
   id: string;
-  handleDelete: (id: string) => void;
-  handleEdit: (assetItem: AssetItem, id: string) => void;
 }
-const BlindTableItem: React.FC<Omit<AssetItem, 'key'> & BlindTableItemProp> = ({ image_url, name, id, handleDelete, handleEdit }) => {
+const BlindTableItem: React.FC<Omit<AssetItem, 'key'> & BlindTableItemProp> = ({ image_url, name, id }) => {
   const [visible, setVisible] = useState(false);
   const [open, setOpen] = useState(false);
+  const deleteItem = useDeleteItem();
   return (
     <div className="grid grid-cols-4 h-[55px] overflow-hidden" key={id}>
       <div className="px-[16px] flex items-center">
@@ -32,8 +33,8 @@ const BlindTableItem: React.FC<Omit<AssetItem, 'key'> & BlindTableItemProp> = ({
         />
       </div>
       <div className="px-[16px] flex items-center">{name}</div>
-      <div className="px-[16px] flex flex-row gap-x-[8px] items-center">
-        <Form.Item name={`weights-${id}`} className="mb-[0px]">
+      <div className="px-[16px] flex flex-row gap-x-[8px] items-center overflow-hidden" id="blindTableItem">
+        <Form.Item name={`weights-${id}`} className="mb-[0px]" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
         <span>%</span>
@@ -44,13 +45,13 @@ const BlindTableItem: React.FC<Omit<AssetItem, 'key'> & BlindTableItemProp> = ({
         <div
           className="hover:cursor-pointer"
           onClick={(e) => {
-            handleDelete(id);
+            deleteItem(id);
           }}
         >
           <DeleteOutlined style={{ color: '#6953EF', width: '16px', height: '16px' }} />
         </div>
       </div>
-      <AddAssetsModal open={open} onCancel={() => setOpen(false)} onFinishEdit={handleEdit} id={id} />
+      <AddAssetsModal open={open} onCancel={() => setOpen(false)} type="edit" id={id} />
     </div>
   );
 };

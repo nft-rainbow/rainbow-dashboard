@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import RainbowBreadcrumb from '@components/Breadcrumb';
 import { Link } from 'react-router-dom';
-import { Card, Button, Form, Select } from 'antd';
+import { Card, Button, Form, Select, Input } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { listContracts } from '@services/contract';
 import { Contract } from '@models/index';
 import { Character, AssetItem } from '@models/index';
+import { useAssetItemsBlind } from '@stores/ActivityItemsBlind';
 import AddAssetsModal from './AddAssetsModal';
 import BlindTableItem from './BlindTableItem';
 const { Option } = Select;
@@ -29,32 +30,13 @@ const TableHeader: React.FC = () => {
 
 const ManageAssetsBlind: React.FC = () => {
   const [contracts, setContracts] = useState<Contract[]>([]);
-  const [assetItems, setAssetItems] = useState<AssetItem[]>([]);
   const [open, setOpen] = useState(false);
+  const assetItems = useAssetItemsBlind();
 
-  const handleAssetsAdding = useCallback((assetItem: AssetItem) => {
-    setAssetItems((pre) => [...pre, assetItem]);
+  const handleFinish = useCallback((data: any) => {
+    debugger;
+    console.log(data);
   }, []);
-
-  const handleEdit = useCallback(
-    (assetItem: AssetItem, id: string) => {
-      let temAssets = assetItems;
-      const index = temAssets.findIndex((e: AssetItem) => e.key === id);
-      temAssets.splice(index, 1);
-      setAssetItems([...temAssets, assetItem]);
-    },
-    [assetItems]
-  );
-
-  const handleDelete = useCallback(
-    (id: string) => {
-      let temAssets = assetItems;
-      const index = temAssets.findIndex((e: AssetItem) => e.key === id);
-      temAssets.splice(index, 1);
-      setAssetItems([...temAssets]);
-    },
-    [assetItems]
-  );
 
   useEffect(() => {
     listContracts().then((res) => {
@@ -70,7 +52,7 @@ const ManageAssetsBlind: React.FC = () => {
     <>
       <RainbowBreadcrumb items={[<Link to="/panels/poaps/">返回</Link>, '管理藏品']} />
       <Card>
-        <Form id="manageAssetsBlindForm">
+        <Form id="manageAssetsBlindForm" onFinish={handleFinish}>
           <Form.Item name="contract_id" label="合约地址" rules={[{ required: true, message: '请选择合约地址' }]}>
             <Select placeholder="请选择">
               {contracts.map((e) => (
@@ -89,10 +71,13 @@ const ManageAssetsBlind: React.FC = () => {
           </div>
           <TableHeader />
           {assetItems.map((item) => {
-            return <BlindTableItem image_url={item.image_url} name={item.name} key={item.key} id={item.key} handleDelete={handleDelete} handleEdit={handleEdit} />;
+            return <BlindTableItem image_url={item.image_url} name={item.name} key={item.key} id={item.key} />;
           })}
+          <div className="mt-[24px] flex justify-center items-center">
+            <Input type="submit" className="w-[188px] bg-[#6953EF] text-[#FFFFFF] rounded-[2px]" value="保存" />
+          </div>
         </Form>
-        <AddAssetsModal open={open} onCancel={() => setOpen(false)} onFinishAdding={handleAssetsAdding} />
+        <AddAssetsModal open={open} onCancel={() => setOpen(false)} type="add" />
       </Card>
     </>
   );

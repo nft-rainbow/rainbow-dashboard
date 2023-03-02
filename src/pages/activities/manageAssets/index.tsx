@@ -152,12 +152,12 @@ const Asset: React.FC = () => {
               </>
             )}
           </Form.List>
-          <div className="flex justify-center items-center mt-24px">
+          <div className="flex justify-center items-center mt-[24px]">
             <Input
               disabled={inTransaction}
               type="submit"
               value="保存"
-              className={cx('w-188px bg-#6953EF color-#FFFFFF rounded-2px', inTransaction ? 'hover:cursor-not-allowed' : 'hover:cursor-pointer')}
+              className={cx('w-[188px] bg-[#6953EF] text-[#FFFFFF] rounded-[2px]', inTransaction ? 'hover:cursor-not-allowed' : 'hover:cursor-pointer')}
             />
           </div>
         </Form>
