@@ -36,6 +36,16 @@ const ManageAssetsBlind: React.FC = () => {
     setAssetItems((pre) => [...pre, assetItem]);
   }, []);
 
+  const handleDelete = useCallback(
+    (id: string) => {
+      let temAssets = assetItems;
+      const index = temAssets.findIndex((e: AssetItem) => e.key === id);
+      temAssets.splice(index, 1);
+      setAssetItems([...temAssets]);
+    },
+    [assetItems]
+  );
+
   useEffect(() => {
     listContracts().then((res) => {
       let tempContracts: Contract[] = [];
@@ -69,7 +79,7 @@ const ManageAssetsBlind: React.FC = () => {
           </div>
           <TableHeader />
           {assetItems.map((item) => {
-            return <BlindTableItem image_url={item.image_url} name={item.name} key={item.key} id={item.key} />;
+            return <BlindTableItem image_url={item.image_url} name={item.name} key={item.key} id={item.key} handleDelete={handleDelete} />;
           })}
         </Form>
         <AddAssetsModal open={open} onCancel={() => setOpen(false)} onFinishAdding={handleAssetsAdding} />
