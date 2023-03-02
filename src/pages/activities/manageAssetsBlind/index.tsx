@@ -1,14 +1,18 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import useSWR from 'swr';
 import RainbowBreadcrumb from '@components/Breadcrumb';
 import { Link } from 'react-router-dom';
 import { Card, Button, Form, Select, Input } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { listContracts } from '@services/contract';
 import { Contract } from '@models/index';
-import { Character, AssetItem } from '@models/index';
-import { useAssetItemsBlind } from '@stores/ActivityItemsBlind';
+import { useAssetItemsBlind, useResetItems } from '@stores/ActivityItemsBlind';
+import { getActivityById, updatePoap } from '@services/activity';
+import { assetsBlindFormat } from '@utils/assetsFormHelper';
 import AddAssetsModal from './AddAssetsModal';
 import BlindTableItem from './BlindTableItem';
+
 const { Option } = Select;
 
 const TableHeader: React.FC = () => {
@@ -31,12 +35,28 @@ const TableHeader: React.FC = () => {
 const ManageAssetsBlind: React.FC = () => {
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [open, setOpen] = useState(false);
+  const { activityId } = useParams<{ activityId: string }>();
   const assetItems = useAssetItemsBlind();
+  const resetItems = useResetItems();
+  const navigate = useNavigate();
+  const { data, error } = useSWR(`api/apps/poap/activity/${activityId}`, () => getActivityById(activityId));
 
-  const handleFinish = useCallback((data: any) => {
-    debugger;
-    console.log(data);
-  }, []);
+  const handleFinish = useCallback(
+    async (formData: any) => {
+      const { contract_id: contractId, contract_type, ...rest } = data;
+      const activity_id = activityId;
+      const formatData = assetsBlindFormat(formData, assetItems, activity_id);
+      const { nft_configs } = formatData;
+      try {
+        await updatePoap({ ...formatData, ...rest, nft_configs });
+        resetItems();
+        navigate('/panels/poaps');
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [data]
+  );
 
   useEffect(() => {
     listContracts().then((res) => {
@@ -70,9 +90,13 @@ const ManageAssetsBlind: React.FC = () => {
             </Button>
           </div>
           <TableHeader />
-          {assetItems.map((item) => {
-            return <BlindTableItem image_url={item.image_url} name={item.name} key={item.key} id={item.key} />;
-          })}
+          <Form.List name="weights">
+            {(fiels) =>
+              assetItems.map((item) => {
+                return <BlindTableItem image_url={item.image_url} name={item.name} key={item.key} id={item.key} />;
+              })
+            }
+          </Form.List>
           <div className="mt-[24px] flex justify-center items-center">
             <Input type="submit" className="w-[188px] bg-[#6953EF] text-[#FFFFFF] rounded-[2px]" value="保存" />
           </div>

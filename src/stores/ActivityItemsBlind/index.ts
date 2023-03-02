@@ -6,6 +6,7 @@ interface ActivityItemsBlindStore {
   addItem: (item: AssetItem) => void;
   editItem: (item: AssetItem, id: string) => void;
   deleteItem: (id: string) => void;
+  resetItems: () => void;
 }
 const activityItemsBlindStore = create<ActivityItemsBlindStore>((set, get) => ({
   assetItems: [],
@@ -25,9 +26,13 @@ const activityItemsBlindStore = create<ActivityItemsBlindStore>((set, get) => ({
     temAssets.splice(index, 1);
     set({ assetItems: [...temAssets] });
   },
+  resetItems: () => {
+    set({ assetItems: [] });
+  },
 }));
 
 export const useAssetItemsBlind = () => activityItemsBlindStore((state) => state.assetItems);
 export const useAddItem = () => activityItemsBlindStore((state) => state.addItem);
 export const useEditItem = () => activityItemsBlindStore((state) => state.editItem);
 export const useDeleteItem = () => activityItemsBlindStore((state) => state.deleteItem);
+export const useResetItems = () => activityItemsBlindStore((state) => state.resetItems);

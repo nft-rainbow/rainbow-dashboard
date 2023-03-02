@@ -17,24 +17,24 @@ const BlindTableItem: React.FC<Omit<AssetItem, 'key'> & BlindTableItemProp> = ({
     <div className="grid grid-cols-4 h-[55px] overflow-hidden" key={id}>
       <div className="px-[16px] flex items-center">
         {/* TODO: */}
-        <div className="w-full text-[#6953EF] hover:cursor-pointer" onClick={(e) => setVisible(true)}>
+        {/* <div className="w-full text-[#6953EF] hover:cursor-pointer" onClick={(e) => setVisible(true)}>
           图片1.png
-        </div>
+        </div> */}
         <Image
-          style={{ display: 'none' }}
-          width={440}
-          preview={{
-            visible,
-            src: image_url,
-            onVisibleChange: (value) => {
-              setVisible(value);
-            },
-          }}
+          width={22}
+          src={image_url}
+          // preview={{
+          //   visible,
+          //   src: image_url,
+          //   onVisibleChange: (value) => {
+          //     setVisible(value);
+          //   },
+          // }}
         />
       </div>
       <div className="px-[16px] flex items-center">{name}</div>
       <div className="px-[16px] flex flex-row gap-x-[8px] items-center overflow-hidden" id="blindTableItem">
-        <Form.Item name={`weights-${id}`} className="mb-[0px]" rules={[{ required: true }]}>
+        <Form.Item name={[id]} className="mb-[0px]" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
         <span>%</span>
