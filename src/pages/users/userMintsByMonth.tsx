@@ -5,9 +5,9 @@ import {
     TablePaginationConfig,
 } from "antd";
 
-import { userMintCountByMonth } from '../../services/user';
+import { userMintCountByMonth } from '@services/user';
 
-export default function Contracts() {
+export default function UserMintCountByMonth() {
     const [mintCounts, setMintCounts] = useState<any[]>([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);

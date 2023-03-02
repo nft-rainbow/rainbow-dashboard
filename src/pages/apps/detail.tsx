@@ -166,9 +166,6 @@ export default function AppDetail(props: { appId?: string }) {
           <TabPane tab="文件" key="3">
             <AppFiles id={idStr} refreshTrigger={refreshNftList} />
           </TabPane>
-          {/* <TabPane tab="POAP" key="4">
-            <AppPoaps id={idStr} />
-          </TabPane> */}
         </Tabs>
       </Card>
       <Modal title="应用详情" open={isDetailModalVisible} onOk={closeDetailModal} onCancel={closeDetailModal} okText={'确认'} cancelText={'取消'} footer={null}>

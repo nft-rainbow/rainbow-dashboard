@@ -16,11 +16,11 @@ import {
     MinusCircleOutlined,
     PlusOutlined,
 } from '@ant-design/icons';
-import FileUpload from '../../components/FileUpload';
-import { getMedtadataList, createMetadata } from '../../services/metadata';
-import { getAllApps } from '../../services/app';
-import { Metadata, App } from '../../models/';
-import { short, formatDate } from '../../utils/';
+import FileUpload from '@components/FileUpload';
+import { getMedtadataList, createMetadata } from '@services/metadata';
+import { getAllApps } from '@services/app';
+import { Metadata, App } from '@models/index';
+import { short, formatDate } from '@utils/index';
 import { Link } from "react-router-dom";
 const { Option } = Select;
 
