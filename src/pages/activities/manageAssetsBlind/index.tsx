@@ -73,15 +73,18 @@ const ManageAssetsBlind: React.FC = () => {
       <RainbowBreadcrumb items={[<Link to="/panels/poaps/">返回</Link>, '管理藏品']} />
       <Card>
         <Form id="manageAssetsBlindForm" onFinish={handleFinish}>
-          <Form.Item name="contract_id" label="合约地址" rules={[{ required: true, message: '请选择合约地址' }]}>
-            <Select placeholder="请选择">
-              {contracts.map((e) => (
-                <Option label={e.address} value={e.id} key={e.address}>
-                  {e.address}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
+          <div className="grid grid-cols-2 gap-x-16px">
+            <Form.Item name="contract_id" label="合约地址" rules={[{ required: true, message: '请选择合约地址' }]}>
+              <Select placeholder="请选择">
+                {contracts.map((e) => (
+                  <Option label={e.address} value={e.id} key={e.address}>
+                    {e.address}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <div></div>
+          </div>
           <div className="mb-[16px] flex flex-row items-center justify-between">
             <span>藏品设置</span>
             <Button onClick={(e) => setOpen(true)} className="text-[#6953EF] border border-solid border-[#6953EF]">
