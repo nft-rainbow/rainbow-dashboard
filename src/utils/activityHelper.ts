@@ -73,7 +73,7 @@ export const timestampToDate = (timestamp: number) => {
   return timeDate;
 };
 
-export const formDataTranslate = (data: FormData, apps: App[]) => {
+export const formDataTranslate = (data: FormData, apps: App[], activityType: number) => {
   let start_time = null;
   let end_time = null;
   start_time = dateTraslate(new Date(data.activityDate[0]));
@@ -91,7 +91,7 @@ export const formDataTranslate = (data: FormData, apps: App[]) => {
     white_list_infos: data.white_list_infos,
     command: data.command ?? '',
     name: data.name,
-    activity_type: 1,
+    activity_type: activityType,
     app_name: apps[appIndex].name,
   };
 };
@@ -132,10 +132,15 @@ export const defaultSwitchers = {
 type Switcher = keyof typeof defaultSwitchers;
 export type Switchers = typeof defaultSwitchers;
 
-export const activityTypeDic = ['单个活动', '盲盒活动', 'POAP活动'];
+export const activityTypeDic = ['盲盒活动', '单个活动', 'POAP活动'];
+export const activityTypeDicEn = ['blind', 'single', 'poap'];
 
 export const activityTypeTransform = (type: number) => {
   return activityTypeDic[type - 1];
+};
+
+export const activityTypeTransformEn = (type: number) => {
+  return activityTypeDicEn[type - 1];
 };
 
 export const getActivityUrl = () => {

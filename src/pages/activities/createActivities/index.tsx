@@ -16,9 +16,10 @@ interface CreatePOAProps {
   open: boolean;
   onCancel: () => void;
   hideModal: () => void;
+  activityType: number;
 }
 
-const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
+const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activityType }) => {
   const [apps, setApps] = useState<App[]>([]);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [form] = Form.useForm();
@@ -48,7 +49,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
 
   const handleFinish = useCallback(
     async (values: FormData) => {
-      const params = formDataTranslate(values, apps);
+      const params = formDataTranslate(values, apps, activityType);
       try {
         setConfirmLoading(true);
         await createActivity(params);
@@ -60,7 +61,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
         setConfirmLoading(false);
       }
     },
-    [apps]
+    [apps, activityType]
   );
 
   const handleCancel = useCallback(() => {
@@ -77,7 +78,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
 
   return (
     <Modal title="创建活动" open={open} onOk={form.submit} onCancel={handleCancel} {...ModalStyle} confirmLoading={confirmLoading}>
-      <Form id="createActivityForm" name="basic" form={form} layout="vertical" onFinish={handleFinish} initialValues={{ chain: 'conflux' }}>
+      <Form id="createActivityForm" name="createActivityForm" form={form} layout="vertical" onFinish={handleFinish} initialValues={{ chain: 'conflux' }}>
         <Form.Item name="app_id" label="所属项目" rules={[{ required: true, message: '请选择项目' }]}>
           <Select placeholder="请选择项目">
             {apps.map((app) => (

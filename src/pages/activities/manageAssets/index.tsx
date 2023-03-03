@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import cx from 'clsx';
 import { Card, Button, Form, Input, Dropdown, DatePicker, Select, type MenuProps } from 'antd';
@@ -66,6 +66,7 @@ const Asset: React.FC = () => {
   const { inTransaction, execTranscation: updatePoap } = useInTransaction(_updatePoap);
   const { data, error } = useSWR(`api/apps/poap/activity/${activityId}`, () => getActivityById(activityId));
   const { getFieldValue } = form;
+  const navigate = useNavigate();
 
   const handleFinish = useCallback(
     async (formData: any) => {
@@ -75,6 +76,7 @@ const Asset: React.FC = () => {
       const { nft_configs } = formatData;
       try {
         await updatePoap({ ...formatData, ...rest, nft_configs });
+        navigate('/panels/poaps');
       } catch (err) {
         console.log(err);
       }
@@ -150,12 +152,12 @@ const Asset: React.FC = () => {
               </>
             )}
           </Form.List>
-          <div className="flex justify-center items-center mt-24px">
+          <div className="flex justify-center items-center mt-[24px]">
             <Input
               disabled={inTransaction}
               type="submit"
               value="保存"
-              className={cx('w-188px bg-#6953EF color-#FFFFFF rounded-2px', inTransaction ? 'hover:cursor-not-allowed' : 'hover:cursor-pointer')}
+              className={cx('w-[188px] bg-[#6953EF] text-[#FFFFFF] rounded-[2px]', inTransaction ? 'hover:cursor-not-allowed' : 'hover:cursor-pointer')}
             />
           </div>
         </Form>
