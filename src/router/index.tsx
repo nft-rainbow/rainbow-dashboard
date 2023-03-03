@@ -20,6 +20,7 @@ import MintFrame from "@pages/mint/mintFrame";
 import Metadata from "../routes/metadata";
 import MetaTable from "../routes/metadata";
 import {PlanFrame} from "@pages/plan/PlanFrame";
+import {PlanList} from "@pages/plan/PlanList";
 
 const AppRouter: React.FC = () => {
   return (
@@ -44,6 +45,7 @@ const AppRouter: React.FC = () => {
             <Route path="apps/:id" element={<AppDetail />} />
             <Route path="mint/:id" element={<MintFrame />} />
             <Route path="plan/:id" element={<PlanFrame />} />
+            <Route path="plan/list" element={<PlanList />} />
             <Route path="contracts" element={<Contracts />} />
             <Route path="metadata" element={<MetaTable />} />
             <Route path="contracts/sponsor" element={<ContractSponsor />} />

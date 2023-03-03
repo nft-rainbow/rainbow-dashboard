@@ -42,6 +42,7 @@ const items: MenuItem[] = [
   getItem(<Link to="/panels">仪表盘</Link>, '1', <DashboardOutlined />),
   getItem(<Link to="/panels/apps">我的项目</Link>, '2', <AppstoreOutlined />),
   getItem(<Link to="/panels/contracts">智能合约</Link>, '3', <AuditOutlined />),
+  getItem(<Link to="/panels/plan/list">发行计划</Link>, '300', <AuditOutlined />),
   getItem(<Link to="/panels/poaps">活动</Link>, '4', <AuditOutlined />),
   getItem(<Link to="/panels/metadata">元数据</Link>, '5', <NodeIndexOutlined />),
   getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">开发文档</a>, '6', <CodeOutlined />),
@@ -54,6 +55,7 @@ function menuKeyFromLocation(location: object): string {
   if (pathname.startsWith('/panels/apps')) return '2';
   if (pathname.startsWith('/panels/contracts')) return '3';
   if (pathname.startsWith('/panels/mint')) return '3';
+  if (pathname.startsWith('/panels/plan')) return '300';
   if (pathname.startsWith('/panels/poaps')) return '4';
   if (pathname.startsWith('/panels/metadata')) return '5';
   return '1';
