@@ -26,6 +26,9 @@ export interface Contract extends BaseModel {
   type: number;
   owner_address: string;
   base_uri: string;
+    status?:number;
+    error?:string;
+    app_id?:string;
 }
 
 export interface UserBalance {

@@ -50,7 +50,7 @@ export default function Poaps() {
 
   return (
     <>
-      <Card title="">
+      <Card title="" style={{flexGrow:1}}>
         <ProTable
           rowKey="activity_id"
           scroll={{ x: 1144 }}

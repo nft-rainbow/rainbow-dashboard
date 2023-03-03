@@ -21,6 +21,7 @@ export default function Contracts() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [apps, setApps] = useState<App[]>([]);
+  const [refreshIt, setRefreshIt] = useState(0);
 
   const [form] = Form.useForm();
   const [isDeployModalVisible, setIsDeployModalVisible] = useState(false);
@@ -115,21 +116,24 @@ export default function Contracts() {
       render: (id: number, record: Contract) => {
         if (!record.address) return null;
         return (
-          <Button
-            type="primary"
-            size="small"
-            onClick={async () => {
-              setCurrentContract(record);
-              const _info = await getContractSponsor(record.address, mapChainNetwork(record.chain_id));
-              setSponsorInfo(_info);
-              const autoSponsor = await getContractAutoSponsor(record.address);
-              // @ts-ignore
-              setAutoSponsorInfo(autoSponsor.auto_sponsor);
-              setIsSponsorModalVisible(true);
-            }}
-          >
-            查看代付
-          </Button>
+          <>
+            <Button
+              type="primary"
+              size="small"
+              onClick={async () => {
+                setCurrentContract(record);
+                const _info = await getContractSponsor(record.address, mapChainNetwork(record.chain_id));
+                setSponsorInfo(_info);
+                const autoSponsor = await getContractAutoSponsor(record.address);
+                // @ts-ignore
+                setAutoSponsorInfo(autoSponsor.auto_sponsor);
+                setIsSponsorModalVisible(true);
+              }}
+            >
+              查看代付
+            </Button>
+            <Link to={`/panels/mint/${record.id}`}>铸造</Link>
+          </>
         );
       },
     },
@@ -156,7 +160,8 @@ export default function Contracts() {
     deployContract(values.app_id as string, meta)
       .then((res) => {
         setIsDeployModalVisible(false);
-        form.resetFields();
+        setRefreshIt(refreshIt+1);
+        // form.resetFields();
       })
       .catch((err) => {
         message.error(err.message);
@@ -170,7 +175,7 @@ export default function Contracts() {
       setTotal(res.count);
       setItems(res.items);
     });
-  }, [page, appIdFilter]);
+  }, [page, appIdFilter, refreshIt]);
 
   useEffect(() => {
     getAllApps().then((res) => {
@@ -180,6 +185,7 @@ export default function Contracts() {
 
   const extra = (
     <Space>
+      <Button type="dashed" onClick={() => setRefreshIt(refreshIt+1)}>刷新</Button>
       <Select
         value={appIdFilter}
         onChange={(val) => {
@@ -204,7 +210,7 @@ export default function Contracts() {
 
   return (
     <>
-      <Card title="智能合约" extra={extra}>
+      <Card title="智能合约" extra={extra} style={{flexGrow:1}}>
         <Table
           rowKey="id"
           dataSource={items}
