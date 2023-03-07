@@ -8,7 +8,7 @@ const onFinish = (values: any) => {
     console.log('Received values of form:', values);
 };
 
-const Attributes: React.FC<{ onValuesChange: (v) => void }> = ({onValuesChange}) => {
+const Attributes: React.FC<{ onValuesChange: (_, v) => void }> = ({onValuesChange}) => {
     const [form] = Form.useForm();
     return (
         <Form form={form}
@@ -45,6 +45,7 @@ const Attributes: React.FC<{ onValuesChange: (v) => void }> = ({onValuesChange})
                                     try {
                                         const json = JSON.parse(data)
                                         form.setFieldsValue(json);
+                                        onValuesChange({}, json)
                                     } catch (e) {
                                         message.info(`导入出错: ${e}`)
                                     }
