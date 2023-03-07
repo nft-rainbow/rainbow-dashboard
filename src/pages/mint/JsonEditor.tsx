@@ -1,8 +1,10 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {CarryOutOutlined, CheckOutlined, FormOutlined} from '@ant-design/icons';
-import {Button, Col, Form, FormInstance, Input, message, Row, Select, Space, Switch, Tree} from 'antd';
+import {Button, Col, Form, FormInstance, Input, message, Row, Select, Space, Switch, Tooltip, Tree, Typography} from 'antd';
 import type {DataNode} from 'antd/es/tree';
 import ParseLocalFile from "@pages/mint/parseLocalFile";
+import {QuestionCircleOutlined} from "@ant-design/icons/lib";
+import {DownloadText} from "@pages/mint/downloadTxt";
 
 const treeData: DataNode[] = [
     {
@@ -75,7 +77,7 @@ function buildJsonFromTree(treeData: DataNode[], form: FormInstance) {
     treeData.forEach(d => {
         let k = d.key.toString();
         console.log(`key is`, k)
-        const name = k.split("_")[1];
+        const name = k.split(":")[1];
         if (d.children.length) {
             json[name] = buildJsonFromTree(d.children, form)
         } else {
@@ -121,14 +123,30 @@ const JsonEditor: React.FC = () => {
             </Form.Item>
         </Space>)
     }
-
+    function jsonToDataNodeArr(json:any, treeKeys:React.Key[], key_prefix = 0) {
+        const arr:DataNode[] = [];
+        const keys = Object.keys(json);
+        keys.forEach(k=>{
+            key_prefix ++;
+            const v = json[k];
+            let nodeKey = `${key_prefix}:${k}`;
+            treeKeys.push(nodeKey)
+            if (typeof v === 'string') {
+                arr.push({key: nodeKey, children:[], title: createNode(k, nodeKey)})
+                form.setFieldValue(nodeKey, v);
+            } else {
+                arr.push({key: nodeKey, children: jsonToDataNodeArr(v, treeKeys, key_prefix + 10000), title: k})
+            }
+        })
+        return arr;
+    }
     const addProp = (parent: any) => {
         const name = form.getFieldValue("field_name")
         if (!name) {
             message.info(`请填写属性名称`)
             return;
         }
-        let key1 = `${Date.now().toString()}_${name}`;
+        let key1 = `${Date.now().toString()}:${name}`;
         if (!parent) {
             setData(arr => [...arr, {
                 title: createNode(name, key1),
@@ -166,7 +184,7 @@ const JsonEditor: React.FC = () => {
             title: (createNode(name, key1)),
             key: key1, children: []
         }];
-        curNode.title = curNode.key.toString().split("_")[1];
+        curNode.title = curNode.key.toString().split(":")[1];
         setData([...data])
         setExpandedKeys([...expandedKeys, selected])
     }
@@ -185,8 +203,8 @@ const JsonEditor: React.FC = () => {
         setData(iter(data, key));
         setSelected("")
     }
-    var fileName = "meta_template.txt";
-    var fileContent = JSON.stringify({
+    const fileName = "meta_template.txt";
+    const fileContent = JSON.stringify({
         "model_3d": {
             "url": "https://someurl.com/path.jpg",
             "display_type": "3d"
@@ -195,27 +213,43 @@ const JsonEditor: React.FC = () => {
         "width": "300px",
         "test": "测试"
     }, null, 4);
-    var myFile = new Blob([fileContent], {type: 'text/plain',});
-    var URL = window.URL || window.webkitURL;
-    var obj = URL.createObjectURL(myFile)
     return (
-        <div style={{flexGrow: 1, border: "1px solid blue"}} id={"outer_div"}>
-            <Form form={form} style={{border:"1px solid yellow", flexGrow: 1}}>
-                <Space direction={"vertical"} style={{border: "1px solid green", width:"100%", flexGrow: 1}}>
-                    <span>
-                        当前节点:[{selected ? selected : "顶层节点"}][{selected}]
-                    </span>
-                    <Space style={{marginBottom: 16}}>
-                        <Form.Item noStyle name={"field_name"}>
-                            <Input placeholder={"属性名称"} style={{width: '100px'}}/>
-                        </Form.Item>
-                        <Button onClick={() => addProp(selected)}>添加属性</Button>
-                        <Button onClick={() => removeProp(selected)}>删除</Button>
-                        <Button type={"link"}><a href={obj} download={fileName}>下载模板</a></Button>
-                        <ParseLocalFile handleData={(data) => {
-                            console.log(`import data`, data)
-                        }}/>
+        <div style={{flexGrow: 1, border: "0px solid blue"}} id={"outer_div"}>
+            <Form form={form} style={{border:"0px solid yellow", flexGrow: 1}}>
+                <Space direction={"vertical"} style={{border: "0px solid green", width:"100%", flexGrow: 1}}>
+                    <Space>
+                        <span style={{minWidth:'300px'}}>当前位置:[{selected ? selected.toString().split(":")[1] : ""}]</span>
+                        <Button type={"link"} onClick={() => removeProp(selected)} disabled={!selected}>删除</Button>
                     </Space>
+                    <Row gutter={16 }  style={{border: "0px solid darkgreen"}}>
+                        <Col span={12} id={"col_for_tree"}>
+                            <Space style={{marginBottom: 0, border: "0px solid blue"}}>
+                                <Form.Item noStyle name={"field_name"}>
+                                    <Input placeholder={"属性名称"} style={{width: '120px'}}/>
+                                </Form.Item>
+                                <Button onClick={() => addProp(selected)}>添加</Button>
+                                <Tooltip title={"为选中的节点添加属性。再次点击选中的节点以取消选中。"}><QuestionCircleOutlined/></Tooltip>
+                                <Button type={"link"}><DownloadText content={fileContent} filename={fileName} label={"下载模板"}/></Button>
+                                <ParseLocalFile handleData={(data) => {
+                                    console.log(`import data`, data)
+                                    try {
+                                        const json = JSON.parse(data)
+                                        const keys = []
+                                        setData(jsonToDataNodeArr(json, keys, 0))
+                                        console.log(`expanded keys`, keys)
+                                        setExpandedKeys(keys)
+                                        setUpdater(Date.now())
+                                    } catch (e) {
+                                        message.info(`导入出错: ${e}`)
+                                    }
+                                }}/>
+                            </Space>
+                        </Col>
+                        <Col span={12} id={"col_for_tree"} style={{border: "0px solid blue"}}>
+                            <Typography.Text>预览</Typography.Text>
+                            <Button type={"link"}><DownloadText content={JSON.stringify(json, null, 4)} filename={"meta.json.txt"} label={"下载"}/></Button>
+                        </Col>
+                    </Row>
                     <Row gutter={16 }>
                         <Col span={12} id={"col_for_tree"}>
                             <Tree id={"tree_id_000"}
@@ -228,7 +262,6 @@ const JsonEditor: React.FC = () => {
                             />
                         </Col>
                         <Col span={12} id={"col_for_preview"}>
-                            预览：
                             <pre style={{}}>
                                 {JSON.stringify(json, null, 4)}
                             </pre>

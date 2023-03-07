@@ -1,10 +1,7 @@
 import React, {useState} from "react";
 import {Typography, Card, Form, FormInstance, Input, Radio, Space, Upload, Button, Image, Table} from "antd";
-import {authHeaderSync, methodUrl} from "@services/index";
-import {UploadOutlined} from "@ant-design/icons/lib";
 import ParseLocalFile from "@pages/mint/parseLocalFile";
 import {utils, writeFileXLSX} from "xlsx";
-import set = Reflect.set;
 
 const {Text, Link} = Typography;
 

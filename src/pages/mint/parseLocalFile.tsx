@@ -25,13 +25,21 @@ function ParseLocalFile(props:{handleData:any}) {
 		// var f = evt.target.files[0];
 
 		if (f) {
+			const isText = f.name.endsWith(".txt") || f.name.endsWith(".json")
 			var r = new FileReader();
+			if (isText) {
+				r.onload = e=>{
+					props.handleData(e.target?.result);
+				}
+				r.readAsText(f)
+				return
+			}
 			r.onload = e => {
 				var contents = processExcel(e.target?.result);
 				console.log('file content', contents);
 				console.log(JSON.stringify(contents))
 				props.handleData(contents);
-			}
+			};
 			r.readAsArrayBuffer(f);
 		} else {
 			console.log("Failed to load file");
