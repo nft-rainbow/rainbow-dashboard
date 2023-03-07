@@ -87,14 +87,23 @@ function buildJsonFromTree(treeData: DataNode[], form: FormInstance) {
     return json;
 }
 
-const JsonEditor: React.FC = () => {
+export function jsonToAttributesArray(json:any) {
+    const keys = Object.keys(json);
+    const arr = []
+    keys.forEach(k=>{
+        arr.push({attribute_name: k, ...json[k]})
+    })
+    return arr;
+}
+
+const JsonEditor: React.FC<{setFetcher:(obj)=>void}> = ({setFetcher}:{setFetcher:(obj)=>void}) => {
     const [expandedKeys, setExpandedKeys] = useState<React.Key[]>(['0-0-0', '0-0-1']);
     const [selected, setSelected] = useState<React.Key>("");
     const [selectedArr, setSelectedArr] = useState<React.Key[]>([]);
     const [data, setData] = useState([] as DataNode[]);
     const [json, setJson] = useState({} as any);
     const [updater, setUpdater] = useState(1);
-    const [form] = Form.useForm()
+    const [form] = Form.useForm();
 
     const onSelect = (selectedKeys: React.Key[], info: any) => {
         console.log('selected', selectedKeys, info);
@@ -111,6 +120,7 @@ const JsonEditor: React.FC = () => {
         let json = buildJsonFromTree(data, form);
         console.log(`changed`, json)
         setJson(json);
+        setFetcher(json)
     }, [form, data, updater])
 
     function createNode(name, key) {
