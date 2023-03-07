@@ -44,7 +44,7 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 			return;
 		}
 		const attributesFormatted = attributes//hasTrait ? jsonToAttributesArray(attributes) : []
-		const badRow = attributesFormatted.filter(v=>!v?.attribute_name || !v?.value).length
+		const badRow = attributesFormatted.filter(v=>!v?.trait_type || !v?.value).length
 		if (badRow) {
 			message.info(`请完善扩展属性`)
 			return;
