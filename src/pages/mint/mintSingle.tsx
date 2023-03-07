@@ -1,11 +1,13 @@
 import MintFormFields, {checkMintInput} from "./mintFormFields";
 import React, {FormEventHandler, useEffect, useState} from "react";
-import {Button, Form, message, Space, Tooltip, Typography} from "antd";
+import {Button, Checkbox, Col, Form, message, Row, Space, Tooltip, Typography} from "antd";
 import {easyMintUrl, getMintTask} from "../../services/app";
 import {Contract, NFT} from "../../models";
 import {mapChainAndNetworkName} from "../../utils";
 import set = Reflect.set;
 import {QuestionCircleOutlined, QuestionOutlined} from "@ant-design/icons/lib";
+import JsonEditor, {jsonToAttributesArray} from "@pages/mint/JsonEditor";
+import Attributes from "@pages/mint/attributes";
 
 export function MintSingle(props: { appId: any, contract: Contract }) {
 	const {contract, appId} = props;
@@ -15,7 +17,9 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 	const [tick, setTick] = useState(0);
 	const [taskId, setTaskId] = useState(0);
 	const [task, setTask] = useState({} as NFT);
+	const [hasTrait, setHasTrait] = useState(false);
 	const [step, setStep] = useState('edit' as 'edit'|'submit'|'done');
+	const [attributes, setAttributes] = useState([] as any[])
 	useEffect(()=>{
 		if (!taskId) {
 			return;
@@ -39,10 +43,20 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 		if (!values) {
 			return;
 		}
+		const attributesFormatted = attributes//hasTrait ? jsonToAttributesArray(attributes) : []
+		const badRow = attributesFormatted.filter(v=>!v?.attribute_name || !v?.value).length
+		if (badRow) {
+			message.info(`请完善扩展属性`)
+			return;
+		} else {
+			// message.info(`ok`)
+			// return;
+		}
 		const options = {
 			...values,
 			chain: mapChainAndNetworkName(contract.chain_type, contract.chain_id),
 			contract_address: contract.address,
+			attributes: attributesFormatted,
 		};
 		setInfo(options);
 		setMintLoading(true)
@@ -68,6 +82,31 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 			                withDesc={true}
 			                withAddress={true}
 			                withName={true}/>
+			{/*<Form form={form} labelCol={{span:2}}>*/}
+			{/*	<Form.Item label={"扩展属性"} style={{marginBottom: 0}}>*/}
+			{/*		<Space direction={"vertical"}>*/}
+			{/*			<Checkbox value={"yes"} onClick={(e)=>setHasTrait(e.target.checked)}/>*/}
+			{/*		</Space>*/}
+			{/*	</Form.Item>*/}
+			{/*</Form>*/}
+			<div style={{marginLeft: '0px', display: (hasTrait || 1) ? "" : "none"}}>
+				<Row>
+					<Col span={2} style={{textAlign: 'right', textBaseline: 'center', marginTop:5}}>
+						扩展属性<Tooltip title={"这些属性会出现在meta信息的attributes上，可不填写。"}><QuestionCircleOutlined/></Tooltip>：
+					</Col>
+					<Col span={22}>
+						<Attributes onValuesChange={(_,{attributes:all})=>{
+							// console.log(`form list changes`, JSON.stringify(all))
+							setAttributes(all)
+						}}/>
+						{/*<JsonEditor setFetcher={(json)=>{*/}
+						{/*	// console.log(`json is`, json)*/}
+						{/*	setAttributes(json)*/}
+						{/*}}/>*/}
+					</Col>
+				</Row>
+				{/*={JSON.stringify(attributes)}-*/}
+			</div>
 			{ step === 'edit' &&
 				<Button loading={mintLoading} style={{marginTop: '8px'}} htmlType={"submit"} type={"primary"}
 			         onClick={() => {
@@ -76,15 +115,20 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 			         }}>{mintLoading ? "铸造中" : "开始铸造"}</Button>
 			}
 			<Space>
+				<Space style={{marginTop:'8px'}} >
 				{mintLoading &&
 					<Tooltip title={"铸造任务会在后台执行，请耐心等待"}><QuestionCircleOutlined  style={{marginLeft: '8px'}} /></Tooltip>
 				}
 				{ step === 'done'  &&
-				(<Space style={{marginTop:'8px'}} >
+				(<>
 					<Typography.Text type={"success"}>铸造成功！</Typography.Text>
 					<Button type={"primary"} onClick={()=>setStep('edit')}>我知道了</Button>
-				</Space>)
+				</>)
 				}
+				{task.token_uri &&
+				<Button type={"link"}><a href={task.token_uri} target={"_blank"}>查看URI</a></Button>
+				}
+				</Space>
 			</Space>
 		</>
 	);
