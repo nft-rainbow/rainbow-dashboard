@@ -6,15 +6,15 @@ import {
 	CheckCircleTwoTone,
 	ClockCircleTwoTone,
 	CloseCircleTwoTone,
-	FileImageOutlined,
-	InfoCircleOutlined, QuestionCircleTwoTone
+	FileImageOutlined, FilterOutlined,
+	InfoCircleOutlined, QuestionCircleOutlined, QuestionCircleTwoTone
 } from "@ant-design/icons/lib";
 import {reMintNFT} from "@services/NFT";
-import {getAppNfts} from "@services/app";
+import {getAppContracts, getAppNfts, getAppNftsOfContract} from "@services/app";
 import axios from "axios";
 
-export function AppNFTs(props: { id: string; refreshTrigger: number; setRefreshTrigger: (v: number) => void, showRefresh?: boolean }) {
-	const { id, refreshTrigger, setRefreshTrigger, showRefresh } = props;
+export function AppNFTs(props: { id: string; contract?:string, refreshTrigger: number; setRefreshTrigger: (v: number) => void, showRefresh?: boolean }) {
+	const { id, refreshTrigger, setRefreshTrigger, showRefresh, contract } = props;
 	const [items, setItems] = useState<NFT[]>([]);
 	const [total, setTotal] = useState(0);
 	const [page, setPage] = useState(1);
@@ -124,8 +124,9 @@ export function AppNFTs(props: { id: string; refreshTrigger: number; setRefreshT
 
 	useEffect(() => {
 		setLoading(true);
-		getAppNfts(id as string, page, 10)
-			.then((res) => {
+		const query = contract ? getAppNftsOfContract(id as string, contract, page, 10) :
+			getAppNfts(id as string, page, 10);
+		query.then((res) => {
 				setTotal(res.count);
 				setItems(res.items);
 			})
@@ -151,7 +152,10 @@ export function AppNFTs(props: { id: string; refreshTrigger: number; setRefreshT
 
 	return (
 		<>
-			{showRefresh && <Button className={"mb-8"} type={"dashed"} onClick={()=>setRefreshTrigger(refreshTrigger + 1)}>刷新</Button>}
+			<Space className={"mb-8"}>
+				{showRefresh && <Button type={"dashed"} onClick={()=>setRefreshTrigger(refreshTrigger + 1)}>刷新</Button>}
+				{contract && <Button type={"text"}><Tooltip title={`已按合约过滤 ${contract}`}><FilterOutlined /></Tooltip></Button> }
+			</Space>
 			<Table
 				rowKey="id"
 				dataSource={items}
