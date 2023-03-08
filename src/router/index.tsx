@@ -18,6 +18,8 @@ import Poaps from '@pages/activities';
 import Asset from '@pages/activities/manageAssets';
 import Building from '@pages/activities/Building';
 import Metadata from '@pages/metadata';
+import EmptyPage from '@pages/emptyPage';
+import Bots from '@pages/bots';
 
 const AppRouter: React.FC = () => {
   return (
@@ -48,6 +50,7 @@ const AppRouter: React.FC = () => {
             <Route path="poaps/asset/:activityId" element={<Asset />} />
             <Route path="poaps/building/:activityId" element={<Building />} />
             <Route path="metadata" element={<Metadata />} />
+            <Route path="socialBot" element={<Bots />} />
           </Route>
           <Route path="/" element={<Navigate to="panels" />} />
           <Route path="*" element={<Navigate to="/" />} />

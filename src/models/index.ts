@@ -137,4 +137,17 @@ export interface NFT extends BaseModel {
     hash: string;
     status: number;
     token_uri: string;
-  }
+}
+
+export interface BotEvent extends BaseModel {
+    event_id: string;
+    type: number;
+    server_id: string;
+    server_name: string;
+    event_name: string;
+    chain: number;
+    contract: string;
+    start_time: string;
+    end_time: string;
+    push_time: string;
+}

@@ -133,7 +133,7 @@ export default function ContractSponsor() {
                             >
                                 <Space>
                                     <Switch onChange={checked => setAutoSponsor(checked)} />
-                                    <Tooltip title="燃气费不满足 1000 * gasUpperBound 自动补充 1BL，存储费不满足 50KB 时，自动补充 50KB；请保证账户有足够余额">
+                                    <Tooltip title="燃气费不满足 1000 * gasUpperBound 自动补充 1BL，存储费不满足 10KB 时，自动补充 50KB；请保证账户有足够余额">
                                         <Typography.Link href="#API">说明</Typography.Link>
                                     </Tooltip>
                                 </Space>
