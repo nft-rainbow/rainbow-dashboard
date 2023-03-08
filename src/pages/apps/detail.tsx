@@ -285,7 +285,7 @@ export default function AppDetail(props: { appId?: string }) {
                 </Button>
               </Col>
               <Col span={6}>
-                <Button htmlType={'submit'} type={'primary'} disabled={minting} loading={minting}>
+                <Button htmlType={'submit'} type={'primary'} disabled={minting} loading={minting} onClick={()=>onNftMint(form.getFieldsValue())}>
                   确认
                 </Button>
               </Col>

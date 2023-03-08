@@ -29,6 +29,7 @@ export default function MintFrame() {
 		{
 			key: '40',			label: `铸造历史`,
 			children: <AppNFTs id={contract.app_id} refreshTrigger={refreshNftList} setRefreshTrigger={setRefreshNftList}
+							   contract={contract.address}
 			                   showRefresh={true}
 				/>,
 		},
