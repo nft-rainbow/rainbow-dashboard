@@ -22,7 +22,6 @@ import Metadata from '@pages/metadata';
 import EmptyPage from '@pages/emptyPage';
 import Bots from '@pages/bots';
 import MintFrame from "@pages/mint/mintFrame";
-// import MetaTable from "../routes/metadata";
 import {PlanFrame} from "@pages/plan/PlanFrame";
 import {PlanList} from "@pages/plan/PlanList";
 
@@ -52,7 +51,6 @@ const AppRouter: React.FC = () => {
             <Route path="plan/:id" element={<PlanFrame />} />
             <Route path="plan/list" element={<PlanList />} />
             <Route path="contracts" element={<Contracts />} />
-            {/* <Route path="metadata" element={<MetaTable />} /> */}
             <Route path="contracts/sponsor" element={<ContractSponsor />} />
             <Route path="contracts/deploy" element={<ContractDeployment />} />
             <Route path="poaps" element={<Poaps />} />
