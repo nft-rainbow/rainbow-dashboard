@@ -11,7 +11,7 @@ import ManageCollection from '@assets/icons/manageCollection.svg';
 import WebLink from '@assets/icons/webLink.svg';
 import { chainTypeToName, timestampToDay, timestampToSecond, turnTimestamp } from '../../utils';
 import { shortenCfxAddress } from '@utils/addressUtils';
-import { activityTypeTransform } from '@utils/activityHelper';
+import { activityTypeTransform, activityTypeTransformEn } from '@utils/activityHelper';
 import ManageActivityModual from './manageActivities';
 import ClaimLinkModual from './activityLink';
 
@@ -91,7 +91,7 @@ export const activityOperations: React.FC<ActivityItem> = (activity: ActivityIte
   return (
     <div className="flex flex-row">
       <ActivityManageIcon activity={activity} />
-      <Link to={`/panels/poaps/asset/${activity.activity_id}`}>
+      <Link to={`/panels/poaps/asset/${activityTypeTransformEn(activity.activity_type)}/${activity.activity_id}`}>
         <Tooltip title="管理藏品" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
           <img src={ManageCollection} />
         </Tooltip>

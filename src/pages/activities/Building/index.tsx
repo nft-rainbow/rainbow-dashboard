@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react';
 import { Card, Button, Form, Input } from 'antd';
-import { HexColorPicker } from "react-colorful";
+import { HexColorPicker } from 'react-colorful';
 import { getActivityById } from '@services/activity';
 import { useParams } from 'react-router-dom';
-import useSWR from 'swr'
+import useSWR from 'swr';
 
 const Building: React.FC = () => {
   const { activityId } = useParams();
-  const { data, error, isLoading } = useSWR('/api/user', () => getActivityById(activityId))
-  console.log(data);
+  const { data, error, isLoading } = useSWR('/api/user', () => getActivityById(activityId));
 
   return (
     <Form name="build-site">

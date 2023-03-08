@@ -87,7 +87,7 @@ export default function ContractSponsor() {
     }, []);
 
     return (
-        <>
+        <div style={{flexGrow: 1}}>
             <RainbowBreadcrumb items={['合约', '树图合约代付']} />
             <Card>
                 <Divider orientation="left">设置代付</Divider>
@@ -174,6 +174,6 @@ export default function ContractSponsor() {
                     />
                 </Modal>
             </Card>
-        </>
+        </div>
     );
 }

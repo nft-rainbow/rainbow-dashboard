@@ -31,7 +31,9 @@ code {
 .mt-5 {
     margin-top: 5px !important;
 }
-
+.mb-8 {
+    margin-bottom: 8px !important;
+}
 .d-inline {
     display: inline !important;
 }

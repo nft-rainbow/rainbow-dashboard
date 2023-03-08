@@ -1,5 +1,5 @@
-import { get, post, put } from '.';
-import { ChainAccount } from '../models';
+import {get, NFT, post, put} from '.';
+import {ChainAccount, Contract} from '../models';
 export interface File {
   file_name: string;
   file_size: number;
@@ -61,11 +61,18 @@ export async function getAppNfts(id: number | string, page?: number, limit?: num
 export async function getAppNftsOfContract(id: number | string, address: string, page?: number, limit?: number) {
   return await get(`/dashboard/apps/${id}/contracts/${address}/nft`, { page, limit });
 }
-
+export async function batchMint(id:string, arr:any[]) {
+  return await post(`/dashboard/apps/${id}/nft/batch`, arr);
+}
 export async function easyMintUrl(id: string, options: any) {
   return await post(`/dashboard/apps/${id}/nft`, options);
 }
-
+export async function getMintTask(id: string|number) : Promise<NFT> {
+  return await get(`/dashboard/mints/${id}`);
+}
 export async function getAppAccounts(id: number | string): Promise<ChainAccount[]> {
   return await get(`/dashboard/apps/${id}/accounts`);
+}
+export async function getContractInfo(id: number | string): Promise<any> {
+  return await get(`/dashboard/contracts?id=${id}`);
 }

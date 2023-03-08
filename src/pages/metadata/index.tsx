@@ -29,7 +29,7 @@ const formLayout = {
     wrapperCol: { span: 18 },
 };
 
-export default function Contracts() {
+export default function MetaTable() {
     const [items, setItems] = useState<Metadata[]>([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
@@ -116,7 +116,7 @@ export default function Contracts() {
 
     return (
         <>
-            <Card title='元数据管理' extra={extra}>
+            <Card title='元数据管理' extra={extra} style={{flexGrow:1}}>
                 <Table
                     rowKey='id'
                     dataSource={items}

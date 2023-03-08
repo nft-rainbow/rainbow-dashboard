@@ -16,10 +16,15 @@ import ContractSponsor from '@pages/contracts/sponsor';
 import ContractDeployment from '@pages/contracts/new';
 import Poaps from '@pages/activities';
 import Asset from '@pages/activities/manageAssets';
+import Blind from '@pages/activities/manageAssetsBlind';
 import Building from '@pages/activities/Building';
 import Metadata from '@pages/metadata';
 import EmptyPage from '@pages/emptyPage';
 import Bots from '@pages/bots';
+import MintFrame from "@pages/mint/mintFrame";
+// import MetaTable from "../routes/metadata";
+import {PlanFrame} from "@pages/plan/PlanFrame";
+import {PlanList} from "@pages/plan/PlanList";
 
 const AppRouter: React.FC = () => {
   return (
@@ -43,11 +48,16 @@ const AppRouter: React.FC = () => {
             <Route path="company" element={<Company />} />
             <Route path="apps" element={<App />} />
             <Route path="apps/:id" element={<AppDetail />} />
+            <Route path="mint/:id" element={<MintFrame />} />
+            <Route path="plan/:id" element={<PlanFrame />} />
+            <Route path="plan/list" element={<PlanList />} />
             <Route path="contracts" element={<Contracts />} />
+            {/* <Route path="metadata" element={<MetaTable />} /> */}
             <Route path="contracts/sponsor" element={<ContractSponsor />} />
             <Route path="contracts/deploy" element={<ContractDeployment />} />
             <Route path="poaps" element={<Poaps />} />
-            <Route path="poaps/asset/:activityId" element={<Asset />} />
+            <Route path="poaps/asset/single/:activityId" element={<Asset />} />
+            <Route path="poaps/asset/blind/:activityId" element={<Blind />} />
             <Route path="poaps/building/:activityId" element={<Building />} />
             <Route path="metadata" element={<Metadata />} />
             <Route path="socialBot" element={<Bots />} />

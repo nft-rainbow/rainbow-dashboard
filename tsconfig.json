@@ -21,12 +21,12 @@
       "@modules/*": ["./src/modules/*"],
       "@assets/*": ["./src/assets/*"],
       "@pages/*": ["./src/pages/*"],
-      // "@store/*": ["./src/store/*"],
-      "@models/*":["./src/models/*"],
+      "@stores/*": ["./src/stores/*"],
+      "@models/*": ["./src/models/*"],
       "@hooks/*": ["./src/hooks/*"],
       "@components/*": ["./src/components/*"],
       "@services/*": ["./src/services/*"],
-      "@router/*": ["./src/router/*"],
+      "@router/*": ["./src/router/*"]
     }
   },
   "include": ["src"],

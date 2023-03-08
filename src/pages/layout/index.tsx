@@ -43,6 +43,7 @@ const items: MenuItem[] = [
   getItem(<Link to="/panels">仪表盘</Link>, '1', <DashboardOutlined />),
   getItem(<Link to="/panels/apps">我的项目</Link>, '2', <AppstoreOutlined />),
   getItem(<Link to="/panels/contracts">智能合约</Link>, '3', <AuditOutlined />),
+  // getItem(<Link to="/panels/plan/list">发行计划</Link>, '300', <AuditOutlined />),
   getItem(<Link to="/panels/poaps">活动</Link>, '4', <AuditOutlined />),
   getItem(<Link to="/panels/socialBot">社群Bot</Link>, '5', <RobotOutlined />),
   getItem(<Link to="/panels/metadata">元数据</Link>, '6', <NodeIndexOutlined />),
@@ -55,6 +56,8 @@ function menuKeyFromLocation(location: object): string {
   if (pathname === '/panels') return '1';
   if (pathname.startsWith('/panels/apps')) return '2';
   if (pathname.startsWith('/panels/contracts')) return '3';
+  if (pathname.startsWith('/panels/mint')) return '3';
+  if (pathname.startsWith('/panels/plan')) return '300';
   if (pathname.startsWith('/panels/poaps')) return '4';
   if (pathname.startsWith('/panels/socialBot')) return '5';
   if (pathname.startsWith('/panels/metadata')) return '6';
@@ -131,7 +134,7 @@ const App: React.FC = () => {
               </Dropdown>
             </div>
           </Header>
-          <Content style={{ margin: '16px 16px' }}>
+          <Content style={{ margin: '16px 16px', display: 'flex' }}>
             <Outlet />
           </Content>
           <Footer className="site-layout-footer">©2022 NFTRainbow</Footer>
