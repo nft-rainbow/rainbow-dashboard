@@ -24,6 +24,7 @@ import {utils, writeFileXLSX} from "xlsx";
 import {mapChainAndNetworkName} from "@utils/index";
 import {batchMint, easyMintUrl} from "@services/app";
 import {Contract} from "@models/index";
+const {Text} = Typography;
 
 interface Item {
 	key: string;
@@ -31,6 +32,7 @@ interface Item {
 	name: string;
 	desc: string;
 	address: string;
+	attributes: {[key:string]:string}[]
 }
 
 const originData: Item[] = [];
@@ -231,23 +233,55 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean, con
 		console.log(`data length`, data.length)
 	}, [data])
 	const addRow = (url='', name='')=>{
-		let newElement = {key: Date.now().toString(), file_url: url, name, address:'', desc:''};
+		let newElement = {key: Date.now().toString(), file_url: url, name, address:'', desc:'', attributes:[]};
 		setData(preArr=>[...preArr, newElement]);
 	}
 	const handleImportData = (arr:any[]) => {
 		const map = {"图片链接":"file_url","名字":"name","描述":"desc","接受地址":"address"};
+		let metaKeys = Object.keys(map);
+		let attrKeys = Object.keys(arr[0] || {})//.filter(k=>k.endsWith("trait_type") || k.endsWith("value") || k.endsWith("display_type"))
+		//console.log(`attrKeys`, attrKeys, 'on', arr[0])
 		const newArr = arr.map((row, idx)=>{
-			const item = {key: `${idx}`};
-			Object.keys(map).forEach(k=>{
+			const item = {key: `${idx}`} as {[key:string]:any};
+			metaKeys.forEach(k=>{
 				//@ts-ignore
 				item[map[k]] = row[k];
 			})
+			const attributes = [];
+			for (let i = 0; i < attrKeys.length; ){
+				let k = attrKeys[i];
+				if (!k.endsWith('trait_type')) {
+					i++;
+					continue;
+				}
+				const attr : {[key:string]:any} = {trait_type: row[k].toString() || '', };
+				while((i+1)<attrKeys.length && !attrKeys[i+1].endsWith('trait_type')) {
+					k = attrKeys[++i];
+					if (k.endsWith("value")) {
+						attr.value = row[k]?.toString() || ''
+					} else if (k.endsWith("display_type")) {
+						attr.display_type = row[k]?.toString() || '';
+					} else {
+					}
+				}
+				if (attr.value === null || attr.value === undefined) {
+					throw new Error(`value字段必填，行 [${idx+1}] 列 [${k} 右侧]`)
+				}
+				attributes.push(attr);
+			}
+			item.attributes = attributes;
 			return item;
 		})
-		console.log(`converted`, newArr)
+		// console.log(`converted`, newArr)
 		setData(newArr as Item[]);
 	}
 	const exportData = ()=>{
+		setExporting(true)
+		new Promise(()=>{
+			exportAsync()
+		}).then().finally(()=>setExporting(false))
+	}
+	const exportAsync = ()=>{
 		const values = checkMintInput(headForm, {withAddress: useCols.sameAddress,
 			withDesc: useCols.sameDesc, withName: useCols.sameName, withImage: useCols.sameImage});
 		if (!values) {
@@ -259,6 +293,11 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean, con
 		setExporting(true);
 		const {file_url, name, description, mint_to_address} = values;
 		const colNames = ["图片链接","名字","描述","接受地址"]
+		if (data[0]?.attributes.length) {
+			for (let i = 0; i < data[0].attributes.length; i++) {
+				colNames.push(`属性${i+1}:trait_type`,`属性${i+1}:value`,`属性${i+1}:display_type`)
+			}
+		}
 		const aoa = [colNames];
 		data.forEach(row=>{
 			const arr = [
@@ -266,7 +305,12 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean, con
 				useCols.sameName ? name : row.name,
 				useCols.sameDesc ? description : row.desc,
 				useCols.sameAddress ? mint_to_address : row.address
-			]
+			];
+			(row.attributes || []).forEach(attr=>{
+				arr.push(attr.trait_type || '')
+				arr.push(attr.value || '')
+				arr.push(attr.display_type || '')
+			})
 			aoa.push(arr);
 		})
 		const ws = utils.aoa_to_sheet(aoa)
@@ -294,6 +338,7 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean, con
 				mint_to_address: useCols.sameAddress ? mint_to_address : row.address,
 				contract_address: contract.address,
 				chain,
+				attributes: row.attributes,
 			}
 			arr.push(nft)
 		})
@@ -348,7 +393,7 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean, con
 					<Button type={"link"}><a href={"/mint_template.xlsx"} style={{color: "gray"}}>下载模板</a></Button>
 					{!useCols.sameImage && <DragUpload onSuccess={({url}: { url: string }, name: string) => addRow(url, name)}/>}
 					<Tooltip title={"通过批量导入图片，再导出，可以获得图片URL和名称的对应关系，完善信息后，即可再次导入。"}>
-						<Button onClick={exportData} type={"link"}>导出</Button>
+						<Button loading={exporting} onClick={exportData} type={"link"}>导出</Button>
 					</Tooltip>
 					<Button type={'link'} onClick={()=>setData([])}>清空</Button>
 				</Space>
@@ -359,6 +404,18 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean, con
 							body: {
 								cell: EditableCell,
 							},
+						}}
+						expandable={{
+							expandedRowRender: (record) => record.attributes?.length ? <>
+								{record.attributes.map(a => {
+									return <Row gutter={16}>
+										<Col span={2}><Text type="secondary">trait_type</Text></Col><Col span={2}>{a.trait_type}</Col>
+										<Col span={2}><Text type="secondary">display_type</Text></Col><Col span={2}>{a.display_type}</Col>
+										<Col span={2}><Text type="secondary">value</Text></Col><Col>{a.value}</Col>
+									</Row>
+								})}
+							</> : "没有扩展属性，请使用模板中的扩展属性sheet导入。",
+							rowExpandable: (record) => true,
 						}}
 						bordered
 						dataSource={data}
