@@ -6,7 +6,7 @@ import {
 export default function Page() {
     return (
         <>
-            <Card title='Empty Page'>
+            <Card title='Empty Page' style={{flexGrow:1}}>
             </Card>
         </>
     );

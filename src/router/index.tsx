@@ -59,6 +59,7 @@ const AppRouter: React.FC = () => {
             <Route path="poaps/building/:activityId" element={<Building />} />
             <Route path="metadata" element={<Metadata />} />
             <Route path="socialBot" element={<Bots />} />
+            <Route path="empty" element={<EmptyPage />} />
           </Route>
           <Route path="/" element={<Navigate to="panels" />} />
           <Route path="*" element={<Navigate to="/" />} />

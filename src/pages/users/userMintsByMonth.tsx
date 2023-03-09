@@ -32,7 +32,7 @@ export default function UserMintCountByMonth() {
 
     return (
         <>
-            <Card title='每月铸造量'>
+            <Card title='每月铸造量' style={{flexGrow:1}}>
                 <Table
                     rowKey='id'
                     dataSource={mintCounts}

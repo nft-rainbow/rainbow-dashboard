@@ -56,7 +56,7 @@ function UserManagement() {
   }, [basicForm, kycForm]);
 
   return (
-    <div>
+    <div style={{flexGrow:1}}>
       <RainbowBreadcrumb items={['设置', '用户设置']} />
       <div className="content-body">
         { (user as User).kyc_msg ? <Alert message={(user as User).kyc_msg} type="error" showIcon /> : null }

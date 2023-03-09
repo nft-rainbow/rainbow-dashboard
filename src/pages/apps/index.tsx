@@ -11,9 +11,9 @@ import {
   message, Space,
 } from "antd";
 import { Link } from "react-router-dom";
-import { getApps, createApp } from '../../services/app';
-import { mapChainName, formatDate } from '../../utils';
-import { App } from '../../models';
+import { getApps, createApp } from '@services/app';
+import { mapChainName, formatDate } from '@utils/index';
+import { App } from '@models/index';
 import AppDetail from "./detail";
 
 function Apps() {

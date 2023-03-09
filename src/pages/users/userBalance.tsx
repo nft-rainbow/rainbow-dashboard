@@ -174,7 +174,7 @@ export default function UserBalance() {
     );
 
     return (
-        <div>
+        <div style={{flexGrow:1}}>
             <RainbowBreadcrumb items={['设置', '用户中心']} />
             <Card>
                 <div style={{width: '200px', float: 'left'}}>

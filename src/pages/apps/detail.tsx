@@ -149,7 +149,7 @@ export default function AppDetail(props: { appId?: string }) {
     {key: '3', label:'文件', children:<AppFiles id={idStr} refreshTrigger={refreshNftList} />},
   ]
   return (
-    <div className="App">
+    <div className="App" style={{flexGrow:1}}>
       {contextHolder}
       <RainbowBreadcrumb items={breadcrumbItems} />
       <Card>

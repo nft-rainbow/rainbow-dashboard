@@ -30,7 +30,7 @@ export default function Page() {
 
     return (
         <>
-            <Card>
+            <Card style={{flexGrow:1}}>
                 <Tabs defaultActiveKey="1" items={items} onChange={onChange} />
             </Card>
         </>
@@ -153,7 +153,7 @@ function Dodo() {
             </Content>
             <Sider theme='light' width={300}>
                 <Space>
-                    <Button type='primary'>添加机器人</Button>
+                    <a href="https://imdodo.com/bot/u/3574817" target="_blank" rel="noreferrer"><Button type='link'>添加机器人</Button></a>
                     <Button type='primary' onClick={showModal}>推送社群</Button>
                 </Space>
             </Sider>

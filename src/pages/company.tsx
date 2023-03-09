@@ -36,7 +36,7 @@ export default function CompanyManagement() {
   }, [kycForm]);
 
   return (
-    <div>
+    <div style={{flexGrow:1}}>
       <RainbowBreadcrumb items={['设置', '企业认证']} />
       <div className="content-body">
         { (company as Company).kyc_msg ? <Alert message={(company as Company).kyc_msg} type="error" showIcon /> : null }
