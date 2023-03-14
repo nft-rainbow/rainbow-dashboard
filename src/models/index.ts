@@ -167,3 +167,11 @@ export interface BotEvent extends BaseModel {
     end_time: string;
     push_time: string;
 }
+
+export interface AutoSponsorContract extends BaseModel {
+    address: string;
+    user_id: number;
+    auto_sponsor: boolean;
+    storage_recharge_threshold: number;
+    storage_recharge_amount: number;
+}

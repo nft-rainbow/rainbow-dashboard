@@ -4,10 +4,10 @@ import { ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCir
 import type { ColumnsType } from 'antd/es/table';
 import { Link } from 'react-router-dom';
 import { Drip } from 'js-conflux-sdk';
-import { Contract, App, SponsorInfo } from '../../models';
-import { mapChainName, formatDate, short, scanTxLink, scanAddressLink, mapNFTType, mapChainNetwork, mapChainNetworId } from '../../utils';
-import { listContracts, deployContract, ContractFilter, getContractSponsor, getContractAutoSponsor } from '../../services/contract';
-import { getAllApps, getAppAccounts } from '../../services/app';
+import { Contract, App, SponsorInfo } from '@models/index';
+import { mapChainName, formatDate, short, scanTxLink, scanAddressLink, mapNFTType, mapChainNetwork, mapChainNetworId } from '@utils/index';
+import { listContracts, deployContract, ContractFilter, getContractSponsor, getContractAutoSponsor } from '@services/contract';
+import { getAllApps, getAppAccounts } from '@services/app';
 const { Option } = Select;
 const { Paragraph } = Typography;
 
@@ -34,6 +34,7 @@ export default function Contracts() {
   const [isSponsorModalVisible, setIsSponsorModalVisible] = useState(false);
 
   const [tokensTransferableByUser, setTokensTransferableByUser] = useState(true);
+  const [autoSponsor, setAutoSponsor] = useState(true);
 
   const columns: ColumnsType<Contract> = [
     {
@@ -111,14 +112,14 @@ export default function Contracts() {
     {
       title: '操作',
       dataIndex: 'id',
-      width: 100,
+      width: 180,
       fixed: 'right',
       render: (id: number, record: Contract) => {
         if (!record.address) return null;
         return (
-          <>
+          <Space>
             <Button
-              type="primary"
+              type="link"
               size="small"
               onClick={async () => {
                 setCurrentContract(record);
@@ -132,8 +133,8 @@ export default function Contracts() {
             >
               查看代付
             </Button>
-            <Link to={`/panels/mint/${record.id}`}>铸造</Link>
-          </>
+            <Link to={`/panels/mint/${record.id}`}><Button type='link' size='small'>铸造NFT</Button></Link>
+          </Space>
         );
       },
     },
@@ -154,6 +155,7 @@ export default function Contracts() {
         owner_address: owner,
         tokens_transferable_by_admin: true,
         tokens_transferable_by_user: tokensTransferableByUser,
+        auto_sponsor: autoSponsor,
       },
       values
     );
@@ -205,6 +207,9 @@ export default function Contracts() {
       <Link to="/panels/contracts/sponsor">
         <Button type="primary">设置树图代付</Button>
       </Link>
+      <Link to="/panels/contracts/autoSponsors">
+        <Button type="primary">自动代付列表</Button>
+      </Link>
     </Space>
   );
 
@@ -244,7 +249,7 @@ export default function Contracts() {
           <Form.Item name="type" label="合约类型" rules={[{ required: true }]}>
             <Select>
               <Option value="erc721">ERC721</Option>
-              <Option value="erc1155">ERC1155</Option>
+              {/* <Option value="erc1155">ERC1155</Option> */}
             </Select>
           </Form.Item>
           <Form.Item name="name" label="合约名称" rules={[{ required: true }]}>
@@ -255,6 +260,9 @@ export default function Contracts() {
           </Form.Item>
           <Form.Item name="tokens_transferable_by_user" label="允许用户转移" rules={[{ required: false }]}>
             <Switch defaultChecked onChange={(checked) => setTokensTransferableByUser(checked)} />
+          </Form.Item>
+          <Form.Item name="auto_sponsor" label="自动补充代付" rules={[{ required: false }]}>
+            <Switch defaultChecked onChange={(checked) => setAutoSponsor(checked)} />
           </Form.Item>
           {/* <Form.Item name="tokens_transferable" label="管理员可转移" rules={[{ required: true }]}>
                         <Radio.Group>

@@ -24,3 +24,7 @@ export async function setContractSponsor(addr: string, options: object) {
 export async function getContractAutoSponsor(addr: string): Promise<object> {
     return await get(`/dashboard/contracts/${addr}/autoSponsor`);
 }
+
+export async function getAutoSponsoredContracts(page = 1, limit = 10): Promise<object> {
+    return await get(`/dashboard/contracts/autoSponsors`, {page, limit});
+}

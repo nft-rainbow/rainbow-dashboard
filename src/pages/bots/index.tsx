@@ -7,7 +7,12 @@ import {
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { BotEvent } from "@models/index";
+import { getBotEvents, getDoDoRoles, getDodoChannels, getDodoServers } from '@services/bot';
+import { getActivities, ActivityQuerier } from '@services/activity';
 const { Content, Sider } = Layout;
+
+const DISCORD_BOT = 1;
+const DODO_BOT = 2;
 
 export default function Page() {
 
@@ -40,6 +45,7 @@ export default function Page() {
 function Dodo() {
     const [form] = Form.useForm();
     const [isModalShow, setIsModalShow] = useState(false);
+    const [serverId, setServerId] = useState("123");
 
     const showModal = () => {
         setIsModalShow(true);
@@ -139,6 +145,36 @@ function Dodo() {
         },
     ];
 
+    useEffect(() => {
+        getBotEvents(DODO_BOT, 1, 10).then((res) => {
+            console.log('bot events', res);
+        })
+    }, []);
+
+    useEffect(() => {
+        getDodoServers(DODO_BOT).then((res) => {
+            console.log('dodo servers', res);
+        })
+    }, []);
+
+    /* useEffect(() => {
+        getDoDoRoles(serverId).then((res) => {
+            console.log('dodo roles', res);
+        });
+    }, [serverId]); */
+
+    /* useEffect(() => {
+        getDodoChannels(serverId).then(res => {
+            console.log('dodo channels', res);
+        });
+    }); */
+
+    /* useEffect(() => {
+        getActivities({page: 1, limit: 10}).then(res => {
+            console.log('activities', res);
+        });
+    }); */
+
     return (<>
         <Layout>
             <Content style={{backgroundColor: 'white'}}>
@@ -170,7 +206,6 @@ function Dodo() {
             cancelText={"取消"}
         >
             <Alert type='info' message='可以将活动推送到授权的 DoDo 或 Discord 社区频道中，提供给社群成员进行藏品铸造，活动需先在管理后台中创建好'/>
-            {/* <div style={{height: '20px'}}></div> */}
             <Form className='mt-20'>
                 <Row>
                     <Col span={11}>

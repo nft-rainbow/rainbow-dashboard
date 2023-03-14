@@ -35,6 +35,7 @@ export default function ContractSponsor() {
     const [autoSponsor, setAutoSponsor] = useState(false);
 
     const onSetSponsor = async (values: any) => {
+        console.log(values);
         const addr = values.address;
         if (!address.isValidCfxAddress(addr)) {
             message.warning('合约地址格式错误');
@@ -45,7 +46,12 @@ export default function ContractSponsor() {
         values.gas = parseInt(values.gas);
         values.storage = parseInt(values.storage);
         values.gas_upper_bound = parseInt(values.gas_upper_bound);
+
         values.auto_sponsor = autoSponsor;
+        if (autoSponsor) {
+            values.storage_recharge_amount = parseInt(values.storage_recharge_amount);
+            values.storage_recharge_threshold = parseInt(values.storage_recharge_threshold);
+        }
 
         const upperBound = JSBI.BigInt(values.gas_upper_bound);
         const gas = JSBI.multiply(JSBI.BigInt(values.gas), CFX_IN_GDRIP);  // in GDrip
@@ -133,11 +139,25 @@ export default function ContractSponsor() {
                             >
                                 <Space>
                                     <Switch onChange={checked => setAutoSponsor(checked)} />
-                                    <Tooltip title="燃气费不满足 1000 * gasUpperBound 自动补充 1BL，存储费不满足 10KB 时，自动补充 50KB；请保证账户有足够余额">
+                                    <Tooltip title="燃气费不满足 1000 * gasUpperBound 自动补充 1BL，存储费不满足一定阈值时，自动补充固定金额；请保证账户有足够余额">
                                         <Typography.Link href="#API">说明</Typography.Link>
                                     </Tooltip>
                                 </Space>
                             </Form.Item>
+                            {autoSponsor ? <Form.Item 
+                                name="storage_recharge_threshold" 
+                                label="存储补充阈值(KB)" 
+                                rules={[{ required: false }]}
+                            >
+                                <Input type="number" placeholder='存储余额低于该值则会自动补充，默认值 10'/>
+                            </Form.Item> : null}
+                            {autoSponsor ? <Form.Item 
+                                name="storage_recharge_amount" 
+                                label="存储补充数量(KB)" 
+                                rules={[{ required: false }]}
+                            >
+                                <Input type="number" placeholder='每次补充数额，默认值 50'/>
+                            </Form.Item> : null}
                             
                             <Form.Item {...tailLayout}>
                                 <Button type="primary" htmlType="submit">

@@ -81,6 +81,11 @@ export function scanAddressLink(chainType: number, chainId: number, address: str
   return `${scanHostFromChainId(chainId)}/address/${address}`;
 }
 
+export function scanAddressLinkByPrefix(address: string) {
+    const chainId = address.toLowerCase().startsWith('cfxtest') ? 1 : 1029;
+    return `${scanHostFromChainId(chainId)}/address/${address}`;
+}
+
 // Only support Conflux mainnet and testnet
 function scanHostFromChainId(chainId: number) {
   switch (chainId) {
