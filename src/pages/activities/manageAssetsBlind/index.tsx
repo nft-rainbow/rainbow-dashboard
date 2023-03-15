@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import RainbowBreadcrumb from '@components/Breadcrumb';
@@ -7,9 +7,7 @@ import { Card, Button, Form, Select, Input } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { listContracts } from '@services/contract';
 import { Contract } from '@models/index';
-import { useAssetItemsBlind, useResetItems } from '@stores/ActivityItemsBlind';
 import { getActivityById, updatePoap } from '@services/activity';
-import { assetsBlindFormat } from '@utils/assetsFormHelper';
 import AddAssetsModal from './AddAssetsModal';
 import BlindTableItem from './BlindTableItem';
 
@@ -34,28 +32,33 @@ const TableHeader: React.FC = () => {
 
 const ManageAssetsBlind: React.FC = () => {
   const [contracts, setContracts] = useState<Contract[]>([]);
+  const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const { activityId } = useParams<{ activityId: string }>();
-  const assetItems = useAssetItemsBlind();
-  const resetItems = useResetItems();
   const navigate = useNavigate();
-  const { data, error } = useSWR(`api/apps/poap/activity/${activityId}`, () => getActivityById(activityId));
+  const { data, mutate } = useSWR(`api/apps/poap/activity/${activityId}`, () => getActivityById(activityId));
+  const isContractEditable = useMemo(() => !data?.contract_address, [data]);
 
   const handleFinish = useCallback(
     async (formData: any) => {
-      const { contract_id: contractId, contract_type, ...rest } = data;
-      const activity_id = activityId;
-      const formatData = assetsBlindFormat(formData, assetItems, activity_id);
-      const { nft_configs } = formatData;
+      const probabilities = Object.keys(formData).filter((key) => key?.endsWith('-probability'));
+      const nftConfigs = [...data?.nft_configs];
+      probabilities?.forEach((probability) => {
+        const id = Number(probability.split('-')[1]);
+        const value = formData[probability];
+        const index = nftConfigs.findIndex((nftItem) => +nftItem?.id === id);
+        nftConfigs[index].probability = +value;
+      });
+
+      const newData = { ...data, nftConfigs, contract_id: formData?.contract_id };
       try {
-        await updatePoap({ ...formatData, ...rest, nft_configs });
-        resetItems();
-        navigate('/panels/poaps');
+        await updatePoap(newData);
+        await mutate();
       } catch (err) {
         console.log(err);
       }
     },
-    [data]
+    [data, activityId]
   );
 
   useEffect(() => {
@@ -68,23 +71,31 @@ const ManageAssetsBlind: React.FC = () => {
     });
   }, []);
 
+  useEffect(() => {
+    if (!data) return;
+    form.setFieldsValue({
+      contract_id: data.contract_id ?? '',
+      ...(data?.nft_configs ? Object.fromEntries(data?.nft_configs?.map((nftItem: any) => [`nftConfig-${nftItem.id}`, nftItem])) : {}),
+      ...(data?.nft_configs ? Object.fromEntries(data?.nft_configs?.map((nftItem: any) => [`nftConfig-${nftItem.id}-probability`, nftItem?.probability])) : {}),
+    });
+  }, [data]);
+
+  const nftConfigs = data?.nft_configs;
+
   return (
     <>
       <RainbowBreadcrumb items={[<Link to="/panels/poaps/">返回</Link>, '管理藏品']} />
       <Card>
-        <Form id="manageAssetsBlindForm" onFinish={handleFinish}>
-          <div className="grid grid-cols-2 gap-x-16px">
-            <Form.Item name="contract_id" label="合约地址" rules={[{ required: true, message: '请选择合约地址' }]}>
-              <Select placeholder="请选择">
-                {contracts.map((e) => (
-                  <Option label={e.address} value={e.id} key={e.address}>
-                    {e.address}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <div></div>
-          </div>
+        <Form form={form} id="manageAssetsBlindForm" onFinish={handleFinish}>
+          <Form.Item name="contract_id" label="合约地址" rules={[{ required: true, message: '请选择合约地址' }]}>
+            <Select placeholder="请选择" disabled={!isContractEditable}>
+              {contracts.map((e) => (
+                <Option label={e.address} value={e.id} key={e.address}>
+                  {e.address}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
           <div className="mb-[16px] flex flex-row items-center justify-between">
             <span>藏品设置</span>
             <Button onClick={(e) => setOpen(true)} className="text-[#6953EF] border border-solid border-[#6953EF]">
@@ -93,18 +104,14 @@ const ManageAssetsBlind: React.FC = () => {
             </Button>
           </div>
           <TableHeader />
-          <Form.List name="weights">
-            {(fiels) =>
-              assetItems.map((item) => {
-                return <BlindTableItem image_url={item.image_url} name={item.name} key={item.key} id={item.key} />;
-              })
-            }
-          </Form.List>
+          {nftConfigs?.map?.((item: any) => (
+            <BlindTableItem key={item.id} {...item} />
+          ))}
           <div className="mt-[24px] flex justify-center items-center">
             <Input type="submit" className="w-[188px] bg-[#6953EF] text-[#FFFFFF] rounded-[2px]" value="保存" />
           </div>
         </Form>
-        <AddAssetsModal open={open} onCancel={() => setOpen(false)} type="add" />
+        {open && <AddAssetsModal open={open} onCancel={() => setOpen(false)} type="add" />}
       </Card>
     </>
   );

@@ -14,9 +14,10 @@ export const parseCSV = <T extends () => Promise<any>>(csv: File) => {
 };
 
 export const csvWhitelistFormat = (res: [string[], string[]]) => {
-  if (res[0].length !== res[1].length) throw new Error('csv格式错误');
-  const whiteListInfo = res[0].map((item: string, i: number) => {
-    return { user: item, address: parseInt(res[1][i]) };
-  });
-  return whiteListInfo;
-};
+  try {
+    const keys = Object.values(res[0]);
+    return Object.values(res.slice(1)).map(item => Object.fromEntries(keys.map((key, index) => [key?.trim(), item[index]])));
+  } catch (err) {
+    throw new Error('csv 格式错误');
+  }
+}

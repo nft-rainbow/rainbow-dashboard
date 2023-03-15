@@ -3,7 +3,7 @@ import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, R
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { ActivityItem } from '../../../models';
 import LimitedInput from '@modules/limitedInput';
-import FileUpload from '@components/FileUpload';
+import FileUploadNew from '@components/FileUploadNew';
 import { PopoverContent, ExistRelationForbidden, ModalStyle } from './constants';
 import { parseCSV, csvWhitelistFormat } from '@utils/csvUtils';
 import { handleFormSwitch, updateformDataTranslate, timestampToDate, type Switchers, type FormData } from '@utils/activityHelper';
@@ -31,7 +31,6 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
   const { Option } = Select;
   const { RangePicker } = DatePicker;
   const [switchers, dispatch] = useReducer(handleFormSwitch, defaultSwitchers);
-  //   const { data: appName, error } = useSWR(`api/apps/${activity.app_id}`, () => getAppDetail(activity?.app_id));
 
   const checkRelAllowed = useCallback((rule: any, value: number, callback: any) => {
     const amount = form.getFieldValue('amount');
@@ -53,7 +52,6 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
   }, []);
 
   const handleFinish = useCallback(async (values: FormData) => {
-    console.log(values);
     const params = updateformDataTranslate(activity, values);
     try {
       setConfirmLoading(true);
@@ -120,19 +118,21 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
         </Form.Item>
         <Form.Item
           label="活动封面："
-          name="activity_picture_url"
           rules={[{ required: true, message: '请上传活动封面' }]}
+          name="file"
+          valuePropName="fileList"
           className="mb-0"
-          initialValue={activity.activity_picture_url}
+          getValueFromEvent={(evt) => (Array.isArray(evt) ? evt : evt?.fileList)}
+          initialValue={[
+            {
+              uid: '1',
+              name: '已上传图片',
+              status: 'done',
+              url: activity?.activity_picture_url ?? '',
+            }
+          ]}
         >
-          <FileUpload
-            onChange={(err: Error, file: any) => {
-              form.setFieldsValue({ activity_picture_url: file.url });
-            }}
-            type="plus"
-            wrapperClass="block w-full !mb-24px"
-            className="block"
-          />
+          <FileUploadNew maxCount={1} listType="picture" type="plus" wrapperClass="block w-full !mb-24px" className="block" />
         </Form.Item>
         <div className="mb-8px flex flex-row justify-between">
           <label htmlFor="amount" className="required" title="发行数量：">

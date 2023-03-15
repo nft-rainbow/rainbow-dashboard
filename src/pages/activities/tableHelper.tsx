@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ActivityItem } from '../../models';
 import type { ProColumns } from '@ant-design/pro-components';
 import { Tooltip } from 'antd';
@@ -12,6 +12,7 @@ import WebLink from '@assets/icons/webLink.svg';
 import { chainTypeToName, timestampToDay, timestampToSecond, turnTimestamp } from '../../utils';
 import { shortenCfxAddress } from '@utils/addressUtils';
 import { activityTypeTransform, activityTypeTransformEn } from '@utils/activityHelper';
+import { useActivitiesStore } from './index';
 import ManageActivityModual from './manageActivities';
 import ClaimLinkModual from './activityLink';
 
@@ -46,6 +47,8 @@ export const mapSimpleStatus = (status: number, error: string) => {
 
 export const ActivityManageIcon: React.FC<{ activity: ActivityItem }> = ({ activity }) => {
   const [isManageActModalVisible, setIsManageActModalVisible] = useState(false);
+  const getItems = useActivitiesStore((state) => state.getItems);
+  useEffect(() => { getItems(); }, [isManageActModalVisible]);
 
   const hideModal = () => {
     setIsManageActModalVisible(false);

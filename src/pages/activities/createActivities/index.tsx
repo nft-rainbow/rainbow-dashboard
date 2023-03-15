@@ -3,7 +3,7 @@ import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, R
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { App } from '../../../models';
 import LimitedInput from '@modules/limitedInput';
-import FileUpload from '@components/FileUpload';
+import FileUploadNew from '@components/FileUploadNew';
 import { PopoverContent, ExistRelationForbidden, ModalStyle } from './constants';
 import { createActivity } from '@services/activity';
 import { getAllApps } from '@services/app';
@@ -111,15 +111,15 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activi
         <Form.Item id="activityDate" name="activityDate" rules={[{ required: true, message: '请输入活动日期' }]}>
           <RangePicker id="activityDate" showTime placeholder={['开始日期', '结束日期']} disabled={[false, switchers.dateDisabled]} allowEmpty={[false, true]} />
         </Form.Item>
-        <Form.Item label="活动封面：" name="activity_picture_url" rules={[{ required: true, message: '请上传活动封面' }]} className="mb-0">
-          <FileUpload
-            onChange={(err: Error, file: any) => {
-              form.setFieldsValue({ activity_picture_url: file.url });
-            }}
-            type="plus"
-            wrapperClass="block w-full !mb-24px"
-            className="block"
-          />
+        <Form.Item
+          label="活动封面："
+          rules={[{ required: true, message: '请上传活动封面' }]}
+          name="file"
+          valuePropName="fileList"
+          className="mb-0"
+          getValueFromEvent={(evt) => (Array.isArray(evt) ? evt : evt?.fileList)}
+        >
+          <FileUploadNew maxCount={1} listType="picture" type="plus" wrapperClass="block w-full !mb-24px" className="block" />
         </Form.Item>
         <div className="mb-8px flex flex-row justify-between">
           <label htmlFor="amount" className="required" title="发行数量：">

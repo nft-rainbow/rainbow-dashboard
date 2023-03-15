@@ -1,11 +1,7 @@
-import { useCallback } from 'react';
-import { uniqueId } from 'lodash-es';
-import { Button, Form, Modal, Select, Input, DatePicker, MenuProps, Dropdown } from 'antd';
+import { Button, Form, Modal, Input, DatePicker, MenuProps, Dropdown } from 'antd';
 import { ModalStyle } from '../../createActivities/constants';
-import { AssetItem, Character } from '@models/index';
-import FileUpload from '@components/FileUpload';
-import useResetFormOnCloseModal from '@hooks/useResetFormOnCloseModal';
-import { useAddItem, useEditItem } from '@stores/ActivityItemsBlind';
+import FileUploadNew from '@components/FileUploadNew';
+import useManageAssets from '../../manageAssets/useManageAssets';
 import './index.scss';
 import { DeleteOutlined, DownOutlined } from '@ant-design/icons';
 
@@ -63,34 +59,7 @@ interface AddAssetsModalProps {
 }
 
 const AddAssetsModal: React.FC<AddAssetsModalProps> = ({ open, type, id, onCancel }) => {
-  const [form] = Form.useForm();
-  const { getFieldValue } = form;
-  const addItem = useAddItem();
-  const editItem = useEditItem();
-  useResetFormOnCloseModal({ form, open });
-
-  const handleFinish = useCallback(
-    async (data: any) => {
-      const { characters, name, image_url } = data;
-      if (type === 'add') {
-        if (!characters) {
-          addItem({ ...data, key: uniqueId() });
-          onCancel();
-          return;
-        }
-        let tempChars: Character[] = [];
-        characters.forEach((char: Character) => {
-          if (char.value) tempChars.push(char);
-        });
-        addItem({ characters: tempChars, key: uniqueId(), name: name, image_url: image_url });
-        onCancel();
-      } else {
-        editItem({ ...data, key: id }, id as string);
-        onCancel();
-      }
-    },
-    [id]
-  );
+  const { form, inTransaction, handleFinish } = useManageAssets('blind', id);
 
   return (
     <Modal
@@ -103,8 +72,8 @@ const AddAssetsModal: React.FC<AddAssetsModalProps> = ({ open, type, id, onCance
           <Button key="cancel" onClick={onCancel} className="grow">
             取消
           </Button>
-          <Button type="primary" key="addAsset" onClick={form.submit} className="grow">
-            添加
+          <Button type="primary" key="addAsset" onClick={form.submit} className="grow" loading={inTransaction}>
+            {type === 'edit' ? '保存' : '添加'}
           </Button>
         </div>,
       ]}
@@ -114,18 +83,21 @@ const AddAssetsModal: React.FC<AddAssetsModalProps> = ({ open, type, id, onCance
         name="addAssetsBoard"
         form={form}
         layout="vertical"
-        onFinish={handleFinish}
+        onFinish={(evt: any) => {
+          handleFinish(evt);
+          onCancel();
+        }}
         initialValues={{ characters: [{ type: 'text', characterName: '活动地点' }] }}
       >
-        <Form.Item label="上传图片：" name="image_url" className="mb-0">
-          <FileUpload
-            onChange={(err: Error, file: any) => {
-              form.setFieldsValue({ image_url: file.url });
-            }}
-            type="plus"
-            wrapperClass="block w-full !mb-24px"
-            className="block"
-          />
+        <Form.Item
+          label="上传图片："
+          name="file"
+          valuePropName="fileList"
+          className="mb-0"
+          getValueFromEvent={(evt) => (Array.isArray(evt) ? evt : evt?.fileList)}
+          rules={[{ required: true, message: '请上传图片' }]}
+        >
+          <FileUploadNew maxCount={1} listType="picture" type="plus" wrapperClass="block w-full !mb-24px" className="block" />
         </Form.Item>
         <Form.Item name="name" label="藏品名称：" rules={[{ required: true, message: '请输入藏品名称' }]}>
           <Input placeholder="2023烤仔守护神兔全家福" />
@@ -144,7 +116,7 @@ const AddAssetsModal: React.FC<AddAssetsModalProps> = ({ open, type, id, onCance
               </div>
               <div className="flex flex-col gap-y-[16px]">
                 {fields.map((field, index) => (
-                  <CharacterItem type={getFieldValue(['characters', index, 'type'])} id={index} name={field.name} remove={remove} key={index} />
+                  <CharacterItem type={form.getFieldValue(['characters', index, 'type'])} id={index} name={field.name} remove={remove} key={index} />
                 ))}
               </div>
             </div>

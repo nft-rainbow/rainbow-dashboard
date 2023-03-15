@@ -15,31 +15,54 @@ export interface PoapActivityConfig {
   metadata_attributes: MetadataAttribute[];
 }
 
-export interface AssetsFormHelper {
+interface NftConfig {
+  id?: string;
   image_url: string;
   name: string;
-  contract_id: string;
   characters: Character[];
 }
 
-export const assetsFormFormat = (data: AssetsFormHelper, activity_id: string) => {
-  const { characters, image_url, name, contract_id } = data;
-  let metadata_attributes: MetadataAttribute[] = [];
-  characters.forEach((characters) => {
-    if (characters.value) {
-      metadata_attributes.push({ attribute_name: characters.characterName, trait_type: characters.type, value: characters.value.toString() });
-    }
-  });
-  return {
-    activity_id,
-    contract_id,
-    nft_configs: [
-      {
+export const assetsFormFormat = ({
+  data,
+  contract_id,
+  nftItemId,
+  type,
+  nftConfig,
+}: {
+  nftConfig: NftConfig;
+  data: any;
+  contract_id: number;
+  nftItemId?: string;
+  type: 'single' | 'blind';
+}) => {
+  const nft_configs = data?.nft_configs ?? [];
+
+  if (nftConfig) {
+    const targetNftItem = (type ==='single' ? nft_configs?.[0] : nft_configs.find((item: any) => item.id === nftItemId)) ?? { probability: 0 };
+    if (targetNftItem) {
+      const { characters, image_url, name } = nftConfig;
+      const metadata_attributes: MetadataAttribute[] = [];
+      characters.forEach((characters) => {
+        if (characters.value) {
+          metadata_attributes.push({ attribute_name: characters.characterName, trait_type: characters.type, value: characters.value.toString() });
+        }
+      });
+
+      Object.assign(targetNftItem, {
         name,
         image_url,
         metadata_attributes,
-      },
-    ],
+      });
+      if ((type === 'blind' && !nftItemId) || (type === 'single' && !nft_configs?.[0])) {
+        nft_configs.push(targetNftItem);
+      }
+    }
+  }
+
+  return {
+    ...data,
+    contract_id: contract_id ?? data?.contract_id,
+    nft_configs,
   };
 };
 
@@ -55,26 +78,3 @@ export interface NftConfigs {
   name: string;
   probability: number;
 }
-export const assetsBlindFormat = (formData: BlindFormData, assetsData: AssetItem[], activity_id?: string) => {
-  const { contract_id, weights } = formData;
-  let nft_configs: NftConfigs[] = [];
-  assetsData.forEach((e) => {
-    let metadata_attributes: MetadataAttribute[] = [];
-    e.characters?.forEach((characters) => {
-      if (characters.value) {
-        metadata_attributes.push({ attribute_name: characters.characterName, trait_type: characters.type, value: characters.value.toString() });
-      }
-    });
-    nft_configs.push({
-      metadata_attributes: [...metadata_attributes],
-      image_url: e.image_url,
-      name: e.name,
-      probability: parseInt(formData.weights[e.key]),
-    });
-  });
-  return {
-    activity_id,
-    contract_id,
-    nft_configs: [...nft_configs],
-  };
-};
