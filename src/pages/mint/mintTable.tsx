@@ -2,28 +2,23 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {
 	Button,
 	Checkbox,
-	Col,
 	Form,
 	FormInstance,
 	Input,
 	InputNumber,
-	Popconfirm,
-	Row,
 	Space,
 	Table, Tooltip,
 	Typography, Image, message,
 } from 'antd';
-import MintFormFields, {checkMintInput} from "./mintFormFields";
-import FileUpload from "../../components/FileUpload";
-import {PictureOutlined, QuestionCircleOutlined, QuestionOutlined} from "@ant-design/icons/lib";
-import ImportImages from "./ImportImages";
-import UploadDir from "./uploadDirectory";
+import { QuestionCircleOutlined } from "@ant-design/icons/lib";
+import MintFormFields, { checkMintInput } from "./mintFormFields";
+import { utils, writeFileXLSX } from "xlsx";
+import FileUpload from "@components/FileUpload";
 import DragUpload from "./dragUpload";
 import ParseLocalFile from "./parseLocalFile";
-import {utils, writeFileXLSX} from "xlsx";
-import {mapChainAndNetworkName} from "@utils/index";
-import {batchMint, easyMintUrl} from "@services/app";
-import {Contract} from "@models/index";
+import { mapChainAndNetworkName } from "@utils/index";
+import { batchMint } from "@services/app";
+import { Contract } from "@models/index";
 
 interface Item {
 	key: string;
@@ -98,7 +93,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
 	);
 };
 
-function MintTable(props:{appId:string, chainId:number, controlForm:boolean, contract: Contract }) {
+function MintTable(props:{appId: string, chainId: number, controlForm: boolean, contract: Contract }) {
 	const {appId, chainId, controlForm, contract} = props;
 	const [form] = Form.useForm();
 	const [headForm] = Form.useForm();
@@ -116,7 +111,7 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean, con
 		setEditingKey(record.key);
 	};
 	const remove = (record: Partial<Item> & { key: React.Key }) => {
-		const arr = data.filter(t=>t.key != record.key);
+		const arr = data.filter(t=>t.key !== record.key);
 		setData(arr)
 	};
 
@@ -227,15 +222,17 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean, con
 			}),
 		};
 	});
+
 	useEffect(()=>{
 		console.log(`data length`, data.length)
 	}, [data])
+
 	const addRow = (url='', name='')=>{
 		let newElement = {key: Date.now().toString(), file_url: url, name, address:'', desc:''};
 		setData(preArr=>[...preArr, newElement]);
 	}
 	const handleImportData = (arr:any[]) => {
-		const map = {"图片链接":"file_url","名字":"name","描述":"desc","接受地址":"address"};
+		const map = {"图片链接": "file_url", "名字": "name", "描述": "desc", "接受地址": "address"};
 		const newArr = arr.map((row, idx)=>{
 			const item = {key: `${idx}`};
 			Object.keys(map).forEach(k=>{
@@ -247,6 +244,7 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean, con
 		console.log(`converted`, newArr)
 		setData(newArr as Item[]);
 	}
+
 	const exportData = ()=>{
 		const values = checkMintInput(headForm, {withAddress: useCols.sameAddress,
 			withDesc: useCols.sameDesc, withName: useCols.sameName, withImage: useCols.sameImage});
@@ -277,8 +275,9 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean, con
 		writeFileXLSX(wb, `export_mints_${dt.getMonth()+1}_${dt.getDate()}.xlsx`);
 		setExporting(false)
 	}
+
 	const mint = () => {
-		const values = checkMintInput(form, {withImage: useCols.sameImage, withName: useCols.sameName,
+		const values = checkMintInput(headForm, {withImage: useCols.sameImage, withName: useCols.sameName,
 			withDesc: useCols.sameDesc, withAddress: useCols.sameAddress})
 		if (!values) {
 			return;
@@ -296,7 +295,18 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean, con
 				chain,
 			}
 			arr.push(nft)
-		})
+		});
+        // if all use same value, just mint one
+        if (useCols.sameImage && useCols.sameName && useCols.sameDesc && useCols.sameAddress) {
+            arr.push({
+                file_url,
+				name,
+				description,
+				mint_to_address,
+				contract_address: contract.address,
+				chain,
+            });
+        }
 		setMintLoading(true)
 		batchMint(props.appId.toString(), arr)
 			.then((res) => {
@@ -312,10 +322,10 @@ function MintTable(props:{appId:string, chainId:number, controlForm:boolean, con
 				setMintLoading(false)
 		})
 	}
+
 	return (
 		<>
-			{controlForm && <Form labelCol={{span: 2}}
-			       wrapperCol={{span: 16}}>
+			{controlForm && <Form labelCol={{span: 2}} wrapperCol={{span: 16}}>
 				<Form.Item label={"选项"}>
 					<Space>
 						{/*ugly code here :( */}

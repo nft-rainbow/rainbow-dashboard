@@ -11,8 +11,8 @@ import { getBotEvents, getDoDoRoles, getDodoChannels, getDodoServers } from '@se
 import { getActivities, ActivityQuerier } from '@services/activity';
 const { Content, Sider } = Layout;
 
-const DISCORD_BOT = 1;
-const DODO_BOT = 2;
+const DISCORD_BOT = 'discord';
+const DODO_BOT = 'dodo';
 
 export default function Page() {
 
@@ -169,11 +169,11 @@ function Dodo() {
         });
     }); */
 
-    /* useEffect(() => {
+    useEffect(() => {
         getActivities({page: 1, limit: 10}).then(res => {
             console.log('activities', res);
         });
-    }); */
+    });
 
     return (<>
         <Layout>

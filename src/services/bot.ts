@@ -5,7 +5,7 @@ export async function getBotEvents(bot: number, page: number, limit: number) {
     return get(`/apps/poap/activity/push/${bot}?page=${page}&limit=${limit}`);
 }
 
-export async function getDodoServers(bot: number) {
+export async function getDodoServers(bot: string) {
     return get(`/apps/poap/activity/servers/${bot}`);
 }
 
