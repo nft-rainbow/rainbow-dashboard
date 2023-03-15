@@ -1,20 +1,39 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { create } from 'zustand';
 import { Card, Button, TablePaginationConfig, type MenuProps, Dropdown } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
 import { ActivityItem } from '../../models';
 import CreatePOA from './createActivities';
 import { columns } from './tableHelper';
-import { getActivities, ActivityQuerier, createActivity } from '@services/activity';
+import { getActivities } from '@services/activity';
 
 const dropItems: MenuProps['items'] = [
   { label: '盲盒活动', key: 1 },
   { label: '单个活动', key: 2 },
 ];
+
+export const useActivitiesStore = create<{ total: number; page: number; limit: number; items: Array<ActivityItem>; setPage: (page: number) => void; getItems: VoidFunction }>(
+  (set, get) => ({
+    total: 0,
+    items: [],
+    page: 1,
+    limit: 10,
+    setPage: (newPage: number) => set({ page: newPage }),
+    getItems: async () =>
+      getActivities({ page: get().page ?? 10, limit: 10 }).then((res) => {
+        set({ total: res.count, items: res.items });
+      }),
+  })
+);
+
 export default function Poaps() {
-  const [items, setItems] = useState<ActivityItem[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
+  const items = useActivitiesStore((state) => state.items);
+  const total = useActivitiesStore((state) => state.total);
+  const page = useActivitiesStore((state) => state.page);
+  const setPage = useActivitiesStore((state) => state.setPage);
+  const getItems = useActivitiesStore((state) => state.getItems);
+
   const [activityType, setActivityType] = useState(-1);
   const [isActivityModalVisible, setIsActivityModalVisible] = useState(false);
 
@@ -23,11 +42,8 @@ export default function Poaps() {
   };
 
   useEffect(() => {
-    getActivities({ page: page, limit: 10 }).then((res) => {
-      setTotal(res.count);
-      setItems(res.items);
-    });
-  }, [isActivityModalVisible]);
+    getItems();
+  }, [page, isActivityModalVisible]);
 
   const extra = (
     <Dropdown
@@ -47,10 +63,10 @@ export default function Poaps() {
       </div>
     </Dropdown>
   );
-
+  
   return (
     <>
-      <Card title="" style={{flexGrow:1}}>
+      <Card title="" style={{ flexGrow: 1 }}>
         <ProTable
           rowKey="activity_id"
           scroll={{ x: 1144 }}
@@ -70,18 +86,14 @@ export default function Poaps() {
           }}
           options={false}
           pagination={{
+            pageSize: 10,
             total,
             current: page,
             showTotal: (total) => `共 ${total} 条`,
           }}
           request={async (params, sort, filter) => {
-            const name = (params.name as string) ?? '';
-            const activity_id = (params.activity_id as string) ?? '';
-            const contract_address = (params.contract_address as string) ?? '';
             try {
-              const res = await getActivities({ name, activity_id, contract_address });
-              setTotal(res.count);
-              setItems(res.items);
+              await getItems();
               return { success: true };
             } catch {
               return { success: false };

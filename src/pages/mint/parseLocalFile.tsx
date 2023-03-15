@@ -47,12 +47,15 @@ function ParseLocalFile(props:{handleData:any}) {
 	}
 
 	function processExcel(data:any) {
-		console.log(`data in file\n`, data)
+		// console.log(`data in file\n`, data)
 		var workbook = read(data);
 
-		var firstSheet = workbook.SheetNames[0];
-		// console.log(`that is `, firstSheet, workbook)
-		var json = utils.sheet_to_json(workbook.Sheets[firstSheet]);
+		var firstSheetName = workbook.SheetNames[0];
+		let sheet = workbook.Sheets[firstSheetName];
+		// console.log(`col `, sheet)
+		// console.log(`that is `, firstSheetName, workbook)
+		var json = utils.sheet_to_json(sheet);
+		// console.log(`keys`, Object.keys(json[0]).join(" "))
 		return json
 	}
 

@@ -215,7 +215,7 @@ export default function AppDetail(props: { appId?: string }) {
                     accept={'.png,.jpg,.svg,.mp3,.mp4,.gif,stp,.max,.fbx,.obj,.x3d,.vrml,.3ds,3mf,.stl,.dae'}
                     listType="picture"
                     maxCount={1}
-                    onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })}
+                    onFormatedChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })}
                   />
                 </Form.Item>
               )}
@@ -302,7 +302,7 @@ export default function AppDetail(props: { appId?: string }) {
             <Input.TextArea rows={4} />
           </Form.Item>
           <Form.Item name="image_uri" label="图片" rules={[{ required: true }]}>
-            <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ image_uri: file.url })} />
+            <FileUpload onFormatedChange={(err: Error, file: any) => form.setFieldsValue({ image_uri: file.url })} />
           </Form.Item>
           <Form.Item name="contract" label="合约地址" rules={[{ required: true }]}>
             <Input placeholder="树图链地址" />

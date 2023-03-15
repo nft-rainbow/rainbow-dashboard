@@ -80,7 +80,7 @@ export const formDataTranslate = (data: FormData, apps: App[], activityType: num
   if (data.activityDate[1]) end_time = dateTraslate(new Date(data.activityDate[1]));
   const appIndex = apps.findIndex((app) => app.id === data.app_id);
   return {
-    activity_picture_url: data.activity_picture_url,
+    activity_picture_url: data?.file?.[0]?.response?.url ?? data?.file?.[0]?.url ?? '',
     amount: parseInt(data.amount ?? '-1'),
     app_id: data.app_id,
     chain_type: apps[appIndex].chain_type,
@@ -102,7 +102,7 @@ export const updateformDataTranslate = (activity: ActivityItem, data: FormData) 
   start_time = dateTraslate(new Date(data.activityDate[0]));
   if (data.activityDate[1]) end_time = dateTraslate(new Date(data.activityDate[1]));
   return {
-    activity_picture_url: data.activity_picture_url ?? '',
+    activity_picture_url: data?.file?.[0]?.response?.url ?? data?.file?.[0]?.url ?? '',
     amount: parseInt(data.amount ?? '-1'),
     app_id: data.app_id,
     activity_id: activity.activity_id ?? '',
