@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import RainbowBreadcrumb from '../../components/Breadcrumb';
-import FileUpload from '../../components/FileUpload';
+import RainbowBreadcrumb from '@components/Breadcrumb';
+import FileUpload from '@components/FileUpload';
 import { Divider, Button, Form, Input, Row, Col, message, Alert } from 'antd';
-import { userProfile, updateUserProfile, updateUserKyc } from '../../services/user';
-import { User } from '../../models';
+import { userProfile, updateUserProfile, updateUserKyc } from '@services/user';
+import { User } from '@models/index';
 
 const layout = {
   labelCol: { span: 6 },
@@ -56,7 +56,7 @@ function UserManagement() {
   }, [basicForm, kycForm]);
 
   return (
-    <div>
+    <div style={{flexGrow:1}}>
       <RainbowBreadcrumb items={['设置', '用户设置']} />
       <div className="content-body">
         { (user as User).kyc_msg ? <Alert message={(user as User).kyc_msg} type="error" showIcon /> : null }

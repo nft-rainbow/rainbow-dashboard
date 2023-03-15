@@ -91,7 +91,7 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 			})
 	}
 	if (!contract.address) {
-		return "合约地址不正确"
+		return <span>"合约地址不正确"</span>;
 	}
 	return (
 		<>

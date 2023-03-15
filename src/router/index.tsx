@@ -7,6 +7,7 @@ import DashboardLayout from '@pages/layout';
 import Panel from '@pages/panel';
 import User from '@pages/users/user';
 import UserBalance from '@pages/users/userBalance';
+import UserMintCountByMonth from '@pages/users/userMintsByMonth';
 import Company from '@pages/company';
 import App from '@pages/apps';
 import AppDetail from '@pages/apps/detail';
@@ -17,11 +18,13 @@ import Poaps from '@pages/activities';
 import Asset from '@pages/activities/manageAssets';
 import Blind from '@pages/activities/manageAssetsBlind';
 import Building from '@pages/activities/Building';
+import Metadata from '@pages/metadata';
+import EmptyPage from '@pages/emptyPage';
+import Bots from '@pages/bots';
 import MintFrame from "@pages/mint/mintFrame";
-import Metadata from "../routes/metadata";
-import MetaTable from "../routes/metadata";
-import {PlanFrame} from "@pages/plan/PlanFrame";
-import {PlanList} from "@pages/plan/PlanList";
+import AutoSponsors from "@pages/contracts/autoSponsorContracts";
+// import {PlanFrame} from "@pages/plan/PlanFrame";
+// import {PlanList} from "@pages/plan/PlanList";
 
 const AppRouter: React.FC = () => {
   return (
@@ -41,20 +44,24 @@ const AppRouter: React.FC = () => {
             <Route index element={<Panel />} />
             <Route path="user" element={<User />} />
             <Route path="userBalance" element={<UserBalance />} />
+            <Route path="mintCountByMonth" element={<UserMintCountByMonth />} />
             <Route path="company" element={<Company />} />
             <Route path="apps" element={<App />} />
             <Route path="apps/:id" element={<AppDetail />} />
             <Route path="mint/:id" element={<MintFrame />} />
-            <Route path="plan/:id" element={<PlanFrame />} />
-            <Route path="plan/list" element={<PlanList />} />
+            {/* <Route path="plan/:id" element={<PlanFrame />} />
+            <Route path="plan/list" element={<PlanList />} /> */}
             <Route path="contracts" element={<Contracts />} />
-            <Route path="metadata" element={<MetaTable />} />
             <Route path="contracts/sponsor" element={<ContractSponsor />} />
+            <Route path="contracts/autoSponsors" element={<AutoSponsors />} />
             <Route path="contracts/deploy" element={<ContractDeployment />} />
             <Route path="poaps" element={<Poaps />} />
             <Route path="poaps/asset/single/:activityId" element={<Asset />} />
             <Route path="poaps/asset/blind/:activityId" element={<Blind />} />
             <Route path="poaps/building/:activityId" element={<Building />} />
+            <Route path="metadata" element={<Metadata />} />
+            <Route path="socialBot" element={<Bots />} />
+            <Route path="empty" element={<EmptyPage />} />
           </Route>
           <Route path="/" element={<Navigate to="panels" />} />
           <Route path="*" element={<Navigate to="/" />} />

@@ -154,3 +154,24 @@ export interface AssetItem {
   image_url?: string;
   name: string;
 }
+
+export interface BotEvent extends BaseModel {
+    event_id: string;
+    type: number;
+    server_id: string;
+    server_name: string;
+    event_name: string;
+    chain: number;
+    contract: string;
+    start_time: string;
+    end_time: string;
+    push_time: string;
+}
+
+export interface AutoSponsorContract extends BaseModel {
+    address: string;
+    user_id: number;
+    auto_sponsor: boolean;
+    storage_recharge_threshold: number;
+    storage_recharge_amount: number;
+}

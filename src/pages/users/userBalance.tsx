@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import RainbowBreadcrumb from '../../components/Breadcrumb';
+import RainbowBreadcrumb from '@components/Breadcrumb';
 import {
     Button,
     Form,
@@ -16,12 +16,12 @@ import {
     DatePicker
 } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons'
-import { userFiatLogs, userBalanceRuntime } from '../../services/user';
-import { createWxPayOrder } from '../../services/pay';
+import { userFiatLogs, userBalanceRuntime } from '@services/user';
+import { createWxPayOrder } from '@services/pay';
 import { QRCodeSVG } from 'qrcode.react';
 import './userBalance.css';
-import { FiatLog } from '../../models';
-import { formatDate, mapFiatLogType, short, scanAddressLink } from '../../utils';
+import { FiatLog } from '@models/index';
+import { formatDate, mapFiatLogType, short, scanAddressLink } from '@utils/index';
 import type { RangePickerProps } from 'antd/es/date-picker';
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -174,7 +174,7 @@ export default function UserBalance() {
     );
 
     return (
-        <div>
+        <div style={{flexGrow:1}}>
             <RainbowBreadcrumb items={['设置', '用户中心']} />
             <Card>
                 <div style={{width: '200px', float: 'left'}}>

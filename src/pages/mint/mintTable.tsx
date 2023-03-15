@@ -1,16 +1,25 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Button, Checkbox, Col, Form, FormInstance, Input, InputNumber, Popconfirm, Row, Space, Table, Tooltip, Typography, Image, message } from 'antd';
-import MintFormFields, { checkMintInput } from './mintFormFields';
-import FileUpload from '../../components/FileUpload';
-import { PictureOutlined, QuestionCircleOutlined, QuestionOutlined } from '@ant-design/icons/lib';
-import ImportImages from './ImportImages';
-import UploadDir from './uploadDirectory';
-import DragUpload from './dragUpload';
-import ParseLocalFile from './parseLocalFile';
-import { utils, writeFileXLSX } from 'xlsx';
-import { mapChainAndNetworkName } from '@utils/index';
-import { batchMint, easyMintUrl } from '@services/app';
-import { Contract } from '@models/index';
+import React, {useCallback, useEffect, useState} from 'react';
+import {
+	Button,
+	Checkbox,
+	Form,
+	FormInstance,
+	Input,
+	InputNumber,
+	Space,
+	Table, Tooltip,
+	Typography, Image, message,
+    Col, Row,
+} from 'antd';
+import { QuestionCircleOutlined } from "@ant-design/icons/lib";
+import MintFormFields, { checkMintInput } from "./mintFormFields";
+import { utils, writeFileXLSX } from "xlsx";
+import FileUpload from "@components/FileUpload";
+import DragUpload from "./dragUpload";
+import ParseLocalFile from "./parseLocalFile";
+import { mapChainAndNetworkName } from "@utils/index";
+import { batchMint } from "@services/app";
+import { Contract } from "@models/index";
 const { Text } = Typography;
 
 interface Item {
@@ -85,31 +94,31 @@ const EditableCell: React.FC<EditableCellProps> = ({ editing, dataIndex, title, 
   );
 };
 
-function MintTable(props: { appId: string; chainId: number; controlForm: boolean; contract: Contract }) {
-  const { appId, chainId, controlForm, contract } = props;
-  const [form] = Form.useForm();
-  const [headForm] = Form.useForm();
-  const [data, setData] = useState(originData);
-  const [useCols, setUseCols] = useState({ sameName: false, sameImage: false, sameDesc: false, sameAddress: false });
-  const [editingKey, setEditingKey] = useState('');
-  const [mintLoading, setMintLoading] = useState(false);
-  const [exporting, setExporting] = useState(false);
-  const [step, setStep] = useState('edit' as 'edit' | 'submit' | 'done');
+function MintTable(props: {appId: string, chainId: number, controlForm: boolean, contract: Contract}) {
+	const {appId, chainId, controlForm, contract} = props;
+	const [form] = Form.useForm();
+	const [headForm] = Form.useForm();
+	const [data, setData] = useState(originData);
+	const [useCols, setUseCols] = useState({sameName: false, sameImage: false, sameDesc: false, sameAddress: false,})
+	const [editingKey, setEditingKey] = useState('');
+	const [mintLoading, setMintLoading] = useState(false);
+	const [exporting, setExporting] = useState(false);
+	const [step, setStep] = useState('edit' as 'edit'|'submit'|'done');
 
-  const isEditing = (record: Item) => record.key === editingKey;
+    const isEditing = (record: Item) => record.key === editingKey;
 
-  const edit = (record: Partial<Item> & { key: React.Key }) => {
-    form.setFieldsValue({ name: '', age: '', address: '', ...record });
-    setEditingKey(record.key);
-  };
-  const remove = (record: Partial<Item> & { key: React.Key }) => {
-    const arr = data.filter((t) => t.key != record.key);
-    setData(arr);
-  };
+	const edit = (record: Partial<Item> & { key: React.Key }) => {
+		form.setFieldsValue({ name: '', age: '', address: '', ...record });
+		setEditingKey(record.key);
+	};
+	const remove = (record: Partial<Item> & { key: React.Key }) => {
+		const arr = data.filter(t=>t.key !== record.key);
+		setData(arr)
+	};
 
-  const cancel = () => {
-    setEditingKey('');
-  };
+    const cancel = () => {
+        setEditingKey('');
+    };
 
   const save = async (key: React.Key) => {
     try {
@@ -312,7 +321,7 @@ function MintTable(props: { appId: string; chainId: number; controlForm: boolean
     setExporting(false);
   };
   const mint = () => {
-    const values = checkMintInput(form, { withImage: useCols.sameImage, withName: useCols.sameName, withDesc: useCols.sameDesc, withAddress: useCols.sameAddress });
+    const values = checkMintInput(headForm, { withImage: useCols.sameImage, withName: useCols.sameName, withDesc: useCols.sameDesc, withAddress: useCols.sameAddress });
     if (!values) {
       return;
     }
@@ -331,6 +340,17 @@ function MintTable(props: { appId: string; chainId: number; controlForm: boolean
       };
       arr.push(nft);
     });
+    // if all use same value, just mint one
+    if (useCols.sameImage && useCols.sameName && useCols.sameDesc && useCols.sameAddress) {
+        arr.push({
+            file_url,
+            name,
+            description,
+            mint_to_address,
+            contract_address: contract.address,
+            chain,
+        });
+    }
     setMintLoading(true);
     batchMint(props.appId.toString(), arr)
       .then((res) => {

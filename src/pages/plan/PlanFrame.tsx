@@ -20,7 +20,7 @@ export function PlanFrame() {
 		})
 	}, [planId])
 	if (!plan.app_id) {
-		return "Loading...";
+		return <span>"Loading..."</span>;
 	}
 	const items: TabsProps['items'] = [
 		{key: '10',			label: `发行设置`,

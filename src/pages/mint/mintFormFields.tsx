@@ -1,15 +1,8 @@
-import React, {FormEventHandler, useCallback, useEffect, useState} from 'react';
-import {Button, Form, FormInstance, Input, message, Radio, Select, Space, Tooltip, Typography, Upload} from 'antd';
-import {CheckboxChangeEvent} from "antd/es/checkbox";
-import FileUpload from "../../components/FileUpload";
+import React, { useEffect, useState } from 'react';
+import { Button, Form, FormInstance, Input, message, Space, Tooltip, Typography, Upload, Image } from 'antd';
 import {LinkOutlined, QuestionCircleOutlined, UploadOutlined, UserOutlined} from "@ant-design/icons/lib";
-import {Image} from "antd"
 import {getAppAccounts} from "@services/app";
-
-import {authHeaderSync, methodUrl} from "../../services";
-import FormUpload from "./MintUpload";
-
-const {Option} = Select;
+import {authHeaderSync, methodUrl} from "@services/index";
 
 const onFinish = (values: any) => {
 	console.log('Received values of form: ', values);
@@ -19,12 +12,13 @@ export default function MintFormFields(props: {
 	withImage: boolean, withName: boolean, withDesc: boolean,
 	withAddress: boolean, form: FormInstance, appId: string, chainId: number
 }) {
-	const {Text, Link} = Typography;
+	const { Text } = Typography;
 	const {form, appId, chainId} = props;
 	const [myAccount, setMyAccount] = useState('fetching')
 	const [uploadPercent, setUploadPercent] = useState(0);
 	const [previewUrl, setPreviewUrl] = useState('');
-	useEffect(() => {
+	
+    useEffect(() => {
 		if (!appId) {
 			return;
 		}
@@ -32,11 +26,13 @@ export default function MintFormFields(props: {
 			const acc = accounts.find(item => item.chain_id === chainId)?.address || "";
 			setMyAccount(acc);
 		});
-	}, [appId])
+	}, [appId, chainId])
+
 	const fillMintTo = () => {
 		form.setFieldsValue({"mint_to_address": myAccount})
 		console.log(`form values`, form.getFieldsValue())
 	}
+
 	const normFile = (e: any) => {
 		// Upload component requires this function
 		if (Array.isArray(e)) {
@@ -44,6 +40,7 @@ export default function MintFormFields(props: {
 		}
 		return e?.fileList;
 	};
+
 	return (
 		<Form
 			name="complex-form" form={form}
@@ -52,14 +49,10 @@ export default function MintFormFields(props: {
 			wrapperCol={{span: 16}}
 		>
 			{props.withImage &&
-			<Form.Item name={"file_group"} label="图片链接"
-			           style={{marginBottom: previewUrl ? '0px' : '24px', border: '0px solid red'}}>
+			<Form.Item name={"file_group"} label="图片链接" style={{marginBottom: previewUrl ? '0px' : '24px', border: '0px solid red'}}>
 				<Space direction={"vertical"}>
 				<Space>
-					<Form.Item name="file_url" noStyle
-						style={{// display: 'inline-block',
-							width: 'calc(90% - 8px)',border: '0px solid red'}}
-					>
+					<Form.Item name="file_url" noStyle style={{width: 'calc(90% - 8px)',border: '0px solid red'}}>
 						<Input placeholder=""/>
 					</Form.Item>
 
@@ -149,7 +142,9 @@ export function checkMintInput(form: FormInstance, {
 	withImage: boolean, withName: boolean, withDesc: boolean,
 	withAddress: boolean
 }) {
-	const {file_url, name, description, mint_to_address, useUpload} = form.getFieldsValue();
+	const { file_url, name, description, mint_to_address } = form.getFieldsValue();
+    console.log(form.getFieldsValue());
+    console.log('checkMintInput: ', file_url, name, description, mint_to_address);
 	if (withImage && !file_url) {
 		message.info(`请设置图片`)
 		return;
