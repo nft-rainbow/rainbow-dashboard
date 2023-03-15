@@ -45,7 +45,7 @@ const items: MenuItem[] = [
   getItem(<Link to="/panels/contracts">智能合约</Link>, '3', <AuditOutlined />),
   // getItem(<Link to="/panels/plan/list">发行计划</Link>, '300', <AuditOutlined />),
   getItem(<Link to="/panels/poaps">活动</Link>, '4', <AuditOutlined />),
-  getItem(<Link to="/panels/socialBot">社群Bot</Link>, '5', <RobotOutlined />),
+//   getItem(<Link to="/panels/socialBot">社群Bot</Link>, '5', <RobotOutlined />),
   getItem(<Link to="/panels/metadata">元数据</Link>, '6', <NodeIndexOutlined />),
   getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">开发文档</a>, '7', <CodeOutlined />),
 ];
