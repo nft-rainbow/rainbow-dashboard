@@ -84,7 +84,7 @@ const Asset: React.FC = () => {
             </div>
             <div></div>
             <Form.Item name="name" label="藏品名称：" rules={[{ required: true, message: '请输入藏品名称' }]}>
-              <Input placeholder="2023烤仔守护神兔全家福" />
+              <Input />
             </Form.Item>
             <Form.Item name="contract_id" label="合约地址" rules={[{ required: true, message: '请选择合约地址' }]} >
               <Select placeholder="请选择" disabled={!isContractEditable}>

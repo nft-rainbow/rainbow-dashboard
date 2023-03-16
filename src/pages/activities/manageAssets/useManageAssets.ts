@@ -62,7 +62,7 @@ const useManageAssets = (type: 'single' | 'blind', nftItemId?: string) => {
     form.setFieldsValue({
       name: nftConfig?.name ?? '',
       contract_id: data.contract_id ?? '',
-      characters: nftConfig?.metadata_attributes?.map((attribute) => ({ type: attribute?.trait_type, characterName: attribute?.attribute_name, value: attribute?.value })) ?? [],
+      characters: nftConfig?.metadata_attributes?.map((attribute) => ({ type: attribute?.trait_type, characterName: attribute?.attribute_name, value: attribute?.value, id: attribute?.id })) ?? [],
       file: [
         {
           uid: '1',

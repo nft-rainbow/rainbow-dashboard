@@ -2,23 +2,23 @@ import dayjs from 'dayjs';
 export function mapChainName(chainType: number) {
   switch (chainType) {
     case 1:
-      return "Conflux";
+      return 'Conflux';
     case 2:
       return 'Ethereum';
     default:
-      return "Other";
+      return 'Other';
   }
 }
 
 export function mapChainAndNetworkName(chainType: number, chainId: number) {
-    switch (chainType) {
-      case 1:
-        return chainId === 1029 ? 'conflux' : 'conflux_test';
-      case 2:
-        return "Ethereum";
-      default:
-        return "Other";
-    }
+  switch (chainType) {
+    case 1:
+      return chainId === 1029 ? 'conflux' : 'conflux_test';
+    case 2:
+      return 'Ethereum';
+    default:
+      return 'Other';
+  }
 }
 
 export function mapAppType(appType: number) {
@@ -33,20 +33,20 @@ export function mapAppType(appType: number) {
 }
 
 export function mapFiatLogType(type: number) {
-    switch (type) {
-        case 1:
-            return "充值";
-        case 2:
-            return "提现";
-        case 3:
-            return "购买燃气";
-        case 4:
-            return "购买存储";
-        case 5:
-            return "API费用";
-        default:
-            return "其他";
-    }
+  switch (type) {
+    case 1:
+      return '充值';
+    case 2:
+      return '提现';
+    case 3:
+      return '购买燃气';
+    case 4:
+      return '购买存储';
+    case 5:
+      return 'API费用';
+    default:
+      return '其他';
+  }
 }
 
 export function formatDate(date: Date | string) {
@@ -82,8 +82,8 @@ export function scanAddressLink(chainType: number, chainId: number, address: str
 }
 
 export function scanAddressLinkByPrefix(address: string) {
-    const chainId = address.toLowerCase().startsWith('cfxtest') ? 1 : 1029;
-    return `${scanHostFromChainId(chainId)}/address/${address}`;
+  const chainId = address.toLowerCase().startsWith('cfxtest') ? 1 : 1029;
+  return `${scanHostFromChainId(chainId)}/address/${address}`;
 }
 
 // Only support Conflux mainnet and testnet
@@ -114,9 +114,9 @@ export function mapSimpleStatus(status: number) {
 export function mapNFTType(type: number) {
   switch (type) {
     case 1:
-      return "erc721";
+      return 'erc721';
     case 2:
-      return "erc1155";
+      return 'erc1155';
     default:
       return '未知';
   }
@@ -155,10 +155,12 @@ export const chainTypeToName = (chainType: number) => {
   }
 };
 
-export const timestampToDay = (timestamp: number | undefined) => {
-  if (!timestamp || timestamp === -1) return '--';
-  const date = new Date(timestamp * 1000);
-  return `${date.getFullYear()}-${padLeftZero(date.getMonth() + 1)}-${padLeftZero(date.getDate())}`;
+export const timestampToSecond2 = (timestamp?: number | string) => {
+  if (!timestamp || timestamp === -1 || timestamp === '-1') return '--';
+  const date = new Date(+`${timestamp}000`);
+  return `${date.getFullYear()}-${padLeftZero(date.getMonth() + 1)}-${padLeftZero(date.getDate())} ${padLeftZero(date.getHours())}:${padLeftZero(date.getMinutes())}:${padLeftZero(
+    date.getSeconds()
+  )}`;
 };
 
 export const timestampToSecond = (preDate: string) => {

@@ -20,17 +20,16 @@ interface CreatePOAProps {
 const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activity }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [form] = Form.useForm();
-  const defaultSwitchers: Switchers = {
-    dateDisabled: !!activity.end_time,
-    numberDisabled: activity.amount === -1,
-    publicLimitDisabled: activity.max_mint_count === -1,
-    passwordDisabled: !!activity.command,
-    whitelistDisabled: !!activity.white_list_infos,
-    existRelationForbidden: false,
-  };
   const { Option } = Select;
   const { RangePicker } = DatePicker;
-  const [switchers, dispatch] = useReducer(handleFormSwitch, defaultSwitchers);
+  const [switchers, dispatch] = useReducer(handleFormSwitch, {
+    dateDisabled: !activity.end_time,
+    numberDisabled: activity.amount === -1,
+    publicLimitDisabled: activity.max_mint_count === -1,
+    passwordDisabled: !activity.command,
+    whitelistDisabled: !!activity.white_list_infos,
+    existRelationForbidden: false,
+  });
 
   const checkRelAllowed = useCallback((rule: any, value: number, callback: any) => {
     const amount = form.getFieldValue('amount');

@@ -100,7 +100,7 @@ const AddAssetsModal: React.FC<AddAssetsModalProps> = ({ open, type, id, onCance
           <FileUploadNew maxCount={1} listType="picture" type="plus" wrapperClass="block w-full !mb-24px" className="block" />
         </Form.Item>
         <Form.Item name="name" label="藏品名称：" rules={[{ required: true, message: '请输入藏品名称' }]}>
-          <Input placeholder="2023烤仔守护神兔全家福" />
+          <Input />
         </Form.Item>
         <Form.List name="characters">
           {(fields, { add, remove }) => (

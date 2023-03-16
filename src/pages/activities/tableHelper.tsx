@@ -9,7 +9,7 @@ import AirDrop from '@assets/icons/airDrop.svg';
 import ManageActivity from '@assets/icons/manageActivity.svg';
 import ManageCollection from '@assets/icons/manageCollection.svg';
 import WebLink from '@assets/icons/webLink.svg';
-import { chainTypeToName, timestampToDay, timestampToSecond, turnTimestamp } from '../../utils';
+import { chainTypeToName, timestampToSecond2, timestampToSecond, turnTimestamp } from '../../utils';
 import { shortenCfxAddress } from '@utils/addressUtils';
 import { activityTypeTransform, activityTypeTransformEn } from '@utils/activityHelper';
 import { useActivitiesStore } from './index';
@@ -99,15 +99,15 @@ export const activityOperations: React.FC<ActivityItem> = (activity: ActivityIte
           <img src={ManageCollection} />
         </Tooltip>
       </Link>
-      <Tooltip title="空投" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
+      <Tooltip title="空投" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer opacity-30 pointer-events-none">
         <img src={AirDrop} />
       </Tooltip>
       <ClaimLinkIcon activity={activity} />
-      <Link to={`/panels/poaps/building/${activity.activity_id}`}>
-        <Tooltip title="网页搭建" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
+      {/* <Link to={`/panels/poaps/building/${activity.activity_id}`}> */}
+        <Tooltip title="网页搭建" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer opacity-30 pointer-events-none">
           <img src={WebLink} />
         </Tooltip>
-      </Link>
+      {/* </Link> */}
     </div>
   );
 };
@@ -145,7 +145,7 @@ export const columns: ProColumns<ActivityItem>[] = [
   {
     title: '开始时间',
     dataIndex: 'start_time',
-    render: (_, record) => timestampToDay(parseInt(record.start_time)),
+    render: (_, record) => timestampToSecond2(record.start_time),
     defaultSortOrder: 'ascend',
     sorter: (a: ActivityItem, b: ActivityItem) => parseInt(b.start_time) - parseInt(a.start_time),
     search: false,
@@ -153,7 +153,7 @@ export const columns: ProColumns<ActivityItem>[] = [
   {
     title: '结束时间',
     dataIndex: 'end_time',
-    render: (_, record) => timestampToDay(record.end_time),
+    render: (_, record) => timestampToSecond2(record.end_time),
     search: false,
   },
   {
