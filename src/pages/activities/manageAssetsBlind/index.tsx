@@ -76,7 +76,7 @@ const ManageAssetsBlind: React.FC = () => {
     form.setFieldsValue({
       contract_id: data.contract_id ?? '',
       ...(data?.nft_configs ? Object.fromEntries(data?.nft_configs?.map((nftItem: any) => [`nftConfig-${nftItem.id}`, nftItem])) : {}),
-      ...(data?.nft_configs ? Object.fromEntries(data?.nft_configs?.map((nftItem: any) => [`nftConfig-${nftItem.id}-probability`, nftItem?.probability])) : {}),
+      ...(data?.nft_configs ? Object.fromEntries(data?.nft_configs?.map((nftItem: any) => [`nftConfig-${nftItem.id}-probability`, nftItem?.probability * 100])) : {}),
     });
   }, [data]);
 
@@ -108,7 +108,7 @@ const ManageAssetsBlind: React.FC = () => {
             <BlindTableItem key={item.id} {...item} />
           ))}
           <div className="mt-[24px] flex justify-center items-center">
-            <Input type="submit" className="w-[188px] bg-[#6953EF] text-[#FFFFFF] rounded-[2px]" value="保存" />
+            <Input type="submit" className="w-[188px] bg-[#6953EF] text-[#FFFFFF] rounded-[2px] cursor-pointer" value="保存" />
           </div>
         </Form>
         {open && <AddAssetsModal open={open} onCancel={() => setOpen(false)} type="add" />}
