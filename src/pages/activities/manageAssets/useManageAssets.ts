@@ -14,7 +14,7 @@ const useManageAssets = (type: 'single' | 'blind', nftItemId?: string) => {
   const { activityId } = useParams<{ activityId: string }>();
   const { inTransaction, execTranscation: updatePoap } = useInTransaction(_updatePoap);
   const { data, mutate } = useSWR(`api/apps/poap/activity/${activityId}`, () => getActivityById(activityId));
-  const isContractEditable = useMemo(() => !data?.contract_address, [data]);
+  const isContractEditable = useMemo(() => !data?.contract_address || !contracts?.find((contract) => contract?.address === data?.contract_address), [data, contracts]);
 
   const handleFinish = useCallback(
     async (formData: any) => {
@@ -57,7 +57,14 @@ const useManageAssets = (type: 'single' | 'blind', nftItemId?: string) => {
 
   useEffect(() => {
     const nftConfig = type === 'blind' ? data?.nft_configs?.find((item: any) => item.id === nftItemId) : data?.nft_configs?.[0];
-    if (!nftConfig) return;
+    if (!nftConfig) {
+      if (data) {
+        form.setFieldsValue({
+          contract_id: data.contract_id ?? '',
+        });
+      }
+      return;
+    }
     form.setFieldsValue({
       name: nftConfig?.name ?? '',
       contract_id: data.contract_id ?? '',

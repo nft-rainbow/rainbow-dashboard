@@ -101,13 +101,13 @@ export const updateformDataTranslate = (activity: ActivityItem, data: FormData) 
   let end_time = null;
   start_time = dateTraslate(new Date(data.activityDate[0]));
   if (data.activityDate[1]) end_time = dateTraslate(new Date(data.activityDate[1]));
+  console.log(activity)
   return {
+    ...activity,
+    activity_type: activity.activity_type ?? 1,
     activity_picture_url: data?.file?.[0]?.response?.url ?? data?.file?.[0]?.url ?? '',
     amount: parseInt(data.amount ?? '-1'),
     app_id: data.app_id,
-    activity_id: activity.activity_id ?? '',
-    contract_id: activity.contract_id ?? 0,
-    chain_type: activity.chain_type,
     description: data.description,
     start_time: start_time,
     end_time: end_time ?? -1,
@@ -115,8 +115,6 @@ export const updateformDataTranslate = (activity: ActivityItem, data: FormData) 
     white_list_infos: data.white_list_infos,
     command: data.command ?? '',
     name: data.name,
-    activity_type: 1,
-    app_name: activity.app_name,
   };
 };
 
