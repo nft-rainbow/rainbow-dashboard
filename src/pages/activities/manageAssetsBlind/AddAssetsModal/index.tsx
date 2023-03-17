@@ -16,18 +16,19 @@ const characterItms: MenuProps['items'] = [
   },
 ];
 interface CharacterItemProps {
-  type: string;
+  trait_type: string;
+  display_type?: string;
   name: number;
   id: number;
   remove: (index: number | number[]) => void;
 }
-const CharacterItem: React.FC<CharacterItemProps> = ({ type, name, id, remove }) => {
+const CharacterItem: React.FC<CharacterItemProps> = ({ display_type, name, id, remove }) => {
   return (
     <div className="grid grid-cols-[41.8%_41.8%_8%] gap-x-[16px]" key={`${name}-${id}`}>
       <>
-        {type === 'text' && (
+        {(!display_type || display_type === 'text' || display_type === 'string') && (
           <>
-            <Form.Item noStyle name={[name, 'characterName']}>
+            <Form.Item noStyle name={[name, 'trait_type']}>
               <Input placeholder="请输入特征名称" />
             </Form.Item>
             <Form.Item noStyle name={[name, 'value']}>
@@ -35,9 +36,9 @@ const CharacterItem: React.FC<CharacterItemProps> = ({ type, name, id, remove })
             </Form.Item>
           </>
         )}
-        {type === 'date' && (
+        {display_type === 'date' && (
           <>
-            <Form.Item noStyle name={[name, 'characterName']}>
+            <Form.Item noStyle name={[name, 'trait_type']}>
               <Input placeholder="日期" />
             </Form.Item>
             <Form.Item noStyle name={[name, 'value']}>
@@ -116,7 +117,7 @@ const AddAssetsModal: React.FC<AddAssetsModalProps> = ({ open, type, id, onCance
               </div>
               <div className="flex flex-col gap-y-[16px]">
                 {fields.map((field, index) => (
-                  <CharacterItem type={form.getFieldValue(['characters', index, 'type'])} id={index} name={field.name} remove={remove} key={index} />
+                  <CharacterItem display_type={form.getFieldValue(['characters', index, 'display_type'])} id={index} name={field.name} remove={remove} key={index} />
                 ))}
               </div>
             </div>

@@ -1,13 +1,15 @@
 import { AssetItem } from '@models/index';
 interface Character {
-  type: 'text' | 'date';
-  characterName: string;
+  id?: string;
+  display_type: 'text' | 'date';
+  character: string;
   value?: string | Date;
 }
 export interface MetadataAttribute {
-  attribute_name: string;
+  id?: string;
+  display_type: 'text' | 'date';
   trait_type: string;
-  value: string;
+  value?: string | Date;
 }
 
 export interface PoapActivityConfig {
@@ -41,27 +43,35 @@ export const assetsFormFormat = ({
     const targetNftItem = (type === 'single' ? nft_configs?.[0] : nft_configs.find((item: any) => item.id === nftItemId)) ?? { probability: 0 };
     if (targetNftItem) {
       const { characters, image_url, name } = nftConfig;
+
       let metadata_attributes: MetadataAttribute[] = targetNftItem?.metadata_attributes ?? [];
+      metadata_attributes = metadata_attributes.filter(attribute => !!characters.find((character) => character?.id === attribute?.id));
       metadata_attributes.forEach((attribute) => {
         const targetCharacter = characters.find((character) => character?.id === attribute?.id);
         if (targetCharacter) {
+          attribute.trait_type = targetCharacter.trait_type?.toString() ?? '';
           attribute.value = targetCharacter.value?.toString() ?? '';
         }
       });
+
       characters.forEach((character) => {
         const isCharacterNew = !metadata_attributes.find((attribute) => attribute?.id === character?.id);
         if (isCharacterNew) {
-          metadata_attributes.push({ attribute_name: character.characterName, trait_type: character.type, value: character.value?.toString() ?? '' });
+          metadata_attributes.push({
+            trait_type: character.trait_type,
+            value: character.value?.toString() ?? '',
+            ...(character.display_type ? { display_type: character.display_type } : {}),
+          });
         }
       });
 
-      metadata_attributes = metadata_attributes.filter((attribute) => !!attribute?.value);
+      metadata_attributes = metadata_attributes.filter((attribute) => !!attribute?.value && !!attribute?.trait_type);
       Object.assign(targetNftItem, {
         name,
         image_url,
         metadata_attributes,
       });
-      
+
       if ((type === 'blind' && !nftItemId) || (type === 'single' && !nft_configs?.[0])) {
         nft_configs.push(targetNftItem);
       }

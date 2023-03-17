@@ -47,7 +47,7 @@ const ManageAssetsBlind: React.FC = () => {
         const id = Number(probability.split('-')[1]);
         const value = formData[probability];
         const index = nftConfigs.findIndex((nftItem) => +nftItem?.id === id);
-        nftConfigs[index].probability = +value;
+        nftConfigs[index].probability = +value / 100;
       });
 
       const newData = { ...data, nftConfigs, contract_id: formData?.contract_id };

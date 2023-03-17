@@ -19,18 +19,19 @@ const items: MenuProps['items'] = [
   },
 ];
 interface CharacterItemProps {
-  type: string;
+  trait_type: string;
+  display_type?: string;
   name: number;
   id: number;
   remove: (index: number | number[]) => void;
 }
-const CharacterItem: React.FC<CharacterItemProps> = ({ type, name, id, remove }) => {
+const CharacterItem: React.FC<CharacterItemProps> = ({ display_type, name, id, remove }) => {
   return (
     <div className="flex flex-row" key={`${name}-${id}`}>
       <>
-        {type === 'text' && (
+        {(!display_type || display_type === 'text' || display_type === 'string') && (
           <>
-            <Form.Item noStyle name={[name, 'characterName']}>
+            <Form.Item noStyle name={[name, 'trait_type']}>
               <Input placeholder="请输入特征名称" className="mr-16px" />
             </Form.Item>
             <Form.Item noStyle name={[name, 'value']}>
@@ -38,9 +39,9 @@ const CharacterItem: React.FC<CharacterItemProps> = ({ type, name, id, remove })
             </Form.Item>
           </>
         )}
-        {type === 'date' && (
+        {display_type === 'date' && (
           <>
-            <Form.Item noStyle name={[name, 'characterName']}>
+            <Form.Item noStyle name={[name, 'trait_type']}>
               <Input placeholder="日期" className="mr-16px" />
             </Form.Item>
             <Form.Item noStyle name={[name, 'value']}>
@@ -86,7 +87,7 @@ const Asset: React.FC = () => {
             <Form.Item name="name" label="藏品名称：" rules={[{ required: true, message: '请输入藏品名称' }]}>
               <Input />
             </Form.Item>
-            <Form.Item name="contract_id" label="合约地址" rules={[{ required: true, message: '请选择合约地址' }]} >
+            <Form.Item name="contract_id" label="合约地址" rules={[{ required: true, message: '请选择合约地址' }]}>
               <Select placeholder="请选择" disabled={!isContractEditable}>
                 {contracts.map((e) => (
                   <Option label={e.address} value={e.id} key={e.address}>
@@ -101,7 +102,7 @@ const Asset: React.FC = () => {
               <>
                 <div className="mb-8px flex flex-row justify-between">
                   <label>特征设置：</label>
-                  <Dropdown trigger={['click']} menu={{ items, onClick: (e) => add({ type: e.key }) }}>
+                  <Dropdown trigger={['click']} menu={{ items, onClick: (e) => add({ display_type: e.key }) }}>
                     <a className="border border-solid border-#6953EF py-1px px-12px rounded-2px">
                       新增
                       <DownOutlined />
@@ -110,7 +111,7 @@ const Asset: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-x-16px gap-y-16px">
                   {fields.map((field, index) => (
-                    <CharacterItem type={form.getFieldValue(['characters', index, 'type'])} id={index} name={field.name} remove={remove} key={index} />
+                    <CharacterItem display_type={form.getFieldValue(['characters', index, 'display_type'])} remove={remove} key={index} id={index} name={field.name}  />
                   ))}
                 </div>
               </>

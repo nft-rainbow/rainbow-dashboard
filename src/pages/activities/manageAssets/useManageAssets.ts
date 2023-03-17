@@ -57,12 +57,17 @@ const useManageAssets = (type: 'single' | 'blind', nftItemId?: string) => {
 
   useEffect(() => {
     const nftConfig = type === 'blind' ? data?.nft_configs?.find((item: any) => item.id === nftItemId) : data?.nft_configs?.[0];
-
     if (!nftConfig) return;
     form.setFieldsValue({
       name: nftConfig?.name ?? '',
       contract_id: data.contract_id ?? '',
-      characters: nftConfig?.metadata_attributes?.map((attribute) => ({ type: attribute?.trait_type, characterName: attribute?.attribute_name, value: attribute?.value, id: attribute?.id })) ?? [],
+      characters:
+        nftConfig?.metadata_attributes?.map((attribute) => ({
+          display_type: attribute?.display_type,
+          trait_type: attribute?.trait_type,
+          value: attribute?.value,
+          id: attribute?.id,
+        })) ?? [],
       file: [
         {
           uid: '1',
