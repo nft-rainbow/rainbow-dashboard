@@ -7,6 +7,7 @@ import { ActivityItem } from '../../models';
 import CreatePOA from './createActivities';
 import { columns } from './tableHelper';
 import { getActivities } from '@services/activity';
+import { throttle } from 'lodash-es';
 
 const dropItems: MenuProps['items'] = [
   { label: '盲盒活动', key: 1 },
@@ -20,10 +21,13 @@ export const useActivitiesStore = create<{ total: number; page: number; limit: n
     page: 1,
     limit: 10,
     setPage: (newPage: number) => set({ page: newPage }),
-    getItems: async () =>
-      getActivities({ page: get().page ?? 10, limit: 10 }).then((res) => {
-        set({ total: res.count, items: res.items });
-      }),
+    getItems: throttle(
+      () =>
+        getActivities({ page: get().page ?? 10, limit: 10 }).then((res) => {
+          set({ total: res.count, items: res.items });
+        }),
+      333
+    ),
   })
 );
 
@@ -64,7 +68,7 @@ export default function Poaps() {
     </Dropdown>
   );
 
-  return (  
+  return (
     <>
       <Card title="" style={{ flexGrow: 1 }}>
         <ProTable
