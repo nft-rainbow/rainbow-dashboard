@@ -101,7 +101,6 @@ export const updateformDataTranslate = (activity: ActivityItem, data: FormData) 
   let end_time = null;
   start_time = dateTraslate(new Date(data.activityDate[0]));
   if (data.activityDate[1]) end_time = dateTraslate(new Date(data.activityDate[1]));
-  console.log(activity)
   return {
     ...activity,
     activity_type: activity.activity_type ?? 1,

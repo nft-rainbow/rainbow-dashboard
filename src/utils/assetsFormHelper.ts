@@ -43,7 +43,6 @@ export const assetsFormFormat = ({
     const targetNftItem = (type === 'single' ? nft_configs?.[0] : nft_configs.find((item: any) => item.id === nftItemId)) ?? { probability: 0 };
     if (targetNftItem) {
       const { characters, image_url, name } = nftConfig;
-
       let metadata_attributes: MetadataAttribute[] = targetNftItem?.metadata_attributes ?? [];
       metadata_attributes = metadata_attributes.filter(attribute => !!characters.find((character) => character?.id === attribute?.id));
       metadata_attributes.forEach((attribute) => {

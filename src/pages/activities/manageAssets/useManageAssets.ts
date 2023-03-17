@@ -7,6 +7,7 @@ import { updatePoap as _updatePoap, getActivityById } from '@services/activity';
 import { assetsFormFormat } from '@utils/assetsFormHelper';
 import { Contract } from '@models/index';
 import useInTransaction from '@hooks/useInTransaction';
+import dayjs from 'dayjs';
 
 const useManageAssets = (type: 'single' | 'blind', nftItemId?: string) => {
   const [contracts, setContracts] = useState<Contract[]>([]);
@@ -65,6 +66,7 @@ const useManageAssets = (type: 'single' | 'blind', nftItemId?: string) => {
       }
       return;
     }
+
     form.setFieldsValue({
       name: nftConfig?.name ?? '',
       contract_id: data.contract_id ?? '',
@@ -72,7 +74,7 @@ const useManageAssets = (type: 'single' | 'blind', nftItemId?: string) => {
         nftConfig?.metadata_attributes?.map((attribute) => ({
           display_type: attribute?.display_type,
           trait_type: attribute?.trait_type,
-          value: attribute?.value,
+          value: attribute?.display_type === 'date' ? dayjs(attribute?.value) : attribute?.value,
           id: attribute?.id,
         })) ?? [],
       file: [

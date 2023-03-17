@@ -5,6 +5,7 @@ import { DownOutlined, DeleteOutlined } from '@ant-design/icons';
 import RainbowBreadcrumb from '@components/Breadcrumb';
 import FileUploadNew from '@components/FileUploadNew';
 import useManageAssets from './useManageAssets';
+import dayjs from 'dayjs';
 import './index.scss';
 
 const { Option } = Select;
@@ -23,9 +24,10 @@ interface CharacterItemProps {
   display_type?: string;
   name: number;
   id: number;
+  value: any;
   remove: (index: number | number[]) => void;
 }
-const CharacterItem: React.FC<CharacterItemProps> = ({ display_type, name, id, remove }) => {
+const CharacterItem: React.FC<CharacterItemProps> = ({ display_type, name, id, remove, value }) => {
   return (
     <div className="flex flex-row" key={`${name}-${id}`}>
       <>
@@ -44,8 +46,11 @@ const CharacterItem: React.FC<CharacterItemProps> = ({ display_type, name, id, r
             <Form.Item noStyle name={[name, 'trait_type']}>
               <Input placeholder="日期" className="mr-16px" />
             </Form.Item>
-            <Form.Item noStyle name={[name, 'value']}>
-              <DatePicker showTime className="mr-18px" />
+            <Form.Item
+              noStyle
+              name={[name, 'value']}
+            >
+              <DatePicker showTime className="mr-18px"/>
             </Form.Item>
           </>
         )}
@@ -111,7 +116,14 @@ const Asset: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-x-16px gap-y-16px">
                   {fields.map((field, index) => (
-                    <CharacterItem display_type={form.getFieldValue(['characters', index, 'display_type'])} remove={remove} key={index} id={index} name={field.name}  />
+                    <CharacterItem
+                      value={form.getFieldValue(['characters', index, 'value'])}
+                      display_type={form.getFieldValue(['characters', index, 'display_type'])}
+                      remove={remove}
+                      key={index}
+                      id={index}
+                      name={field.name}
+                    />
                   ))}
                 </div>
               </>
