@@ -144,15 +144,19 @@ export function mapChainNetworId(chainName: string) {
   }
 }
 
-export const chainTypeToName = (chainType: number) => {
-  switch (chainType) {
-    case 1:
-      return '树图测试链';
-    case 1029:
+export const chainTypeToName = (chainType: number, chainId: number) => {
+  if (chainType === 1) {
+    if (chainId === 1029) {
       return '树图链';
-    default:
-      return '其他';
+    } else if (chainId === 1) {
+      return '树图测试链';
+    } else {
+      return '树图其他链'
+    }
+  } else if (chainType === 2) {
+    return '以太坊链';
   }
+  return '其他';
 };
 
 export const timestampToSecond2 = (timestamp?: number | string) => {
