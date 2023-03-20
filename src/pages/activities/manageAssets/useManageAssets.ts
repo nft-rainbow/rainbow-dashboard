@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import useSWR from 'swr';
-import { Form } from 'antd';
+import { Form, message } from 'antd';
 import { listContracts } from '@services/contract';
 import { updatePoap as _updatePoap, getActivityById } from '@services/activity';
 import { assetsFormFormat } from '@utils/assetsFormHelper';
@@ -38,6 +38,7 @@ const useManageAssets = (type: 'single' | 'blind', nftItemId?: string) => {
       try {
         await updatePoap(newDate);
         await mutate();
+        message.success('保存更新成功');
         // navigate('/panels/poaps');
       } catch (err) {
         console.log(err);

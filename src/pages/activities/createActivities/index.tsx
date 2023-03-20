@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useReducer } from 'react';
-import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, Radio } from 'antd';
+import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, Radio, message } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { App } from '../../../models';
 import LimitedInput from '@modules/limitedInput';
@@ -55,6 +55,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activi
         await createActivity(params);
         dispatch({ type: 'reset' });
         hideModal();
+        message.success('创建活动成功')
       } catch (err) {
         console.log(err);
       } finally {

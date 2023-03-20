@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import useSWR from 'swr';
 import RainbowBreadcrumb from '@components/Breadcrumb';
 import { Link } from 'react-router-dom';
-import { Card, Button, Form, Select, Input } from 'antd';
+import { Card, Button, Form, Select, Input, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { listContracts } from '@services/contract';
 import { Contract } from '@models/index';
@@ -50,10 +50,16 @@ const ManageAssetsBlind: React.FC = () => {
         nftConfigs[index].probability = +value / 100;
       });
 
+      const totalProbability = nftConfigs.reduce((acc, nftItem) => acc + (nftItem?.probability ?? 0), 0);
+      if (totalProbability !== 1) {
+        message.error('请正确设置藏品权重：各项藏品需大于0，且总和为100%');
+        return;
+      }
       const newData = { ...data, nftConfigs, contract_id: formData?.contract_id };
       try {
         await updatePoap(newData);
         await mutate();
+        message.success('保存更新成功');
       } catch (err) {
         console.log(err);
       }

@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useReducer } from 'react';
-import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, Radio } from 'antd';
+import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, Radio, message } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { ActivityItem } from '../../../models';
 import LimitedInput from '@modules/limitedInput';
@@ -57,6 +57,7 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
       await updatePoap(params);
       dispatch({ type: 'reset' });
       hideModal();
+      message.success('保存更新成功')
     } catch (err) {
       console.log(err);
     } finally {
