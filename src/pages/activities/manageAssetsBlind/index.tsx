@@ -50,8 +50,9 @@ const ManageAssetsBlind: React.FC = () => {
         nftConfigs[index].probability = +value / 100;
       });
 
-      const totalProbability = nftConfigs.reduce((acc, nftItem) => acc + (nftItem?.probability ?? 0), 0);
-      if (totalProbability !== 1) {
+      const totalProbability = nftConfigs.reduce((acc, nftItem) => acc + (nftItem?.probability ?? 0), 0)?.toFixed(6);
+      const isProbabilityValid = nftConfigs.every((nftItem) => nftItem?.probability > 0);
+      if (totalProbability !== '1.000000' || !isProbabilityValid) {
         message.error('请正确设置藏品权重：各项藏品需大于0，且总和为100%');
         return;
       }
