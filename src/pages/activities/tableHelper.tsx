@@ -127,9 +127,9 @@ export const columns: ProColumns<ActivityItem>[] = [
   {
     title: '区块链',
     dataIndex: 'chain_type',
-    render: (_, record) => chainTypeToName(record.chain_type),
+    render: (_, record) => chainTypeToName(record.chain_type, record.chain_id),
     defaultSortOrder: 'ascend',
-    sorter: (a: ActivityItem, b: ActivityItem) => a.chain_type - b.chain_type,
+    sorter: (a: ActivityItem, b: ActivityItem) => a.chain_id - b.chain_id,
     search: false,
   },
   {

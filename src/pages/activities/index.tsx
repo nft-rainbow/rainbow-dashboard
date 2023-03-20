@@ -37,7 +37,6 @@ export default function Poaps() {
   const page = useActivitiesStore((state) => state.page);
   const setPage = useActivitiesStore((state) => state.setPage);
   const getItems = useActivitiesStore((state) => state.getItems);
-
   const [activityType, setActivityType] = useState(-1);
   const [isActivityModalVisible, setIsActivityModalVisible] = useState(false);
 
