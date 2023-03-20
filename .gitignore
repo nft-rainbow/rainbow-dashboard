@@ -1,6 +1,19 @@
+# dependencies
 node_modules
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+
+# cache
+dist
+
 src/config.ts
 tmp
 .DS_Store
 build
 *.log
+
+#env variables
+.env.development
+.env.production
+.env
