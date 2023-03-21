@@ -61,6 +61,7 @@ const ManageAssetsBlind: React.FC = () => {
         await updatePoap(newData);
         await mutate();
         message.success('保存更新成功');
+        navigate("/panels/poaps")
       } catch (err) {
         console.log(err);
       }
