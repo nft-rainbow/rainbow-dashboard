@@ -144,10 +144,10 @@ export default function MetaTable() {
                         </Select>
                     </Form.Item>
                     <Form.Item name="image" label="图片" rules={[{ required: true }]}>
-                        <FileUpload onFormatedChange={(err: Error, file: any) => form.setFieldsValue({ image: file.url })} />
+                        <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ image: file.url })} />
                     </Form.Item>
                     <Form.Item name="animation_url" label="动画文件" rules={[{ required: false }]}>
-                        <FileUpload onFormatedChange={(err: Error, file: any) => form.setFieldsValue({ animation_url: file.url })} />
+                        <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ animation_url: file.url })} />
                     </Form.Item>
                     <Form.Item name="name" label="名字" rules={[{ required: true }]}>
                         <Input />

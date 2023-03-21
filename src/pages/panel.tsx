@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Col, Row, Statistic, Card, Table, Divider, Typography } from 'antd';
+import { Alert, Col, Row, Statistic, Card, Table, Typography } from 'antd';
 import { 
   userStatistics, 
   UserStatistics,
@@ -7,7 +7,7 @@ import {
   userBalanceRuntime,
 } from '@services/user';
 import { User } from '@models/index';
-const { Title, Paragraph, Text, Link } = Typography;
+const { Title, Paragraph, Text } = Typography;
 
 export default function Panel() {
   const defaultStatistics = {

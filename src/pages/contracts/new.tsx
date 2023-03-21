@@ -124,7 +124,7 @@ export default function ContractDeployment() {
                     name="username"
                     rules={[{ required: true, message: 'Please input your username!' }]}
                 >
-                    <FileUpload onFormatedChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} />
+                    <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })} />
                 </Form.Item>
 
                 <Row>

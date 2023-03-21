@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import RainbowBreadcrumb from '@components/Breadcrumb';
 import { getAppDetail, getAppMetadatas, getAppFiles, File, Metadata, easyMintUrl, getAppAccounts } from '@services/app';
-import { createPoap } from '@services/poap';
 import {
   Card,
   Tabs,
@@ -28,7 +27,7 @@ import { ChainAccount, App } from '@models/index';
 import { address } from 'js-conflux-sdk';
 import { LinkOutlined, QuestionCircleOutlined, UserOutlined } from '@ant-design/icons/lib';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import {AppNFTs} from "@pages/apps/MintTasks";
+import { AppNFTs } from "@pages/apps/MintTasks";
 const { Paragraph } = Typography;
 
 const formLayout = {
@@ -55,6 +54,7 @@ export default function AppDetail(props: { appId?: string, pageLimit?: number })
   const mainnetAccount = () => accounts.find((item) => item.chain_id === 1029) || { address: '' };
   const testAccount = () => accounts.find((item) => item.chain_id === 1) || { address: '' };
   const [messageApi, contextHolder] = message.useMessage();
+  
   const fillMintTo = useCallback(() => {
     const chain = form.getFieldValue('chain');
     if (!chain) {
@@ -194,7 +194,7 @@ export default function AppDetail(props: { appId?: string, pageLimit?: number })
                     accept={'.png,.jpg,.svg,.mp3,.mp4,.gif,stp,.max,.fbx,.obj,.x3d,.vrml,.3ds,3mf,.stl,.dae'}
                     listType="picture"
                     maxCount={1}
-                    onFormatedChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })}
+                    onChange={(err: Error, file: any) => {form.setFieldsValue({ file_url: file.url })}}
                   />
                 </Form.Item>
               )}
@@ -340,7 +340,7 @@ function AppMetadatas(props: { id: string; refreshTrigger: number, pageLimit?: n
       setTotal(res.count);
       setItems(res.items);
     });
-  }, [id, page, refreshTrigger]);
+  }, [id, page, refreshTrigger, pageLimit]);
 
   return (
     <>
