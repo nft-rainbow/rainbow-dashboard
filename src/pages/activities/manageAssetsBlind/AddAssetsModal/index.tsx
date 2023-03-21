@@ -16,7 +16,7 @@ const characterItms: MenuProps['items'] = [
   },
 ];
 interface CharacterItemProps {
-  trait_type: string;
+  trait_type?: string;
   display_type?: string;
   name: number;
   id: number;
@@ -108,9 +108,9 @@ const AddAssetsModal: React.FC<AddAssetsModalProps> = ({ open, type, id, onCance
             <div className="mb-[24px]">
               <div className="mb-8px flex flex-row justify-between">
                 <label>特征设置：</label>
-                <Dropdown trigger={['click']} menu={{ items: characterItms, onClick: (e) => add({ type: e.key }) }}>
+                <Dropdown trigger={['click']} menu={{ items: characterItms, onClick: (e) => add({ display_type: e.key }) }}>
                   <a className="border border-solid border-#6953EF py-1px px-12px rounded-2px">
-                    新增
+                    新增 
                     <DownOutlined />
                   </a>
                 </Dropdown>
