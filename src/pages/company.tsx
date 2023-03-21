@@ -51,7 +51,7 @@ export default function CompanyManagement() {
                 <Input />
               </Form.Item>
               <Form.Item name="company_id_img" label="营业执照" rules={[{ required: true }]}>
-                <FileUpload onFormatedChange={(err: Error, file: any) => kycForm.setFieldsValue({company_id_img: file.url})}/>
+                <FileUpload onChange={(err: Error, file: any) => kycForm.setFieldsValue({company_id_img: file.url})}/>
               </Form.Item>
               <Form.Item name="phone" label="联系电话" rules={[{ required: true, min: 8 }]}>
                 <Input />
