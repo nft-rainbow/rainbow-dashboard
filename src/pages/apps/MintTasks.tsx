@@ -1,20 +1,20 @@
 import React, {useEffect, useState} from "react";
-import {NFT} from "@models/index";
-import {formatDate, mapChainName, mapNFTType, scanAddressLink, scanNFTLink, scanTxLink, short} from "@utils/index";
-import {Button, Image, Popover, Space, Table, TablePaginationConfig, Tooltip} from "antd";
+import { NFT } from "@models/index";
+import { formatDate, mapChainName, mapNFTType, scanAddressLink, scanNFTLink, scanTxLink, short } from "@utils/index";
+import { Button, Image, Popover, Space, Table, TablePaginationConfig, Tooltip } from "antd";
 import {
 	CheckCircleTwoTone,
 	ClockCircleTwoTone,
 	CloseCircleTwoTone,
 	FileImageOutlined, FilterOutlined,
-	InfoCircleOutlined, QuestionCircleOutlined, QuestionCircleTwoTone
+	InfoCircleOutlined, QuestionCircleTwoTone
 } from "@ant-design/icons/lib";
-import {reMintNFT} from "@services/NFT";
-import {getAppContracts, getAppNfts, getAppNftsOfContract} from "@services/app";
+import { reMintNFT } from "@services/NFT";
+import { getAppNfts, getAppNftsOfContract } from "@services/app";
 import axios from "axios";
 
-export function AppNFTs(props: { id: string; contract?:string, refreshTrigger: number; setRefreshTrigger: (v: number) => void, showRefresh?: boolean }) {
-	const { id, refreshTrigger, setRefreshTrigger, showRefresh, contract } = props;
+export function AppNFTs(props: { id: string; contract?: string, refreshTrigger: number; setRefreshTrigger: (v: number) => void, showRefresh?: boolean, pageLimit?: number }) {
+	const { id, refreshTrigger, setRefreshTrigger, showRefresh, contract, pageLimit } = props;
 	const [items, setItems] = useState<NFT[]>([]);
 	const [total, setTotal] = useState(0);
 	const [page, setPage] = useState(1);
@@ -124,16 +124,15 @@ export function AppNFTs(props: { id: string; contract?:string, refreshTrigger: n
 
 	useEffect(() => {
 		setLoading(true);
-		const query = contract ? getAppNftsOfContract(id as string, contract, page, 10) :
-			getAppNfts(id as string, page, 10);
+		const query = contract ? getAppNftsOfContract(id as string, contract, page, pageLimit || 10) : getAppNfts(id as string, page,  pageLimit || 10);
 		query.then((res) => {
-				setTotal(res.count);
-				setItems(res.items);
-			})
-			.finally(() => {
-				setLoading(false);
-			});
-	}, [id, page, refreshTrigger]);
+            setTotal(res.count);
+            setItems(res.items);
+        })
+        .finally(() => {
+            setLoading(false);
+        });
+	}, [id, page, refreshTrigger, pageLimit, contract]);
 
 	// SJR: click button to load one image
 	const showNFTImage = (metadataUri: string, index: number) => {
@@ -147,8 +146,6 @@ export function AppNFTs(props: { id: string; contract?:string, refreshTrigger: n
 			setImages(temp);
 		}
 	};
-
-	// useEffect(() => {}, [images]);
 
 	return (
 		<>

@@ -23,8 +23,6 @@ import EmptyPage from '@pages/emptyPage';
 import Bots from '@pages/bots';
 import MintFrame from "@pages/mint/mintFrame";
 import AutoSponsors from "@pages/contracts/autoSponsorContracts";
-// import {PlanFrame} from "@pages/plan/PlanFrame";
-// import {PlanList} from "@pages/plan/PlanList";
 
 const AppRouter: React.FC = () => {
   return (
@@ -49,8 +47,6 @@ const AppRouter: React.FC = () => {
             <Route path="apps" element={<App />} />
             <Route path="apps/:id" element={<AppDetail />} />
             <Route path="mint/:id" element={<MintFrame />} />
-            {/* <Route path="plan/:id" element={<PlanFrame />} />
-            <Route path="plan/list" element={<PlanList />} /> */}
             <Route path="contracts" element={<Contracts />} />
             <Route path="contracts/sponsor" element={<ContractSponsor />} />
             <Route path="contracts/autoSponsors" element={<AutoSponsors />} />

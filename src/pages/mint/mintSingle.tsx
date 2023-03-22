@@ -1,13 +1,12 @@
-import MintFormFields, {checkMintInput} from "./mintFormFields";
-import React, {FormEventHandler, useEffect, useState} from "react";
-import {Button, Checkbox, Col, Form, Input, InputNumber, message, Row, Space, Tooltip, Typography} from "antd";
-import {batchMint, easyMintUrl, getMintTask} from "../../services/app";
-import {Contract, NFT} from "../../models";
-import {mapChainAndNetworkName} from "../../utils";
-import set = Reflect.set;
-import {QuestionCircleOutlined, QuestionOutlined} from "@ant-design/icons/lib";
-import JsonEditor, {jsonToAttributesArray} from "@pages/mint/JsonEditor";
+
+import React, { useEffect, useState } from "react";
+import { Button, Col, Form, InputNumber, message, Row, Space, Tooltip, Typography } from "antd";
+import { batchMint, easyMintUrl, getMintTask } from "../../services/app";
+import { Contract, NFT } from "../../models";
+import { mapChainAndNetworkName } from "../../utils";
+import { QuestionCircleOutlined } from "@ant-design/icons/lib";
 import Attributes from "@pages/mint/attributes";
+import MintFormFields, { checkMintInput } from "./mintFormFields";
 
 export function MintSingle(props: { appId: any, contract: Contract }) {
 	const {contract, appId} = props;
@@ -21,15 +20,16 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 	const [hasTrait, setHasTrait] = useState(false);
 	const [step, setStep] = useState('edit' as 'edit'|'submitted'|'done');
 	const [attributes, setAttributes] = useState([] as any[])
-	useEffect(()=>{
+	
+    useEffect(()=>{
 		if (!taskId) {
 			return;
 		}
 		getMintTask(taskId).then(res=>{
 			setTask(res);
-			if (res.status == 0) {
+			if (res.status === 0) {
 				setTimeout(()=>setTick(tick+1), 1_000)
-			} else if (res.status == 1){
+			} else if (res.status === 1){
 				setMintLoading(false)
 				message.info(`铸造完毕~`)
 				setStep('done')
@@ -39,9 +39,9 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 			}
 		})
 	}, [taskId, tick])
+
 	const mint = () => {
-		console.log(`copies`, formCopies.getFieldsValue())
-		const values = checkMintInput(form, {withImage: true, withName: true, withDesc: true, withAddress: true})
+		const values = checkMintInput(form, {withImage: true, withName: true, withDesc: true, withAddress: true, withAnimation: true})
 		if (!values) {
 			return;
 		}
@@ -98,31 +98,19 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 			<MintFormFields withImage={true} form={form} appId={appId} chainId={contract.chain_id}
 			                withDesc={true}
 			                withAddress={true}
+                            withAnimation={true}
 			                withName={true}/>
-			{/*<Form form={form} labelCol={{span:2}}>*/}
-			{/*	<Form.Item label={"扩展属性"} style={{marginBottom: 0}}>*/}
-			{/*		<Space direction={"vertical"}>*/}
-			{/*			<Checkbox value={"yes"} onClick={(e)=>setHasTrait(e.target.checked)}/>*/}
-			{/*		</Space>*/}
-			{/*	</Form.Item>*/}
-			{/*</Form>*/}
 			<div style={{marginLeft: '0px', display: (hasTrait || 1) ? "" : "none"}}>
 				<Row>
-					<Col span={2} style={{textAlign: 'right', textBaseline: 'center', marginTop:5}}>
+					<Col span={2} style={{textAlign: 'right', marginTop: 5}}>
 						<Tooltip title={"这些属性会出现在meta信息的attributes上，可不填写。"}><QuestionCircleOutlined/></Tooltip> 扩展属性：
 					</Col>
 					<Col span={22}>
 						<Attributes onValuesChange={(_,{attributes:all})=>{
-							// console.log(`form list changes`, JSON.stringify(all))
 							setAttributes(all)
 						}}/>
-						{/*<JsonEditor setFetcher={(json)=>{*/}
-						{/*	// console.log(`json is`, json)*/}
-						{/*	setAttributes(json)*/}
-						{/*}}/>*/}
 					</Col>
 				</Row>
-				{/*={JSON.stringify(attributes)}-*/}
 			</div>
 			<Form form={formCopies} labelCol={{span:2}}>
 				<Form.Item label={"数量"} style={{marginBottom: 0}} name={"copies"}>
@@ -134,11 +122,15 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 				</Form.Item>
 			</Form>
 			{ step === 'edit' &&
-				<Button loading={mintLoading} style={{marginTop: '8px'}} htmlType={"submit"} type={"primary"}
-			         onClick={() => {
-				         // message.info(`尚未接入后端接口`)
-				         mint();
-			         }}>{mintLoading ? "铸造中" : "开始铸造"}</Button>
+				<Button 
+                    loading={mintLoading} 
+                    style={{marginTop: '8px'}} 
+                    htmlType={"submit"} 
+                    type={"primary"} 
+                    onClick={() => mint()}
+                >
+                    {mintLoading ? "铸造中" : "开始铸造"}
+                </Button>
 			}
 			<Space>
 				<Space style={{marginTop:'8px'}} >
@@ -160,9 +152,7 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 				</>)
 				}
 
-				{task.token_uri &&
-				<Button type={"link"}><a href={task.token_uri} target={"_blank"}>查看URI</a></Button>
-				}
+				{task.token_uri && <Button type={"link"}><a href={task.token_uri} target={"_blank"} rel="noreferrer">查看URI</a></Button>}
 				</Space>
 			</Space>
 		</>

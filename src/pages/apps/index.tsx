@@ -92,7 +92,7 @@ function Apps() {
   return (
     <Space direction={"vertical"}>
       {defaultAppId.toString().length > 0 && <Card title={'默认项目'}>
-        {defaultAppId.toString().length > 0 && <AppDetail appId={defaultAppId}/>}
+        {defaultAppId.toString().length > 0 && <AppDetail appId={defaultAppId} pageLimit={5}/>}
       </Card>}
       <Card title='我的项目' extra={<Button onClick={() => setIsModalVisible(true)} type="primary">创建项目</Button>}>
         <Table
