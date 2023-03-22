@@ -60,7 +60,6 @@ const EditableCell: React.FC<EditableCellProps> = ({ editing, dataIndex, title, 
               message.error(`上传图片出错: ${err}`);
               return;
             }
-            console.log(`set file : `, dataIndex, file.url);
             form.setFieldsValue({ [dataIndex]: file.url });
             setTrigger(trigger + 1);
           }}
@@ -154,6 +153,12 @@ function MintTable(props: {appId: string, chainId: number, controlForm: boolean,
         return url ? <Image alt={url} src={url} /> : '';
       },
     },
+    /* {
+        title: '视频',
+        dataIndex: 'animation_url',
+        width: '15%',
+        editable: true,
+    }, */
     {
       title: '名称',
       dataIndex: 'name',
@@ -227,18 +232,20 @@ function MintTable(props: {appId: string, chainId: number, controlForm: boolean,
       }),
     };
   });
-  useEffect(() => {
+
+  /* useEffect(() => {
     console.log(`data length`, data.length);
-  }, [data]);
+  }, [data]); */
+
   const addRow = (url = '', name = '') => {
     let newElement = { key: Date.now().toString(), file_url: url, name, address: '', desc: '', attributes: [] };
     setData((preArr) => [...preArr, newElement]);
   };
+
   const handleImportData = (arr: any[]) => {
     const map = { 图片链接: 'file_url', 名字: 'name', 描述: 'desc', 接受地址: 'address' };
     let metaKeys = Object.keys(map);
-    let attrKeys = Object.keys(arr[0] || {}); //.filter(k=>k.endsWith("trait_type") || k.endsWith("value") || k.endsWith("display_type"))
-    //console.log(`attrKeys`, attrKeys, 'on', arr[0])
+    let attrKeys = Object.keys(arr[0] || {});
     const newArr = arr.map((row, idx) => {
       const item = { key: `${idx}` } as { [key: string]: any };
       metaKeys.forEach((k) => {
@@ -270,7 +277,6 @@ function MintTable(props: {appId: string, chainId: number, controlForm: boolean,
       item.attributes = attributes;
       return item;
     });
-    // console.log(`converted`, newArr)
     setData(newArr as Item[]);
   };
   const exportData = () => {
@@ -313,7 +319,6 @@ function MintTable(props: {appId: string, chainId: number, controlForm: boolean,
       aoa.push(arr);
     });
     const ws = utils.aoa_to_sheet(aoa);
-    // const ws = utils.json_to_sheet(exportArr);
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, 'mint');
     const dt = new Date();
@@ -373,7 +378,6 @@ function MintTable(props: {appId: string, chainId: number, controlForm: boolean,
         <Form labelCol={{ span: 2 }} wrapperCol={{ span: 16 }}>
           <Form.Item label={'选项'}>
             <Space>
-              {/*ugly code here :( */}
               <Checkbox
                 checked={useCols.sameImage}
                 onClick={() =>
@@ -417,6 +421,7 @@ function MintTable(props: {appId: string, chainId: number, controlForm: boolean,
         withDesc={useCols.sameDesc}
         withAddress={useCols.sameAddress}
         withName={useCols.sameName}
+        withAnimation={false}
       />
 
       {mergedColumns.length > 1 && (
