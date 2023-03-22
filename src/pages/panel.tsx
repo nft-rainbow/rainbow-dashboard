@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Col, Row, Statistic, Card, Table } from 'antd';
+import { Alert, Col, Row, Statistic, Card, Table, Typography } from 'antd';
 import { 
   userStatistics, 
   UserStatistics,
   userProfile,
   userBalanceRuntime,
-} from '../services/user';
-import { User } from '../models';
+} from '@services/user';
+import { User } from '@models/index';
+const { Title, Paragraph, Text } = Typography;
 
 export default function Panel() {
   const defaultStatistics = {
@@ -58,9 +59,8 @@ export default function Panel() {
     userBalanceRuntime().then(setFreeQuota);
   }, []);
 
-  return (
-    <div style={{flexGrow: 1}}>
-      {user && user.status === 0 && user.id_no.length === 0 ? <Alert message="新用户请先至个人中心完善信息" type="info" showIcon /> : null}
+  return (<div style={{flexGrow: 1}}>
+      {user && user.status === 0 && user.id_no.length === 0 ? <Alert message="新用户请先至右上角个人中心完善信息" type="info" showIcon /> : null}
       {user && user.status === 0 && user.id_no.length > 0 ? <Alert message="请耐心等待审核通过，我们会在2-3天完成审核。" type="info" showIcon /> : null}
       <Row gutter={16} style={{margin: '16px 0'}}>
         <Col span={6}>
@@ -97,6 +97,38 @@ export default function Panel() {
           </Card>
         </Col>
       </Row>
+        <Row style={{margin: '16px 0', padding: '16px 16px'}}>
+            <Col>
+                <Typography>
+                    <Title level={4}>快速上手</Title>
+                    <Paragraph>
+                        <ul>
+                            <li>1. 新用户请先至个人中心（右上角）进行 KYC 信息填写，待管理员审核通过后即可使用。</li>
+                            <li>2. KYC 通过后请先创建项目，创建项目后即可创建合约。</li>
+                            <li>3. 在合约页面可进行代付设置，及<Text code>藏品铸造</Text></li>
+                        </ul>
+                    </Paragraph>
+                    <Title level={4}>注意事项</Title>
+                    <Paragraph>
+                        <ul>
+                            <li>铸造藏品前请确保合约<Text code>正确</Text>且设置了<Text code>足够</Text>的代付赞助。否则藏品铸造会失败。</li>
+                            <li>建议为合约打开代付自动补充功能，且保证账户有足够的余额.</li>
+                        </ul>
+                    </Paragraph>
+                    <Title level={4}>常见问题</Title>
+                    <Title level={5}>为什么的我的 NFT 铸造失败了?</Title>
+                    <Paragraph>
+                        NFT 铸造失败的常见原因有以下几种：
+                        <ul>
+                            <li>1. 合约代付不足</li>
+                            <li>2. ERC721 合约同 TokenId 重复铸造</li>
+                            <li>3. AccessControl 铸造权限问题</li>
+                        </ul>
+                        关于铸造失败的详细原因请查看 <a href="https://docs.nftrainbow.xyz/api-reference/common-errors" target={"_blank"} rel={"noreferrer"}>Rainbow 文档</a>
+                    </Paragraph>
+                </Typography>
+            </Col>
+        </Row>
     </div>
   );
 }

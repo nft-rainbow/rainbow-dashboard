@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import RainbowBreadcrumb from '../../components/Breadcrumb';
-import { getAppDetail, getAppNfts, getAppMetadatas, getAppFiles, File, Metadata, easyMintUrl, getAppAccounts } from '../../services/app';
-import { createPoap } from '../../services/poap';
-import { reMintNFT } from '../../services/NFT';
+import RainbowBreadcrumb from '@components/Breadcrumb';
+import { getAppDetail, getAppMetadatas, getAppFiles, File, Metadata, easyMintUrl, getAppAccounts } from '@services/app';
 import {
   Card,
   Tabs,
@@ -18,22 +16,18 @@ import {
   Input,
   message,
   Image,
-  Popover,
   Radio,
   Row,
   Col,
   TabsProps
 } from 'antd';
-import { mapChainName, formatDate, short, scanTxLink, scanNFTLink, scanAddressLink, mapNFTType } from '../../utils';
-import FileUpload from '../../components/FileUpload';
-import { ChainAccount, App, NFT } from '../../models';
-import axios from 'axios';
-import { FileImageOutlined, ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
+import { formatDate, short } from '@utils/index';
+import FileUpload from '@components/FileUpload';
+import { ChainAccount, App } from '@models/index';
 import { address } from 'js-conflux-sdk';
-import { LinkOutlined, QuestionCircleOutlined, UserOutlined, InfoCircleOutlined } from '@ant-design/icons/lib';
+import { LinkOutlined, QuestionCircleOutlined, UserOutlined } from '@ant-design/icons/lib';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
-import {AppNFTs} from "@pages/apps/MintTasks";
-const { TabPane } = Tabs;
+import { AppNFTs } from "@pages/apps/MintTasks";
 const { Paragraph } = Typography;
 
 const formLayout = {
@@ -43,7 +37,7 @@ const formLayout = {
 
 // SJR: show status in icons
 
-export default function AppDetail(props: { appId?: string }) {
+export default function AppDetail(props: { appId?: string, pageLimit?: number }) {
   const { id: paramId } = useParams();
   const id = paramId || props.appId;
   const [app, setApp] = useState<App | {}>({});
@@ -53,7 +47,6 @@ export default function AppDetail(props: { appId?: string }) {
 
   const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [isMintModalVisible, setIsMintModalVisible] = useState(false);
-  const [isPoapModalVisible, setIsPoapModalVisible] = useState(false);
   const [refreshNftList, setRefreshNftList] = useState(0);
   const [useUpload, setUseUpload] = useState(true);
   const [minting, setMinting] = useState(false);
@@ -61,6 +54,7 @@ export default function AppDetail(props: { appId?: string }) {
   const mainnetAccount = () => accounts.find((item) => item.chain_id === 1029) || { address: '' };
   const testAccount = () => accounts.find((item) => item.chain_id === 1) || { address: '' };
   const [messageApi, contextHolder] = message.useMessage();
+  
   const fillMintTo = useCallback(() => {
     const chain = form.getFieldValue('chain');
     if (!chain) {
@@ -73,7 +67,6 @@ export default function AppDetail(props: { appId?: string }) {
 
   const onNftMint = (values: any) => {
     const { file_url, file_link } = values;
-    console.log(file_link, file_url);
     if (!file_url && !file_link) {
       messageApi.warning('请上传图片或者填入图片链接');
       return;
@@ -95,21 +88,8 @@ export default function AppDetail(props: { appId?: string }) {
       });
   };
 
-  const onCreatePoap = (values: any) => {
-    values.total_amount = parseInt(values.total_amount);
-    createPoap(id as string, values)
-      .then((res) => {
-        setIsPoapModalVisible(false);
-        form.resetFields();
-      })
-      .catch((err) => {
-        message.error(err.response.data.message);
-      });
-  };
-
   const closeMintModal = () => setIsMintModalVisible(false);
   const closeDetailModal = () => setIsDetailModalVisible(false);
-  const closePoapModal = () => setIsPoapModalVisible(false);
 
   const idStr = id as string;
 
@@ -124,7 +104,6 @@ export default function AppDetail(props: { appId?: string }) {
           <QuestionCircleOutlined />
         </Tooltip>
       </Button>
-      {/*<Button type='primary' onClick={() => setIsPoapModalVisible(true)}>创建POAP</Button>*/}
       <Button type="primary" onClick={() => setIsDetailModalVisible(true)}>
         查看AppKey
       </Button>
@@ -142,10 +121,10 @@ export default function AppDetail(props: { appId?: string }) {
       setBreadcrumbItems(['项目详情', data.name]);
     });
   }, [id]);
+  
   const tabs : TabsProps['items'] = [
-    {key: '1', label:'藏品铸造',
-      children:<AppNFTs id={idStr} refreshTrigger={refreshNftList} setRefreshTrigger={setRefreshNftList} />},
-    {key: '2', label:'元数据', children:<AppMetadatas id={idStr} refreshTrigger={refreshNftList} />},
+    {key: '1', label:'藏品铸造', children:<AppNFTs id={idStr} refreshTrigger={refreshNftList} setRefreshTrigger={setRefreshNftList} pageLimit={props.pageLimit} />},
+    {key: '2', label:'元数据', children:<AppMetadatas id={idStr} refreshTrigger={refreshNftList} pageLimit={props.pageLimit} />},
     {key: '3', label:'文件', children:<AppFiles id={idStr} refreshTrigger={refreshNftList} />},
   ]
   return (
@@ -215,7 +194,7 @@ export default function AppDetail(props: { appId?: string }) {
                     accept={'.png,.jpg,.svg,.mp3,.mp4,.gif,stp,.max,.fbx,.obj,.x3d,.vrml,.3ds,3mf,.stl,.dae'}
                     listType="picture"
                     maxCount={1}
-                    onFormatedChange={(err: Error, file: any) => form.setFieldsValue({ file_url: file.url })}
+                    onChange={(err: Error, file: any) => {form.setFieldsValue({ file_url: file.url })}}
                   />
                 </Form.Item>
               )}
@@ -293,32 +272,13 @@ export default function AppDetail(props: { appId?: string }) {
           </Form.Item>
         </Form>
       </Modal>
-      <Modal title="创建POAP" open={isPoapModalVisible} onOk={() => form.submit()} onCancel={closePoapModal} okText={'确认'} cancelText={'取消'}>
-        <Form {...formLayout} form={form} name="control-hooks" onFinish={onCreatePoap}>
-          <Form.Item name="title" label="标题" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="intro" label="简介" rules={[{ required: true }]}>
-            <Input.TextArea rows={4} />
-          </Form.Item>
-          <Form.Item name="image_uri" label="图片" rules={[{ required: true }]}>
-            <FileUpload onFormatedChange={(err: Error, file: any) => form.setFieldsValue({ image_uri: file.url })} />
-          </Form.Item>
-          <Form.Item name="contract" label="合约地址" rules={[{ required: true }]}>
-            <Input placeholder="树图链地址" />
-          </Form.Item>
-          <Form.Item name="total_amount" label="发行总量" rules={[{ required: false }]}>
-            <Input placeholder="无总量限制留空即可" type="number" />
-          </Form.Item>
-        </Form>
-      </Modal>
       <Form form={form} name="nothing_but_suppress_antd_warning"/>
     </div>
   );
 }
 
-function AppMetadatas(props: { id: string; refreshTrigger: number }) {
-  const { id, refreshTrigger = 0 } = props;
+function AppMetadatas(props: { id: string; refreshTrigger: number, pageLimit?: number }) {
+  const { id, refreshTrigger = 0, pageLimit } = props;
   const [items, setItems] = useState<Metadata[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -376,11 +336,11 @@ function AppMetadatas(props: { id: string; refreshTrigger: number }) {
   ];
 
   useEffect(() => {
-    getAppMetadatas(id as string, page, 10).then((res) => {
+    getAppMetadatas(id as string, page, pageLimit || 10).then((res) => {
       setTotal(res.count);
       setItems(res.items);
     });
-  }, [id, page, refreshTrigger]);
+  }, [id, page, refreshTrigger, pageLimit]);
 
   return (
     <>
@@ -451,69 +411,3 @@ function AppFiles(props: { id: string; refreshTrigger: number }) {
     </>
   );
 }
-
-/* function AppPoaps(props: { id: string }) {
-    const { id } = props;
-    const [items, setItems] = useState<Poap[]>([]);
-    const [total, setTotal] = useState(0);
-    const [page, setPage] = useState(1);
-  
-    const columns = [
-        {
-            title: 'ID',
-            dataIndex: 'id',
-        },
-        {
-            title: '标题',
-            dataIndex: 'title',
-        },
-        {
-            title: '合约',
-            dataIndex: 'contract',
-            // render: (text: string, record: Poap) => <a target="_blank" rel="noreferrer" href={'#'}>{text}</a>,
-        },
-        {
-            title: '发行数量',
-            dataIndex: 'total_amount',
-            render: (amount: number) => amount > 0 ? amount : '无限制',
-        },
-        {
-            title: 'NextID',
-            dataIndex: 'next_id',
-        },
-        {
-            title: 'POAP Link',
-            dataIndex: 'id',
-            render:   (text: string, record: Poap) => <a target="_blank" rel="noreferrer" href={"https://nftrainbow.cn/poap.html?id="+text}>POAP链接</a>,
-        },
-        {
-            title: '创建时间',
-            dataIndex: 'created_at',
-            render: formatDate,
-        },
-    ];
-  
-    useEffect(() => {
-      listPoaps(id as string, page, 10).then(res => {
-        setTotal(res.count);
-        setItems(res.items);
-      });
-    }, [id, page]);
-  
-    return (
-      <>
-        <Table
-          rowKey='id'
-          dataSource={items}
-          columns={columns}
-          pagination={{
-            total,
-            current: page,
-            showTotal: (total) => `共 ${total} 条`,
-          }}
-          onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
-        />
-      </>
-    );
-} */
-

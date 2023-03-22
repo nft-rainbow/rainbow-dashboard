@@ -10,7 +10,8 @@ const onFinish = (values: any) => {
 
 export default function MintFormFields(props: {
 	withImage: boolean, withName: boolean, withDesc: boolean,
-	withAddress: boolean, form: FormInstance, appId: string, chainId: number
+	withAddress: boolean, form: FormInstance, appId: string, chainId: number,
+    withAnimation: boolean,
 }) {
 	const { Text } = Typography;
 	const {form, appId, chainId} = props;
@@ -30,7 +31,7 @@ export default function MintFormFields(props: {
 
 	const fillMintTo = () => {
 		form.setFieldsValue({"mint_to_address": myAccount})
-		console.log(`form values`, form.getFieldsValue())
+		console.log(`MintFormFields form values`, form.getFieldsValue())
 	}
 
 	const normFile = (e: any) => {
@@ -80,7 +81,6 @@ export default function MintFormFields(props: {
 								        if (previewUrl) {
 									        setPreviewUrl("")
 								        }
-								        console.log(`uploading`, info.file.percent);
 								        setUploadPercent(info.file.percent || 100)
 							        }
 						        }}
@@ -100,6 +100,16 @@ export default function MintFormFields(props: {
 			</Form.Item>
 			}
 
+            {props.withAnimation && <Form.Item label="动画文件">
+				<Form.Item
+					name="animation_url"
+					noStyle
+					rules={[{required: false, message: ''}]}
+				>
+					<Input style={{width: '50%'}} placeholder="NFT的动画文件url，非必填"/>
+				</Form.Item>
+			</Form.Item>}
+
 			{props.withName && <Form.Item label="名字">
 				<Form.Item
 					name="name"
@@ -108,8 +118,7 @@ export default function MintFormFields(props: {
 				>
 					<Input style={{width: '50%'}} placeholder=""/>
 				</Form.Item>
-			</Form.Item>
-			}
+			</Form.Item>}
 
 			{props.withDesc && <Form.Item name="description" label="描述" rules={[{required: false}]}>
 				<Input.TextArea style={{width: '50%'}} rows={2}/>
@@ -137,14 +146,12 @@ export default function MintFormFields(props: {
 
 export function checkMintInput(form: FormInstance, {
 	withImage, withName, withDesc,
-	withAddress
+	withAddress,
 }: {
 	withImage: boolean, withName: boolean, withDesc: boolean,
-	withAddress: boolean
+	withAddress: boolean,
 }) {
-	const { file_url, name, description, mint_to_address } = form.getFieldsValue();
-    console.log(form.getFieldsValue());
-    console.log('checkMintInput: ', file_url, name, description, mint_to_address);
+	const { file_url, name, description, mint_to_address, animation_url } = form.getFieldsValue();
 	if (withImage && !file_url) {
 		message.info(`请设置图片`)
 		return;
@@ -157,5 +164,5 @@ export function checkMintInput(form: FormInstance, {
 		message.info(`请填写接受地址`)
 		return;
 	}
-	return {file_url, name, description: description || '', mint_to_address}
+	return {file_url, name, description: description || '', mint_to_address, animation_url}
 }
