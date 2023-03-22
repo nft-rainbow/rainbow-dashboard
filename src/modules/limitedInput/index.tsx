@@ -39,7 +39,7 @@ const LimitedInput: React.FC<ILimitByteInputProps> = ({ form, id, placeholder, m
   }, []);
 
   return (
-    <Form.Item rules={[{ required: true, message: message }, { validator: LimitValidator }]} {...props}>
+    <Form.Item rules={[{ required: true, message: message }, { validator: LimitValidator }]} {...props} >
       <Input id={id} placeholder={placeholder} />
     </Form.Item>
   );

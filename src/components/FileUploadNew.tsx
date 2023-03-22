@@ -12,7 +12,7 @@ interface FileUploadProps extends Omit<ComponentProps<typeof Upload>, 'type'> {
 
 const FileUpload = ({ isPrivate, type, wrapperClass, className, name = 'file', headers = authHeaderSync(), ...uploadProps }: FileUploadProps) => {
   return (
-    <Upload {...uploadProps} action={isPrivate ? methodUrl('/dashboard/misc/upload/kyc') : methodUrl('/dashboard/misc/upload')} headers={authHeaderSync()} className={wrapperClass}>
+    <Upload {...uploadProps} action={isPrivate ? methodUrl('/dashboard/misc/upload/kyc') : methodUrl('/dashboard/misc/upload')} headers={authHeaderSync()} className={wrapperClass} onPreview={file=>null}>
       <Button className={className} icon={!!type && type === 'plus' ? <PlusOutlined /> : <UploadOutlined />}>
         {!!type && type === 'plus' ? '' : '上传'}
       </Button>
