@@ -3,9 +3,9 @@ import { Card, Space, Tabs, TabsProps } from "antd";
 import { useParams } from "react-router-dom";
 import { Contract } from "@models/index";
 import { AppNFTs } from "@pages/apps/MintTasks";
-import MintTable from "./mintTable";
 import { MintSingle } from "./mintSingle";
 import { ContractInfo } from "../contracts/contractInfo";
+import MintTable from "./mintTable";
 
 export default function MintFrame() {
 	const [refreshNftList, setRefreshNftList] = useState(0);
@@ -33,13 +33,10 @@ export default function MintFrame() {
 			children: <AppNFTs id={contract.app_id || ""} refreshTrigger={refreshNftList} setRefreshTrigger={setRefreshNftList} contract={contract.address} showRefresh={true} />,
 		},
 	];
-	/* if (!contract.app_id) {
-		return <span>"载入中..."</span>
-	} */
 	return (
 		<Space direction={'vertical'} style={{flexGrow:1, border: "0px solid green",}}>
 			<ContractInfo id={paramId} reportContract={setContract}/>
-			<Card bodyStyle={{paddingTop:'8px'}}>
+			<Card bodyStyle={{paddingTop: '8px'}}>
 				<Tabs defaultActiveKey="10" items={items}/>
 			</Card>
 		</Space>
