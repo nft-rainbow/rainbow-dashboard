@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form, FormInstance, Input, message, Space, Tooltip, Typography, Upload, Image } from 'antd';
-import {LinkOutlined, QuestionCircleOutlined, UploadOutlined, UserOutlined} from "@ant-design/icons/lib";
-import {getAppAccounts} from "@services/app";
-import {authHeaderSync, methodUrl} from "@services/index";
+import { LinkOutlined, QuestionCircleOutlined, UploadOutlined, UserOutlined } from "@ant-design/icons/lib";
+import { getAppAccounts } from "@services/app";
+import { authHeaderSync, methodUrl } from "@services/index";
+import FileUploadOrInput from '@components/FileUploadOrInput';
 
 const onFinish = (values: any) => {
 	console.log('Received values of form: ', values);
@@ -20,9 +21,7 @@ export default function MintFormFields(props: {
 	const [previewUrl, setPreviewUrl] = useState('');
 	
     useEffect(() => {
-		if (!appId) {
-			return;
-		}
+		if (!appId) return;
 		getAppAccounts(appId).then(accounts => {
 			const acc = accounts.find(item => item.chain_id === chainId)?.address || "";
 			setMyAccount(acc);
@@ -106,7 +105,8 @@ export default function MintFormFields(props: {
 					noStyle
 					rules={[{required: false, message: ''}]}
 				>
-					<Input style={{width: '50%'}} placeholder="NFT的动画文件url，非必填"/>
+					{/* <Input style={{width: '50%'}} placeholder="NFT的动画文件url，非必填"/> */}
+                    <FileUploadOrInput style={{width: '50%'}} onChange={(err: Error, file: any) => form.setFieldValue('animation_url', file.url)}/>
 				</Form.Item>
 			</Form.Item>}
 

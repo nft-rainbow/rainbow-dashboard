@@ -17,6 +17,7 @@ import {
     PlusOutlined,
 } from '@ant-design/icons';
 import FileUpload from '@components/FileUpload';
+import FileUploadOrInput from '@components/FileUploadOrInput';
 import { getMedtadataList, createMetadata } from '@services/metadata';
 import { getAllApps } from '@services/app';
 import { Metadata, App } from '@models/index';
@@ -88,12 +89,6 @@ export default function MetaTable() {
         }
     ];
 
-    const extra = (
-        <>
-            <Button type='primary' onClick={() => setIsModalVisible(true)}>添加</Button>
-        </>
-    );
-
     const createMetadta = async (values: object) => {
         // @ts-ignore
         const appId = values.app_id;
@@ -109,14 +104,12 @@ export default function MetaTable() {
     }, [page]);
 
     useEffect(() => {
-        getAllApps().then(res => {
-            setApps(res);
-        });
+        getAllApps().then(setApps);
     }, []);
 
     return (
         <>
-            <Card title='元数据管理' extra={extra} style={{flexGrow:1}}>
+            <Card title='元数据管理' extra={<Button type='primary' onClick={() => setIsModalVisible(true)}>添加</Button>} style={{flexGrow:1}}>
                 <Table
                     rowKey='id'
                     dataSource={items}
@@ -144,10 +137,18 @@ export default function MetaTable() {
                         </Select>
                     </Form.Item>
                     <Form.Item name="image" label="图片" rules={[{ required: true }]}>
-                        <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ image: file.url })} />
+                        <FileUploadOrInput 
+                            accept={'.png,.jpg,.svg,.gif,stp,.max,.fbx,.obj,.x3d,.vrml,.3ds,3mf,.stl,.dae'}
+                            listType="picture"
+                            maxCount={1}
+                            onChange={(err: Error, file: any) => form.setFieldsValue({ image: file.url })}
+                        />
                     </Form.Item>
                     <Form.Item name="animation_url" label="动画文件" rules={[{ required: false }]}>
-                        <FileUpload onChange={(err: Error, file: any) => form.setFieldsValue({ animation_url: file.url })} />
+                        <FileUploadOrInput 
+                            maxCount={1}
+                            onChange={(err: Error, file: any) => form.setFieldsValue({ animation_url: file.url })}
+                        />
                     </Form.Item>
                     <Form.Item name="name" label="名字" rules={[{ required: true }]}>
                         <Input />

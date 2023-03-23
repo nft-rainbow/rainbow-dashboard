@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Card, Table, TablePaginationConfig
+    Card, Table, TablePaginationConfig, Input,
 } from "antd";
 import { getAutoSponsoredContracts } from '@services/contract';
 import { formatDate, scanAddressLinkByPrefix, short } from '@utils/index';
@@ -11,15 +11,16 @@ export default function Page() {
     const [contracts, setContracts] = useState<any[]>([]);
     const [totalCount, setTotalCount] = useState<number>(0);
     const [page, setPage] = useState(1);
+    const [contractFilter, setContractFilter] = useState<string>('');
 
     useEffect(() => {
-        getAutoSponsoredContracts(page, 10).then(res => {
+        getAutoSponsoredContracts(page, 10, contractFilter).then(res => {
             // @ts-ignore
             setContracts(res.items);
             // @ts-ignore
             setTotalCount(res.count);
         });
-    }, [page]);
+    }, [page, contractFilter]);
 
     const columns = [
         {
@@ -53,9 +54,15 @@ export default function Page() {
         },
     ];
 
+    const extra = (
+        <>
+            <Input onChange={e => setContractFilter(e.target.value)} placeholder="使用合约地址查询" style={{width: "400px"}}/>
+        </>
+    );
+
     return (
         <>
-            <Card title='代付自动设置合约列表' style={{flexGrow: 1}}>
+            <Card title='代付自动设置合约列表' style={{flexGrow: 1}} extra={extra}>
                 <Table
                     rowKey='id'
                     dataSource={contracts}
