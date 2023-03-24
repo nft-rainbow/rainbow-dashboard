@@ -14,7 +14,7 @@ interface ILimitByteInputProps extends FormItemProps {
 const LimitedInput: React.FC<ILimitByteInputProps> = ({ form, id, placeholder, maxLength, message, ...props }) => {
   const [isExessed, setIsExessed] = useState(false);
 
-  const LimitValidator = useCallback((rule: any, value: any, callback: any) => {
+  const LimitValidator = useCallback((rule: any, value: string = '', callback: any) => {
     if (!maxLength) return callback();
     const length = calculator(value);
     if (length > maxLength) {
