@@ -149,7 +149,7 @@ export function checkMintInput(form: FormInstance, {
 	withAddress,
 }: {
 	withImage: boolean, withName: boolean, withDesc: boolean,
-	withAddress: boolean,
+	withAddress: boolean, withAnimation?: boolean,
 }) {
 	const { file_url, name, description, mint_to_address, animation_url } = form.getFieldsValue();
 	if (withImage && !file_url) {
