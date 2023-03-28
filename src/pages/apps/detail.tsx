@@ -28,7 +28,7 @@ import { address } from 'js-conflux-sdk';
 import { LinkOutlined, QuestionCircleOutlined, UserOutlined } from '@ant-design/icons/lib';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { AppNFTs } from "@pages/apps/MintTasks";
-const { Paragraph } = Typography;
+const { Paragraph, Text } = Typography;
 
 const formLayout = {
   labelCol: { span: 4 },
@@ -95,6 +95,7 @@ export default function AppDetail(props: { appId?: string, pageLimit?: number })
 
   const extraOp = (
     <Space>
+        <Text type="secondary">如果铸造交易长期处于待处理状态，请检查余额是否足够</Text>
       <Button type="dashed" onClick={() => setRefreshNftList(refreshNftList + 1)}>
         刷新
       </Button>

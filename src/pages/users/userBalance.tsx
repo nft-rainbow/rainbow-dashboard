@@ -50,6 +50,7 @@ export default function UserBalance() {
     const [orderNo, setOrderNo] = useState("");
     const [startAt, setStartAt] = useState("");
     const [endAt, setEndAt] = useState("");
+    const [address, setAddress] = useState("");
 
     const refreshItems = (currentPage = 1, limit = 10, filter = {}) => {
         setLoading(true);
@@ -160,6 +161,9 @@ export default function UserBalance() {
             <Form.Item name="order_no" label="订单号">
                 <Input onChange={(val) => setOrderNo(val.target.value)} style={{width: '150px'}} />
             </Form.Item>
+            <Form.Item name="address" label="合约地址">
+                <Input onChange={(val) => setAddress(val.target.value)} style={{width: '300px'}} />
+            </Form.Item>
             <Form.Item>
                 <Button type="primary" onClick={() => {
                     refreshItems(page, 10, {
@@ -167,6 +171,7 @@ export default function UserBalance() {
                         started_at: startAt,
                         ended_at: endAt,
                         type,
+                        address,
                     });
                 }}>搜索</Button>
             </Form.Item>
