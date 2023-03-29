@@ -102,7 +102,8 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activi
               checked={switchers.dateDisabled}
               onClick={(checked, e) => {
                 e.preventDefault();
-                form.setFieldsValue({ activityDate: [null, null] });
+                // form.setFieldsValue({ activityDate: [null, null] });
+                checked && form.getFieldValue('activityDate')?.length === 2 && form.getFieldValue('activityDate').pop();
                 dispatch({ type: 'set', name: 'dateDisabled', value: checked });
               }}
             />
@@ -110,7 +111,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activi
           </div>
         </div>
         <Form.Item id="activityDate" name="activityDate" rules={[{ required: true, message: '请输入活动日期' }]}>
-          <RangePicker id="activityDate" showTime placeholder={['开始日期', '结束日期']} disabled={[false, switchers.dateDisabled]} allowEmpty={[false, true]} />
+          <RangePicker id="activityDate" showTime placeholder={['开始日期', '结束日期']} disabled={[false, switchers.dateDisabled]} allowEmpty={[false, switchers.dateDisabled]} />
         </Form.Item>
         <Form.Item
           label="活动封面："
