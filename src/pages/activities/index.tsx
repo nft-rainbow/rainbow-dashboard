@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { Card, Button, TablePaginationConfig, type MenuProps, Dropdown } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
-import { ActivityItem } from '../../models';
+import { ActivityItem, SearchParams } from '../../models';
 import CreatePOA from './createActivities';
 import { columns } from './tableHelper';
 import { getActivities } from '@services/activity';
@@ -14,7 +14,7 @@ const dropItems: MenuProps['items'] = [
   { label: '单个活动', key: 2 },
 ];
 
-export const useActivitiesStore = create<{ total: number; page: number; limit: number; items: Array<ActivityItem>; setPage: (page: number) => void; getItems: VoidFunction }>(
+export const useActivitiesStore = create<{ total: number; page: number; limit: number; items: Array<ActivityItem>; setPage: (page: number) => void; getItems: Function }>(
   (set, get) => ({
     total: 0,
     items: [],
@@ -22,8 +22,8 @@ export const useActivitiesStore = create<{ total: number; page: number; limit: n
     limit: 10,
     setPage: (newPage: number) => set({ page: newPage }),
     getItems: throttle(
-      () =>
-        getActivities({ page: get().page ?? 10, limit: 10 }).then((res) => {
+      (searchParams?:SearchParams) =>
+        getActivities(Object.assign({},{ page: get().page ?? 10, limit: 10 },searchParams)).then((res) => {
           set({ total: res.count, items: res.items });
         }),
       333
@@ -71,7 +71,7 @@ export default function Poaps() {
     <>
       <Card title="" style={{ flexGrow: 1 }}>
         <ProTable
-          rowKey="activity_id"
+          rowKey="created_at"
           scroll={{ x: 1144 }}
           dataSource={items}
           columns={columns}
@@ -81,7 +81,7 @@ export default function Poaps() {
               <Button type="primary" onClick={() => form?.submit()} key={searchText}>
                 {searchText}
               </Button>,
-              <Button onClick={() => form?.resetFields()} key={resetText}>
+              <Button onClick={() => {form?.resetFields();setPage(1);form?.submit();}} key={resetText}>
                 {resetText}
               </Button>,
               extra,
@@ -96,7 +96,12 @@ export default function Poaps() {
           }}
           request={async (params, sort, filter) => {
             try {
-              await getItems();
+              let searchParams = {
+                activity_id: params.activity_id,
+                contract_address: params.contract_address,
+                name: params.name
+              }
+              await getItems(searchParams);
               return { success: true };
             } catch {
               return { success: false };

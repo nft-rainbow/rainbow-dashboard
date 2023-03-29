@@ -114,6 +114,12 @@ export interface ActivityItem {
   ];
 }
 
+export interface SearchParams {
+  activity_id?: string;
+  contract_address?: string;
+  name?: string;
+}
+
 export interface MintCountByMonth {
   count: number;
   month: string;
