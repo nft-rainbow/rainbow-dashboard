@@ -14,7 +14,7 @@ const dropItems: MenuProps['items'] = [
   { label: '单个活动', key: 2 },
 ];
 
-export const useActivitiesStore = create<{ total: number; page: number; limit: number; items: Array<ActivityItem>; setPage: (page: number) => void; getItems: Function }>(
+export const useActivitiesStore = create<{ total: number; page: number; limit: number; items: Array<ActivityItem>; setPage: (page: number) => void; getItems: (params?: SearchParams) => void }>(
   (set, get) => ({
     total: 0,
     items: [],
@@ -71,7 +71,7 @@ export default function Poaps() {
     <>
       <Card title="" style={{ flexGrow: 1 }}>
         <ProTable
-          rowKey="created_at"
+          rowKey="activity_id"
           scroll={{ x: 1144 }}
           dataSource={items}
           columns={columns}
