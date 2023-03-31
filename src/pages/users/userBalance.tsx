@@ -186,6 +186,11 @@ export default function UserBalance() {
                 <div style={{width: '200px', float: 'left'}}>
                     <span style={{display: 'block',color: 'gray', fontSize: '14px'}}>账户余额</span>
                     <span className='user-balance'>¥ {(balance / 100).toFixed(2)}</span>
+                    <a href="https://nftrainbow.cn/financial-agreement.html" target='_blank' rel="noreferrer">
+                        <span style={{display: 'block',color: 'gray', fontSize: '14px'}}>
+                            用户协议
+                        </span>
+                    </a>
                 </div>
                 <div style={{width: '100px', float: 'right'}}>
                     <Tooltip title={billText}>
