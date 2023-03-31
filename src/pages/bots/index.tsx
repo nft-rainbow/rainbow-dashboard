@@ -3,13 +3,14 @@ import {
     Tabs, TabsProps, Card, Form, Input, 
     Button, Space, Table, Layout, Modal,
     Row, Col, Divider, Select, Checkbox,
-    Alert,
+    Alert, Typography
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { BotEvent } from "@models/index";
 import { getBotEvents, getDoDoRoles, getDodoChannels, getDodoServers } from '@services/bot';
 import { getActivities, ActivityQuerier } from '@services/activity';
 const { Content, Sider } = Layout;
+const { Text } = Typography;
 
 const DISCORD_BOT = 'discord';
 const DODO_BOT = 'dodo';
@@ -46,18 +47,20 @@ function Dodo() {
     const [form] = Form.useForm();
     const [isModalShow, setIsModalShow] = useState(false);
     const [serverId, setServerId] = useState("123");
+    
+    const [isAddBotShow, setIsAddBotShow] = useState(true);
 
     const showModal = () => {
         setIsModalShow(true);
-      };
+    };
     
-      const handleOk = () => {
+    const handleOk = () => {
         setIsModalShow(false);
-      };
+    };
     
-      const handleCancel = () => {
+    const handleCancel = () => {
         setIsModalShow(false);
-      };
+    };
 
     const onFinish = (values: any) => {
         console.log('Finish:', values);
@@ -189,7 +192,7 @@ function Dodo() {
             </Content>
             <Sider theme='light' width={300}>
                 <Space>
-                    <a href="https://imdodo.com/bot/u/3574817" target="_blank" rel="noreferrer"><Button type='link'>添加机器人</Button></a>
+                    <Button type='primary' onClick={() => setIsAddBotShow(true)}>添加机器人</Button>
                     <Button type='primary' onClick={showModal}>推送社群</Button>
                 </Space>
             </Sider>
@@ -246,6 +249,33 @@ function Dodo() {
                 </Row>
                 <Divider/>
                 <h4>选择推送消息</h4>
+            </Form>
+        </Modal>
+        <Modal
+            title="添加机器人"
+            open={isAddBotShow}
+            onOk={() => setIsAddBotShow(false)}
+            onCancel={() => setIsAddBotShow(false)}
+            okText={"确定"}
+            cancelText={"取消"}
+        >
+            <Form layout='vertical' className='mt-20'>
+                <Form.Item>
+                    <Text>1. 点击机器人<a href="https://imdodo.com/bot/u/3574817" target={"_blank"} rel="noreferrer">邀请链接</a>，授权机器人加入自己创建的 DoDo 社区</Text>
+                </Form.Item>
+                <Form.Item label="2. 填写自己的超级群号" name="server_no">
+                    <Input placeholder="输入超级群号" />
+                </Form.Item>
+                <Form.Item label="3. 填写机器人私信的验证码，完成验证" name="code">
+                    <Row gutter={8}>
+                        <Col span={12}>
+                            <Input placeholder="输入验证码" />
+                        </Col>
+                        <Col span={12}>
+                            <Button type='primary'>发送验证码</Button>
+                        </Col>
+                    </Row>
+                </Form.Item>
             </Form>
         </Modal>
     </>
