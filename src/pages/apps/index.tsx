@@ -144,6 +144,33 @@ function Apps() {
               <Select.Option value="conflux">树图链</Select.Option>
             </Select>
           </Form.Item>
+
+          <Form.Item
+            label="网址"
+            name="website"
+            rules={[{ required: false }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="ICP备案号"
+            name="icp"
+            rules={[{ required: false }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="发行平台"
+            name="platform"
+            rules={[{ required: false }]}
+          >
+            <Select>
+              <Select.Option value="weixin">微信</Select.Option>
+              <Select.Option value="app">App</Select.Option>
+              <Select.Option value="h5">H5</Select.Option>
+              <Select.Option value="other">其他</Select.Option>
+            </Select>
+          </Form.Item>
           
         </Form>
       </Modal>
