@@ -79,6 +79,7 @@ export default function AppDetail(props: { appId?: string, pageLimit?: number })
       .then((res) => {
         setIsMintModalVisible(false);
         setRefreshNftList(refreshNftList + 1);
+        form.resetFields();
       })
       .catch((err) => {
         message.error(err.response.data.message);
@@ -96,18 +97,18 @@ export default function AppDetail(props: { appId?: string, pageLimit?: number })
   const extraOp = (
     <Space>
         <Text type="secondary">如果铸造交易长期处于待处理状态，请检查余额是否足够</Text>
-      <Button type="dashed" onClick={() => setRefreshNftList(refreshNftList + 1)}>
-        刷新
-      </Button>
-      <Button type="primary" onClick={() => setIsMintModalVisible(true)}>
-        快捷铸造藏品{' '}
-        <Tooltip title={'快捷铸造使用的是平台内置合约，所有人共用。'}>
-          <QuestionCircleOutlined />
-        </Tooltip>
-      </Button>
-      <Button type="primary" onClick={() => setIsDetailModalVisible(true)}>
-        查看AppKey
-      </Button>
+        <Button type="dashed" onClick={() => setRefreshNftList(refreshNftList + 1)}>
+            刷新
+        </Button>
+        <Button type="primary" onClick={() => setIsMintModalVisible(true)}>
+            快捷铸造藏品{' '}
+            <Tooltip title={'快捷铸造使用的是平台内置合约，所有人共用。'}>
+                <QuestionCircleOutlined />
+            </Tooltip>
+        </Button>
+        <Button type="primary" onClick={() => setIsDetailModalVisible(true)}>
+            查看AppKey
+        </Button>
     </Space>
   );
 
