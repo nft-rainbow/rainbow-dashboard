@@ -73,7 +73,7 @@ const ManageAssetsBlind: React.FC = () => {
     listContracts().then((res) => {
       let tempContracts: Contract[] = [];
       res.items.map((e: Contract) => {
-        if (e.type === 1) tempContracts.push(e);
+        if (e.type === 1 && e.address) tempContracts.push(e);
       });
       setContracts(tempContracts);
     });
@@ -82,7 +82,7 @@ const ManageAssetsBlind: React.FC = () => {
   useEffect(() => {
     if (!data) return;
     form.setFieldsValue({
-      contract_id: data.contract_id ?? '',
+      contract_id: data.contract_id ? data.contract_id : undefined,
       ...(data?.nft_configs ? Object.fromEntries(data?.nft_configs?.map((nftItem: any) => [`nftConfig-${nftItem.id}`, nftItem])) : {}),
       ...(data?.nft_configs ? Object.fromEntries(data?.nft_configs?.map((nftItem: any) => [`nftConfig-${nftItem.id}-probability`, nftItem?.probability * 100])) : {}),
     });
@@ -96,12 +96,12 @@ const ManageAssetsBlind: React.FC = () => {
       <Card>
         <Form form={form} id="manageAssetsBlindForm" onFinish={handleFinish}>
           <Form.Item name="contract_id" label="合约地址" rules={[{ required: true, message: '请选择合约地址' }]}>
-            <Select placeholder="请选择" disabled={!isContractEditable}>
-              {contracts.map((e) => (
+            <Select placeholder="请选择" disabled={!isContractEditable} options={contracts.map((e) => ({value:e.id,label:e.name+' - '+e.symbol+' - '+e.address}))}>
+              {/* {contracts.map((e) => (
                 <Option label={e.address} value={e.id} key={e.address}>
                   {e.address}
                 </Option>
-              ))}
+              ))} */}
             </Select>
           </Form.Item>
           <div className="mb-[16px] flex flex-row items-center justify-between">
