@@ -94,13 +94,20 @@ export interface ActivityItem {
   description: string;
   activity_id?: string;
   app_name: string;
+  app_id: number;
   activity_picture_url: string;
+  activity_poster_url: string;
   amount: number;
-  contract_address: string;
+  contract?: {
+    chain_id: number;
+    chain_type: number;
+    contract_address: number;
+    contract_type: number;
+    id: number;
+  },
   contract_id?: number;
   chain_type: number;
   command?: string;
-  app_id: number;
   activity_name: string;
   activity_type: number;
   start_time: string;

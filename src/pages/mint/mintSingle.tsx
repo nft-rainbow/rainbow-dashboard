@@ -50,9 +50,6 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 		if (badRow) {
 			message.info(`请完善扩展属性`)
 			return;
-		} else {
-			// message.info(`ok`)
-			// return;
 		}
 		const options = {
 			...values,
@@ -62,36 +59,36 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 		};
 		setInfo(options);
 		setMintLoading(true)
-		let copies = formCopies.getFieldValue("copies")
+		let copies = parseInt(formCopies.getFieldValue("copies"));
 		if (copies > 1) {
 			const arr = []
-			for(let i=0; i<copies; i++) arr.push(options);
-			batchMint(props.appId.toString(), arr).then(([res])=>{
+			arr.push(Object.assign(options, {number: copies}));
+			batchMint(props.appId.toString(), arr).then(([res]) => {
 				setStep("submitted")
 				setTask(res?.mint_task || {})
 				console.log(`res`, res)
 			}).finally(()=>{
 				setMintLoading(false)
 			})
-			return;
+            return;
 		}
 
-		easyMintUrl(props.appId.toString(), options)
-			.then((res) => {
-				message.info(`铸造任务提交成功！`)
-				setTaskId(res.id)
-				// still in loading in order to check status
-			})
-			.catch(e => {
-				const msg = e.response?.data?.message || e.toString()
-				message.error(`铸造失败:${msg}`)
-				console.log(`error is`, e)
-				setMintLoading(false)
-			}).finally(() => {
-			})
+        easyMintUrl(props.appId.toString(), options)
+            .then((res) => {
+                message.info(`铸造任务提交成功！`)
+                setTaskId(res[0].id)
+                // still in loading in order to check status
+            })
+            .catch(e => {
+                const msg = e.response?.data?.message || e.toString()
+                message.error(`铸造失败:${msg}`)
+                console.log(`error is`, e)
+                setMintLoading(false)
+            }).finally(() => {
+        })
 	}
 	if (!contract.address) {
-		return <span>"合约地址不正确"</span>;
+		return <span>合约地址不正确</span>;
 	}
 	return (
 		<>
