@@ -1,22 +1,22 @@
 import { useState, useCallback } from 'react';
 
-const useInTransaction = <T extends (params: any) => void | Promise<any> | null | undefined>(transcationFunc: T) => {
+const useInTransaction = <T extends (params: any) => void | Promise<any> | null | undefined>(transactionFunc: T) => {
   const [inTransaction, setInTransaction] = useState(false);
-  const execTranscation = useCallback(
+  const execTransaction = useCallback(
     async (params: any) => {
       try {
         setInTransaction(true);
-        const res = await transcationFunc(params);
+        const res = await transactionFunc(params);
         setInTransaction(false);
         return res;
       } catch (_) {
         setInTransaction(false);
       }
     },
-    [transcationFunc]
+    [transactionFunc]
   ) as T;
 
-  return { inTransaction, execTranscation };
+  return { inTransaction, execTransaction };
 };
 
 export default useInTransaction;

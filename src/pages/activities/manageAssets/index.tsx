@@ -5,10 +5,9 @@ import { DownOutlined, DeleteOutlined } from '@ant-design/icons';
 import RainbowBreadcrumb from '@components/Breadcrumb';
 import FileUploadNew from '@components/FileUploadNew';
 import useManageAssets from './useManageAssets';
-import dayjs from 'dayjs';
 import './index.scss';
-
 const { Option } = Select;
+
 const items: MenuProps['items'] = [
   {
     label: '文本',
@@ -19,6 +18,7 @@ const items: MenuProps['items'] = [
     key: 'date',
   },
 ];
+
 interface CharacterItemProps {
   trait_type: string;
   display_type?: string;
@@ -27,6 +27,7 @@ interface CharacterItemProps {
   value: any;
   remove: (index: number | number[]) => void;
 }
+
 const CharacterItem: React.FC<CharacterItemProps> = ({ display_type, name, id, remove, value }) => {
   return (
     <div className="flex flex-row" key={`${name}-${id}`}>

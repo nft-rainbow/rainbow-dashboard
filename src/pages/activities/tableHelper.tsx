@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityItem } from '../../models';
+import { ActivityItem } from '@models/index';
 import type { ProColumns } from '@ant-design/pro-components';
 import { Tooltip } from 'antd';
 import { ClockCircleTwoTone, CheckCircleTwoTone, CloseCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import ActivityLink from '@assets/icons/activityLink.svg';
-import AirDrop from '@assets/icons/airDrop.svg';
 import ManageActivity from '@assets/icons/manageActivity.svg';
 import ManageCollection from '@assets/icons/manageCollection.svg';
-import WebLink from '@assets/icons/webLink.svg';
-import { chainTypeToName, timestampToSecond2, timestampToSecond, turnTimestamp } from '../../utils';
+import { chainTypeToName, timestampToSecond2, timestampToSecond, turnTimestamp } from '@utils/index';
 import { shortenCfxAddress } from '@utils/addressUtils';
 import { activityTypeTransform, activityTypeTransformEn } from '@utils/activityHelper';
 import { useActivitiesStore } from './index';
-import ManageActivityModual from './manageActivities';
-import ClaimLinkModual from './activityLink';
+import ManageActivityModal from './manageActivities';
+import ClaimLinkModal from './activityLink';
 
 export const mapSimpleStatus = (status: number, error: string) => {
   switch (status) {
@@ -66,7 +64,7 @@ export const ActivityManageIcon: React.FC<{ activity: ActivityItem }> = ({ activ
           <img src={ManageActivity} />
         </Tooltip>
       </div>
-      {isManageActModalVisible && <ManageActivityModual open={isManageActModalVisible} hideModal={hideModal} onCancel={hideModal} activity={activity} />}
+      {isManageActModalVisible && <ManageActivityModal open={isManageActModalVisible} hideModal={hideModal} onCancel={hideModal} activity={activity} />}
     </>
   );
 };
@@ -85,7 +83,7 @@ export const ClaimLinkIcon: React.FC<{ activity: ActivityItem }> = ({ activity }
           <img src={ActivityLink} />
         </Tooltip>
       </div>
-      <ClaimLinkModual open={open} onCancle={() => setOpen(false)} activity={activity} />
+      <ClaimLinkModal open={open} onCancel={() => setOpen(false)} activity={activity} />
     </>
   );
 };
@@ -99,14 +97,14 @@ export const activityOperations: React.FC<ActivityItem> = (activity: ActivityIte
           <img src={ManageCollection} />
         </Tooltip>
       </Link>
-      <Tooltip title="空投" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer opacity-30 pointer-events-none">
+      {/* <Tooltip title="空投" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer opacity-30 pointer-events-none">
         <img src={AirDrop} />
-      </Tooltip>
+      </Tooltip> */}
       <ClaimLinkIcon activity={activity} />
       {/* <Link to={`/panels/poaps/building/${activity.activity_id}`}> */}
-        <Tooltip title="网页搭建" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer opacity-30 pointer-events-none">
+        {/* <Tooltip title="网页搭建" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer opacity-30 pointer-events-none">
           <img src={WebLink} />
-        </Tooltip>
+        </Tooltip> */}
       {/* </Link> */}
     </div>
   );
@@ -122,14 +120,15 @@ export const columns: ProColumns<ActivityItem>[] = [
   {
     title: '合约地址',
     dataIndex: 'contract_address',
-    render: (_, record) => (record.contract_address ? <Tooltip title={record.contract_address}>{shortenCfxAddress(record.contract_address)} </Tooltip> : '--'),
+    render: (_, record) => (record.contract?.contract_address ? <Tooltip title={record.contract?.contract_address}>{shortenCfxAddress(record.contract.contract_address as unknown as string)} </Tooltip> : '--'),
   },
   {
     title: '区块链',
     dataIndex: 'chain_type',
-    render: (_, record) => chainTypeToName(record.chain_type, record.chain_id),
+    render: (_, record) => record.contract?.chain_id ? chainTypeToName(record.contract.chain_type, record.contract.chain_id) : '--',
     defaultSortOrder: 'ascend',
-    sorter: (a: ActivityItem, b: ActivityItem) => a.chain_id - b.chain_id,
+    // @ts-ignore
+    sorter: (a: ActivityItem, b: ActivityItem) => a.contract?.chain_id - b.contract?.chain_id,
     search: false,
   },
   {

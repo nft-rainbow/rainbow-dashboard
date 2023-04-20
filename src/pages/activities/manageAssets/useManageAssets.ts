@@ -13,9 +13,9 @@ const useManageAssets = (type: 'single' | 'blind', nftItemId?: string) => {
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [form] = Form.useForm();
   const { activityId } = useParams<{ activityId: string }>();
-  const { inTransaction, execTranscation: updatePoap } = useInTransaction(_updatePoap);
+  const { inTransaction, execTransaction: updatePoap } = useInTransaction(_updatePoap);
   const { data, mutate } = useSWR(`api/apps/poap/activity/${activityId}`, () => getActivityById(activityId));
-  const isContractEditable = useMemo(() => !data?.contract_address || !contracts?.find((contract) => contract?.address === data?.contract_address), [data, contracts]);
+  const isContractEditable = useMemo(() => !data?.contract?.contract_address || !contracts?.find((contract) => contract?.address === data?.contract?.contract_address), [data, contracts]);
 
   const handleFinish = useCallback(
     async (formData: any) => {
