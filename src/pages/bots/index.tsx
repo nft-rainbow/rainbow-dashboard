@@ -21,7 +21,6 @@ const { Text } = Typography;
 const { Option } = Select;
 
 export default function Page() {
-
     const onChange = (key: string) => {
         console.log(key);
     };
@@ -52,31 +51,32 @@ function Dodo() {
     const social_tool = 'dodo';
 
     const [isModalShow, setIsModalShow] = useState(false);
-    
-    const [form] = Form.useForm();
-    
     const [isAddBotShow, setIsAddBotShow] = useState(false);
     const [inviteUrl, setInviteUrl] = useState("");
     const [bindForm] = Form.useForm();
     const [serverId, setServerId] = useState(""); // server id in bind form
+    const [filterAddress, setFilterAddress] = useState(""); // filter address in bind form
+    const [filterName, setFilterName] = useState(""); // filter name in bind form
+    const [page, setPage] = useState(1);
+    const [total, setTotal] = useState(0);
+    const [items, setItems] = useState([]);
 
-    const onFinish = (values: any) => {
-        console.log('Finish:', values);
-    };
+    const [form] = Form.useForm();
 
     const columns: ColumnsType<BotEvent> = [
         {
           title: '互动/藏品ID',
-          dataIndex: 'event_id',
+          dataIndex: 'activity_id',
           render: (text) => <a>{text}</a>,
         },
         {
           title: '类型',
-          dataIndex: 'type',
+          dataIndex: 'activity_type',
+          render: (text) => text === 'single' ? '单个活动' : '盲盒活动',
         },
         {
           title: '社群ID',
-          dataIndex: 'server_id',
+          dataIndex: 'raw_server_id',
         },
         {
           title: '社群名称',
@@ -84,55 +84,47 @@ function Dodo() {
         },
         {
           title: '互动/藏品名称',
-          dataIndex: 'event_name',
+          dataIndex: 'name',
         },
         {
           title: '区块链',
-          dataIndex: 'chain',
+          dataIndex: 'chain_id',
         },
         {
           title: '合约地址',
-          dataIndex: 'contract',
+          dataIndex: 'contract_address',
+          render: (text) => short(text),
         },
         {
           title: '开始时间',
           dataIndex: 'start_time',
+          render: (text) => formatDate(new Date(text * 1000)),
         },
         {
           title: '结束时间',
           dataIndex: 'end_time',
+          render: (text) => text ? formatDate(new Date(text * 1000)) : '',
         },
         {
           title: '推送时间',
-          dataIndex: 'push_time',
+          dataIndex: 'last_push_time',
+          render: (text) => text ? formatDate(new Date(text * 1000)) : '',
         },
-        /* {
+        {
           title: 'Action',
           key: 'action',
-          render: (_, record) => (
+          render: (_, record: BotEvent) => (
             <Space size="middle">
-              <a>Invite {record.server_name}</a>
-              <a>Delete</a>
+              <Button type='primary' onClick={() => {
+                try {
+                    pushBotActivity(record.push_info_id.toString())
+                } catch(e) {
+                    // @ts-ignore
+                    message.error(e.response.data.message);
+                }
+            }}>推送</Button>
             </Space>
           ),
-        }, */
-    ];
-
-    const data: BotEvent[] = [
-        {
-            id: 1,
-            created_at: '2023-03-08 12:00:00',
-            updated_at: '2023-03-08 12:00:00',
-            event_id: "123456",
-            event_name: 'John Brown',
-            type: 1,
-            server_id: '123456',
-            server_name: 'John Brown',
-            chain: 1029,
-            contract: 'New York No. 1 Lake Park',
-            start_time: '2023-03-08 12:00:00',
-            end_time: "2023-03-08 12:00:00",
-            push_time: "2023-03-08 12:00:00",
         },
     ];
 
@@ -146,27 +138,37 @@ function Dodo() {
     }
 
     useEffect(() => {
+        const filter = {
+            social_tool,
+            page,
+            limit: 10,
+        }
+        // @ts-ignore
+        if (filterName) filter.activity_name = filterName;
+        // @ts-ignore
+        if (filterAddress) filter.contract_address = filterAddress;
+        getBotActivities(filter).then(res => {
+            setTotal(res.count);
+            setItems(res.items);
+        });
+    }, [filterName, filterAddress, page]);
+
+    useEffect(() => {
         if (!isAddBotShow) return;
         getBotInviteUrl(social_tool).then(res => {
             setInviteUrl(res.message);
         })
     }, [isAddBotShow]);
 
-    useEffect(() => {
-        getBotActivities({social_tool}).then(res => {
-            console.log('bot activities', res);
-        });
-    });
-
     return (<>
         <Layout>
             <Content style={{backgroundColor: 'white'}}>
-                <Form form={form} name="horizontal_login" layout="inline" onFinish={onFinish}>
+                <Form form={form} name="horizontal_login" layout="inline">
                     <Form.Item label="活动/藏品名称" name="name">
-                        <Input placeholder="NFT Name" />
+                        <Input placeholder="活动名称" onChange={e => setFilterName(e.target.value)}/>
                     </Form.Item>
                     <Form.Item label="合约地址" name="contract">
-                        <Input placeholder="Contract Address" />
+                        <Input placeholder="合约地址" onChange={e => setFilterAddress(e.target.value)} />
                     </Form.Item>
                 </Form>
             </Content>
@@ -178,7 +180,17 @@ function Dodo() {
             </Sider>
         </Layout>
         <div style={{height: '20px'}}></div>
-        <Table rowKey={'event_id'} columns={columns} dataSource={data} />
+        <Table 
+            rowKey={'event_id'} 
+            columns={columns} 
+            dataSource={items}
+            pagination={{
+                total,
+                current: page,
+                showTotal: (total) => `共 ${total} 条`,
+            }}
+            onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
+        />
         <DoDoActivityCreateModal isModalShow={isModalShow} setIsModalShow={setIsModalShow} />
         <Modal
             title="添加机器人"
@@ -263,13 +275,14 @@ function DoDoActivityCreateModal(props: {
         },
     ]
 
-    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        setSelectedRowKeys(newSelectedRowKeys);
-    };
-
     const createServerActivity = async (values: any) => {
         if (selectedRowKeys.length === 0) {
             message.error('请选择活动');
+            return;
+        }
+        const serverMeta = botServers.find(server => server.raw_server_id === pushServerId);
+        if (!serverMeta) {
+            message.error('请选择服务器');
             return;
         }
 
@@ -281,29 +294,30 @@ function DoDoActivityCreateModal(props: {
             channel_id,
             role_id,
         } = values;
-        
+
         const meta = {
             activity_id,
             channel_id,
             color_theme,
             content,
-            roles: [
+            roles: role_id ? [
                 role_id,
-            ]
+            ] : [],
         }
 
-        const serverMeta = botServers.find(server => server.raw_server_id === pushServerId);
-        if (!serverMeta) {
-            message.error('请选择服务器');
-            return;
+        try {
+            const res = await createPushInfo(serverMeta.id.toString(), meta);
+            // await pushBotActivity(res.id);
+            setIsModalShow(false);
+        } catch(e) {
+            // @ts-ignore
+            message.error(e.response.data.message);
         }
-
-        const res = await createPushInfo(serverMeta.id.toString(), meta);
-
-        await pushBotActivity(await res.id);
-        
-        setIsModalShow(false);
     }
+
+    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+        setSelectedRowKeys(newSelectedRowKeys);
+    };
     
     const rowSelection = {
         selectedRowKeys,
@@ -316,10 +330,6 @@ function DoDoActivityCreateModal(props: {
         getBotServers(social_tool, 1, 1000).then(res => {
             setBotServers(res.items);
         });
-    }, [isModalShow]);
-
-    useEffect(() => {
-        if (!isModalShow) return;
         getActivities({page: 1, limit: 10}).then(res => {
             setActivities(res.items);
             setActivityCount(res.count);
@@ -332,7 +342,7 @@ function DoDoActivityCreateModal(props: {
             setCurrServerChannels(res);
         });
         getServerRoles(pushServerId, social_tool).then(res => {
-            setCurrServerRoles(res);
+            setCurrServerRoles(res.filter((role: {roleName: string, roleId: string}) => role.roleName !== "NFTRainbowBot"));
         });
     }, [pushServerId]);
 
