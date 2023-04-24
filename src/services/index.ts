@@ -80,6 +80,7 @@ export function tryToGetLocalStorageUser(): UserInfo | null {
   return userMeta;
 }
 
+// http request helper methods
 export async function get(url: string, query = {}) {
   const headers = await authHeader();
   const { data } = await axios.get(methodUrl(url), {
