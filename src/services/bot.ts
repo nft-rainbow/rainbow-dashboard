@@ -1,58 +1,64 @@
-import { get, post } from '.';
+import { get, post, put } from '.';
 
-// bot 1-discord 2-dodo
-export async function getBotEvents(bot = '2', page: number, limit: number) {
-    return get(`/apps/botserver`, {
-        social_tool: bot || '2',
+// social_tool: dodo, discord
+
+export function getBotInviteUrl(social_tool: string) {
+    return get(`/apps/bot/invite_url?social_tool=${social_tool}`);
+}
+
+export function getBotServers(social_tool: string, page?: number, limit?: number) {
+    return get(`/apps/bot/server`, {
+        social_tool,
         page,
         limit,
     });
 }
 
-export async function getDodoServers(bot = '2') {
-    return get(`/apps/botserver`, {
-        social_tool: bot
-    });
-}
-
-export async function getDodoChannels(server_id: string, bot = '2') {
-    return get(`/apps/botserver/channels`, {
-        server_id,
-        social_tool: bot
-    });
-}
-
-export async function getDoDoRoles(server_id: string, bot = '2') {
-    return get(`/apps/botserver/roles`, {
-        server_id,
-        social_tool: bot
-    });
-}
-
-/**
-{
-    "activity_id": 1,
-    "channel_id": "1",
-    "roles": "1",
-    "content": "content",
-    "color_theme": "red"
-}
-*/
-export async function createBotEvents(meta: object) {
-    return post('/apps/botserver/push', meta);
-}
-
-export async function getDodoAuthCode(server_id: string, bot: string) {
-    return post('/apps/botserver/authcode', {
-        server_id,
-        social_tool: bot,
-    });
-}
-
-export async function bindDodoServer(server_id: string, auth_code: string, social_tool: string) {
-    return post('/apps/botserver', {
-        server_id,
+export function bindBotServers(auth_code: string, server_id: string, social_tool: string) {
+    return post(`/apps/bot/server`, {
         auth_code,
-        social_tool,
+        server_id,
+        social_tool
     });
+}
+
+export function getBotActivities(filter: {social_tool: string, page?: number, limit?: number, activity_name?: string, contract_address?: string}) {
+    return get(`/apps/bot/server/activities`, filter);
+}
+
+export function getBotAuthCode(server_id: string, social_tool: string) {
+    return get(`/apps/bot/server/authcode`, {
+        server_id,
+        social_tool
+    });
+}
+
+export function getServerChannels(server_id: string, social_tool: string) {
+    return get(`/apps/bot/server/channels`, {
+        server_id,
+        social_tool
+    })
+}
+
+export function getServerRoles(server_id: string, social_tool: string) {
+    return get(`/apps/bot/server/roles`, {
+        server_id,
+        social_tool
+    })
+}
+
+export function pushBotActivity(id: string) {
+    return post(`/apps/bot/server/push/${id}`);
+}
+
+export function updateBotPushInfo(id: string, meta: object) {
+    return put(`/apps/bot/server/pushinfo/${id}`, meta)
+}
+
+export function getServerDetail(id: string) {
+    return get(`/apps/bot/server/${id}`);
+}
+
+export function createPushInfo(id: string, pushInfo: object) {
+    return post(`/apps/bot/server/${id}/pushinfo`, pushInfo)
 }

@@ -146,7 +146,7 @@ export const columns: ProColumns<ActivityItem>[] = [
     dataIndex: 'start_time',
     render: (_, record) => timestampToSecond2(record.start_time),
     defaultSortOrder: 'ascend',
-    sorter: (a: ActivityItem, b: ActivityItem) => parseInt(b.start_time) - parseInt(a.start_time),
+    sorter: (a: ActivityItem, b: ActivityItem) => b.start_time - a.start_time,
     search: false,
   },
   {

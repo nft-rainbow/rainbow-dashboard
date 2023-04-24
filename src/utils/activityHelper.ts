@@ -80,6 +80,7 @@ export const formDataTranslate = (data: FormData, apps: App[], activityType: num
   if (data.activityDate[1]) end_time = dateTraslate(new Date(data.activityDate[1]));
   const appIndex = apps.findIndex((app) => app.id === data.app_id);
   return {
+    // @ts-ignore
     activity_picture_url: data?.file?.[0]?.response?.url ?? data?.file?.[0]?.url ?? '',
     amount: parseInt(data.amount ?? '-1'),
     app_id: data.app_id,
@@ -91,7 +92,7 @@ export const formDataTranslate = (data: FormData, apps: App[], activityType: num
     white_list_infos: data.white_list_infos,
     command: data.command ?? '',
     name: data.name,
-    activity_type: activityType,
+    activity_type: activityTypeIdToName(activityType),
     app_name: apps[appIndex].name,
   };
 };
@@ -129,20 +130,37 @@ export const defaultSwitchers = {
 type Switcher = keyof typeof defaultSwitchers;
 export type Switchers = typeof defaultSwitchers;
 
-export const activityTypeDic = ['盲盒活动', '单个活动', 'POAP活动'];
-export const activityTypeDicEn = ['blind', 'single', 'poap'];
+export const activityTypeDic = {
+    'single': "单个活动",
+    'blind_box': "盲盒活动",
+}
+// ['盲盒活动', '单个活动', 'POAP活动'];
+export const activityTypeDicEn = {
+    'single': 'Single',
+    'blind_box': 'Blind Box',
+    'poap': 'POAP',
+}
+// ['blind', 'single', 'poap'];
 
-export const activityTypeTransform = (type: number) => {
-  return activityTypeDic[type - 1];
+export const activityTypeTransform = (type: string) => {
+    // @ts-ignore
+    return activityTypeDic[type];
 };
 
-export const activityTypeTransformEn = (type: number) => {
-  return activityTypeDicEn[type - 1];
+export const activityTypeIdToName = (type: number) => {
+    // @ts-ignore
+    return ['blind_box', 'single', 'poap'][type - 1];
+};
+
+export const activityTypeTransformEn = (type: string) => {
+    // @ts-ignore
+  return activityTypeDicEn[type];
 };
 
 export const getActivityUrl = () => {
-  const url = new URL(location.href);
-  const searchParams = new URLSearchParams(url.search);
-  const activity_id = searchParams.get('activity_id');
-  return activity_id;
+    // @ts-ignore
+    const url = new URL(location.href);
+    const searchParams = new URLSearchParams(url.search);
+    const activity_id = searchParams.get('activity_id');
+    return activity_id;
 };
