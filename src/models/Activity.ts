@@ -1,3 +1,4 @@
+// activity_type enum: blind_box, single
 
 export interface ActivityItem {
     id: number;
@@ -21,7 +22,7 @@ export interface ActivityItem {
     // chain_type: number;
     command?: string;
     // activity_name: string;
-    activity_type: number;
+    activity_type: string;
     start_time: number;
     end_time?: number;
     created_at: string;
