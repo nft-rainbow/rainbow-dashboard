@@ -32,6 +32,11 @@ export default function MintFrame() {
             label: `铸造历史`,
 			children: <AppNFTs id={contract.app_id || ""} refreshTrigger={refreshNftList} setRefreshTrigger={setRefreshNftList} contract={contract.address} showRefresh={true} />,
 		},
+		{
+			key: '50',			
+            label: `按序铸造`,
+			children: <div />,
+		},
 	];
 	return (
 		<Space direction={'vertical'} style={{flexGrow:1, border: "0px solid green",}}>
