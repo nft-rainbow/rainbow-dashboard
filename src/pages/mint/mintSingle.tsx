@@ -92,11 +92,16 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 	}
 	return (
 		<>
-			<MintFormFields withImage={true} form={form} appId={appId} chainId={contract.chain_id}
-			                withDesc={true}
-			                withAddress={true}
-                            withAnimation={true}
-			                withName={true}/>
+			<MintFormFields 
+                withImage={true} 
+                form={form} 
+                appId={appId} 
+                chainId={contract.chain_id}
+			    withDesc={true}
+			    withAddress={true}
+                withAnimation={true}
+			    withName={true}
+            />
 			<div style={{marginLeft: '0px', display: (hasTrait || 1) ? "" : "none"}}>
 				<Row>
 					<Col span={2} style={{textAlign: 'right', marginTop: 5}}>
@@ -114,7 +119,9 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 					<Space>
 						<InputNumber type={"number"} step={1} precision={0} min={1} max={100} defaultValue={1} style={{width:"200px"}}
 							onChange={(v)=>formCopies.setFieldValue("copies", v)}/>
-						<Tooltip title={"铸造多少个NFT给同一个接受地址。这些NFT只有id不同，其他属性完全相同。"}><QuestionCircleOutlined/></Tooltip>
+						<Tooltip title={"铸造多少个NFT给同一个接受地址。这些NFT只有id不同，其他属性完全相同。"}>
+                            <QuestionCircleOutlined/>
+                        </Tooltip>
 					</Space>
 				</Form.Item>
 			</Form>
@@ -131,25 +138,25 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 			}
 			<Space>
 				<Space style={{marginTop:'8px'}} >
-				{mintLoading &&
-					<Tooltip title={"铸造任务会在后台执行，请耐心等待"}><QuestionCircleOutlined  style={{marginLeft: '8px'}} /></Tooltip>
-				}
+                    {mintLoading &&
+                        <Tooltip title={"铸造任务会在后台执行，请耐心等待"}><QuestionCircleOutlined  style={{marginLeft: '8px'}} /></Tooltip>
+                    }
 
-				{ step === 'submitted'  &&
-				(<>
-					<Typography.Text type={"success"}>任务提交成功！</Typography.Text>请在铸造历史中查看执行结果。
-					<Button type={"primary"} onClick={()=>setStep('edit')}>我知道了</Button>
-				</>)
-				}
+                    { step === 'submitted'  &&
+                    (<>
+                        <Typography.Text type={"success"}>任务提交成功！</Typography.Text>请在铸造历史中查看执行结果。
+                        <Button type={"primary"} onClick={()=>setStep('edit')}>我知道了</Button>
+                    </>)
+                    }
 
-				{ step === 'done'  &&
-				(<>
-					<Typography.Text type={"success"}>铸造成功！</Typography.Text>
-					<Button type={"primary"} onClick={()=>setStep('edit')}>我知道了</Button>
-				</>)
-				}
+                    { step === 'done'  &&
+                    (<>
+                        <Typography.Text type={"success"}>铸造成功！</Typography.Text>
+                        <Button type={"primary"} onClick={()=>setStep('edit')}>我知道了</Button>
+                    </>)
+                    }
 
-				{task.token_uri && <Button type={"link"}><a href={task.token_uri} target={"_blank"} rel="noreferrer">查看URI</a></Button>}
+				    {task.token_uri && <Button type={"link"}><a href={task.token_uri} target={"_blank"} rel="noreferrer">查看URI</a></Button>}
 				</Space>
 			</Space>
 		</>
