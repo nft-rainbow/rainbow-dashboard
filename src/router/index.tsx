@@ -21,7 +21,7 @@ import Building from '@pages/activities/Building';
 import Metadata from '@pages/metadata';
 import EmptyPage from '@pages/emptyPage';
 import Bots from '@pages/bots';
-import MintFrame from "@pages/mint/mintFrame";
+import MintFrame from "@pages/mint";
 import AutoSponsors from "@pages/contracts/autoSponsorContracts";
 
 const AppRouter: React.FC = () => {
