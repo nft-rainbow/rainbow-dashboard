@@ -42,14 +42,14 @@ export default function MintFrame() {
 			children: <MintTable appId={contract.app_id || ''} chainId={contract.chain_id} controlForm={true} contract={contract} />,
 		},
 		{
-			key: '40',			
-            label: `铸造历史`,
-			children: <AppNFTs id={contract.app_id || ""} refreshTrigger={refreshNftList} setRefreshTrigger={setRefreshNftList} contract={contract.address} showRefresh={true} />,
-		},
-		{
-			key: '50',			
+			key: '40',
             label: `按序铸造`,
 			children: <MintByMetadataUri appId={contract.app_id || ''} chainId={contract.chain_id} contract={contract} />,
+		},
+		{
+			key: '50',
+            label: `铸造历史`,
+			children: <AppNFTs id={contract.app_id || ""} refreshTrigger={refreshNftList} setRefreshTrigger={setRefreshNftList} contract={contract.address} showRefresh={true} />,
 		},
 	];
 
