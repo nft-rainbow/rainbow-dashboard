@@ -53,7 +53,6 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 		}
         try {
             let res = await easyMintUrl(props.appId.toString(), options);
-            console.log(res);
             message.info(`铸造任务提交成功！`)
             setTaskId(res[0].id)
         } catch(e) {
@@ -147,8 +146,8 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 
                         { step === 'done'  &&
                         (<>
-                            <Typography.Text type={"success"}>铸造成功！</Typography.Text>
                             <Button type={"primary"} onClick={()=>setStep('edit')}>确定</Button>
+                            <Typography.Text type={"success"}>铸造成功！</Typography.Text>
                         </>)
                         }
 
