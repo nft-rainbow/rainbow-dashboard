@@ -1,7 +1,7 @@
 import React from 'react';
-import {MinusCircleOutlined, PlusOutlined} from '@ant-design/icons';
-import {Button, Col, Form, Input, message, Row, Space} from 'antd';
-import {DownloadText} from "@pages/mint/downloadTxt";
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Col, Form, Input, message, Row, Space } from 'antd';
+import { DownloadText} from "@pages/mint/downloadTxt";
 import ParseLocalFile from "@pages/mint/parseLocalFile";
 
 const onFinish = (values: any) => {
@@ -28,8 +28,7 @@ const Attributes: React.FC<{ onValuesChange: (_, v) => void }> = ({onValuesChang
                                         name={[name, k]} label={k}
                                         rules={[{required: k === 'trait_type' || k === 'value', message: `必填项`}]}
                                     >
-                                        <Input placeholder="" bordered={false}
-                                               style={{borderBottom: '1px dashed gray'}}/>
+                                        <Input placeholder="" bordered={false} style={{borderBottom: '1px dashed gray'}}/>
                                     </Form.Item>
                                 </span>))}
                                 <MinusCircleOutlined onClick={() => remove(name)}/>
@@ -37,8 +36,8 @@ const Attributes: React.FC<{ onValuesChange: (_, v) => void }> = ({onValuesChang
                         ))}
                         <Form.Item>
                             <Row gutter={16}>
-                                <Col span={8}> <Button type="dashed" onClick={() => add()} block
-                                                       icon={<PlusOutlined/>}/>
+                                <Col span={8}> 
+                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined/>}/>
                                 </Col>
                                 <Col span={8}><ParseLocalFile handleData={(data) => {
                                     console.log(`import data`, data)
@@ -50,9 +49,9 @@ const Attributes: React.FC<{ onValuesChange: (_, v) => void }> = ({onValuesChang
                                         message.info(`导入出错: ${e}`)
                                     }
                                 }}/>
-                                    <Button type={"link"}><DownloadText label={"导出"}
-                                                                        content={JSON.stringify(form.getFieldsValue(), null, 4)}
-                                                                        filename={"meta_table.json.txt"}/></Button>
+                                    <Button type={"link"}>
+                                        <DownloadText label={"导出"} content={JSON.stringify(form.getFieldsValue(), null, 4)} filename={"meta_table.json.txt"}/>
+                                    </Button>
                                 </Col>
                                 <Col span={8}>
                                 </Col>

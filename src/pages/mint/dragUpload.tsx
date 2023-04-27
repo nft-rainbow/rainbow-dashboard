@@ -1,15 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import { InboxOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
 import type { UploadProps } from 'antd';
-import {message, Space, Tooltip, Upload} from 'antd';
+import {message, Tooltip, Upload} from 'antd';
 import {authHeaderSync, methodUrl} from "../../services";
-import CompoundedSpace from "antd/es/space";
 import {PictureOutlined} from "@ant-design/icons/lib";
-import SliderTooltip from "antd/es/slider/SliderTooltip";
-
 const { Dragger } = Upload;
-
-
 
 function DragUpload(props:{onSuccess:any}) {
 	const [count, setCount] = useState(0);
@@ -29,7 +23,7 @@ function DragUpload(props:{onSuccess:any}) {
 	};
 	const onChange = (info:any)=>{
 		const { status } = info.file;
-		console.log('info is ', info)
+		// console.log('info is ', info)
 		setCountAll(info.fileList.length);
 		if (status !== 'uploading') {
 			console.log('status ', status, info.file.name);

@@ -136,8 +136,8 @@ export const activityTypeDic = {
 }
 // ['盲盒活动', '单个活动', 'POAP活动'];
 export const activityTypeDicEn = {
-    'single': 'Single',
-    'blind_box': 'Blind Box',
+    'single': 'single',
+    'blind_box': 'blind',
     'poap': 'POAP',
 }
 // ['blind', 'single', 'poap'];

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
 	Button,
 	Checkbox,
@@ -23,25 +23,25 @@ import { Contract } from "@models/index";
 const { Text } = Typography;
 
 interface Item {
-  key: string;
-  file_url: string;
-  name: string;
-  desc: string;
-  address: string;
-  attributes: { [key: string]: string }[];
+    key: string;
+    file_url: string;
+    name: string;
+    desc: string;
+    address: string;
+    attributes: { [key: string]: string }[];
 }
 
 const originData: Item[] = [];
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
-  editing: boolean;
-  dataIndex: string;
-  title: any;
-  inputType: 'number' | 'text' | 'file';
-  record: Item;
-  index: number;
-  children: React.ReactNode;
-  form: FormInstance;
+    editing: boolean;
+    dataIndex: string;
+    title: any;
+    inputType: 'number' | 'text' | 'file';
+    record: Item;
+    index: number;
+    children: React.ReactNode;
+    form: FormInstance;
 }
 
 const EditableCell: React.FC<EditableCellProps> = ({ editing, dataIndex, title, inputType, record, index, form, children, ...restProps }) => {
@@ -233,10 +233,6 @@ function MintTable(props: {appId: string, chainId: number, controlForm: boolean,
     };
   });
 
-  /* useEffect(() => {
-    console.log(`data length`, data.length);
-  }, [data]); */
-
   const addRow = (url = '', name = '') => {
     let newElement = { key: Date.now().toString(), file_url: url, name, address: '', desc: '', attributes: [] };
     setData((preArr) => [...preArr, newElement]);
@@ -279,6 +275,7 @@ function MintTable(props: {appId: string, chainId: number, controlForm: boolean,
     });
     setData(newArr as Item[]);
   };
+
   const exportData = () => {
     setExporting(true);
     new Promise(() => {
@@ -287,6 +284,7 @@ function MintTable(props: {appId: string, chainId: number, controlForm: boolean,
       .then()
       .finally(() => setExporting(false));
   };
+
   const exportAsync = () => {
     const values = checkMintInput(headForm, { withAddress: useCols.sameAddress, withDesc: useCols.sameDesc, withName: useCols.sameName, withImage: useCols.sameImage });
     if (!values) {
@@ -325,6 +323,7 @@ function MintTable(props: {appId: string, chainId: number, controlForm: boolean,
     writeFileXLSX(wb, `export_mints_${dt.getMonth() + 1}_${dt.getDate()}.xlsx`);
     setExporting(false);
   };
+
   const mint = () => {
     const values = checkMintInput(headForm, { withImage: useCols.sameImage, withName: useCols.sameName, withDesc: useCols.sameDesc, withAddress: useCols.sameAddress });
     if (!values) {
@@ -372,6 +371,7 @@ function MintTable(props: {appId: string, chainId: number, controlForm: boolean,
         setMintLoading(false);
       });
   };
+  
   return (
     <>
       {controlForm && (
