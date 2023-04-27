@@ -84,7 +84,6 @@ export default function UserBalance() {
         {
           title: '创建时间',
           dataIndex: 'created_at',
-          key: 'created_at',
           render: formatDate,
         },
         {

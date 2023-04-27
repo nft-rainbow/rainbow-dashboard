@@ -1,9 +1,8 @@
-
 import React, { useEffect, useState } from "react";
 import { Button, Col, Form, InputNumber, message, Row, Space, Tooltip, Typography } from "antd";
-import { batchMint, easyMintUrl, getMintTask } from "../../services/app";
-import { Contract, NFT } from "../../models";
-import { mapChainAndNetworkName } from "../../utils";
+import { batchMint, easyMintUrl, getMintTask } from "@services/app";
+import { Contract, NFT } from "@models/index";
+import { mapChainAndNetworkName } from "@utils/index";
 import { QuestionCircleOutlined } from "@ant-design/icons/lib";
 import Attributes from "@pages/mint/attributes";
 import MintFormFields, { checkMintInput } from "./mintFormFields";
@@ -20,27 +19,8 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 	const [hasTrait, setHasTrait] = useState(false);
 	const [step, setStep] = useState('edit' as 'edit'|'submitted'|'done');
 	const [attributes, setAttributes] = useState([] as any[])
-	
-    useEffect(()=>{
-		if (!taskId) {
-			return;
-		}
-		getMintTask(taskId).then(res=>{
-			setTask(res);
-			if (res.status === 0) {
-				setTimeout(()=>setTick(tick+1), 1_000)
-			} else if (res.status === 1){
-				setMintLoading(false)
-				message.info(`铸造完毕~`)
-				setStep('done')
-			} else {
-				setMintLoading(false)
-				message.info(`铸造出错[${res.status}][${res.error}]`)
-			}
-		})
-	}, [taskId, tick])
 
-	const mint = () => {
+	const mint = async () => {
 		const values = checkMintInput(form, {withImage: true, withName: true, withDesc: true, withAddress: true, withAnimation: true})
 		if (!values) {
 			return;
@@ -66,29 +46,42 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 			batchMint(props.appId.toString(), arr).then(([res]) => {
 				setStep("submitted")
 				setTask(res?.mint_task || {})
-				console.log(`res`, res)
 			}).finally(()=>{
 				setMintLoading(false)
 			})
             return;
 		}
-
-        easyMintUrl(props.appId.toString(), options)
-            .then((res) => {
-                message.info(`铸造任务提交成功！`)
-                setTaskId(res[0].id)
-                // still in loading in order to check status
-            })
-            .catch(e => {
-                const msg = e.response?.data?.message || e.toString()
-                message.error(`铸造失败:${msg}`)
-                console.log(`error is`, e)
-                setMintLoading(false)
-            }).finally(() => {
-        })
+        try {
+            let res = await easyMintUrl(props.appId.toString(), options);
+            console.log(res);
+            message.info(`铸造任务提交成功！`)
+            setTaskId(res[0].id)
+        } catch(e) {
+            const msg = e.response?.data?.message || e.toString()
+            message.error(`铸造失败:${msg}`)
+            console.log(`error is`, e)
+            setMintLoading(false)
+        }
 	}
+
+    useEffect(()=>{
+		if (!taskId) return;
+		getMintTask(taskId).then(res=>{
+			setTask(res);
+			if (res.status === 0) {
+				setTimeout(()=>setTick(tick+1), 1_000)
+			} else if (res.status === 1){
+				setMintLoading(false)
+				message.info(`铸造完毕~`)
+				setStep('done')
+			} else {
+				setMintLoading(false)
+				message.info(`铸造出错[${res.status}][${res.error}]`)
+			}
+		})
+	}, [taskId, tick])
 	if (!contract.address) {
-		return <span>合约地址不正确</span>;
+		return <span>合约信息加载不完整</span>;
 	}
 	return (
 		<>
@@ -125,40 +118,44 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 					</Space>
 				</Form.Item>
 			</Form>
-			{ step === 'edit' &&
-				<Button 
-                    loading={mintLoading} 
-                    style={{marginTop: '8px'}} 
-                    htmlType={"submit"} 
-                    type={"primary"} 
-                    onClick={() => mint()}
-                >
-                    {mintLoading ? "铸造中" : "开始铸造"}
-                </Button>
-			}
-			<Space>
-				<Space style={{marginTop:'8px'}} >
-                    {mintLoading &&
-                        <Tooltip title={"铸造任务会在后台执行，请耐心等待"}><QuestionCircleOutlined  style={{marginLeft: '8px'}} /></Tooltip>
+            <Row>
+                <Col span={2}>
+                </Col>
+                <Col>
+                    { step === 'edit' &&
+                        <Button 
+                            loading={mintLoading} 
+                            style={{marginTop: '8px'}} 
+                            htmlType={"submit"} 
+                            type={"primary"} 
+                            onClick={() => mint()}
+                        >
+                            {mintLoading ? "铸造中" : "开始铸造"}
+                        </Button>
                     }
+                    <Space style={{marginTop:'8px'}} >
+                        {mintLoading &&
+                            <Tooltip title={"铸造任务会在后台执行，请耐心等待"}><QuestionCircleOutlined  style={{marginLeft: '8px'}} /></Tooltip>
+                        }
 
-                    { step === 'submitted'  &&
-                    (<>
-                        <Typography.Text type={"success"}>任务提交成功！</Typography.Text>请在铸造历史中查看执行结果。
-                        <Button type={"primary"} onClick={()=>setStep('edit')}>我知道了</Button>
-                    </>)
-                    }
+                        { step === 'submitted'  &&
+                        (<>
+                            <Typography.Text type={"success"}>任务提交成功！</Typography.Text>请在铸造历史中查看执行结果。
+                            <Button type={"primary"} onClick={()=>setStep('edit')}>确定</Button>
+                        </>)
+                        }
 
-                    { step === 'done'  &&
-                    (<>
-                        <Typography.Text type={"success"}>铸造成功！</Typography.Text>
-                        <Button type={"primary"} onClick={()=>setStep('edit')}>我知道了</Button>
-                    </>)
-                    }
+                        { step === 'done'  &&
+                        (<>
+                            <Typography.Text type={"success"}>铸造成功！</Typography.Text>
+                            <Button type={"primary"} onClick={()=>setStep('edit')}>确定</Button>
+                        </>)
+                        }
 
-				    {task.token_uri && <Button type={"link"}><a href={task.token_uri} target={"_blank"} rel="noreferrer">查看URI</a></Button>}
-				</Space>
-			</Space>
+                        {task.token_uri && <Button type={"link"}><a href={task.token_uri} target={"_blank"} rel="noreferrer">查看URI</a></Button>}
+                    </Space>
+                </Col>
+            </Row>
 		</>
 	);
 }
