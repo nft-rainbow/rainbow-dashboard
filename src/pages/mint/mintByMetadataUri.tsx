@@ -29,10 +29,10 @@ export function MintByMetadataUri(props: {
                 return;
             }
             // 如果第一个元素包含模版字符串'{id}', 则检查所有 metadata uri 是否一致
-            if (items[0].MetadataUri.match("{id}")) {
+            if (items[0].MetadataUri.match("{id}") && items.length > 1) {
                 let allMatch = true;
-                for(let i = 0; i < items.length; i++) {
-                    if (!items[i].MetadataUri !== items[0].MetadataUri) {
+                for(let i = 1; i < items.length; i++) {
+                    if (items[i].MetadataUri !== items[0].MetadataUri) {
                         allMatch = false;
                         break;
                     }
@@ -98,7 +98,7 @@ export function MintByMetadataUri(props: {
                 <Row justify="start" gutter={8}>
                     <Col  xs={8} sm={4} md={3}>
                         <Form.Item>
-                            <ParseLocalFile handleData={data => setItems(data)}/>
+                            <ParseLocalFile handleData={data => setItems(data)} />
                         </Form.Item>
                     </Col>
                     <Col xs={8} sm={4} md={3}>
