@@ -48,7 +48,7 @@ const useManageAssets = (type: 'single' | 'blind', nftItemId?: string) => {
   );
 
   useEffect(() => {
-    listContracts().then((res) => {
+    listContracts(1, 100, {status: 1}).then((res) => {
       let tempContracts: Contract[] = [];
       res.items.map((e: Contract) => {
         if (e.type === 1) tempContracts.push(e);

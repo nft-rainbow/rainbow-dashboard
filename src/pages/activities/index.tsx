@@ -6,12 +6,12 @@ import { ProTable } from '@ant-design/pro-components';
 import { ActivityItem, SearchParams } from '@models/index';
 import { getActivities } from '@services/activity';
 import { throttle } from 'lodash-es';
-import CreatePOA from './createActivities';
+import { CreatePOA } from './createActivities';
 import { columns } from './tableHelper';
 
 const dropItems: MenuProps['items'] = [
-    { label: '盲盒活动', key: 1 },
     { label: '单个活动', key: 2 },
+    { label: '盲盒活动', key: 1 },
 ];
 
 export const useActivitiesStore = create<{ 
@@ -29,11 +29,11 @@ export const useActivitiesStore = create<{
         limit: 10,
         setPage: (newPage: number) => set({ page: newPage }),
         getItems: throttle(
-        (searchParams?: SearchParams) =>
-            getActivities(Object.assign({}, { page: get().page ?? 10, limit: 10 }, searchParams)).then((res) => {
+            async (searchParams?: SearchParams) => {
+                const res = await getActivities(Object.assign({}, { page: get().page ?? 10, limit: 10 }, searchParams));
                 set({ total: res.count, items: res.items });
-            }),
-        333
+            },
+            333
         ),
     })
 );
@@ -117,7 +117,7 @@ export default function Poaps() {
                     onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
                 />
             </Card>
-            <CreatePOA activityType={activityType} open={isActivityModalVisible} onCancel={() => setIsActivityModalVisible(false)} hideModal={hideModal} />
+            <CreatePOA activityType={activityType} open={isActivityModalVisible} onCancel={hideModal} hideModal={hideModal} />
         </>
     );
 }

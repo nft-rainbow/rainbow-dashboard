@@ -3,6 +3,7 @@ import { SponsorInfo } from '../models';
 
 export interface ContractFilter {
     app_id?: number;
+    status?: number;
 }
 
 export async function deployContract(id: number | string, meta: object) {
