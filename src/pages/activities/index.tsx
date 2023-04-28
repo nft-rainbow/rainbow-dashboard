@@ -3,114 +3,121 @@ import { create } from 'zustand';
 import { Card, Button, TablePaginationConfig, type MenuProps, Dropdown } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
-import { ActivityItem, SearchParams } from '../../models';
-import CreatePOA from './createActivities';
-import { columns } from './tableHelper';
+import { ActivityItem, SearchParams } from '@models/index';
 import { getActivities } from '@services/activity';
 import { throttle } from 'lodash-es';
+import CreatePOA from './createActivities';
+import { columns } from './tableHelper';
 
 const dropItems: MenuProps['items'] = [
-  { label: '盲盒活动', key: 1 },
-  { label: '单个活动', key: 2 },
+    { label: '盲盒活动', key: 1 },
+    { label: '单个活动', key: 2 },
 ];
 
-export const useActivitiesStore = create<{ total: number; page: number; limit: number; items: Array<ActivityItem>; setPage: (page: number) => void; getItems: (params?: SearchParams) => void }>(
-  (set, get) => ({
-    total: 0,
-    items: [],
-    page: 1,
-    limit: 10,
-    setPage: (newPage: number) => set({ page: newPage }),
-    getItems: throttle(
-      (searchParams?:SearchParams) =>
-        getActivities(Object.assign({},{ page: get().page ?? 10, limit: 10 },searchParams)).then((res) => {
-          set({ total: res.count, items: res.items });
-        }),
-      333
-    ),
-  })
+export const useActivitiesStore = create<{ 
+    total: number; 
+    page: number; 
+    limit: number; 
+    items: Array<ActivityItem>; 
+    setPage: (page: number) => void; 
+    getItems: (params?: SearchParams) => void;
+}>(
+    (set, get) => ({
+        total: 0,
+        items: [],
+        page: 1,
+        limit: 10,
+        setPage: (newPage: number) => set({ page: newPage }),
+        getItems: throttle(
+        (searchParams?: SearchParams) =>
+            getActivities(Object.assign({}, { page: get().page ?? 10, limit: 10 }, searchParams)).then((res) => {
+                set({ total: res.count, items: res.items });
+            }),
+        333
+        ),
+    })
 );
 
 export default function Poaps() {
-  const items = useActivitiesStore((state) => state.items);
-  const total = useActivitiesStore((state) => state.total);
-  const page = useActivitiesStore((state) => state.page);
-  const setPage = useActivitiesStore((state) => state.setPage);
-  const getItems = useActivitiesStore((state) => state.getItems);
-  const [activityType, setActivityType] = useState(-1);
-  const [isActivityModalVisible, setIsActivityModalVisible] = useState(false);
+    const items = useActivitiesStore((state) => state.items);
+    const total = useActivitiesStore((state) => state.total);
+    const page = useActivitiesStore((state) => state.page);
+    const setPage = useActivitiesStore((state) => state.setPage);
+    const getItems = useActivitiesStore((state) => state.getItems);
+    const [activityType, setActivityType] = useState(-1);
+    const [isActivityModalVisible, setIsActivityModalVisible] = useState(false);
 
-  const hideModal = () => {
-    setIsActivityModalVisible(false);
-  };
+    const hideModal = () => {
+        setIsActivityModalVisible(false);
+    };
 
-  useEffect(() => {
-    getItems();
-  }, [page, isActivityModalVisible]);
+    useEffect(() => {
+        getItems();
+    }, [page, isActivityModalVisible, getItems]);
 
-  const extra = (
-    <Dropdown
-      key="create-activity"
-      trigger={['click']}
-      menu={{
-        items: dropItems,
-        onClick: (e) => {
-          setActivityType(parseInt(e.key));
-          setIsActivityModalVisible(true);
-        },
-      }}
-    >
-      <div className="h-[32px] flex items-center justify-center px-[4px] border border-solid border-[#6953EF] text-[#6953EF] rounded-[6px]">
-        创建活动
-        <DownOutlined />
-      </div>
-    </Dropdown>
-  );
+    const extra = (
+        <Dropdown
+            key="create-activity"
+            trigger={['click']}
+            menu={{
+                items: dropItems,
+                onClick: (e) => {
+                    setActivityType(parseInt(e.key));
+                    setIsActivityModalVisible(true);
+                },
+            }}
+        >
+        <div className="h-[32px] flex items-center justify-center px-[4px] border border-solid border-[#6953EF] text-[#6953EF] rounded-[6px]">
+            创建活动
+            <DownOutlined />
+        </div>
+        </Dropdown>
+    );
 
-  return (
-    <>
-      <Card title="" style={{ flexGrow: 1 }}>
-        <ProTable
-          rowKey="activity_id"
-          scroll={{ x: 1144 }}
-          dataSource={items}
-          columns={columns}
-          search={{
-            span: 6,
-            optionRender: ({ searchText, resetText }, { form }) => [
-              <Button type="primary" onClick={() => form?.submit()} key={searchText}>
-                {searchText}
-              </Button>,
-              <Button onClick={() => {form?.resetFields();setPage(1);form?.submit();}} key={resetText}>
-                {resetText}
-              </Button>,
-              extra,
-            ],
-          }}
-          options={false}
-          pagination={{
-            pageSize: 10,
-            total,
-            current: page,
-            showTotal: (total) => `共 ${total} 条`,
-          }}
-          request={async (params, sort, filter) => {
-            try {
-              let searchParams = {
-                activity_id: params.activity_id,
-                contract_address: params.contract_address,
-                name: params.name
-              }
-              await getItems(searchParams);
-              return { success: true };
-            } catch {
-              return { success: false };
-            }
-          }}
-          onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
-        />
-      </Card>
-      <CreatePOA activityType={activityType} open={isActivityModalVisible} onCancel={() => setIsActivityModalVisible(false)} hideModal={hideModal} />
-    </>
-  );
+    return (
+        <>
+            <Card title="" style={{ flexGrow: 1 }}>
+                <ProTable
+                    rowKey="activity_id"
+                    scroll={{ x: 1144 }}
+                    dataSource={items}
+                    columns={columns}
+                    search={{
+                        span: 6,
+                        optionRender: ({ searchText, resetText }, { form }) => [
+                            <Button type="primary" onClick={() => form?.submit()} key={searchText}>
+                                {searchText}
+                            </Button>,
+                            <Button onClick={() => {form?.resetFields();setPage(1);form?.submit();}} key={resetText}>
+                                {resetText}
+                            </Button>,
+                            extra,
+                        ],
+                    }}
+                    options={false}
+                    pagination={{
+                        pageSize: 10,
+                        total,
+                        current: page,
+                        showTotal: (total) => `共 ${total} 条`,
+                    }}
+                    request={async (params, sort, filter) => {
+                        try {
+                            let searchParams = {
+                                activity_id: params.activity_id,
+                                contract_address: params.contract_address,
+                                name: params.name
+                            }
+                            await getItems(searchParams);
+                            return { success: true };
+                        } catch {
+                            return { success: false };
+                        }
+                    }}
+                    onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
+                />
+            </Card>
+            <CreatePOA activityType={activityType} open={isActivityModalVisible} onCancel={() => setIsActivityModalVisible(false)} hideModal={hideModal} />
+        </>
+    );
 }

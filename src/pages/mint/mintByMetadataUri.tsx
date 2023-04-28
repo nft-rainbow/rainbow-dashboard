@@ -49,6 +49,7 @@ export function MintByMetadataUri(props: {
                 mint_items: items.map(item => ({
                     metadata_uri: item.MetadataUri,
                     mint_to_address: item.Address,
+                    token_id: item.TokenId ? item.TokenId : null,
                     amount: 1,
                 })),
             };
