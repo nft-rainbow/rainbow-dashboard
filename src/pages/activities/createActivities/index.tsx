@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useReducer } from 'react';
 import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, Radio, message } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { App } from '../../../models';
+import { App } from '@models/index';
 import LimitedInput from '@modules/limitedInput';
 import FileUploadNew from '@components/FileUploadNew';
 import { PopoverContent, ExistRelationForbidden, ModalStyle } from './constants';
@@ -11,71 +11,67 @@ import { parseCSV, csvWhitelistFormat } from '@utils/csvUtils';
 import { handleFormSwitch, defaultSwitchers, formDataTranslate, type FormData } from '@utils/activityHelper';
 import useResetFormOnCloseModal from '@hooks/useResetFormOnCloseModal';
 import './index.scss';
+const { Option } = Select;
+const { RangePicker } = DatePicker;
 
 interface CreatePOAProps {
-  open: boolean;
-  onCancel: () => void;
-  hideModal: () => void;
-  activityType: number;
+    open: boolean;
+    onCancel: () => void;
+    hideModal: () => void;
+    activityType: number;
 }
 
-const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activityType }) => {
-  const [apps, setApps] = useState<App[]>([]);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const [form] = Form.useForm();
-  useResetFormOnCloseModal({ form, open });
-  const { Option } = Select;
-  const { RangePicker } = DatePicker;
-  const [switchers, dispatch] = useReducer(handleFormSwitch, defaultSwitchers);
+export const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activityType }) => {
+    const [apps, setApps] = useState<App[]>([]);
+    const [confirmLoading, setConfirmLoading] = useState(false);
+    const [switchers, dispatch] = useReducer(handleFormSwitch, defaultSwitchers);
+    const [form] = Form.useForm();
+    useResetFormOnCloseModal({ form, open });
 
-  const checkRelAllowed = useCallback((rule: any, value: number, callback: any) => {
-    const amount = form.getFieldValue('amount');
-    if (!switchers.numberDisabled && amount && amount < value) callback('公开铸造上限不能大于发行数量');
-    callback();
-  }, []);
+    const checkRelAllowed = useCallback((rule: any, value: number) => {
+        const amount = form.getFieldValue('amount');
+        if (!switchers.numberDisabled && amount && amount < value) return '公开铸造上限不能大于发行数量';
+        return null;
+    }, [form, switchers.numberDisabled]);
 
-  const handleWhiltelistChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(async (e) => {
-    if (!e.target?.files?.length) return;
-    const csvResPromise = parseCSV(e.target?.files[0]);
-    csvResPromise
-      .then((res: any) => {
-        const whiteListInfo = csvWhitelistFormat(res);
-        form.setFieldsValue({ white_list_infos: whiteListInfo });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+    const handleWhiltelistChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(async (e) => {
+        if (!e.target?.files?.length) return;
+        try {
+            let res = await parseCSV(e.target?.files[0]);
+            const whiteListInfo = csvWhitelistFormat(res as [string[], string[]]);
+            form.setFieldsValue({ white_list_infos: whiteListInfo });
+        } catch(err: any) {
+            message.error(err.message);   
+        }
+    }, [form]);
 
-  const handleFinish = useCallback(
-    async (values: FormData) => {
-      const params = formDataTranslate(values, apps, activityType);
-      try {
-        setConfirmLoading(true);
-        await createActivity(params);
+    const handleFinish = useCallback(
+        async (values: FormData) => {
+            const params = formDataTranslate(values, apps, activityType);
+            try {
+                setConfirmLoading(true);
+                await createActivity(params);
+                dispatch({ type: 'reset' });
+                hideModal();
+                message.success('创建活动成功')
+            } catch (err: any) {
+                message.error(err);
+            } finally {
+                setConfirmLoading(false);
+            }
+        },
+        [apps, activityType, hideModal]
+    );
+
+    const handleCancel = useCallback(() => {
         dispatch({ type: 'reset' });
-        hideModal();
-        message.success('创建活动成功')
-      } catch (err) {
-        console.log(err);
-      } finally {
         setConfirmLoading(false);
-      }
-    },
-    [apps, activityType]
-  );
+        onCancel();
+    }, [onCancel]);
 
-  const handleCancel = useCallback(() => {
-    dispatch({ type: 'reset' });
-    setConfirmLoading(false);
-    onCancel();
-  }, []);
-
-  useEffect(() => {
-    getAllApps().then((res) => {
-      setApps(res);
-    });
-  }, []);
+    useEffect(() => {
+        getAllApps().then(setApps);
+    }, []);
 
   return (
     <Modal title="创建活动" open={open} onOk={form.submit} onCancel={handleCancel} {...ModalStyle} confirmLoading={confirmLoading}>
@@ -176,7 +172,7 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activi
           <div className="mb-24px w-full h-32px"></div>
         ) : (
           <Form.Item name="max_mint_count" initialValue={1} rules={[{ validator: checkRelAllowed, message: '公开铸造上限不可超过发行上限' }]}>
-            <InputNumber defaultValue={1} className="w-full" />
+            <InputNumber className="w-full" />
           </Form.Item>
         )}
         <div className="mb-8px flex flex-row justify-between">
@@ -234,5 +230,3 @@ const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activi
     </Modal>
   );
 };
-
-export default CreatePOA;

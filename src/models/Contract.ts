@@ -10,9 +10,15 @@ export interface Contract extends BaseModel {
     type: number;
     owner_address: string;
     base_uri: string;
-    status?:number;
-    error?:string;
-    app_id?:string;
+    status?: number;
+    error?: string;
+    app_id?: string;
+    royalties_address: string;
+    tokens_burnable: true;
+    tokens_transferable_by_admin: true;
+    tokens_transferable_by_user: true;
+    transfer_cooldown_time: number;
+    tx_id: number;
 }
 
 export interface SponsorInfo {
