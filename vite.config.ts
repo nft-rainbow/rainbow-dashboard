@@ -51,6 +51,7 @@ export default ({ mode }) => {
         '@hooks': path.resolve(__dirname, './src/hooks'),
         '@components': path.resolve(__dirname, './src/components'),
         '@services': path.resolve(__dirname, './src/services'),
+        process: 'rollup-plugin-node-polyfills/polyfills/process-es6',
       },
     },
     build: {},
