@@ -24,7 +24,7 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 	const [step, setStep] = useState('edit' as 'edit'|'submitted'|'done');
 	const [attributes, setAttributes] = useState([] as any[])
 
-    const [mintMode, setMintMode] = useState('uri' as 'metadata'|'uri');
+    const [mintMode, setMintMode] = useState('metadata' as 'metadata'|'uri');
     const [metadataUri, setMetadataUri] = useState('');
     const [address, setAddress] = useState('');
     const [tokenId, setTokenId] = useState('');
