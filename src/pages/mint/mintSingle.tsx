@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Form, InputNumber, message, Row, Space, Tooltip, Typography } from "antd";
+import { 
+    Button, Col, Form, InputNumber, message,
+    Row, Space, Tooltip, Typography, Radio, Input
+} from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons/lib";
 import { batchMint, easyMintUrl, getMintTask } from "@services/app";
+import { batchMintByMetadataUri } from '@services/app';
 import { Contract, NFT } from "@models/index";
 import { mapChainAndNetworkName } from "@utils/index";
-import { QuestionCircleOutlined } from "@ant-design/icons/lib";
-import Attributes from "@pages/mint/attributes";
+import Attributes from "./attributes";
 import MintFormFields, { checkMintInput } from "./mintFormFields";
 
 export function MintSingle(props: { appId: any, contract: Contract }) {
@@ -20,46 +24,78 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 	const [step, setStep] = useState('edit' as 'edit'|'submitted'|'done');
 	const [attributes, setAttributes] = useState([] as any[])
 
+    const [mintMode, setMintMode] = useState('uri' as 'metadata'|'uri');
+    const [metadataUri, setMetadataUri] = useState('');
+    const [address, setAddress] = useState('');
+    const [tokenId, setTokenId] = useState('');
+
 	const mint = async () => {
-		const values = checkMintInput(form, {withImage: true, withName: true, withDesc: true, withAddress: true, withAnimation: true})
-		if (!values) {
-			return;
-		}
-		const attributesFormatted = attributes//hasTrait ? jsonToAttributesArray(attributes) : []
-		const badRow = attributesFormatted.filter(v=>!v?.trait_type || !v?.value).length
-		if (badRow) {
-			message.info(`请完善扩展属性`)
-			return;
-		}
-		const options = {
-			...values,
-			chain: mapChainAndNetworkName(contract.chain_type, contract.chain_id),
-			contract_address: contract.address,
-			attributes: attributesFormatted,
-		};
-		setInfo(options);
-		setMintLoading(true)
-		let copies = parseInt(formCopies.getFieldValue("copies"));
-		if (copies > 1) {
-			const arr = []
-			arr.push(Object.assign(options, {number: copies}));
-			batchMint(props.appId.toString(), arr).then(([res]) => {
-				setStep("submitted")
-				setTask(res?.mint_task || {})
-			}).finally(()=>{
-				setMintLoading(false)
-			})
-            return;
-		}
-        try {
-            let res = await easyMintUrl(props.appId.toString(), options);
-            message.info(`铸造任务提交成功！`)
-            setTaskId(res[0].id)
-        } catch(e) {
-            const msg = e.response?.data?.message || e.toString()
-            message.error(`铸造失败:${msg}`)
-            console.log(`error is`, e)
-            setMintLoading(false)
+        if (mintMode === 'metadata') {  // 元数据铸造模式
+            const checkOpts = {withImage: true, withName: true, withDesc: true, withAddress: true, withAnimation: true};
+            const values = checkMintInput(form, checkOpts);
+            if (!values) return;
+
+            const attributesFormatted = attributes//hasTrait ? jsonToAttributesArray(attributes) : []
+            const badRow = attributesFormatted.filter(v=>!v?.trait_type || !v?.value).length
+            if (badRow) {
+                message.info(`请完善扩展属性`)
+                return;
+            }
+
+            // TODO: check accept address is valid
+
+            const options = {
+                ...values,
+                chain: mapChainAndNetworkName(contract.chain_type, contract.chain_id),
+                contract_address: contract.address,
+                attributes: attributesFormatted,
+            };
+            setInfo(options);
+            setMintLoading(true)
+            let copies = parseInt(formCopies.getFieldValue("copies"));
+            if (copies > 1) {
+                const arr = []
+                arr.push(Object.assign(options, {number: copies}));
+                batchMint(props.appId.toString(), arr).then(([res]) => {
+                    setStep("submitted")
+                    setTask(res?.mint_task || {})
+                }).finally(()=>{
+                    setMintLoading(false)
+                })
+                return;
+            }
+            try {
+                let res = await easyMintUrl(props.appId.toString(), options);
+                message.info(`铸造任务提交成功！`)
+                setTaskId(res[0].id)
+            } catch(e) {
+                const msg = e.response?.data?.message || e.toString()
+                message.error(`铸造失败:${msg}`)
+                console.log(`error is`, e)
+                setMintLoading(false)
+            }
+        } else if (mintMode === 'uri') {  // metadataUri 铸造模式
+            try {
+                const item = {
+                    metadata_uri: metadataUri,
+                    mint_to_address: address,
+                    token_id: tokenId,
+                    // amount: 1,
+                };
+                if (tokenId) {
+                    // @ts-ignore
+                    item.token_id = tokenId;
+                }
+                await batchMintByMetadataUri(appId, {
+                    chain: mapChainAndNetworkName(contract.chain_type, contract.chain_id),
+                    contract_address: contract.address,
+                    mint_items: [item],
+                });
+                message.success("任务提交成功，请至铸造历史查看");
+            } catch(e) {
+                // @ts-ignore
+                message.error("任务提交失败" + e.response?.data?.message || '');
+            }
         }
 	}
 
@@ -79,44 +115,72 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 			}
 		})
 	}, [taskId, tick])
+
 	if (!contract.address) {
 		return <span>合约信息加载不完整</span>;
 	}
+
 	return (
 		<>
-			<MintFormFields 
-                withImage={true} 
-                form={form} 
-                appId={appId} 
-                chainId={contract.chain_id}
-			    withDesc={true}
-			    withAddress={true}
-                withAnimation={true}
-			    withName={true}
-            />
-			<div style={{marginLeft: '0px', display: (hasTrait || 1) ? "" : "none"}}>
-				<Row>
-					<Col span={2} style={{textAlign: 'right', marginTop: 5}}>
-						<Tooltip title={"这些属性会出现在meta信息的attributes上，可不填写。"}><QuestionCircleOutlined/></Tooltip> 扩展属性：
-					</Col>
-					<Col span={22}>
-						<Attributes onValuesChange={(_,{attributes:all})=>{
-							setAttributes(all)
-						}}/>
-					</Col>
-				</Row>
-			</div>
-			<Form form={formCopies} labelCol={{span:2}}>
-				<Form.Item label={"数量"} style={{marginBottom: 0}} name={"copies"}>
-					<Space>
-						<InputNumber type={"number"} step={1} precision={0} min={1} max={100} defaultValue={1} style={{width:"200px"}}
-							onChange={(v)=>formCopies.setFieldValue("copies", v)}/>
-						<Tooltip title={"铸造多少个NFT给同一个接受地址。这些NFT只有id不同，其他属性完全相同。"}>
-                            <QuestionCircleOutlined/>
-                        </Tooltip>
-					</Space>
-				</Form.Item>
-			</Form>
+            <Form.Item label={<><span>铸造模式</span>&nbsp;<Tooltip title={"若事先已创建了 NFT 元数据，并获得 URI，可选用'元数据URI'模式; 否则请选择'自定义信息'模式"}><QuestionCircleOutlined/></Tooltip></>} labelCol={{span:2}}>
+                <Space>
+                    <Radio.Group value={mintMode} onChange={e => setMintMode(e.target.value)}>
+                        <Radio.Button value="metadata">自定义信息</Radio.Button>
+                        <Radio.Button value="uri">元数据URI</Radio.Button>
+                    </Radio.Group>
+                </Space>
+            </Form.Item>
+            {   
+                mintMode === 'metadata' && <>
+                    <MintFormFields 
+                        withImage={true} 
+                        form={form} 
+                        appId={appId} 
+                        chainId={contract.chain_id}
+                        withDesc={true}
+                        withAddress={true}
+                        withAnimation={true}
+                        withName={true}
+                    />
+                    <div style={{marginLeft: '0px', display: (hasTrait || 1) ? "" : "none"}}>
+                        <Row>
+                            <Col span={2} style={{textAlign: 'right', marginTop: 5}}>
+                                扩展属性 <Tooltip title={"属性用于设置 NFT 信息的 attributes 内容，非必填项"}><QuestionCircleOutlined/></Tooltip> ：
+                            </Col>
+                            <Col span={22}>
+                                <Attributes onValuesChange={(_,{attributes:all})=>{
+                                    setAttributes(all)
+                                }}/>
+                            </Col>
+                        </Row>
+                    </div>
+                    <Form form={formCopies} labelCol={{span:2}} style={{marginBottom: '20px'}}>
+                        <Form.Item label={<><span>数量</span>&nbsp;<Tooltip title={"NFT 铸造数量，多个 NFT 信息相同，TokenId 不同"}><QuestionCircleOutlined/></Tooltip></>} style={{marginBottom: 0}} name={"copies"}>
+                            <Space>
+                                <InputNumber type={"number"} step={1} precision={0} min={1} max={100} defaultValue={1} style={{width:"200px"}}
+                                    onChange={(v)=>formCopies.setFieldValue("copies", v)}/>
+                            </Space>
+                        </Form.Item>
+                    </Form>
+                </>
+            }
+            {
+                mintMode === 'uri' && <>
+                    <Form labelCol={{ span: 2 }} wrapperCol={{span: 16}} style={{ marginTop: "20px" }}>
+                        <Form.Item label="元数据URI" name="metadata_uri" rules={[{ required: true, message: '请输入MetadataURI' }]}>
+                            <Input onChange={e => setMetadataUri(e.target.value)} style={{width: '50%'}} />
+                        </Form.Item>
+                        <Form.Item label="接受地址" name="address" rules={[{ required: true, message: '请输入地址' }]}>
+                            <Input onChange={e => setAddress(e.target.value)} style={{width: '50%'}} />
+                        </Form.Item>
+                    </Form>
+                </>
+            }
+
+            <Form.Item label="藏品ID" labelCol={{span: 2}}>
+                <Input name="token_id" onChange={e => setTokenId(e.target.value)} style={{width: '200px'}} />
+            </Form.Item>
+			
             <Row>
                 <Col span={2}>
                 </Col>

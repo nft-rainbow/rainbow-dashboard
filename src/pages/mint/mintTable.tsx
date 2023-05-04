@@ -93,7 +93,7 @@ const EditableCell: React.FC<EditableCellProps> = ({ editing, dataIndex, title, 
   );
 };
 
-function MintTable(props: {appId: string, chainId: number, controlForm: boolean, contract: Contract}) {
+export function MintTable(props: {appId: string, chainId: number, controlForm: boolean, contract: Contract}) {
 	const {appId, chainId, controlForm, contract} = props;
 	const [form] = Form.useForm();
 	const [headForm] = Form.useForm();
@@ -525,5 +525,3 @@ function MintTable(props: {appId: string, chainId: number, controlForm: boolean,
     </>
   );
 }
-
-export default MintTable;
