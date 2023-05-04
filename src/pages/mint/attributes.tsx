@@ -1,21 +1,18 @@
 import React from 'react';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, message, Row, Space } from 'antd';
-import { DownloadText} from "@pages/mint/downloadTxt";
-import ParseLocalFile from "@pages/mint/parseLocalFile";
-
-const onFinish = (values: any) => {
-    console.log('Received values of form:', values);
-};
+import { DownloadText} from "./downloadTxt";
+import ParseLocalFile from "./parseLocalFile";
 
 const Attributes: React.FC<{ onValuesChange: (_, v) => void }> = ({onValuesChange}) => {
     const [form] = Form.useForm();
+
     return (
         <Form form={form}
-              name="dynamic_form_nest_item" onValuesChange={onValuesChange}
-              onFinish={onFinish}
-              style={{flexGrow: 1}}
-              autoComplete="off"
+            name="dynamic_form_nest_item" onValuesChange={onValuesChange}
+            onFinish={(values: any) => console.log('Received values of form:', values)}
+            style={{flexGrow: 1}}
+            autoComplete="off"
         >
             <Form.List name="attributes">
                 {(fields, {add, remove}) => (
@@ -37,11 +34,11 @@ const Attributes: React.FC<{ onValuesChange: (_, v) => void }> = ({onValuesChang
                         <Form.Item>
                             <Row gutter={16}>
                                 <Col span={8}> 
-                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined/>}/>
+                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined/>} />
                                 </Col>
                                 <Col span={8}><ParseLocalFile handleData={(data) => {
-                                    console.log(`import data`, data)
                                     try {
+                                        console.log(`import data`, data)
                                         const json = JSON.parse(data)
                                         form.setFieldsValue(json);
                                         onValuesChange({}, json)
