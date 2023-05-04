@@ -1,14 +1,12 @@
 import React, { useState } from "react";
-import { Card, Space, Tabs, TabsProps, Tooltip } from "antd";
-import { QuestionCircleOutlined } from "@ant-design/icons";
+import { Card, Space, Tabs, TabsProps } from "antd";
 import { useParams } from "react-router-dom";
 import { Contract } from "@models/index";
 import { AppNFTs } from "@pages/apps/MintTasks";
 import { MintSingle } from "./mintSingle";
 import { ContractInfo } from "../contracts/contractInfo";
-import MintTable from "./mintTable";
+import { MintTable } from "./mintTable";
 import { MintByMetadataUri } from "./mintByMetadataUri";
-import { MintSingleByMetadataUri } from './MingSingleMetadataUril';
 
 export default function MintFrame() {
 	const [refreshNftList, setRefreshNftList] = useState(0);
@@ -20,16 +18,6 @@ export default function MintFrame() {
 			key: '10',	
             label: `单个铸造`,
 			children: <MintSingle appId={contract.app_id} contract={contract} />,
-		},
-        {
-			key: '11',	
-            label: <span>
-                    单个铸造(元数据URI) &nbsp;
-                    <Tooltip title="若 Metadata 已经事先创建好，可选择此铸造方式">
-                        <QuestionCircleOutlined />
-                    </Tooltip>
-                </span>,
-			children: <MintSingleByMetadataUri appId={contract.app_id || ''} chainId={contract.chain_id} contract={contract} />,
 		},
 		{
 			key: '20',

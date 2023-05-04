@@ -41,7 +41,7 @@ export function MintSingleByMetadataUri(props: {
             const item = {
                 metadata_uri: metadataUri,
                 mint_to_address: addr,
-                // token_id: tokenId,
+                token_id: tokenId,
                 // amount: 1,
             };
             if (tokenId) {
