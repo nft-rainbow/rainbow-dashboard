@@ -21,14 +21,14 @@ interface CreatePOAProps {
     activityType: number;
 }
 
-export const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activityType }) => {
+export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activityType }) => {
     const [apps, setApps] = useState<App[]>([]);
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [switchers, dispatch] = useReducer(handleFormSwitch, defaultSwitchers);
     const [form] = Form.useForm();
     useResetFormOnCloseModal({ form, open });
 
-    const checkRelAllowed = useCallback((rule: any, value: number) => {
+    const checkRelAllowed = useCallback(async (rule: any, value: number) => {
         const amount = form.getFieldValue('amount');
         if (!switchers.numberDisabled && amount && amount < value) return '公开铸造上限不能大于发行数量';
         return null;
@@ -41,7 +41,8 @@ export const CreatePOA: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal,
             const whiteListInfo = csvWhitelistFormat(res as [string[], string[]]);
             form.setFieldsValue({ white_list_infos: whiteListInfo });
         } catch(err: any) {
-            message.error(err.message);   
+            message.error(err.message);
+            return "白名单错误";
         }
     }, [form]);
 

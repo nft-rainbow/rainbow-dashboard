@@ -6,7 +6,7 @@ import { ProTable } from '@ant-design/pro-components';
 import { ActivityItem, SearchParams } from '@models/index';
 import { getActivities } from '@services/activity';
 import { throttle } from 'lodash-es';
-import { CreatePOA } from './createActivities';
+import { CreatePOAP } from './createActivities';
 import { columns } from './tableHelper';
 
 const dropItems: MenuProps['items'] = [
@@ -117,7 +117,7 @@ export default function Poaps() {
                     onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
                 />
             </Card>
-            <CreatePOA activityType={activityType} open={isActivityModalVisible} onCancel={hideModal} hideModal={hideModal} />
+            <CreatePOAP activityType={activityType} open={isActivityModalVisible} onCancel={hideModal} hideModal={hideModal} />
         </>
     );
 }
