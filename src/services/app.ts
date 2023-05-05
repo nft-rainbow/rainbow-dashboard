@@ -73,7 +73,7 @@ export function batchMintByMetadataUri(id: string, meta: object) {
 }
 
 export async function easyMintUrl(id: string, options: any) {
-    return await post(`/dashboard/apps/${id}/nft/`, options);
+    return await post(`/dashboard/apps/${id}/nft`, options);
 }
 
 export async function getMintTask(id: string|number) : Promise<NFT> {

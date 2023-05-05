@@ -15,7 +15,7 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
     const [mintMode, setMintMode] = useState('metadata' as 'metadata'|'uri');
     const [mintLoading, setMintLoading] = useState(false);
     const [taskId, setTaskId] = useState(0);
-	const [task, setTask] = useState({} as NFT);
+	// const [task, setTask] = useState({} as NFT);
     const [step, setStep] = useState('edit' as 'edit'|'submitted'|'done');
 
 	const [form] = Form.useForm();
@@ -57,8 +57,8 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
                     const arr = []
                     arr.push(Object.assign(options, {number: copies}));
                     let [res] = await batchMint(props.appId.toString(), arr);
-                    setTask(res?.mint_task || {})
-                    return;
+                    setTaskId(res.id);
+                    // setTask(res?.mint_task || {})
                 } else { // mint single copy
                     let res = await easyMintUrl(props.appId.toString(), options);
                     setTaskId(res[0].id);
@@ -89,8 +89,8 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
                     mint_items: [item],
                 });
                 setTaskId(res[0]);
+                setStep("submitted");
                 setMintLoading(false);
-                message.success("任务提交成功，请至铸造历史查看");
             } catch(e) {
                 // @ts-ignore
                 message.error("任务提交失败" + e.response?.data?.message || '');
@@ -102,7 +102,7 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
     useEffect(()=>{
 		if (!taskId) return;
 		getMintTask(taskId).then(res=>{
-			setTask(res);
+			// setTask(res);
 			if (res.status === 0) {
 				setTimeout(()=>setTick(tick+1), 1_000)
 			} else if (res.status === 1){
@@ -154,7 +154,7 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
                             </Col>
                         </Row>
                     </div>
-                    <Form form={formCopies} labelCol={{span:2}} style={{marginBottom: '20px'}}>
+                    <Form form={formCopies} labelCol={{span:2}} style={{marginBottom: '10px'}}>
                         <Form.Item label={<><span>数量</span>&nbsp;<Tooltip title={"NFT 铸造数量，多个 NFT 信息相同，TokenId 不同"}><QuestionCircleOutlined/></Tooltip></>} style={{marginBottom: 0}} name={"copies"}>
                             <Space>
                                 <InputNumber type={"number"} step={1} precision={0} min={1} max={100} defaultValue={1} style={{width:"200px"}}
@@ -173,14 +173,13 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
                         <Form.Item label="接受地址" name="address" rules={[{ required: true, message: '请输入地址' }]}>
                             <Input onChange={e => setAddress(e.target.value)} style={{width: '50%'}} />
                         </Form.Item>
+                        <Form.Item label={<><span>TokenID</span>&nbsp;<Tooltip title={"非必填项"}><QuestionCircleOutlined/></Tooltip></>} labelCol={{span: 2}}>
+                            <Input name="token_id" onChange={e => setTokenId(e.target.value)} style={{width: '200px'}} placeholder="非必填项"/>
+                        </Form.Item>
                     </Form>
                 </>
             }
 
-            <Form.Item label={<><span>TokenID</span>&nbsp;<Tooltip title={"非必填项，不填则随机生成"}><QuestionCircleOutlined/></Tooltip></>} labelCol={{span: 2}}>
-                <Input name="token_id" onChange={e => setTokenId(e.target.value)} style={{width: '200px'}} placeholder="非必填项，默认随机生成"/>
-            </Form.Item>
-			
             <Row>
                 <Col span={2}>
                 </Col>
@@ -203,8 +202,8 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
 
                         { step === 'submitted'  &&
                             (<>
-                                <Typography.Text type={"success"}>任务提交成功！</Typography.Text>请在铸造历史中查看执行结果。
                                 <Button type={"primary"} onClick={()=>setStep('edit')}>确定</Button>
+                                <Typography.Text type={"success"}>任务提交成功！</Typography.Text>请在铸造历史中查看执行结果。
                             </>)
                         }
 
@@ -215,7 +214,7 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
                             </>)
                         }
 
-                        {task.token_uri && <Button type={"link"}><a href={task.token_uri} target={"_blank"} rel="noreferrer">查看URI</a></Button>}
+                        {/* {task.token_uri && <Button type={"link"}><a href={task.token_uri} target={"_blank"} rel="noreferrer">查看URI</a></Button>} */}
                     </Space>
                 </Col>
             </Row>
