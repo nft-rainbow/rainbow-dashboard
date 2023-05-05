@@ -21,7 +21,7 @@ export interface FiatLog extends BaseModel {
     user_id: number;
     amount: number;
     type: number;
-    meta: any;
+    meta: object;
     order_no: string;
     balance: number;
 }
