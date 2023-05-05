@@ -151,15 +151,15 @@ export default function UserBalance() {
                 <Select style={{width: '100px'}} onChange={val => setType(val)}>
                     <Select.Option value="0">所有</Select.Option>
                     <Select.Option value="1">充值</Select.Option>
-                    <Select.Option value="2">提现</Select.Option>
+                    {/* <Select.Option value="2">提现</Select.Option> */}
                     <Select.Option value="3">购买燃气</Select.Option>
                     <Select.Option value="4">购买存储</Select.Option>
                     <Select.Option value="5">API费用</Select.Option>
                 </Select>
             </Form.Item>
-            <Form.Item name="order_no" label="订单号">
+            {/* <Form.Item name="order_no" label="订单号">
                 <Input onChange={(val) => setOrderNo(val.target.value)} style={{width: '150px'}} />
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item name="address" label="合约地址">
                 <Input onChange={(val) => setAddress(val.target.value)} style={{width: '300px'}} />
             </Form.Item>
@@ -173,6 +173,9 @@ export default function UserBalance() {
                         address,
                     });
                 }}>搜索</Button>
+            </Form.Item>
+            <Form.Item>
+                <Button type="primary" onClick={() => {}} disabled>导出CSV</Button>
             </Form.Item>
         </Form>
         </>
