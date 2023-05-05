@@ -4,8 +4,7 @@ import {
     Row, Space, Tooltip, Typography, Radio, Input
 } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons/lib";
-import { batchMint, easyMintUrl, getMintTask } from "@services/app";
-import { batchMintByMetadataUri } from '@services/app';
+import { batchMint, easyMintUrl, getMintTask, batchMintByMetadataUri } from "@services/app";
 import { Contract, NFT } from "@models/index";
 import { mapChainAndNetworkName } from "@utils/index";
 import Attributes from "./attributes";
@@ -13,18 +12,19 @@ import MintFormFields, { checkMintInput } from "./mintFormFields";
 
 export function MintSingle(props: { appId: any, contract: Contract }) {
 	const {contract, appId} = props;
+    const [mintMode, setMintMode] = useState('metadata' as 'metadata'|'uri');
+    const [mintLoading, setMintLoading] = useState(false);
+    const [taskId, setTaskId] = useState(0);
+	const [task, setTask] = useState({} as NFT);
+    const [step, setStep] = useState('edit' as 'edit'|'submitted'|'done');
+
 	const [form] = Form.useForm();
 	const [formCopies] = Form.useForm();
-	const [info, setInfo] = useState({} as any)
-	const [mintLoading, setMintLoading] = useState(false);
 	const [tick, setTick] = useState(0);
-	const [taskId, setTaskId] = useState(0);
-	const [task, setTask] = useState({} as NFT);
 	const [hasTrait, setHasTrait] = useState(false);
-	const [step, setStep] = useState('edit' as 'edit'|'submitted'|'done');
 	const [attributes, setAttributes] = useState([] as any[])
 
-    const [mintMode, setMintMode] = useState('metadata' as 'metadata'|'uri');
+    // metadataUri mint mode state
     const [metadataUri, setMetadataUri] = useState('');
     const [address, setAddress] = useState('');
     const [tokenId, setTokenId] = useState('');
@@ -43,36 +43,33 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
             }
 
             // TODO: check accept address is valid
-
-            const options = {
-                ...values,
-                chain: mapChainAndNetworkName(contract.chain_type, contract.chain_id),
-                contract_address: contract.address,
-                attributes: attributesFormatted,
-            };
-            setInfo(options);
-            setMintLoading(true)
-            let copies = parseInt(formCopies.getFieldValue("copies"));
-            if (copies > 1) {
-                const arr = []
-                arr.push(Object.assign(options, {number: copies}));
-                batchMint(props.appId.toString(), arr).then(([res]) => {
-                    setStep("submitted")
-                    setTask(res?.mint_task || {})
-                }).finally(()=>{
-                    setMintLoading(false)
-                })
-                return;
-            }
             try {
-                let res = await easyMintUrl(props.appId.toString(), options);
-                message.info(`铸造任务提交成功！`)
-                setTaskId(res[0].id)
-            } catch(e) {
+                const options = {
+                    ...values,
+                    chain: mapChainAndNetworkName(contract.chain_type, contract.chain_id),
+                    contract_address: contract.address,
+                    attributes: attributesFormatted,
+                };
+                // setInfo(options);
+                setMintLoading(true);
+                let copies = parseInt(formCopies.getFieldValue("copies"));
+                if (copies > 1) { // mint multiple copies
+                    const arr = []
+                    arr.push(Object.assign(options, {number: copies}));
+                    let [res] = await batchMint(props.appId.toString(), arr);
+                    setTask(res?.mint_task || {})
+                    return;
+                } else { // mint single copy
+                    let res = await easyMintUrl(props.appId.toString(), options);
+                    setTaskId(res[0].id);
+                }
+                setStep("submitted");
+                setMintLoading(false);
+            } catch (e) {
+                // @ts-ignore
                 const msg = e.response?.data?.message || e.toString()
                 message.error(`铸造失败:${msg}`)
-                console.log(`error is`, e)
-                setMintLoading(false)
+                setMintLoading(false);
             }
         } else if (mintMode === 'uri') {  // metadataUri 铸造模式
             try {
@@ -80,21 +77,24 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
                     metadata_uri: metadataUri,
                     mint_to_address: address,
                     token_id: tokenId,
-                    // amount: 1,
                 };
                 if (tokenId) {
                     // @ts-ignore
                     item.token_id = tokenId;
                 }
-                await batchMintByMetadataUri(appId, {
+                setMintLoading(true);
+                let res = await batchMintByMetadataUri(appId, {
                     chain: mapChainAndNetworkName(contract.chain_type, contract.chain_id),
                     contract_address: contract.address,
                     mint_items: [item],
                 });
+                setTaskId(res[0]);
+                setMintLoading(false);
                 message.success("任务提交成功，请至铸造历史查看");
             } catch(e) {
                 // @ts-ignore
                 message.error("任务提交失败" + e.response?.data?.message || '');
+                setMintLoading(false)
             }
         }
 	}
@@ -177,8 +177,8 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
                 </>
             }
 
-            <Form.Item label="藏品ID" labelCol={{span: 2}}>
-                <Input name="token_id" onChange={e => setTokenId(e.target.value)} style={{width: '200px'}} />
+            <Form.Item label={<><span>TokenID</span>&nbsp;<Tooltip title={"非必填项，不填则随机生成"}><QuestionCircleOutlined/></Tooltip></>} labelCol={{span: 2}}>
+                <Input name="token_id" onChange={e => setTokenId(e.target.value)} style={{width: '200px'}} placeholder="非必填项，默认随机生成"/>
             </Form.Item>
 			
             <Row>
@@ -202,17 +202,17 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
                         }
 
                         { step === 'submitted'  &&
-                        (<>
-                            <Typography.Text type={"success"}>任务提交成功！</Typography.Text>请在铸造历史中查看执行结果。
-                            <Button type={"primary"} onClick={()=>setStep('edit')}>确定</Button>
-                        </>)
+                            (<>
+                                <Typography.Text type={"success"}>任务提交成功！</Typography.Text>请在铸造历史中查看执行结果。
+                                <Button type={"primary"} onClick={()=>setStep('edit')}>确定</Button>
+                            </>)
                         }
 
                         { step === 'done'  &&
-                        (<>
-                            <Button type={"primary"} onClick={()=>setStep('edit')}>确定</Button>
-                            <Typography.Text type={"success"}>铸造成功！</Typography.Text>
-                        </>)
+                            (<>
+                                <Button type={"primary"} onClick={()=>setStep('edit')}>确定</Button>
+                                <Typography.Text type={"success"}>铸造成功！</Typography.Text>
+                            </>)
                         }
 
                         {task.token_uri && <Button type={"link"}><a href={task.token_uri} target={"_blank"} rel="noreferrer">查看URI</a></Button>}
