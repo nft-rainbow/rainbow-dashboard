@@ -1,8 +1,8 @@
 import React from 'react';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, message, Row, Space } from 'antd';
-import { DownloadText} from "./downloadTxt";
 import ParseLocalFile from "./parseLocalFile";
+import { TextDownloader } from '@components/TEXTDownloader';
 
 const Attributes: React.FC<{ onValuesChange: (_, v) => void }> = ({onValuesChange}) => {
     const [form] = Form.useForm();
@@ -47,7 +47,7 @@ const Attributes: React.FC<{ onValuesChange: (_, v) => void }> = ({onValuesChang
                                     }
                                 }}/>
                                     <Button type={"link"}>
-                                        <DownloadText label={"导出"} content={JSON.stringify(form.getFieldsValue(), null, 4)} filename={"meta_table.json.txt"}/>
+                                        <TextDownloader label={"导出"} content={JSON.stringify(form.getFieldsValue(), null, 4)} filename={"meta_table.json.txt"}/>
                                     </Button>
                                 </Col>
                                 <Col span={8}>

@@ -1,28 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import RainbowBreadcrumb from '@components/Breadcrumb';
 import {
-    Button,
-    Form,
-    Modal,
-    Input,
-    Radio,
-    Space,
-    Card,
-    Table,
-    TablePaginationConfig,
-    Typography,
-    Tooltip,
-    Select,
-    DatePicker
+    Button, Form, Modal, Input, Radio, Space, Card,
+    Table, TablePaginationConfig, Typography, Tooltip, Select, DatePicker
 } from 'antd';
+import type { RangePickerProps } from 'antd/es/date-picker';
 import { InfoCircleOutlined } from '@ant-design/icons'
+import { QRCodeSVG } from 'qrcode.react';
 import { userFiatLogs, userBalanceRuntime } from '@services/user';
 import { createWxPayOrder } from '@services/pay';
-import { QRCodeSVG } from 'qrcode.react';
-import './userBalance.css';
 import { FiatLog } from '@models/index';
 import { formatDate, mapFiatLogType, short, scanAddressLink } from '@utils/index';
-import type { RangePickerProps } from 'antd/es/date-picker';
+import { arrayToCSVText } from '@utils/csvUtils';
+import './userBalance.css';
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
 
@@ -57,6 +47,7 @@ export default function UserBalance() {
         userFiatLogs(currentPage, limit, filter).then(data => {
             setItems(data.items);
             setTotal(data.count);
+            console.log(arrayToCSVText(data.items));
         }).then(() => {
             setLoading(false);
         });
