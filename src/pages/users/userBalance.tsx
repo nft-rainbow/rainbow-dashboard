@@ -11,11 +11,11 @@ import { userFiatLogs, userBalanceRuntime } from '@services/user';
 import { createWxPayOrder } from '@services/pay';
 import { FiatLog } from '@models/index';
 import { formatDate, mapFiatLogType, short, scanAddressLink } from '@utils/index';
+import { TextDownloader } from '@components/TextDownloader';
 import { arrayToCSVText } from '@utils/csvUtils';
 import './userBalance.css';
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
-
 
 const billText = `
     1、目前支持通过联系 NFTRainbow 客服人员申请开具纸质增值税专用发票或电子普通发票。请您提供正确的交易编号及开票信息（名称、纳税人识别号、地址电话、开户行及账号）。平台将根据您提供的信息开具发票，如您填写有误，平台将不会受理重新开具发票的要求，请务必认真校对所填开票信息。
@@ -37,20 +37,35 @@ export default function UserBalance() {
     const [page, setPage] = useState(1);
 
     const [type, setType] = useState(0);
-    const [orderNo, setOrderNo] = useState("");
     const [startAt, setStartAt] = useState("");
     const [endAt, setEndAt] = useState("");
     const [address, setAddress] = useState("");
 
-    const refreshItems = (currentPage = 1, limit = 10, filter = {}) => {
+    const [downloadContent, setDownloadContent] = useState('');
+
+    const refreshItems = async (currentPage = 1, limit = 10, filter = {}) => {
         setLoading(true);
-        userFiatLogs(currentPage, limit, filter).then(data => {
-            setItems(data.items);
-            setTotal(data.count);
-            console.log(arrayToCSVText(data.items));
-        }).then(() => {
-            setLoading(false);
-        });
+        const data = await userFiatLogs(currentPage, limit, filter);
+        setLoading(false);
+
+        setItems(data.items);
+        setTotal(data.count);
+    }
+
+    const getExportData = async (filter = {}) => {
+        const {items} = await userFiatLogs(1, 10000, filter);
+        const rows = items.map((item: FiatLog) => ({
+            'ID': item.id,
+            '创建时间': formatDate(item.created_at),
+            '订单号': item.order_no,
+            '交易方向': item.amount > 0 ? '充值' : '消费',
+            '交易类型': mapFiatLogType(item.type),
+            '金额(元)': (item.amount / 100).toFixed(2),
+            '余额(元)': (item.balance / 100).toFixed(2),
+            // @ts-ignore
+            '地址': item.meta ? item.meta.address : '',
+        }));
+        setDownloadContent(arrayToCSVText(rows));
     }
 
     const onPay = async (values: any) => {
@@ -61,8 +76,8 @@ export default function UserBalance() {
             amount: amount,
             desc: 'Charge',
         });
-        setIsModalVisible(false);
 
+        setIsModalVisible(false);
         setPayUrl(res.code_url);
         setIsPayModalVisible(true);
     }
@@ -148,25 +163,23 @@ export default function UserBalance() {
                     <Select.Option value="5">API费用</Select.Option>
                 </Select>
             </Form.Item>
-            {/* <Form.Item name="order_no" label="订单号">
-                <Input onChange={(val) => setOrderNo(val.target.value)} style={{width: '150px'}} />
-            </Form.Item> */}
             <Form.Item name="address" label="合约地址">
                 <Input onChange={(val) => setAddress(val.target.value)} style={{width: '300px'}} />
             </Form.Item>
             <Form.Item>
-                <Button type="primary" onClick={() => {
-                    refreshItems(page, 10, {
-                        order_no: orderNo,
+                <Button type="primary" onClick={async () => {
+                    const filter = {
                         started_at: startAt,
                         ended_at: endAt,
                         type,
                         address,
-                    });
+                    };
+                    await refreshItems(page, 10, filter);
+                    await getExportData(filter);
                 }}>搜索</Button>
             </Form.Item>
             <Form.Item>
-                <Button type="primary" onClick={() => {}} disabled>导出CSV</Button>
+                {downloadContent && <TextDownloader content={downloadContent} filename='交易明细.csv' label='导出CSV' type='text/csv'/>}
             </Form.Item>
         </Form>
         </>
