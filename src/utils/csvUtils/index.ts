@@ -26,5 +26,5 @@ export const csvWhitelistFormat = (res: [string[], string[]]) => {
 
 export function arrayToCSVText(rows: any[]) :string {
     const worksheet = utils.json_to_sheet(rows);
-    return utils.sheet_to_csv(worksheet);
+    return '\uFEFF' + utils.sheet_to_csv(worksheet);
 }
