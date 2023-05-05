@@ -2,7 +2,7 @@ import React from 'react';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Col, Form, Input, message, Row, Space } from 'antd';
 import ParseLocalFile from "./parseLocalFile";
-import { TextDownloader } from '@components/TEXTDownloader';
+import { TextDownloader } from '@components/TextDownloader';
 
 const Attributes: React.FC<{ onValuesChange: (_, v) => void }> = ({onValuesChange}) => {
     const [form] = Form.useForm();
