@@ -156,7 +156,7 @@ export function AppNFTs(props: { id: string; contract?: string, refreshTrigger: 
 					current: page,
 					showTotal: (total) => `共 ${total} 条`,
 				}}
-				onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
+				onChange={(info: TablePaginationConfig) => {setPage(info.current as number); setImages([])}}
 			/>
 		</>
 	);
