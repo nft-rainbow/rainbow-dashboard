@@ -1,14 +1,11 @@
 import React, {useEffect, useState} from "react";
-import { NFT } from "@models/index";
-import { formatDate, mapChainName, mapNFTType, scanAddressLink, scanNFTLink, scanTxLink, short } from "@utils/index";
 import { Button, Image, Popover, Space, Table, TablePaginationConfig, Tooltip } from "antd";
 import {
-	CheckCircleTwoTone,
-	ClockCircleTwoTone,
-	CloseCircleTwoTone,
-	FileImageOutlined, FilterOutlined,
-	InfoCircleOutlined, QuestionCircleTwoTone
+	CheckCircleTwoTone, ClockCircleTwoTone, CloseCircleTwoTone,
+	FileImageOutlined, FilterOutlined, InfoCircleOutlined, QuestionCircleTwoTone
 } from "@ant-design/icons/lib";
+import { NFT } from "@models/index";
+import { formatDate, mapChainName, mapNFTType, scanAddressLink, scanNFTLink, scanTxLink, short } from "@utils/index";
 import { reMintNFT } from "@services/NFT";
 import { getAppNfts, getAppNftsOfContract } from "@services/app";
 import axios from "axios";
@@ -21,7 +18,6 @@ export function AppNFTs(props: { id: string; contract?: string, refreshTrigger: 
 	const [loading, setLoading] = useState(false);
 	const [images, setImages] = useState<string[]>([]);
 
-	// TODO: display metadata and picture
 	const columns = [
 		{
 			title: '区块链',
@@ -135,22 +131,19 @@ export function AppNFTs(props: { id: string; contract?: string, refreshTrigger: 
 	}, [id, page, refreshTrigger, pageLimit, contract]);
 
 	// SJR: click button to load one image
-	const showNFTImage = (metadataUri: string, index: number) => {
-		let temp: string[] = [];
+	const showNFTImage = async (metadataUri: string, index: number) => {
 		if (images[index] != null) return;
-		else {
-			temp = images;
-			axios.get(metadataUri).then((res) => {
-				temp[index] = res.data.image;
-			});
-			setImages(temp);
-		}
+        let temp: string[] = [];
+        temp = temp.concat(images);
+        let res = await axios.get(metadataUri);
+        temp[index] = res.data.image;
+        setImages(temp);
 	};
 
 	return (
 		<>
 			<Space className={"mb-8"}>
-				{showRefresh && <Button type={"dashed"} onClick={()=>setRefreshTrigger(refreshTrigger + 1)}>刷新</Button>}
+				{showRefresh && <Button type={"dashed"} onClick={() => setRefreshTrigger(refreshTrigger + 1)}>刷新</Button>}
 				{contract && <Button type={"text"}><Tooltip title={`已按合约过滤 ${contract}`}><FilterOutlined /></Tooltip></Button> }
 			</Space>
 			<Table
