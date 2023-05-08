@@ -3,23 +3,8 @@ import { useParams } from 'react-router-dom';
 import RainbowBreadcrumb from '@components/Breadcrumb';
 import { getAppDetail, getAppMetadatas, getAppFiles, File, Metadata, easyMintUrl, getAppAccounts } from '@services/app';
 import {
-  Card,
-  Tabs,
-  Table,
-  TablePaginationConfig,
-  Tooltip,
-  Space,
-  Button,
-  Modal,
-  Typography,
-  Form,
-  Input,
-  message,
-  Image,
-  Radio,
-  Row,
-  Col,
-  TabsProps
+    Card, Tabs, Table, TablePaginationConfig, Tooltip, Space, Button, Modal,
+    Typography, Form, Input, message, Image, Radio, Row, Col, TabsProps
 } from 'antd';
 import { formatDate, short } from '@utils/index';
 import FileUpload from '@components/FileUpload';
@@ -31,8 +16,8 @@ import { AppNFTs } from "@pages/apps/MintTasks";
 const { Paragraph, Text } = Typography;
 
 const formLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 18 },
+    labelCol: { span: 4 },
+    wrapperCol: { span: 18 },
 };
 
 // SJR: show status in icons
@@ -112,169 +97,180 @@ export default function AppDetail(props: { appId?: string, pageLimit?: number })
     </Space>
   );
 
-  useEffect(() => {
-    getAppAccounts(id as string).then((data) => setAccounts(data));
-    form.setFieldValue('group', '1');
-  }, [id, form]);
+    useEffect(() => {
+        getAppAccounts(id as string).then((data) => setAccounts(data));
+        form.setFieldValue('group', '1');
+    }, [id, form]);
 
-  useEffect(() => {
-    getAppDetail(id as string).then((data) => {
-      setApp(data);
-      setBreadcrumbItems(['项目详情', data.name]);
-    });
-  }, [id]);
+    useEffect(() => {
+        getAppDetail(id as string).then((data) => {
+            setApp(data);
+            setBreadcrumbItems(['项目详情', data.name]);
+        });
+    }, [id]);
   
-  const tabs : TabsProps['items'] = [
-    {key: '1', label:'藏品铸造', children:<AppNFTs id={idStr} refreshTrigger={refreshNftList} setRefreshTrigger={setRefreshNftList} pageLimit={props.pageLimit} />},
-    {key: '2', label:'元数据', children:<AppMetadatas id={idStr} refreshTrigger={refreshNftList} pageLimit={props.pageLimit} />},
-    {key: '3', label:'文件', children:<AppFiles id={idStr} refreshTrigger={refreshNftList} />},
-  ]
+    const tabs : TabsProps['items'] = [
+        {
+            key: '1', 
+            label: '藏品铸造', 
+            children: <AppNFTs id={idStr} refreshTrigger={refreshNftList} setRefreshTrigger={setRefreshNftList} pageLimit={props.pageLimit} />
+        },
+        {
+            key: '2', 
+            label: '元数据', 
+            children: <AppMetadatas id={idStr} refreshTrigger={refreshNftList} pageLimit={props.pageLimit} />
+        },
+        {
+            key: '3', 
+            label: '文件', 
+            children: <AppFiles id={idStr} refreshTrigger={refreshNftList} />
+        },
+    ]
   return (
     <div className="App" style={{flexGrow:1}}>
-      {contextHolder}
-      <RainbowBreadcrumb items={breadcrumbItems} />
-      <Card>
-        <Tabs defaultActiveKey="1" items={tabs} tabBarExtraContent={extraOp}>
-        </Tabs>
-      </Card>
-      <Modal title="应用详情" open={isDetailModalVisible} onOk={closeDetailModal} onCancel={closeDetailModal} okText={'确认'} cancelText={'取消'} footer={null}>
-        <p>
-          AppId:{' '}
-          <Paragraph copyable code className="d-inline">
-            {(app as App).app_id}
-          </Paragraph>
-        </p>
-        <p>
-          AppSecret:{' '}
-          <Paragraph copyable code className="d-inline">
-            {(app as App).app_secret}
-          </Paragraph>
-        </p>
-        <p>
-          APIHost:{' '}
-          <Paragraph copyable code className="d-inline">
-            {import.meta.env.VITE_ServiceHost.replace('console', 'api')}
-          </Paragraph>
-        </p>
-        <p>
-          主网账户:{' '}
-          <Paragraph copyable code className="d-inline">
-            {mainnetAccount().address}
-          </Paragraph>
-        </p>
-        <p>
-          测试网账户:{' '}
-          <Paragraph copyable code className="d-inline">
-            {testAccount().address}
-          </Paragraph>
-        </p>
-      </Modal>
-      <Modal title="快速铸造" open={isMintModalVisible} onOk={() => form.submit()} onCancel={closeMintModal} cancelButtonProps={{ hidden: true }} okButtonProps={{ hidden: true }}>
-        <Form {...formLayout} form={form} name="control-hooks" onFinish={onNftMint}>
-          <Form.Item name="name" label="名字" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="description" label="描述" rules={[{ required: true }]}>
-            <Input.TextArea rows={4} />
-          </Form.Item>
-          <Form.Item name={'img_group'} label="图片">
-            <Input.Group>
-              <Radio.Group
-                value={useUpload ? 'upload' : 'input'}
-                style={{ marginRight: '8px' }}
-                onChange={(e: CheckboxChangeEvent) => {
-                  setUseUpload(e.target.value === 'upload');
-                }}
-              >
-                <Radio.Button value="upload">本地文件</Radio.Button>
-                <Radio.Button value="input">网络链接</Radio.Button>
-              </Radio.Group>
-
-              {useUpload && (
-                <Form.Item name="file_url" noStyle rules={[{ required: false }]}>
-                  <FileUpload
-                    accept={'.png,.jpg,.svg,.mp3,.mp4,.gif,stp,.max,.fbx,.obj,.x3d,.vrml,.3ds,3mf,.stl,.dae'}
-                    listType="picture"
-                    maxCount={1}
-                    onChange={(err: Error, file: any) => {form.setFieldsValue({ file_url: file.url })}}
-                  />
-                </Form.Item>
-              )}
-
-              {!useUpload && (
-                <Input.Group style={{ display: 'flex', marginTop: '8px' }}>
-                  <Form.Item name="file_link" noStyle style={{ flexGrow: 1 }}>
-                    <Input style={{ flexGrow: 1 }} />
-                  </Form.Item>
-                  <Button
-                    type={'text'}
-                    onClick={() => {
-                      form.setFieldValue('file_link', 'https://console.nftrainbow.cn/nftrainbow-logo-light.png');
+        {contextHolder}
+        <RainbowBreadcrumb items={breadcrumbItems} />
+        <Card>
+            <Tabs defaultActiveKey="1" items={tabs} tabBarExtraContent={extraOp} />
+        </Card>
+        <Modal title="应用详情" open={isDetailModalVisible} onOk={closeDetailModal} onCancel={closeDetailModal} okText={'确认'} cancelText={'取消'} footer={null}>
+            <p>
+            AppId:{' '}
+            <Paragraph copyable code className="d-inline">
+                {(app as App).app_id}
+            </Paragraph>
+            </p>
+            <p>
+            AppSecret:{' '}
+            <Paragraph copyable code className="d-inline">
+                {(app as App).app_secret}
+            </Paragraph>
+            </p>
+            <p>
+            APIHost:{' '}
+            <Paragraph copyable code className="d-inline">
+                {import.meta.env.VITE_ServiceHost.replace('console', 'api')}
+            </Paragraph>
+            </p>
+            <p>
+            主网账户:{' '}
+            <Paragraph copyable code className="d-inline">
+                {mainnetAccount().address}
+            </Paragraph>
+            </p>
+            <p>
+            测试网账户:{' '}
+            <Paragraph copyable code className="d-inline">
+                {testAccount().address}
+            </Paragraph>
+            </p>
+        </Modal>
+        <Modal title="快捷铸造" open={isMintModalVisible} onOk={() => form.submit()} onCancel={closeMintModal} cancelButtonProps={{ hidden: true }} okButtonProps={{ hidden: true }}>
+            <Form {...formLayout} form={form} name="control-hooks" onFinish={onNftMint}>
+            <Form.Item name="name" label="名字" rules={[{ required: true }]}>
+                <Input />
+            </Form.Item>
+            <Form.Item name="description" label="描述" rules={[{ required: true }]}>
+                <Input.TextArea rows={4} />
+            </Form.Item>
+            <Form.Item name={'img_group'} label="图片">
+                <Input.Group>
+                <Radio.Group
+                    value={useUpload ? 'upload' : 'input'}
+                    style={{ marginRight: '8px' }}
+                    onChange={(e: CheckboxChangeEvent) => {
+                        setUseUpload(e.target.value === 'upload');
                     }}
-                    style={{ color: 'gray' }}
-                  >
-                    <Tooltip title={'使用测试图片'} mouseEnterDelay={0.1}>
-                      <LinkOutlined />
-                    </Tooltip>
-                  </Button>
+                >
+                    <Radio.Button value="upload">本地文件</Radio.Button>
+                    <Radio.Button value="input">网络链接</Radio.Button>
+                </Radio.Group>
+
+                {useUpload && (
+                    <Form.Item name="file_url" noStyle rules={[{ required: false }]}>
+                    <FileUpload
+                        accept={'.png,.jpg,.svg,.mp3,.mp4,.gif,stp,.max,.fbx,.obj,.x3d,.vrml,.3ds,3mf,.stl,.dae'}
+                        listType="picture"
+                        maxCount={1}
+                        onChange={(err: Error, file: any) => {form.setFieldsValue({ file_url: file.url })}}
+                    />
+                    </Form.Item>
+                )}
+
+                {!useUpload && (
+                    <Input.Group style={{ display: 'flex', marginTop: '8px' }}>
+                    <Form.Item name="file_link" noStyle style={{ flexGrow: 1 }}>
+                        <Input style={{ flexGrow: 1 }} />
+                    </Form.Item>
+                    <Button
+                        type={'text'}
+                        onClick={() => {
+                            form.setFieldValue('file_link', 'https://console.nftrainbow.cn/nftrainbow-logo-light.png');
+                        }}
+                        style={{ color: 'gray' }}
+                    >
+                        <Tooltip title={'使用测试图片'} mouseEnterDelay={0.1}>
+                        <LinkOutlined />
+                        </Tooltip>
+                    </Button>
+                    </Input.Group>
+                )}
                 </Input.Group>
-              )}
-            </Input.Group>
-          </Form.Item>
-          <Form.Item name="chain" label="网络" rules={[{ required: true }]}>
-            <Radio.Group>
-              <Radio.Button value="conflux">树图主网</Radio.Button>
-              <Radio.Button value="conflux_test">树图测试网</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-          <Form.Item name={'group'} label="接受地址">
-            <Input.Group compact style={{ display: 'flex' }}>
-              <Form.Item
-                name="mint_to_address"
-                style={{ flexGrow: 1, border: '0px solid black' }}
-                rules={[
-                  { required: true, message: '请输入接受地址' },
-                  ({ getFieldValue }) => ({
-                    validator: function (_, value) {
-                      const isValidAddr = address.isValidCfxAddress(value);
-                      if (!isValidAddr) return Promise.reject(new Error('地址格式错误'));
-                      const prefix = getFieldValue('chain') === 'conflux' ? 'cfx' : 'cfxtest';
-                      const isValidPrefix = value.toLowerCase().split(':')[0] === prefix;
-                      if (!isValidPrefix) return Promise.reject(new Error('请输入正确网络的地址'));
-                      return Promise.resolve();
-                    },
-                  }),
-                ]}
-              >
-                <Input style={{ flexGrow: 1 }} placeholder="树图链地址" />
-              </Form.Item>
-              <Button type={'text'} onClick={fillMintTo} style={{ color: 'gray' }}>
-                <Tooltip title={'使用App账户地址'} mouseEnterDelay={1}>
-                  <UserOutlined />
-                </Tooltip>
-              </Button>
-            </Input.Group>
-          </Form.Item>
-          <Form.Item wrapperCol={{ offset: 4, span: 18 }}>
-            <Row gutter={24}>
-              <Col span={6}>
-                <Button htmlType={'reset'}>重置</Button>
-              </Col>
-              <Col span={6}>
-                <Button htmlType={'button'} type={'dashed'} onClick={() => setIsMintModalVisible(false)}>
-                  取消
+            </Form.Item>
+            <Form.Item name="chain" label="网络" rules={[{ required: true }]}>
+                <Radio.Group>
+                <Radio.Button value="conflux">树图主网</Radio.Button>
+                <Radio.Button value="conflux_test">树图测试网</Radio.Button>
+                </Radio.Group>
+            </Form.Item>
+            <Form.Item name={'group'} label="接受地址">
+                <Input.Group compact style={{ display: 'flex' }}>
+                <Form.Item
+                    name="mint_to_address"
+                    style={{ flexGrow: 1, border: '0px solid black' }}
+                    rules={[
+                        { required: true, message: '请输入接受地址' },
+                        ({ getFieldValue }) => ({
+                            validator: function (_, value) {
+                                const isValidAddr = address.isValidCfxAddress(value);
+                                if (!isValidAddr) return Promise.reject(new Error('地址格式错误'));
+                                const prefix = getFieldValue('chain') === 'conflux' ? 'cfx' : 'cfxtest';
+                                const isValidPrefix = value.toLowerCase().split(':')[0] === prefix;
+                                if (!isValidPrefix) return Promise.reject(new Error('请输入正确网络的地址'));
+                                return Promise.resolve();
+                            },
+                        }),
+                    ]}
+                >
+                    <Input style={{ flexGrow: 1 }} placeholder="树图链地址" />
+                </Form.Item>
+                <Button type={'text'} onClick={fillMintTo} style={{ color: 'gray' }}>
+                    <Tooltip title={'使用App账户地址'} mouseEnterDelay={1}>
+                    <UserOutlined />
+                    </Tooltip>
                 </Button>
-              </Col>
-              <Col span={6}>
-                <Button htmlType={'submit'} type={'primary'} disabled={minting} loading={minting} onClick={()=>onNftMint(form.getFieldsValue())}>
-                  确认
-                </Button>
-              </Col>
-            </Row>
-          </Form.Item>
-        </Form>
-      </Modal>
-      <Form form={form} name="nothing_but_suppress_antd_warning"/>
+                </Input.Group>
+            </Form.Item>
+            <Form.Item wrapperCol={{ offset: 4, span: 18 }}>
+                <Row gutter={24}>
+                <Col span={6}>
+                    <Button htmlType={'reset'}>重置</Button>
+                </Col>
+                <Col span={6}>
+                    <Button htmlType={'button'} type={'dashed'} onClick={() => setIsMintModalVisible(false)}>
+                    取消
+                    </Button>
+                </Col>
+                <Col span={6}>
+                    <Button htmlType={'submit'} type={'primary'} disabled={minting} loading={minting} onClick={()=>onNftMint(form.getFieldsValue())}>
+                    确认
+                    </Button>
+                </Col>
+                </Row>
+            </Form.Item>
+            </Form>
+        </Modal>
+        <Form form={form} name="nothing_but_suppress_antd_warning"/>
     </div>
   );
 }
