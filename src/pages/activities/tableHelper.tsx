@@ -71,6 +71,7 @@ export const ActivityManageIcon: React.FC<{ activity: ActivityItem }> = ({ activ
 
 export const ClaimLinkIcon: React.FC<{ activity: ActivityItem }> = ({ activity }) => {
   const [open, setOpen] = useState(false);
+  if (!activity.contract || !activity.contract?.contract_address) return (<></>);
   return (
     <>
       <div

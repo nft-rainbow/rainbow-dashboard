@@ -10,7 +10,7 @@ import type { MenuProps } from 'antd';
 import { 
     Layout, Menu, Dropdown, Space, Button,
     Form, Modal, Input, ConfigProvider,
-    Row, Col, Radio, message, Select
+    Row, Col, Radio, message, Select, Typography
 } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { SelectInfo } from 'rc-menu/lib/interface';
@@ -23,6 +23,7 @@ import { App as AppModel } from '@models/index';
 import { getAllApps } from '@services/app';
 import "./layout.css";
 const { Header, Content, Footer, Sider } = Layout;
+const { Text } = Typography;
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -268,20 +269,23 @@ const App: React.FC = () => {
                             </Form.Item>
                             <Form.Item wrapperCol={{ offset: 4, span: 18 }}>
                                 <Row gutter={24}>
-                                <Col span={6}>
-                                    <Button htmlType={'reset'}>重置</Button>
-                                </Col>
-                                <Col span={6}>
-                                    <Button htmlType={'button'} type={'dashed'} onClick={() => setIsMintModalVisible(false)}>
-                                        取消
-                                    </Button>
-                                </Col>
-                                <Col span={6}>
-                                    <Button htmlType={'submit'} type={'primary'} disabled={minting} loading={minting} onClick={()=>onNftMint(form.getFieldsValue())}>
-                                        确认
-                                    </Button>
-                                </Col>
+                                    <Col span={6}>
+                                        <Button htmlType={'reset'}>重置</Button>
+                                    </Col>
+                                    <Col span={6}>
+                                        <Button htmlType={'button'} type={'dashed'} onClick={() => setIsMintModalVisible(false)}>
+                                            取消
+                                        </Button>
+                                    </Col>
+                                    <Col span={6}>
+                                        <Button htmlType={'submit'} type={'primary'} disabled={minting} loading={minting} onClick={()=>onNftMint(form.getFieldsValue())}>
+                                            确认
+                                        </Button>
+                                    </Col>
                                 </Row>
+                            </Form.Item>
+                            <Form.Item wrapperCol={{ offset: 4, span: 18 }}>
+                                <Text type="secondary">NFT铸造后，可在项目详情页查看</Text>
                             </Form.Item>
                         </Form>
                     </Modal>
