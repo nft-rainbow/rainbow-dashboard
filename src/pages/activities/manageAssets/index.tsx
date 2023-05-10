@@ -4,6 +4,7 @@ import { Card, Button, Form, Input, Dropdown, DatePicker, Select, type MenuProps
 import { DownOutlined, DeleteOutlined } from '@ant-design/icons';
 import RainbowBreadcrumb from '@components/Breadcrumb';
 import FileUploadNew from '@components/FileUploadNew';
+import { short } from '@utils/index';
 import useManageAssets from './useManageAssets';
 import './index.scss';
 const { Option } = Select;
@@ -97,7 +98,7 @@ const Asset: React.FC = () => {
                             <Select placeholder="请选择" disabled={!isContractEditable}>
                                 {contracts.map((e) => (
                                     <Option label={e.address} value={e.id} key={e.address}>
-                                        {e.address}
+                                        {`${short(e.address)} (${e.name}-${e.symbol})`}
                                     </Option>
                                 ))}
                             </Select>

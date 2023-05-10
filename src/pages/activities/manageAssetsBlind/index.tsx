@@ -8,6 +8,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { listContracts } from '@services/contract';
 import { Contract } from '@models/index';
 import { getActivityById, updatePoap } from '@services/activity';
+import { short } from '@utils/index';
 import AddAssetsModal from './AddAssetsModal';
 import BlindTableItem from './BlindTableItem';
 
@@ -71,14 +72,15 @@ const ManageAssetsBlind: React.FC = () => {
     );
 
     useEffect(() => {
-        listContracts().then((res) => {
+        if (!data) return;
+        listContracts(1, 1000, {status: 1, app_id: data.app_id}).then((res) => {
             let tempContracts: Contract[] = [];
             res.items.map((e: Contract) => {
                 if (e.type === 1 && e.address) tempContracts.push(e);
             });
             setContracts(tempContracts);
         });
-    }, []);
+    }, [data]);
 
     useEffect(() => {
         if (!data) return;
@@ -97,7 +99,7 @@ const ManageAssetsBlind: React.FC = () => {
             <Card>
                 <Form form={form} id="manageAssetsBlindForm" onFinish={handleFinish}>
                     <Form.Item name="contract_id" label="合约地址" rules={[{ required: true, message: '请选择合约地址' }]}>
-                        <Select placeholder="请选择" disabled={!isContractEditable} options={contracts.map((e) => ({value: e.id, label: `${e.name}-${e.symbol}-${e.address}`}))}>
+                        <Select placeholder="请选择" disabled={!isContractEditable} options={contracts.map((e) => ({value: e.id, label: `${short(e.address)} (${e.name}-${e.symbol})`}))}>
                         {/* {contracts.map((e) => (
                             <Option label={e.address} value={e.id} key={e.address}>
                             {e.address}
