@@ -4,12 +4,12 @@ import {
     DashboardOutlined, AppstoreOutlined, MenuFoldOutlined, DownOutlined, 
     UserOutlined, LogoutOutlined, UsergroupAddOutlined,
     CodeOutlined, MoneyCollectOutlined, AuditOutlined,
-    LineChartOutlined, NodeIndexOutlined, RobotOutlined,
+    LineChartOutlined, NodeIndexOutlined, RobotOutlined, QuestionCircleOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { 
     Layout, Menu, Dropdown, Space, Button,
-    Form, Modal, Input, ConfigProvider,
+    Form, Modal, Input, ConfigProvider, Tooltip,
     Row, Col, Radio, message, Select, Typography
 } from 'antd';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
@@ -176,7 +176,13 @@ const App: React.FC = () => {
                     <Header className="bg-white" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between' }}>
                         <div><MenuFoldOutlined style={{ fontSize: '20px' }} onClick={() => setCollapsed(!collapsed)} /></div>
                         <div>
-                            <Button type='link' onClick={() => setIsMintModalVisible(true)}>快捷铸造</Button>
+                            <Button 
+                                type='link' 
+                                onClick={() => setIsMintModalVisible(true)}
+                            >
+                                快捷铸造
+                                <Tooltip title="快捷铸造是在事先部署的智能合约中铸造 NFT，方便新用户快速上手"><QuestionCircleOutlined/></Tooltip>
+                            </Button>
                             <Link to="/panels/contracts/sponsor">设置代付</Link>
                             <Dropdown menu={{ items: userMenuItems }}>
                                 <Button type='link' onClick={e => e.preventDefault()} href="#">

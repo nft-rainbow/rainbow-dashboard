@@ -48,14 +48,15 @@ const useManageAssets = (type: 'single' | 'blind', nftItemId?: string) => {
   );
 
   useEffect(() => {
-    listContracts(1, 100, {status: 1}).then((res) => {
+    if (!data) return;
+    listContracts(1, 1000, {status: 1, app_id: data?.app_id}).then((res) => {
       let tempContracts: Contract[] = [];
       res.items.map((e: Contract) => {
-        if (e.type === 1) tempContracts.push(e);
+        if (e.type === 1) tempContracts.push(e); // only support erc721 contracts?
       });
       setContracts(tempContracts);
     });
-  }, []);
+  }, [data]);
 
   useEffect(() => {
     const nftConfig = type === 'blind' ? data?.nft_configs?.find((item: any) => item.id === nftItemId) : data?.nft_configs?.[0];
