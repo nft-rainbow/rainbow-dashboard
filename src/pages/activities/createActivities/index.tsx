@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useCallback, useReducer } from 'react';
-import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, Radio, message } from 'antd';
+import { 
+    Modal, Form, Input, Switch, DatePicker, Select, 
+    Popover, InputNumber, Radio, message, Checkbox 
+} from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { App } from '@models/index';
 import LimitedInput from '@modules/limitedInput';
 import FileUploadNew from '@components/FileUploadNew';
@@ -34,7 +38,7 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
         return null;
     }, [form, switchers.numberDisabled]);
 
-    const handleWhiltelistChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(async (e) => {
+    /* const handleWhiltelistChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(async (e) => {
         if (!e.target?.files?.length) return;
         try {
             let res = await parseCSV(e.target?.files[0]);
@@ -44,7 +48,7 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
             message.error(err.message);
             return "白名单错误";
         }
-    }, [form]);
+    }, [form]); */
 
     const handleFinish = useCallback(
         async (values: FormData) => {
@@ -176,6 +180,16 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
             <InputNumber className="w-full" />
           </Form.Item>
         )}
+        <Form.Item label='活动钱包' name='wallets'>
+            <Checkbox.Group 
+                options={['Anyweb', 'Cellar']} 
+                defaultValue={['Anyweb', 'Cellar']} 
+                onChange={(checkedValues: CheckboxValueType[]) => {
+                    console.log('checked = ', checkedValues);
+                    form.setFieldsValue({ wallets: checkedValues });
+                }
+            } />
+        </Form.Item>
         <div className="mb-8px flex flex-row justify-between">
           <label htmlFor="command" title="领取口令：">
             领取口令：
@@ -197,7 +211,8 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
             <Input placeholder="请输入" className="w-full" />
           </Form.Item>
         )}
-        <div className="mb-8px flex flex-row justify-between">
+        {/* 白名单铸造表单项部分 */}
+        {/* <div className="mb-8px flex flex-row justify-between">
           <div>
             白名单铸造：
             <Popover content={PopoverContent} placement="topLeft" trigger="hover">
@@ -226,7 +241,7 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
             </Form.Item>
             <input type="file" accept=".csv" id="whitelistUpload" onChange={handleWhiltelistChange} className="!hidden" />
           </>
-        )}
+        )} */}
       </Form>
     </Modal>
   );

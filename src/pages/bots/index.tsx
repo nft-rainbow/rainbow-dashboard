@@ -261,7 +261,7 @@ function DoDoActivityCreateModal(props: {
         {
             title: '合约地址',
             dataIndex: 'contract.contract_address',
-            render:(text: string, record: ActivityItem) => short(record.contract?.contract_address as string),
+            render:(text: string, record: ActivityItem) => record.contract?.contract_address ? short(record.contract?.contract_address as string) : '',
         },
         {
             title: '开始时间',
@@ -330,11 +330,11 @@ function DoDoActivityCreateModal(props: {
         getBotServers(social_tool, 1, 1000).then(res => {
             setBotServers(res.items);
         });
-        getActivities({page: 1, limit: 10}).then(res => {
+        getActivities({page, limit: 10}).then(res => {
             setActivities(res.items);
             setActivityCount(res.count);
         });
-    }, [isModalShow]);
+    }, [isModalShow, page]);
 
     useEffect(() => {
         if (!pushServerId) return;
