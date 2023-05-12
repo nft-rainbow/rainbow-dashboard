@@ -12,11 +12,11 @@ export interface ActivityItem {
     activity_poster_url: string;
     amount: number;
     contract?: {
-      chain_id: number;
-      chain_type: number;
-      contract_address: string;
-      contract_type: number;
-      id: number;
+        chain_id: number;
+        chain_type: number;
+        contract_address: string;
+        contract_type: number;
+        id: number;
     },
     contract_id?: number;
     // chain_type: number;
@@ -27,11 +27,12 @@ export interface ActivityItem {
     end_time?: number;
     created_at: string;
     white_list_infos?: [
-      {
-        count: number;
-        user: string;
-      }
+        {
+            count: number;
+            user: string;
+        }
     ];
+    support_wallets: string[];
 }
 
 export interface SearchParams {

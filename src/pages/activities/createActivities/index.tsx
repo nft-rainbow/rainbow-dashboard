@@ -31,6 +31,7 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
     const [switchers, dispatch] = useReducer(handleFormSwitch, defaultSwitchers);
     const [form] = Form.useForm();
     useResetFormOnCloseModal({ form, open });
+    const [supportWallets, setSupportWallets] = useState<string[]>(['anyweb', 'cellar']);
 
     const checkRelAllowed = useCallback(async (rule: any, value: number) => {
         const amount = form.getFieldValue('amount');
@@ -55,6 +56,8 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
             const params = formDataTranslate(values, apps, activityType);
             try {
                 setConfirmLoading(true);
+                // @ts-ignore
+                params.support_wallets = supportWallets;
                 await createActivity(params);
                 dispatch({ type: 'reset' });
                 hideModal();
@@ -80,7 +83,7 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
 
   return (
     <Modal title="创建活动" open={open} onOk={form.submit} onCancel={handleCancel} {...ModalStyle} confirmLoading={confirmLoading}>
-      <Form id="createActivityForm" name="createActivityForm" form={form} layout="vertical" onFinish={handleFinish} initialValues={{ chain: 'conflux' }}>
+      <Form id="createActivityForm" name="createActivityForm" form={form} layout="vertical" onFinish={handleFinish} initialValues={{ chain: 'conflux', support_wallets: ['anyweb', 'cellar'] }}>
         <Form.Item name="app_id" label="所属项目" rules={[{ required: true, message: '请选择项目' }]}>
           <Select placeholder="请选择项目">
             {apps.map((app) => (
@@ -180,13 +183,11 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
             <InputNumber className="w-full" />
           </Form.Item>
         )}
-        <Form.Item label='活动钱包' name='wallets'>
+        <Form.Item label='活动钱包' name='support_wallets'>
             <Checkbox.Group 
-                options={['Anyweb', 'Cellar']} 
-                defaultValue={['Anyweb', 'Cellar']} 
+                options={[{ label: 'Anyweb', value: 'anyweb' }, { label: 'Cellar', value: 'cellar' }]} 
                 onChange={(checkedValues: CheckboxValueType[]) => {
-                    console.log('checked = ', checkedValues);
-                    form.setFieldsValue({ wallets: checkedValues });
+                    setSupportWallets(checkedValues as string[]);
                 }
             } />
         </Form.Item>

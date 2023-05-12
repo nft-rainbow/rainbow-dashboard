@@ -1,5 +1,9 @@
 import React, { useState, useCallback, useReducer } from 'react';
-import { Modal, Form, Input, Switch, DatePicker, Select, Popover, InputNumber, Radio, message } from 'antd';
+import { 
+    Modal, Form, Input, Switch, DatePicker, Select, Popover, 
+    InputNumber, Radio, message, Checkbox
+} from 'antd';
+import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { ActivityItem } from '../../../models';
 import LimitedInput from '@modules/limitedInput';
@@ -54,6 +58,7 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
     const params = updateformDataTranslate(activity, values);
     try {
       setConfirmLoading(true);
+      params.support_wallets = ['anyweb', 'cellar']; // TEMP CODE
       await updatePoap(params);
       dispatch({ type: 'reset' });
       hideModal();
@@ -190,6 +195,14 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
             <InputNumber defaultValue={activity.max_mint_count} className="w-full" />
           </Form.Item>
         )}
+        {/* <Form.Item label='活动钱包' name='support_wallets'>
+            <Checkbox.Group 
+                options={[{ label: 'Anyweb', value: 'anyweb' }, { label: 'Cellar', value: 'cellar' }]} 
+                defaultValue={activity.support_wallets || ['anyweb', 'cellar']}
+                onChange={(checkedValues: CheckboxValueType[]) => {
+                }
+            } />
+        </Form.Item> */}
         <div className="mb-8px flex flex-row justify-between">
           <label htmlFor="command" title="领取口令：">
             领取口令：
@@ -211,7 +224,7 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
             <Input placeholder="请输入" className="w-full" defaultValue={activity.command} />
           </Form.Item>
         )}
-        <div className="mb-8px flex flex-row justify-between">
+        {/* <div className="mb-8px flex flex-row justify-between">
           <div>
             白名单铸造：
             <Popover content={PopoverContent} placement="topLeft" trigger="hover">
@@ -240,7 +253,7 @@ const ManageActivityModual: React.FC<CreatePOAProps> = ({ open, onCancel, hideMo
             </Form.Item>
             <input type="file" accept=".csv" id="whitelistUpload" onChange={handleWhiltelistChange} className="!hidden" />
           </>
-        )}
+        )} */}
       </Form>
     </Modal>
   );
