@@ -31,7 +31,7 @@ export async function userForgotPassword (metadata: object) {
 
 // new_password
 export async function userResetPassword (code: string, metadata: object) {
-    const { data } = await axios.post(methodUrl(`/password/session/${code}`), metadata);
+    const { data } = await axios.post(methodUrl(`/dashboard/password/session/${code}`), metadata);
     return data;
 }
 
