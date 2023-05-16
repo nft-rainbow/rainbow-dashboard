@@ -4,7 +4,6 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, ConfigProvider } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { userRegister, LoginMeta } from '../../services/user';
-// import { any } from 'js-conflux-sdk/dist/types/util/format';
 
 function Register() {
     const navigate = useNavigate();
@@ -62,10 +61,10 @@ function Register() {
                             <Button type="primary" htmlType="submit" className="login-form-button">
                                 注册
                             </Button>
-                            <p className="mt-5">
-                                <Link to="/login">登录</Link>
-                            </p>
                         </Form.Item>
+                        <div>
+                            <Link to="/login">登录</Link>
+                        </div>
                     </Form>
                 </div>
                 <div className="register-footer">

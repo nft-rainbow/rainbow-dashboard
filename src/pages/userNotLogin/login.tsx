@@ -4,7 +4,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Form, Input, message, ConfigProvider } from 'antd';
 import { LoginMeta } from '@services/user';
 import { useAuth } from '@router/Auth';
-import './register/register.css';
+import './register.css';
 
 function Login() {
   let navigate = useNavigate();
@@ -50,10 +50,12 @@ function Login() {
               <Button type="primary" htmlType="submit" className="login-form-button">
                 登录
               </Button>
-              <p className="mt-5">
-                <Link to="/register">注册</Link>
-              </p>
             </Form.Item>
+            
+            <div>
+                <Link to="/register">注册</Link>
+                <Link to="/forgotPwd" className="float-right">重置密码</Link>
+            </div>
           </Form>
         </div>
         <div className="register-footer">
