@@ -65,7 +65,7 @@ function Dodo() {
 
     const columns: ColumnsType<BotEvent> = [
         {
-          title: '互动/藏品ID',
+          title: '活动/藏品ID',
           dataIndex: 'activity_id',
           render: (text) => <a>{text}</a>,
         },
@@ -83,7 +83,7 @@ function Dodo() {
           dataIndex: 'server_name',
         },
         {
-          title: '互动/藏品名称',
+          title: '活动/藏品名称',
           dataIndex: 'name',
         },
         {
@@ -129,12 +129,22 @@ function Dodo() {
     ];
 
     const sendAuthCode = async (server_id: string) => {
-        const res = await getBotAuthCode(server_id, social_tool);
+        try {
+            await getBotAuthCode(server_id, social_tool);
+        } catch(e) {
+            // @ts-ignore
+            message.error(e.response.data.message);
+        }
     }
 
     const bindServer = async (values: any) => {
-        const res = await bindBotServers(values.code, values.server_no, social_tool);
-        setIsAddBotShow(false);
+        try {
+            await bindBotServers(values.code, values.server_no, social_tool);
+            setIsAddBotShow(false);
+        } catch(e) {
+            // @ts-ignore
+            message.error(e.response.data.message);
+        }
     }
 
     useEffect(() => {
@@ -246,7 +256,7 @@ function DoDoActivityCreateModal(props: {
 
     const activityColumns: ColumnsType<ActivityItem> = [
         {
-            title: '互动/藏品ID',
+            title: '活动/藏品ID',
             dataIndex: 'activity_id',
             render: (text) => <a>{text}</a>,
         },
@@ -271,7 +281,7 @@ function DoDoActivityCreateModal(props: {
         {
             title: '结束时间',
             dataIndex: 'end_time',
-            render: (num: number) => num ? formatDate(new Date(num * 1000)) : '',
+            render: (num: number) => (num && num > 100) ? formatDate(new Date(num * 1000)) : '',
         },
     ]
 

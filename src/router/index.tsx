@@ -1,8 +1,10 @@
 import React from 'react';
 import { Routes, Route, Navigate, BrowserRouter } from 'react-router-dom';
 import { RequireAuth } from './Auth';
-import Login from '@pages/login';
-import Register from '@pages/register';
+import Login from '@pages/userNotLogin/login';
+import Register from '@pages/userNotLogin/register';
+import ForgotPwd from '@pages/userNotLogin/forgotPwd';
+import ResetPwd from '@pages/userNotLogin/resetPwd';
 import DashboardLayout from '@pages/layout';
 import Panel from '@pages/panel';
 import User from '@pages/users/user';
@@ -31,6 +33,8 @@ const AppRouter: React.FC = () => {
         <Route path="/">
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
+          <Route path="forgotPwd" element={<ForgotPwd />} />
+          <Route path="resetPwd" element={<ResetPwd />} />
           <Route
             path="panels"
             element={

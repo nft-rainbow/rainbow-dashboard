@@ -24,6 +24,17 @@ export async function userLogin (metadata: LoginMeta) {
     return data;
 }
 
+export async function userForgotPassword (metadata: object) {
+    const { data } = await axios.post(methodUrl('/dashboard/password/session'), metadata);
+    return data;
+}
+
+// new_password
+export async function userResetPassword (code: string, metadata: object) {
+    const { data } = await axios.post(methodUrl(`/password/session/${code}`), metadata);
+    return data;
+}
+
 export async function userProfile(): Promise<User> {
     return await get('/dashboard/users/profile');
 }

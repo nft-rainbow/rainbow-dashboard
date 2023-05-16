@@ -68,7 +68,7 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
                 setConfirmLoading(false);
             }
         },
-        [apps, activityType, hideModal]
+        [apps, activityType, hideModal, supportWallets]
     );
 
     const handleCancel = useCallback(() => {
@@ -187,6 +187,7 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
             <Checkbox.Group 
                 options={[{ label: 'Anyweb', value: 'anyweb' }, { label: 'Cellar', value: 'cellar' }]} 
                 onChange={(checkedValues: CheckboxValueType[]) => {
+                    // @ts-ignore
                     setSupportWallets(checkedValues as string[]);
                 }
             } />
