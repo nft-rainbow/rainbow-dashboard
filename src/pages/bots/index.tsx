@@ -65,7 +65,7 @@ function Dodo() {
 
     const columns: ColumnsType<BotEvent> = [
         {
-          title: '互动/藏品ID',
+          title: '活动/藏品ID',
           dataIndex: 'activity_id',
           render: (text) => <a>{text}</a>,
         },
@@ -83,7 +83,7 @@ function Dodo() {
           dataIndex: 'server_name',
         },
         {
-          title: '互动/藏品名称',
+          title: '活动/藏品名称',
           dataIndex: 'name',
         },
         {
@@ -256,7 +256,7 @@ function DoDoActivityCreateModal(props: {
 
     const activityColumns: ColumnsType<ActivityItem> = [
         {
-            title: '互动/藏品ID',
+            title: '活动/藏品ID',
             dataIndex: 'activity_id',
             render: (text) => <a>{text}</a>,
         },
@@ -281,7 +281,7 @@ function DoDoActivityCreateModal(props: {
         {
             title: '结束时间',
             dataIndex: 'end_time',
-            render: (num: number) => num ? formatDate(new Date(num * 1000)) : '',
+            render: (num: number) => (num && num > 100) ? formatDate(new Date(num * 1000)) : '',
         },
     ]
 
