@@ -27,7 +27,6 @@ export default class ForgotPwd extends Component {
             },
             handler: this.captchaHandler.bind(this)
         }
-        this.validate = this.validate.bind(this)
     }
 
     captchaHandler(captchaObj: any) {
@@ -50,23 +49,6 @@ export default class ForgotPwd extends Component {
                 this.setState({resetBtnDisabled: false});
             });
     }
-    async validate() {
-        const result = (window as any).captchaObj.getValidate();
-        if (!result) {
-          alert("请先完成验证！");
-          return;
-        }
-        result.email = this.state.email;
-
-        try {
-            // captcha_id: '7febcd48048617b383109cbdfc1d5459'
-            await userForgotPassword(result);
-            message.success('重置密码邮件发送成功');
-        } catch (err) {
-            // @ts-ignore
-            message.error('重置密码邮件发送失败' + err.response.data.message);
-        }
-    }
 
     componentDidMount() {
         if ((window as any).captchaLoading) return;
@@ -82,7 +64,7 @@ export default class ForgotPwd extends Component {
         // (window as any).captchaObj && (window as any).captchaObj.destroy();
     // }
 
-    sendResetEmail() {
+    async sendResetEmail() {
         const result = (window as any).captchaObj.getValidate();
         if (!result) {
           alert("请先完成验证！");
@@ -90,6 +72,16 @@ export default class ForgotPwd extends Component {
         }
         console.log('result', result);
         console.log('email', this.state.email);
+        result.email = this.state.email;
+
+        try {
+            // captcha_id: '7febcd48048617b383109cbdfc1d5459'
+            await userForgotPassword(result);
+            message.success('重置密码邮件发送成功, 请查收邮件并重置密码');
+        } catch (err) {
+            // @ts-ignore
+            message.error('重置密码邮件发送失败' + err.response.data.message);
+        }
     }
 
     render() {

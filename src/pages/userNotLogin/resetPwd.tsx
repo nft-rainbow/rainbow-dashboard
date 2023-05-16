@@ -1,18 +1,24 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Button, Form, Input, message, ConfigProvider } from 'antd';
 import { userResetPassword } from '@services/user';
 import './register.css';
 
 export default function ResetPwd() {
+    const [searchParams,] = useSearchParams();
 
-    const resetPwd = async (values: {code: string; password: string; new_password: string}) => {
+    const resetPwd = async (values: {password: string; new_password: string}) => {
         try {
             if (values.password !== values.new_password) {
                 message.error('两次密码不一致');
                 return;
             }
-            const result = await userResetPassword(values.code, values);
+            let code = searchParams.get('code');
+            if (!code) {
+                message.error('重置密码链接错误');
+                return;
+            }
+            await userResetPassword(code, values);
             message.success('重置密码成功');
         } catch (error) {
             // @ts-ignore
@@ -32,10 +38,9 @@ export default function ResetPwd() {
             <div className="register">
                 <div className="register-form">
                     <Form name="normal_login" className="login-form" initialValues={{ remember: true }} onFinish={resetPwd}>
-                        <Form.Item name="code" rules={[{ required: true, message: 'Please input your code!' }]}>
+                        {/* <Form.Item name="code" rules={[{ required: true, message: 'Please input your code!' }]}>
                             <Input placeholder="重置验证码" />
-                        </Form.Item>
-                        
+                        </Form.Item> */}
                         <Form.Item name="password" rules={[{ required: true, message: 'Please input your Password!' }]}>
                             <Input type="password" placeholder="新密码" />
                         </Form.Item>
