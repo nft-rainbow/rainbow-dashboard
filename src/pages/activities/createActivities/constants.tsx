@@ -5,7 +5,7 @@ export const PopoverContent = (
 );
 
 export const ModalStyle = {
-    width: '440px',
+    width: '500px',
     style: { top: '0px', paddingBottom: '0px' },
     wrapClassName: 'flex items-center',
     bodyStyle: { paddingTop: '16px' },
