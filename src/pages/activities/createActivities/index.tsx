@@ -13,6 +13,7 @@ import { getAllApps } from '@services/app';
 import { handleFormSwitch, defaultSwitchers, formDataTranslate, type FormData } from '@utils/activityHelper';
 import useResetFormOnCloseModal from '@hooks/useResetFormOnCloseModal';
 import './index.scss';
+import { check } from 'prettier';
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
@@ -25,7 +26,8 @@ interface CreatePOAProps {
 export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal }) => {
     const [apps, setApps] = useState<App[]>([]);
     const [confirmLoading, setConfirmLoading] = useState(false);
-    const [switchers, dispatch] = useReducer(handleFormSwitch, defaultSwitchers);
+    // const [switchers, dispatch] = useReducer(handleFormSwitch, defaultSwitchers);
+    const [useCommand, setUseCommand] = useState(false);
     const [form] = Form.useForm();
     const [supportWallets, setSupportWallets] = useState<string[]>(DEFAULT_WALLETS);
     const [activityType, setActivityType] = useState(-1);
@@ -44,7 +46,6 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
                 // @ts-ignore
                 params.support_wallets = supportWallets;
                 await createActivity(params);
-                dispatch({ type: 'reset' });
                 hideModal();
                 message.success('创建活动成功')
             } catch (err: any) {
@@ -57,7 +58,6 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
     );
 
     const handleCancel = useCallback(() => {
-        dispatch({ type: 'reset' });
         setConfirmLoading(false);
         onCancel();
     }, [onCancel]);
@@ -139,14 +139,14 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
                     <Space>
                         <Form.Item>
                             <Switch
-                                checked={!switchers.passwordDisabled}
+                                checked={useCommand}
                                 onClick={(checked, e) => {
                                     e.preventDefault();
-                                    dispatch({ type: 'set', name: 'passwordDisabled', value: !checked });
+                                    setUseCommand(checked);
                                 }}
                             />
                         </Form.Item>
-                        {!switchers.passwordDisabled && <Form.Item name="command">
+                        {useCommand && <Form.Item name="command">
                             <Input placeholder="请输入口令" className="w-full" />
                         </Form.Item>}
                         
