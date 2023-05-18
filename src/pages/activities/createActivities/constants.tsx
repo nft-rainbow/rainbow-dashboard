@@ -12,3 +12,5 @@ export const ModalStyle = {
 };
 
 export const ExistRelationForbidden = () => <div className="text-#ff4d4f mb-8px ">公开铸造上线不可小于发行数量</div>;
+
+export const DEFAULT_WALLETS = ['anyweb', 'cellar'];

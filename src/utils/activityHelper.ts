@@ -97,7 +97,7 @@ export const formDataTranslate = (data: FormData, apps: App[], activityType: num
     };
 };
 
-export const updateformDataTranslate = (activity: ActivityItem, data: FormData) => {
+export const updateFormDataTranslate = (activity: ActivityItem, data: FormData) => {
     let start_time = null;
     let end_time = null;
     start_time = dateTranslate(new Date(data.activityDate[0]));

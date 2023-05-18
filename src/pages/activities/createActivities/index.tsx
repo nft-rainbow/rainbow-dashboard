@@ -7,7 +7,7 @@ import type { CheckboxValueType } from 'antd/es/checkbox/Group';
 import { App } from '@models/index';
 import LimitedInput from '@modules/limitedInput';
 import FileUploadNew from '@components/FileUploadNew';
-import { ModalStyle } from './constants';
+import { ModalStyle, DEFAULT_WALLETS } from './constants';
 import { createActivity } from '@services/activity';
 import { getAllApps } from '@services/app';
 import { handleFormSwitch, defaultSwitchers, formDataTranslate, type FormData } from '@utils/activityHelper';
@@ -27,14 +27,19 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [switchers, dispatch] = useReducer(handleFormSwitch, defaultSwitchers);
     const [form] = Form.useForm();
-    useResetFormOnCloseModal({ form, open });
-    const [supportWallets, setSupportWallets] = useState<string[]>(['anyweb', 'cellar']);
+    const [supportWallets, setSupportWallets] = useState<string[]>(DEFAULT_WALLETS);
     const [activityType, setActivityType] = useState(-1);
+    const [nolimitAmount, setNolimitAmount] = useState(false);
+    useResetFormOnCloseModal({ form, open });
 
     const handleFinish = useCallback(
         async (values: FormData) => {
-            const params = formDataTranslate(values, apps, activityType);
             try {
+                if (supportWallets.length === 0) {
+                    message.error('请选择支持的钱包');
+                    return;
+                }
+                const params = formDataTranslate(values, apps, activityType);
                 setConfirmLoading(true);
                 // @ts-ignore
                 params.support_wallets = supportWallets;
@@ -68,7 +73,7 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
                 name="createActivityForm" 
                 form={form} 
                 onFinish={handleFinish} 
-                initialValues={{ chain: 'conflux', support_wallets: ['anyweb', 'cellar'], max_mint_count: 1 }} 
+                initialValues={{ chain: 'conflux', support_wallets: DEFAULT_WALLETS, max_mint_count: 1 }} 
                 labelCol={{span: 6}}
             >
                 <Form.Item name="app_id" label="所属项目" rules={[{ required: true, message: '请选择项目' }]}>
@@ -81,7 +86,7 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
                     </Select>
                 </Form.Item>
                 <Form.Item name='activity_type' label='活动类型' rules={[{ required: true, message: '请选择类型' }]}>
-                    <Select onChange={val => setActivityType(val)}>
+                    <Select onChange={val => setActivityType(val)} placeholder='请选择活动类型'>
                         <Option value={2}>单NFT活动</Option>
                         <Option value={1}>盲盒活动</Option>
                     </Select>
@@ -89,7 +94,7 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
                 <Form.Item name="name" label="活动名称" rules={[{ required: true, message: '请输入活动名称' }]}>
                     <Input placeholder="请输入" />
                 </Form.Item>
-                <LimitedInput form={form} id="description" label="活动描述" name="description" maxLength={100} message="请输入活动描述" />
+                <LimitedInput form={form} id="description" label="活动描述" name="description" maxLength={100} message="请输入活动描述" placeholder='建议长度40字以内'/>
                 <Form.Item
                     label="活动封面："
                     rules={[{ required: true, message: '请上传活动封面' }]}
@@ -101,12 +106,24 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
                     <FileUploadNew maxCount={1} listType="picture" type="plus" wrapperClass="block w-full !mb-24px" className="block" />
                 </Form.Item>
                 <Form.Item label='活动日期' id="activityDate" name="activityDate">
-                    <RangePicker id="activityDate" showTime placeholder={['开始日期', '结束日期']} disabled={[false, false]} allowEmpty={[false, true]} />
+                    <RangePicker id="activityDate" showTime placeholder={['开始日期', '结束日期(可选)']} disabled={[false, false]} allowEmpty={[false, true]} />
                 </Form.Item>
-                <Form.Item label='发行数量' name='amount'>
-                    <InputNumber />
+                <Form.Item label='发行数量'>
+                    <Space>
+                        <Form.Item name='amount' noStyle>
+                            <InputNumber disabled={nolimitAmount} />
+                        </Form.Item>
+                        <Checkbox onChange={e => {
+                            if (e.target.checked) {
+                                form.setFieldValue('amount', null);
+                            }
+                            setNolimitAmount(e.target.checked);
+                        }}>
+                            不限制数量
+                        </Checkbox>
+                    </Space>
                 </Form.Item>
-                <Form.Item label='公开铸造上限' name='max_mint_count'>
+                <Form.Item label='公开铸造上限' name='max_mint_count' tooltip='单地址铸造上限'>
                     <InputNumber />
                 </Form.Item>
                 <Form.Item label='活动钱包' name='support_wallets'>
