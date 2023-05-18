@@ -1,18 +1,12 @@
 import { useEffect, useState } from 'react';
 import { create } from 'zustand';
-import { Card, Button, TablePaginationConfig, type MenuProps, Dropdown } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import { Card, Button, TablePaginationConfig } from 'antd';
 import { ProTable } from '@ant-design/pro-components';
 import { ActivityItem, SearchParams } from '@models/index';
 import { getActivities } from '@services/activity';
 import { throttle } from 'lodash-es';
 import { CreatePOAP } from './createActivities';
 import { columns } from './tableHelper';
-
-const dropItems: MenuProps['items'] = [
-    { label: '单个活动', key: 2 },
-    { label: '盲盒活动', key: 1 },
-];
 
 export const useActivitiesStore = create<{ 
     total: number; 
@@ -44,7 +38,6 @@ export default function Poaps() {
     const page = useActivitiesStore((state) => state.page);
     const setPage = useActivitiesStore((state) => state.setPage);
     const getItems = useActivitiesStore((state) => state.getItems);
-    const [activityType, setActivityType] = useState(-1);
     const [isActivityModalVisible, setIsActivityModalVisible] = useState(false);
 
     const hideModal = () => {
@@ -54,25 +47,6 @@ export default function Poaps() {
     useEffect(() => {
         getItems();
     }, [page, isActivityModalVisible, getItems]);
-
-    const extra = (
-        <Dropdown
-            key="create-activity"
-            trigger={['click']}
-            menu={{
-                items: dropItems,
-                onClick: (e) => {
-                    setActivityType(parseInt(e.key));
-                    setIsActivityModalVisible(true);
-                },
-            }}
-        >
-        <div className="h-[32px] flex items-center justify-center px-[4px] border border-solid border-[#6953EF] text-[#6953EF] rounded-[6px]">
-            创建活动
-            <DownOutlined />
-        </div>
-        </Dropdown>
-    );
 
     return (
         <>
@@ -91,7 +65,7 @@ export default function Poaps() {
                             <Button onClick={() => {form?.resetFields();setPage(1);form?.submit();}} key={resetText}>
                                 {resetText}
                             </Button>,
-                            extra,
+                            <Button key='create-activity' type='primary' onClick={() => setIsActivityModalVisible(true)}>创建活动</Button>
                         ],
                     }}
                     options={false}
@@ -117,7 +91,7 @@ export default function Poaps() {
                     onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
                 />
             </Card>
-            <CreatePOAP activityType={activityType} open={isActivityModalVisible} onCancel={hideModal} hideModal={hideModal} />
+            <CreatePOAP open={isActivityModalVisible} onCancel={hideModal} hideModal={hideModal} />
         </>
     );
 }

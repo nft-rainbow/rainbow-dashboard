@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { Form, Input } from 'antd';
 import type { FormInstance, FormItemProps } from 'antd/es/form';
+const { TextArea } = Input;
 
 interface ILimitByteInputProps extends FormItemProps {
     form: FormInstance;
@@ -37,7 +38,7 @@ const LimitedInput: React.FC<ILimitByteInputProps> = ({ form, id, placeholder, m
 
     return (
         <Form.Item rules={[{ required: true, message: message }, { validator: limitValidator }]} {...props} >
-            <Input id={id} placeholder={placeholder} />
+            <TextArea id={id} placeholder={placeholder} rows={3} />
         </Form.Item>
     );
 };

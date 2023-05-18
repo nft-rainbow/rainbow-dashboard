@@ -5,10 +5,12 @@ export const PopoverContent = (
 );
 
 export const ModalStyle = {
-    width: '440px',
+    width: '500px',
     style: { top: '0px', paddingBottom: '0px' },
     wrapClassName: 'flex items-center',
     bodyStyle: { paddingTop: '16px' },
 };
 
 export const ExistRelationForbidden = () => <div className="text-#ff4d4f mb-8px ">公开铸造上线不可小于发行数量</div>;
+
+export const DEFAULT_WALLETS = ['anyweb', 'cellar'];
