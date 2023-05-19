@@ -134,12 +134,14 @@ export const activityTypeDic = {
     'single': "单NFT活动",
     'blind_box': "盲盒活动",
 }
+
 // ['盲盒活动', '单个活动', 'POAP活动'];
 export const activityTypeDicEn = {
     'single': 'single',
     'blind_box': 'blind',
     'poap': 'POAP',
 }
+
 // ['blind', 'single', 'poap'];
 
 export const activityTypeTransform = (type: string) => {
@@ -159,7 +161,7 @@ export const activityTypeTransformEn = (type: string) => {
 
 export const getActivityUrl = () => {
     // @ts-ignore
-    const url = new URL(location.href);
+    const url = new URL((window.location as any).href);
     const searchParams = new URLSearchParams(url.search);
     const activity_id = searchParams.get('activity_id');
     return activity_id;
