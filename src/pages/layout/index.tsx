@@ -132,9 +132,7 @@ const App: React.FC = () => {
     }, [collapsed]);
 
     useEffect(() => {
-        getAllApps().then((res) => {
-          setApps(res);
-        });
+        getAllApps().then(setApps);
     }, []);
 
     return (
