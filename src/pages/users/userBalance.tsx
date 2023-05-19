@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import RainbowBreadcrumb from '@components/Breadcrumb';
 import {
     Button, Form, Modal, Input, Radio, Space, Card,
-    Table, TablePaginationConfig, Typography, Tooltip, Select, DatePicker
+    Table, TablePaginationConfig, Typography,
+    Tooltip, Select, DatePicker, QRCode,
 } from 'antd';
 import type { RangePickerProps } from 'antd/es/date-picker';
 import { InfoCircleOutlined } from '@ant-design/icons'
-import { QRCodeSVG } from 'qrcode.react';
 import { userFiatLogs, userBalanceRuntime } from '@services/user';
 import { createWxPayOrder } from '@services/pay';
 import { FiatLog } from '@models/index';
@@ -245,7 +245,11 @@ export default function UserBalance() {
                 onCancel={() => setIsPayModalVisible(false)}
                 footer={null}
             >
-                <QRCodeSVG value={payUrl} style={{display: 'block', marginLeft: 'auto', marginRight: 'auto'}}/>
+                <QRCode 
+                    value={payUrl} 
+                    icon='/nftrainbow-logo-icon.png'
+                    style={{display: 'block', marginLeft: 'auto', marginRight: 'auto'}}
+                />
                 <div style={{textAlign: "center", marginTop: '10px'}}>
                     <span>支付完成后，请刷新页面</span>
                 </div>

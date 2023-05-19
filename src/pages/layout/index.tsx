@@ -45,7 +45,7 @@ const items: MenuItem[] = [
     getItem(<Link to="/panels">仪表盘</Link>, '1', <DashboardOutlined />),
     getItem(<Link to="/panels/apps">我的项目</Link>, '2', <AppstoreOutlined />),
     getItem(<Link to="/panels/contracts">智能合约</Link>, '3', <AuditOutlined />),
-    getItem(<Link to="/panels/poaps">活动</Link>, '4', <AuditOutlined />),
+    getItem(<Link to="/panels/poaps">NFT活动</Link>, '4', <AuditOutlined />),
     getItem(<Link to="/panels/socialBot">社群Bot</Link>, '5', <RobotOutlined />),
     getItem(<Link to="/panels/metadata">元数据</Link>, '6', <NodeIndexOutlined />),
     getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">开发文档</a>, '7', <CodeOutlined />),
@@ -132,9 +132,7 @@ const App: React.FC = () => {
     }, [collapsed]);
 
     useEffect(() => {
-        getAllApps().then((res) => {
-          setApps(res);
-        });
+        getAllApps().then(setApps);
     }, []);
 
     return (
@@ -198,7 +196,15 @@ const App: React.FC = () => {
                         <Outlet />
                     </Content>
                     <Footer className="site-layout-footer">©2022 NFTRainbow</Footer>
-                    <Modal title="快捷铸造" open={isMintModalVisible} onOk={() => form.submit()} onCancel={closeMintModal} cancelButtonProps={{ hidden: true }} okButtonProps={{ hidden: true }}>
+
+                    <Modal 
+                        title="快捷铸造" 
+                        open={isMintModalVisible} 
+                        onOk={() => form.submit()} 
+                        onCancel={closeMintModal} 
+                        cancelButtonProps={{ hidden: true }} 
+                        okButtonProps={{ hidden: true }}
+                    >
                         <Form {...formLayout} form={form} name="control-hooks" onFinish={onNftMint}>
                             <Form.Item name="app_id" label="所属项目" rules={[{ required: true }]}>
                                 <Select onChange={val => setAppId(val)} placeholder='请选择项目，新用户需先创建项目'>

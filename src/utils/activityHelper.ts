@@ -62,7 +62,7 @@ export const handleFormSwitch = (switchers: Switchers, action: ResetSwitcherActi
   }
 };
 
-export const dateTraslate = (date: Date) => {
+export const dateTranslate = (date: Date) => {
   return Math.floor(date.getTime() / 1000);
 };
 
@@ -74,72 +74,74 @@ export const timestampToDate = (timestamp: number) => {
 };
 
 export const formDataTranslate = (data: FormData, apps: App[], activityType: number) => {
-  let start_time = null;
-  let end_time = null;
-  start_time = dateTraslate(new Date(data.activityDate[0]));
-  if (data.activityDate[1]) end_time = dateTraslate(new Date(data.activityDate[1]));
-  const appIndex = apps.findIndex((app) => app.id === data.app_id);
-  return {
-    // @ts-ignore
-    activity_picture_url: data?.file?.[0]?.response?.url ?? data?.file?.[0]?.url ?? '',
-    amount: parseInt(data.amount ?? '-1'),
-    app_id: data.app_id,
-    chain_type: apps[appIndex].chain_type,
-    description: data.description,
-    start_time: start_time,
-    end_time: end_time ?? -1,
-    max_mint_count: data.max_mint_count ?? -1,
-    white_list_infos: data.white_list_infos,
-    command: data.command ?? '',
-    name: data.name,
-    activity_type: activityTypeIdToName(activityType),
-    app_name: apps[appIndex].name,
-  };
+    let start_time = null;
+    let end_time = null;
+    start_time = dateTranslate(new Date(data.activityDate[0]));
+    if (data.activityDate[1]) end_time = dateTranslate(new Date(data.activityDate[1]));
+    const appIndex = apps.findIndex((app) => app.id === data.app_id);
+    return {
+        // @ts-ignore
+        activity_picture_url: data?.file?.[0]?.response?.url ?? data?.file?.[0]?.url ?? '',
+        amount: parseInt(data.amount ?? '-1'),
+        app_id: data.app_id,
+        chain_type: apps[appIndex].chain_type,
+        description: data.description,
+        start_time: start_time,
+        end_time: end_time ?? -1,
+        max_mint_count: data.max_mint_count ?? -1,
+        white_list_infos: data.white_list_infos,
+        command: data.command ?? '',
+        name: data.name,
+        activity_type: activityTypeIdToName(activityType),
+        app_name: apps[appIndex].name,
+    };
 };
 
-export const updateformDataTranslate = (activity: ActivityItem, data: FormData) => {
-  let start_time = null;
-  let end_time = null;
-  start_time = dateTraslate(new Date(data.activityDate[0]));
-  if (data.activityDate[1]) end_time = dateTraslate(new Date(data.activityDate[1]));
-  return {
-    ...activity,
-    activity_type: activity.activity_type ?? 1,
-    activity_picture_url: data?.file?.[0]?.response?.url ?? data?.file?.[0]?.url ?? '',
-    amount: parseInt(data.amount ?? '-1'),
-    app_id: data.app_id,
-    description: data.description,
-    start_time: start_time,
-    end_time: end_time ?? -1,
-    max_mint_count: data.max_mint_count ?? -1,
-    white_list_infos: data.white_list_infos,
-    command: data.command ?? '',
-    name: data.name,
-  };
+export const updateFormDataTranslate = (activity: ActivityItem, data: FormData) => {
+    let start_time = null;
+    let end_time = null;
+    start_time = dateTranslate(new Date(data.activityDate[0]));
+    if (data.activityDate[1]) end_time = dateTranslate(new Date(data.activityDate[1]));
+    return {
+        ...activity,
+        activity_type: activity.activity_type ?? 1,
+        activity_picture_url: data?.file?.[0]?.response?.url ?? data?.file?.[0]?.url ?? '',
+        amount: parseInt(data.amount ?? '-1'),
+        app_id: data.app_id,
+        description: data.description,
+        start_time: start_time,
+        end_time: end_time ?? -1,
+        max_mint_count: data.max_mint_count ?? -1,
+        white_list_infos: data.white_list_infos,
+        command: data.command ?? '',
+        name: data.name,
+    };
 };
 
 export const defaultSwitchers = {
-  dateDisabled: false,
-  numberDisabled: false,
-  publicLimitDisabled: false,
-  passwordDisabled: true,
-  whitelistDisabled: true,
-  existRelationForbidden: false,
+    dateDisabled: false,
+    numberDisabled: false,
+    publicLimitDisabled: false,
+    passwordDisabled: true,
+    whitelistDisabled: true,
+    existRelationForbidden: false,
 };
 
 type Switcher = keyof typeof defaultSwitchers;
 export type Switchers = typeof defaultSwitchers;
 
 export const activityTypeDic = {
-    'single': "单个活动",
+    'single': "单NFT活动",
     'blind_box': "盲盒活动",
 }
+
 // ['盲盒活动', '单个活动', 'POAP活动'];
 export const activityTypeDicEn = {
     'single': 'single',
     'blind_box': 'blind',
     'poap': 'POAP',
 }
+
 // ['blind', 'single', 'poap'];
 
 export const activityTypeTransform = (type: string) => {
@@ -154,12 +156,12 @@ export const activityTypeIdToName = (type: number) => {
 
 export const activityTypeTransformEn = (type: string) => {
     // @ts-ignore
-  return activityTypeDicEn[type];
+    return activityTypeDicEn[type];
 };
 
 export const getActivityUrl = () => {
     // @ts-ignore
-    const url = new URL(location.href);
+    const url = new URL((window.location as any).href);
     const searchParams = new URLSearchParams(url.search);
     const activity_id = searchParams.get('activity_id');
     return activity_id;

@@ -15,7 +15,12 @@ const ActivityLinkModalContent: React.FC<{ activity: ActivityItem }> = ({ activi
     return (
         <div className="flex flex-col items-center font-medium">
             <div className="mt-[24px] mb-[8px] text-[20px] leading-[28px]">{activity.name}</div>
-            <QRCode value={`${rainbowAppLink}/?activity_id=${activity.activity_id}`} className="mb-[8px]" size={248} />
+            <QRCode
+                value={`${rainbowAppLink}/?activity_id=${activity.activity_id}`}
+                className="mb-[8px]"
+                size={248}
+                icon='/nftrainbow-logo-icon.png'
+            />
             <div className="text-[14px] leading-[22px] text-[#9B99A5]">
                 <a href={`${rainbowAppLink}/?activity_id=${activity.activity_id}`} target='_blank' rel={'noreferrer'}>
                     {rainbowAppLink}/?activity_id={activity.activity_id}

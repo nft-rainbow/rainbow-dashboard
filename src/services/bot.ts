@@ -14,12 +14,8 @@ export function getBotServers(social_tool: string, page?: number, limit?: number
     });
 }
 
-export function bindBotServers(auth_code: string, server_id: string, social_tool: string) {
-    return post(`/apps/bot/server`, {
-        auth_code,
-        server_id,
-        social_tool
-    });
+export function bindBotServers(meta: {auth_code: string, server_id: string, social_tool: string; outdated_server_id: string}) {
+    return post(`/apps/bot/server`, meta);
 }
 
 export function getBotActivities(filter: {social_tool: string, page?: number, limit?: number, activity_name?: string, contract_address?: string}) {
