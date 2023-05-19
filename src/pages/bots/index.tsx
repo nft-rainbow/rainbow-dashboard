@@ -63,6 +63,7 @@ function Dodo() {
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
     const [items, setItems] = useState([]);
+    const [ticker, setTicker] = useState(0);
 
     const [form] = Form.useForm();
 
@@ -163,7 +164,7 @@ function Dodo() {
             setTotal(res.count);
             setItems(res.items);
         });
-    }, [filterName, filterAddress, page]);
+    }, [filterName, filterAddress, page, ticker]);
 
     useEffect(() => {
         if (!isAddBotShow) return;
@@ -184,6 +185,7 @@ function Dodo() {
             </Content>
             <Sider theme='light' width={300}>
                 <Space>
+                    <Button onClick={() => setTicker(ticker + 1)}>刷新</Button>
                     <Button type='primary' onClick={() => setIsAddBotShow(true)}>添加机器人</Button>
                     <Button type='primary' onClick={() => setIsModalShow(true)}>推送社群</Button>
                 </Space>
@@ -368,13 +370,13 @@ function DoDoActivityCreateModal(props: {
             <Row>
                 <Col span={14}>
                     <Form className='mt-20' form={form} onFinish={createServerActivity} labelCol={{span: 6}}>
-                        <Form.Item label="推送超级群" name="server_id">
+                        <Form.Item label="推送超级群" name="server_id" rules={[{required: true, message: '请输入内容'}]}>
                             <Select onChange={val => setPushServerId(val)}>
                                 {botServers.map(server => <Option key={server.id} value={server.raw_server_id}>{server.server_name}</Option>)}
                             </Select>
                         </Form.Item>
                         <Form.Item label="身份组" name="role_id">
-                            <Select>
+                            <Select placeholder='推送@对象，默认所有'>
                                 {currServerRoles.map(channel => <Option key={channel.roleId} value={channel.roleId}>{channel.roleName}</Option>)}
                             </Select>
                         </Form.Item>
@@ -383,7 +385,7 @@ function DoDoActivityCreateModal(props: {
                                 {currServerChannels.map(channel => <Option key={channel.channelId} value={channel.channelId}>{channel.channelName}</Option>)}
                             </Select>
                         </Form.Item> */}
-                        <Form.Item label="消息内容" name="content">
+                        <Form.Item label="消息内容" name="content" rules={[{required: true, message: '请输入内容'}]}>
                             <Input.TextArea rows={4} placeholder="推送消息内容" />
                         </Form.Item>
                     </Form>
