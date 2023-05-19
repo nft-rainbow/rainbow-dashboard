@@ -5,7 +5,9 @@ import {
     Row, Col, Select, 
     Alert, Typography, TablePaginationConfig,
     message,
+    Tooltip,
 } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { BotServer, BotEvent, BotChannel, BotRoles, ActivityItem } from "@models/index";
 import { 
@@ -212,11 +214,11 @@ function Dodo() {
                 <Form.Item>
                     <Text>1. 点击机器人<a href={inviteUrl} target={"_blank"} rel="noreferrer">邀请链接</a>，授权机器人加入自己创建的 DoDo 社区</Text>
                 </Form.Item>
-                <Form.Item label="2. 填写社群ID" name="server_id" tooltip={'如何查看'}>
+                <Form.Item label={<span>2. 填写社群ID <Tooltip title={<img src="/community_id.jpg" alt="" />}><QuestionCircleOutlined/> 如何获取</Tooltip></span>} name="server_id">
                     <Input placeholder="输入社群ID" onChange={e => setServerId(e.target.value)} />
                 </Form.Item>
-                <Form.Item label="3. 填写超级群号" name="outdated_server_id" tooltip={'如何查看'}>
-                    <Input placeholder="输入超级群号" onChange={e => setServerId(e.target.value)} />
+                <Form.Item label={<span>3. 填写超级群号 <Tooltip title={<img src="/super_server_no.jpg" alt="" />}><QuestionCircleOutlined/> 如何获取</Tooltip></span>} name="outdated_server_id">
+                    <Input placeholder="输入超级群号" />
                 </Form.Item>
                 <Form.Item label="4. 填写机器人私信的验证码，完成验证">
                     <Space>
@@ -298,13 +300,13 @@ function DoDoActivityCreateModal(props: {
         const { 
             content,
             color_theme = 'blue',
-            channel_id,
+            // channel_id,
             role_id,
         } = values;
 
         const meta = {
             activity_id,
-            channel_id,
+            // channel_id,
             color_theme,
             content,
             roles: role_id ? [
@@ -313,7 +315,7 @@ function DoDoActivityCreateModal(props: {
         }
 
         try {
-            const res = await createPushInfo(serverMeta.id.toString(), meta);
+            await createPushInfo(serverMeta.id.toString(), meta);
             setIsModalShow(false);
         } catch(e) {
             // @ts-ignore
@@ -336,7 +338,7 @@ function DoDoActivityCreateModal(props: {
         getBotServers(social_tool, 1, 1000).then(res => {
             setBotServers(res.items);
         });
-        getActivities({page, limit: 10}).then(res => {
+        getActivities({page, limit: 10, exclude_no_contract: true, activity_status: [1, 2]}).then(res => {
             setActivities(res.items);
             setActivityCount(res.count);
         });

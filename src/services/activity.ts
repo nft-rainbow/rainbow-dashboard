@@ -8,6 +8,8 @@ export interface ActivityQuerier {
     name?: string;
     page?: number;
     limit?: number;
+    exclude_no_contract?: boolean;
+    activity_status?: number[];  // 1 - not start 2 - in progress 3 - ended
 }
 
 export interface NftConfig {
@@ -27,7 +29,11 @@ export const createActivity = async (meta: CreateActivityData) => {
 };
 
 export const getActivities = async (query: ActivityQuerier) => {
-    return await get(`/apps/poap/activity`, Object.assign({}, query));
+    let url = `/apps/poap/activity?page=${query.page || 1}&limit=${query.limit || 10}&activity_status=1&activity_status=2`;
+    if (query.exclude_no_contract) url += '&exclude_no_contract=true';
+    if (query.activity_id) url += `&activity_id=${query.activity_id}`;
+    if (query.contract_address) url += `&contract_address=${query.contract_address}`;
+    return await get(url);
 };
 
 export const updatePoap = async (meta: PoapActivityConfig) => {
