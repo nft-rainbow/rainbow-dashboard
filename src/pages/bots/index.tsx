@@ -107,7 +107,7 @@ function Dodo() {
         {
             title: '结束时间',
             dataIndex: 'end_time',
-            render: (text) => text ? formatDate(new Date(text * 1000)) : '',
+            render: (text) => (text && text > 0) ? formatDate(new Date(text * 1000)) : '',
         },
         {
             title: '推送时间',
