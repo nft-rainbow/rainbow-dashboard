@@ -29,10 +29,13 @@ export const createActivity = async (meta: CreateActivityData) => {
 };
 
 export const getActivities = async (query: ActivityQuerier) => {
-    let url = `/apps/poap/activity?page=${query.page || 1}&limit=${query.limit || 10}&activity_status=1&activity_status=2`;
+    let url = `/apps/poap/activity?page=${query.page || 1}&limit=${query.limit || 10}`;
     if (query.exclude_no_contract) url += '&exclude_no_contract=true';
     if (query.activity_id) url += `&activity_id=${query.activity_id}`;
     if (query.contract_address) url += `&contract_address=${query.contract_address}`;
+    if (query.activity_status && query.activity_status.length > 0) {
+        url += `&${query.activity_status.map(status => `activity_status=${status}`).join('&')}`;
+    }
     return await get(url);
 };
 
