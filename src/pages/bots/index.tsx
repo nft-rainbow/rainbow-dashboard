@@ -52,20 +52,27 @@ export default function BotTabs() {
 
 function Dodo() {
     const social_tool = 'dodo';
-
     const [isModalShow, setIsModalShow] = useState(false);
     const [isAddBotShow, setIsAddBotShow] = useState(false);
     const [inviteUrl, setInviteUrl] = useState("");
-    const [bindForm] = Form.useForm();
+    
     const [serverId, setServerId] = useState(""); // server id in bind form
     const [filterAddress, setFilterAddress] = useState(""); // filter address in bind form
     const [filterName, setFilterName] = useState(""); // filter name in bind form
+
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
     const [items, setItems] = useState([]);
     const [ticker, setTicker] = useState(0);
-
+    
+    const [bindForm] = Form.useForm();
     const [form] = Form.useForm();
+
+    const [pushForm] = Form.useForm();
+    const [isPushModalShow, setIsPushModalShow] = useState(false);
+    const [pushServerId, setPushServerId] = useState(""); // push server id in push form
+    const [pushId, setPushId] = useState(""); // push id in push form
+    const [currServerChannels, setCurrServerChannels] = useState<BotChannel[]>([]);
 
     const columns: ColumnsType<BotEvent> = [
         {
@@ -119,12 +126,9 @@ function Dodo() {
             key: 'action',
             render: (_, record: BotEvent) => (
                 <Button type='primary' onClick={() => {
-                    try {
-                        pushBotActivity(record.push_info_id.toString())
-                    } catch(e) {
-                        // @ts-ignore
-                        message.error(e.response.data.message);
-                    }
+                    setPushId(record.push_info_id.toString());
+                    setPushServerId(record.raw_server_id);
+                    setIsPushModalShow(true);
                 }}>推送</Button>
             ),
         },
@@ -144,6 +148,16 @@ function Dodo() {
             values.social_tool = social_tool;
             await bindBotServers(values);
             setIsAddBotShow(false);
+        } catch(e) {
+            // @ts-ignore
+            message.error(e.response.data.message);
+        }
+    }
+
+    const onPushActivity = async function(values: {channel_id: string}) {
+        try {
+            await pushBotActivity(pushId, values.channel_id);
+            setIsPushModalShow(false);
         } catch(e) {
             // @ts-ignore
             message.error(e.response.data.message);
@@ -170,6 +184,13 @@ function Dodo() {
         if (!isAddBotShow) return;
         getBotInviteUrl(social_tool).then(res => setInviteUrl(res.message));
     }, [isAddBotShow]);
+
+    useEffect(() => {
+        if (!pushServerId) return;
+        getServerChannels(pushServerId, social_tool).then(res => {
+            setCurrServerChannels(res);
+        });
+    }, [pushServerId]);
 
     return (<>
         <Layout>
@@ -231,6 +252,22 @@ function Dodo() {
                             <Button type='primary' onClick={() => sendAuthCode(serverId)}>发送验证码</Button>
                         </Form.Item>
                     </Space>
+                </Form.Item>
+            </Form>
+        </Modal>
+        <Modal
+            title="推送活动"
+            open={isPushModalShow}
+            onOk={() => pushForm.submit()}
+            onCancel={() => setIsPushModalShow(false)}
+            okText={"推送"}
+            cancelText={"取消"}
+        >
+            <Form form={pushForm} className='mt-20' onFinish={onPushActivity}>
+                <Form.Item label="推送频道" name="channel_id" rules={[{required: true}]}>
+                    <Select>
+                        {currServerChannels.map(channel => <Option key={channel.channelId} value={channel.channelId}>{channel.channelName}</Option>)}
+                    </Select>
                 </Form.Item>
             </Form>
         </Modal>

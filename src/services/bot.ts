@@ -43,8 +43,10 @@ export function getServerRoles(server_id: string, social_tool: string) {
     })
 }
 
-export function pushBotActivity(id: string) {
-    return post(`/apps/bot/server/push/${id}`);
+export function pushBotActivity(id: string, channel: string) {
+    let url = `/apps/bot/server/push/${id}`;
+    if (channel) url += `?channel=${channel}`;
+    return post(url);
 }
 
 export function updateBotPushInfo(id: string, meta: object) {
