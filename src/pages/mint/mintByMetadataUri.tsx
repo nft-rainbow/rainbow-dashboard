@@ -98,11 +98,11 @@ export function MintByMetadataUri(props: {
                 <Row justify="start" gutter={8}>
                     <Col  xs={8} sm={4} md={3}>
                         <Form.Item>
-                            <ParseLocalFile handleData={data => setItems(data)} />
+                            <ParseLocalFile handleData={setItems} />
                         </Form.Item>
                     </Col>
                     <Col xs={8} sm={4} md={3}>
-                        <a href={'/mintByMetadataUri.csv'} style={{ color: 'gray' }}><Button type='link'>下载模板</Button></a>
+                        <a href={'/mintByMetadataUri.csv'} download={'mintByMetadataUri.csv'} style={{ color: 'gray' }}><Button type='link'>下载模板</Button></a>
                     </Col>
                 </Row>
             </Form.Item>
