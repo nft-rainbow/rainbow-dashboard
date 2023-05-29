@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import { Card, Button, Form, Input } from 'antd';
-import { HexColorPicker } from 'react-colorful';
+import { Card, Form, Input } from 'antd';
 import { getActivityById } from '@services/activity';
 import { useParams } from 'react-router-dom';
 import useSWR from 'swr';

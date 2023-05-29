@@ -25,50 +25,53 @@ import EmptyPage from '@pages/emptyPage';
 import Bots from '@pages/bots';
 import MintFrame from "@pages/mint";
 import AutoSponsors from "@pages/contracts/autoSponsorContracts";
+import GaslessPoap from '@pages/activities/createPoap';
 
 const AppRouter: React.FC = () => {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/">
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="forgotPwd" element={<ForgotPwd />} />
-          <Route path="resetPwd" element={<ResetPwd />} />
-          <Route
-            path="panels"
-            element={
-              <RequireAuth>
-                <DashboardLayout />
-              </RequireAuth>
-            }
-          >
-            <Route index element={<Panel />} />
-            <Route path="user" element={<User />} />
-            <Route path="userBalance" element={<UserBalance />} />
-            <Route path="mintCountByMonth" element={<UserMintCountByMonth />} />
-            <Route path="company" element={<Company />} />
-            <Route path="apps" element={<App />} />
-            <Route path="apps/:id" element={<AppDetail />} />
-            <Route path="mint/:id" element={<MintFrame />} />
-            <Route path="contracts" element={<Contracts />} />
-            <Route path="contracts/sponsor" element={<ContractSponsor />} />
-            <Route path="contracts/autoSponsors" element={<AutoSponsors />} />
-            <Route path="contracts/deploy" element={<ContractDeployment />} />
-            <Route path="poaps" element={<Poaps />} />
-            <Route path="poaps/asset/single/:activityId" element={<Asset />} />
-            <Route path="poaps/asset/blind/:activityId" element={<Blind />} />
-            <Route path="poaps/building/:activityId" element={<Building />} />
-            <Route path="metadata" element={<Metadata />} />
-            <Route path="socialBot" element={<Bots />} />
-            <Route path="empty" element={<EmptyPage />} />
-          </Route>
-          <Route path="/" element={<Navigate to="panels" />} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  );
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/">
+                <Route path="login" element={<Login />} />
+                <Route path="register" element={<Register />} />
+                <Route path="forgotPwd" element={<ForgotPwd />} />
+                <Route path="resetPwd" element={<ResetPwd />} />
+                <Route
+                    path="panels"
+                    element={
+                    <RequireAuth>
+                        <DashboardLayout />
+                    </RequireAuth>
+                    }
+                >
+                    <Route index element={<Panel />} />
+                    <Route path="user" element={<User />} />
+                    <Route path="userBalance" element={<UserBalance />} />
+                    <Route path="mintCountByMonth" element={<UserMintCountByMonth />} />
+                    <Route path="company" element={<Company />} />
+                    <Route path="apps" element={<App />} />
+                    <Route path="apps/:id" element={<AppDetail />} />
+                    <Route path="mint/:id" element={<MintFrame />} />
+                    <Route path="contracts" element={<Contracts />} />
+                    <Route path="contracts/sponsor" element={<ContractSponsor />} />
+                    <Route path="contracts/autoSponsors" element={<AutoSponsors />} />
+                    <Route path="contracts/deploy" element={<ContractDeployment />} />
+                    <Route path="poaps" element={<Poaps />} />
+                    <Route path="poaps/:appId/createGasless" element={<GaslessPoap />} />
+                    <Route path="poaps/:activityId/updateGasless" element={<GaslessPoap />} />
+                    <Route path="poaps/asset/single/:activityId" element={<Asset />} />
+                    <Route path="poaps/asset/blind/:activityId" element={<Blind />} />
+                    <Route path="poaps/building/:activityId" element={<Building />} />
+                    <Route path="metadata" element={<Metadata />} />
+                    <Route path="socialBot" element={<Bots />} />
+                    <Route path="empty" element={<EmptyPage />} />
+                </Route>
+                <Route path="/" element={<Navigate to="panels" />} />
+                <Route path="*" element={<Navigate to="/" />} />
+                </Route>
+            </Routes>
+        </BrowserRouter>
+    );
 };
 
 export default AppRouter;

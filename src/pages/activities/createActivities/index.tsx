@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useReducer } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
     Modal, Form, Input, Switch, DatePicker, Select, 
     message, Checkbox, Space, InputNumber,
@@ -10,10 +10,9 @@ import FileUploadNew from '@components/FileUploadNew';
 import { ModalStyle, DEFAULT_WALLETS } from './constants';
 import { createActivity } from '@services/activity';
 import { getAllApps } from '@services/app';
-import { handleFormSwitch, defaultSwitchers, formDataTranslate, type FormData } from '@utils/activityHelper';
+import { formDataTranslate, type FormData } from '@utils/activityHelper';
 import useResetFormOnCloseModal from '@hooks/useResetFormOnCloseModal';
 import './index.scss';
-import { check } from 'prettier';
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 

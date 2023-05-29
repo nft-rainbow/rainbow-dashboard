@@ -7,7 +7,7 @@ import { Card, Button, Form, Select, Input, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { listContracts } from '@services/contract';
 import { Contract } from '@models/index';
-import { getActivityById, updatePoap } from '@services/activity';
+import { getActivityById, updateActivity, setActivityNftConfigs } from '@services/activity';
 import { short } from '@utils/index';
 import AddAssetsModal from './AddAssetsModal';
 import BlindTableItem from './BlindTableItem';
@@ -39,7 +39,8 @@ const ManageAssetsBlind: React.FC = () => {
     const { activityId } = useParams<{ activityId: string }>();
     const navigate = useNavigate();
     const { data, mutate } = useSWR(`api/apps/poap/activity/${activityId}`, () => getActivityById(activityId));
-    const isContractEditable = useMemo(() => !data?.contract_address, [data]);
+    const isContractEditable = useMemo(() => !data?.contract.contract_address, [data]);
+    const [nftConfigDeleted, setNftConfigDeleted] = useState<boolean[]>([]);
 
     const handleFinish = useCallback(
         async (formData: any) => {
@@ -58,17 +59,28 @@ const ManageAssetsBlind: React.FC = () => {
                 message.error('请正确设置藏品权重：各项藏品需大于0，且总和为100%');
                 return;
             }
-            const newData = { ...data, nftConfigs, contract_id: formData?.contract_id };
+            const newData = { ...data, contract_id: formData?.contract_id };
+
+            // mark deleted nft configs
+            for(let i in nftConfigDeleted) {
+                if (nftConfigDeleted[i]) {
+                    newData.nft_configs[i].deleted = true;
+                }
+            }
+
             try {
-                await updatePoap(newData);
+                await updateActivity(newData);
+                console.log(newData.nft_configs);
+                await setActivityNftConfigs(newData.activity_id, newData.nft_configs);
                 await mutate();
                 message.success('保存更新成功');
                 navigate("/panels/poaps");
             } catch (err) {
-                console.log(err);
+                // @ts-ignore
+                message.error('保存更新失败' + err.response?.data?.message);
             }
         },
-        [data, activityId]
+        [data, mutate, navigate, nftConfigDeleted]
     );
 
     useEffect(() => {
@@ -89,9 +101,9 @@ const ManageAssetsBlind: React.FC = () => {
             ...(data?.nft_configs ? Object.fromEntries(data?.nft_configs?.map((nftItem: any) => [`nftConfig-${nftItem.id}`, nftItem])) : {}),
             ...(data?.nft_configs ? Object.fromEntries(data?.nft_configs?.map((nftItem: any) => [`nftConfig-${nftItem.id}-probability`, nftItem?.probability * 100])) : {}),
         });
-    }, [data]);
-
-    const nftConfigs = data?.nft_configs;
+        // @ts-ignore
+        setNftConfigDeleted(data?.nft_configs.map(item => false));
+    }, [data, form]);
 
     return (
         <div>
@@ -99,13 +111,11 @@ const ManageAssetsBlind: React.FC = () => {
             <Card>
                 <Form form={form} id="manageAssetsBlindForm" onFinish={handleFinish}>
                     <Form.Item name="contract_id" label="合约地址" rules={[{ required: true, message: '请选择合约地址' }]}>
-                        <Select placeholder="请选择" disabled={!isContractEditable} options={contracts.map((e) => ({value: e.id, label: `${short(e.address)} (${e.name}-${e.symbol})`}))}>
-                        {/* {contracts.map((e) => (
-                            <Option label={e.address} value={e.id} key={e.address}>
-                            {e.address}
-                            </Option>
-                        ))} */}
-                        </Select>
+                        <Select 
+                            placeholder="请选择"
+                            disabled={!isContractEditable}
+                            options={contracts.map((e) => ({value: e.id, label: `${short(e.address)} (${e.name}-${e.symbol})`}))}
+                        />
                     </Form.Item>
                     <div className="mb-[16px] flex flex-row items-center justify-between">
                         <span>藏品设置</span>
@@ -115,14 +125,19 @@ const ManageAssetsBlind: React.FC = () => {
                         </Button>
                     </div>
                     <TableHeader />
-                    {nftConfigs?.map?.((item: any) => (
-                        <BlindTableItem key={item.id} {...item} />
+                    {data?.nft_configs?.map?.((item: any, i: string) => (
+                        // @ts-ignore
+                        !nftConfigDeleted[i] ? <BlindTableItem key={item.id} {...item} deleteItem={() => {
+                            // @ts-ignore
+                            nftConfigDeleted[i] = true;
+                            setNftConfigDeleted([...nftConfigDeleted]);
+                        }} /> : null
                     ))}
                     <div className="mt-[24px] flex justify-center items-center">
                         <Input type="submit" className="w-[188px] bg-[#6953EF] text-[#FFFFFF] rounded-[2px] cursor-pointer" value="保存" />
                     </div>
                 </Form>
-                {open && <AddAssetsModal open={open} onCancel={() => setOpen(false)} type="add" />}
+                <AddAssetsModal open={open} onCancel={() => setOpen(false)} type="add" />
             </Card>
         </div>
     );

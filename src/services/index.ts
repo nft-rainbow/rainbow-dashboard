@@ -23,6 +23,7 @@ export interface ErrorCallback {
 const isLocalhost = globalThis.location.hostname === 'localhost'
     || globalThis.location.hostname === '127.0.0.1'
     || globalThis.location.hostname.match(/\d+\.\d+\.\d+\.\d+/)
+    
 export function methodUrl(method: string) {
   return `${isLocalhost ? '/api/' : '/'}${method.startsWith('/') ? method.slice(1) : method}`;
 }
@@ -107,4 +108,12 @@ export async function put(url: string, body = {}) {
     headers
   });
   return data;
+}
+
+export async function del(url: string) {
+    const headers = await authHeader();
+    const { data } = await axios.delete(methodUrl(url), {
+        headers
+    });
+    return data;
 }

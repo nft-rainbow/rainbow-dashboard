@@ -1,4 +1,4 @@
-import { get, post, put } from '.';
+import { get, post, put, del } from '.';
 import { type CreateActivityData } from '@utils/activityHelper';
 import { type MetadataAttribute } from '@utils/assetsFormHelper';
 
@@ -13,9 +13,12 @@ export interface ActivityQuerier {
 }
 
 export interface NftConfig {
+    id?: number;
     name: string;
     image_url: string;
     metadata_attributes: MetadataAttribute[] | [];
+    probability?: number;
+    deleted?: boolean;
 }
 
 export interface PoapActivityConfig extends CreateActivityData {
@@ -39,9 +42,41 @@ export const getActivities = async (query: ActivityQuerier) => {
     return await get(url);
 };
 
-export const updatePoap = async (meta: PoapActivityConfig) => {
+export const updateActivity = async (meta: PoapActivityConfig) => {
     const { activity_id, ...rest } = meta;
-    return await put(`/apps/poap/activity/${activity_id}`, { ...rest, activity_id });
+    return await put(`/apps/poap/activity/${activity_id}/base`, { ...rest, activity_id });
 };
 
 export const getActivityById = async (activity_id?: string) => (activity_id ? get(`/apps/poap/activity/${activity_id}`) : false);
+
+export const setActivityNftConfigs = async (activity_code: string, nft_configs: NftConfig[]) => {
+    // delete removed nft_configs
+    const toDelete = nft_configs.filter((nft_config) => nft_config.deleted && nft_config.id);
+    for (const item of toDelete) {
+        await deleteNftConfigs(item.id as number);
+    }
+
+    // create new
+    const toCreate = nft_configs.filter((nft_config) => !nft_config.id);
+    if (toCreate.length > 0) {
+        await createNftConfigs(activity_code, toCreate);
+    }
+
+    // update
+    const toUpdate = nft_configs.filter((nft_config) => !nft_config.deleted && nft_config.id);
+    for (const item of toUpdate) {
+        await updateNftConfig(item.id as number, item);
+    }
+}
+
+export const createNftConfigs = async (activity_code: string, nft_configs: NftConfig[]) => {
+    return await post(`/apps/poap/activity/${activity_code}/nftconfigs`, nft_configs);
+}
+
+export const deleteNftConfigs = async (nft_config_id: number) => {
+    return del(`/apps/poap/activity/nftconfig/${nft_config_id}`);
+}
+
+export const updateNftConfig = async (nft_config_id: number, nft_config: NftConfig) => {
+    return put(`/apps/poap/activity/nftconfig/${nft_config_id}`, nft_config);
+}
