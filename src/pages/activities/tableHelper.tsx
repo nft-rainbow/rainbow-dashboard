@@ -90,13 +90,13 @@ export const activityOperations: React.FC<ActivityItem> = (activity: ActivityIte
         <div className="flex flex-row">
             {activity.activity_type === 'gasless' && (
                 <>
-                    <Link to={`/panels/poaps/${activity.id}/updateGasless`}>
+                    <Link to={`/panels/poaps/${activity.activity_id}/updateGasless`}>
                         <Tooltip title="管理活动" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
                             <img src={ManageActivity} />
                         </Tooltip>
                     </Link>
                     <Link 
-                        to={`/panels/poaps/${activity.id}/updateGasless`}
+                        to={`/panels/poaps/${activity.activity_id}/updateGasless`}
                     >
                         <Tooltip title="管理藏品" className="px-9px border-r-1px border-r-solid border-#0000000F hover:cursor-pointer">
                             <img src={ManageCollection} />

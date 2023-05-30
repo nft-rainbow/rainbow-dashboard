@@ -53,7 +53,7 @@ const ManageAssetsBlind: React.FC = () => {
                 nftConfigs[index].probability = +value / 100;
             });
 
-            const totalProbability = nftConfigs.reduce((acc, nftItem) => acc + (nftItem?.probability ?? 0), 0)?.toFixed(6);
+            const totalProbability = nftConfigs.filter((nft, i) => !nftConfigDeleted[i]).reduce((acc, nftItem) => acc + (nftItem?.probability ?? 0), 0)?.toFixed(6);
             const isProbabilityValid = nftConfigs.every((nftItem) => nftItem?.probability > 0);
             if (totalProbability !== '1.000000' || !isProbabilityValid) {
                 message.error('请正确设置藏品权重：各项藏品需大于0，且总和为100%');
@@ -70,7 +70,6 @@ const ManageAssetsBlind: React.FC = () => {
 
             try {
                 await updateActivity(newData);
-                console.log(newData.nft_configs);
                 await setActivityNftConfigs(newData.activity_id, newData.nft_configs);
                 await mutate();
                 message.success('保存更新成功');
@@ -108,7 +107,7 @@ const ManageAssetsBlind: React.FC = () => {
     return (
         <div>
             <RainbowBreadcrumb items={[<Link to="/panels/poaps/">返回</Link>, '管理藏品']} />
-            <Card>
+            <Card style={{minWidth: '600px'}}>
                 <Form form={form} id="manageAssetsBlindForm" onFinish={handleFinish}>
                     <Form.Item name="contract_id" label="合约地址" rules={[{ required: true, message: '请选择合约地址' }]}>
                         <Select 

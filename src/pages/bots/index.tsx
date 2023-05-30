@@ -214,7 +214,7 @@ function Dodo() {
         </Layout>
         <div style={{height: '20px'}}></div>
         <Table 
-            rowKey={'event_id'} 
+            rowKey={'push_info_id'} 
             columns={columns} 
             dataSource={items}
             pagination={{

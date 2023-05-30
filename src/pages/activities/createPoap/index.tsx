@@ -13,9 +13,10 @@ import { canvasPreview } from './canvasPreview'
 import { useDebounceEffect } from './useDebounceEffect'
 import { uploadFile } from '@services/misc';
 import { userProfile } from "@services/user"
-import { createActivity, setActivityNftConfigs } from '@services/activity';
-import { CreateActivityData, dateTranslate } from '@utils/activityHelper';
+import { createActivity, setActivityNftConfigs, getActivityById, updateActivity } from '@services/activity';
+import { CreateActivityData, dateTranslate, timestampToDate } from '@utils/activityHelper';
 import isProduction from '@utils/isProduction';
+import { ActivityItem } from '@models/Activity'
 
 const { RangePicker } = DatePicker;
 
@@ -45,7 +46,7 @@ export default function Page() {
 }
 
 function ActivityConfig() {
-    const { appId } = useParams();
+    const { appId, activityId } = useParams();
     const [userId, setUserId] = useState<number>(0);
 
     const [crop, setCrop] = useState<Crop>();
@@ -59,10 +60,122 @@ function ActivityConfig() {
     const [useCommand, setUseCommand] = useState(false);
     const [file_url, setFileUrl] = useState(''); // http://dev.nftrainbow.cn/assets/uploads/3622c399a34448c9198e6e284f4d16e0.png
 
+    const [activity, setActivity] = useState<ActivityItem | null>(null);
+
+    const [form] = Form.useForm();
+
     function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
         const { width, height } = e.currentTarget
         setCrop(centerAspectCrop(width, height, 1))
     }
+
+    const createPoap = async (values: any) => {
+        values.file_url = file_url || activity?.activity_picture_url;
+        if (!values.file_url && !activity) {
+            message.warning('请上传文件, 并进行合成操作');
+            return;
+        }
+        try {
+            // date convert
+            const activityMeta = {
+                name: values.name,
+                description: values.description,
+                activity_type: 'gasless', // poap
+                chain_of_gasless: isProduction ? 'conflux' : 'conflux_test',
+                app_id: appId ? parseInt(appId) : (activity ? activity.app_id : 0),
+                activity_picture_url: file_url,
+                amount: values.amount,
+                start_time: values.activityDate[0] ? dateTranslate(new Date(values.activityDate[0])) : -1,
+                end_time: values.activityDate[1] ? dateTranslate(new Date(values.activityDate[1])) : -1,
+                max_mint_count: 1,
+                rainbow_user_id: userId,
+                support_wallets: values.support_wallets,
+                command: values.command,
+            };
+
+            // create activity nft configs
+            let attributes = [];
+            for (let i = 0; i < traitTypes.length; i++) {
+                let config = {
+                    trait_type: values.attributes[i].trait_type,
+                    value: values.attributes[i].value,
+                };
+                if (traitTypes[i] === 'date') {
+                    // @ts-ignore
+                    config.display_type = 'date';
+                }
+                attributes.push(config);
+            }
+            let _nft_config = {
+                name: values.name,
+                image_url: file_url,
+                // @ts-ignore
+                metadata_attributes: attributes,
+            };
+
+            if (!activityId) {
+                let res = await createActivity(activityMeta as CreateActivityData);
+            
+                // @ts-ignore
+                await setActivityNftConfigs((res as any).activity_id, [_nft_config]);
+            } else {
+                // @ts-ignore
+                activityMeta.activity_id = activityId;
+                // @ts-ignore
+                await updateActivity(activityMeta);
+                // @ts-ignore
+                _nft_config.id = activity.nft_configs[0].id;
+                // @ts-ignore
+                await setActivityNftConfigs(activity.activity_id, [_nft_config]);
+            }
+            
+
+            message.success('创建成功, 请到活动列表查看');
+        } catch(e) {
+            // @ts-ignore
+            message.error('创建失败' + e.response.data.message);   
+        }
+    }
+
+    useEffect(() => {
+        userProfile().then((res) => {
+            setUserId((res as any).id);
+        });
+    }, []);
+
+    useEffect(() => {
+        if (!activityId) return;
+        getActivityById(activityId).then((res) => {
+            setActivity(res);
+            if (res.command) setUseCommand(true);
+            const activityDate = [];
+            if (res.start_time && res.start_time !== -1) {
+                activityDate.push(timestampToDate(res.start_time));
+            }
+            if (res.end_time && res.end_time !== -1) {
+                activityDate.push(timestampToDate(res.end_time));
+            }
+            let attributes = [];
+            if (res.nft_configs.length === 1) {
+                setTraitTypes(res.nft_configs[0].metadata_attributes.map((item: any) => item.display_type === 'date' ? 'date' : 'text'));
+                attributes = res.nft_configs[0].metadata_attributes.map((item: any, i: string) => ({
+                    trait_type: item.trait_type,
+                    value: item.value,
+                    id: i,
+                }));
+            }
+            form.setFieldsValue({
+                name: res.name,
+                description: res.description,
+                support_wallets: res.support_wallets,
+                activityDate,
+                amount: res.amount,
+                command: res.command,
+                attributes,
+                file_url: res.activity_picture_url,
+            });
+        });
+    }, [activityId]);
 
     useDebounceEffect(
         async () => {
@@ -87,17 +200,6 @@ function ActivityConfig() {
         [completedCrop],
     )
 
-    const items: MenuProps['items'] = [
-        {
-            label: '文本',
-            key: '1',
-        },
-        {
-            label: '日期',
-            key: '2',
-        },
-    ];
-
     const uploadProps: UploadProps = {
         name: 'file',
         fileList: null,
@@ -111,65 +213,17 @@ function ActivityConfig() {
         }
     };
 
-    const createPoap = async (values: any) => {
-        values.file_url = file_url;
-        if (!values.file_url) {
-            message.warning('请上传文件, 并进行合成操作');
-            return;
-        }
-        try {
-            // date convert
-            const activityMeta = {
-                name: values.name,
-                description: values.description,
-                activity_type: 'gasless', // poap
-                chain_of_gasless: isProduction ? 'conflux' : 'conflux_test',
-                app_id: appId ? parseInt(appId) : 0,
-                activity_picture_url: file_url,
-                amount: values.amount,
-                start_time: values.activityDate[0] ? dateTranslate(new Date(values.activityDate[0])) : -1,
-                end_time: values.activityDate[1] ? dateTranslate(new Date(values.activityDate[1])) : -1,
-                max_mint_count: 1,
-                rainbow_user_id: userId,
-                support_wallets: values.support_wallets,
-                command: values.command,
-            };
-
-            let res = await createActivity(activityMeta as CreateActivityData);
-
-            // create activity nft configs
-            let attributes = [];
-            for (let i = 0; i < traitTypes.length; i++) {
-                let config = {
-                    trait_type: values.attributes[i].trait_type,
-                    value: values.attributes[i].value,
-                };
-                if (traitTypes[i] === 'date') {
-                    // @ts-ignore
-                    config.display_type = 'date';
-                }
-                attributes.push(config);
-            }
-            // @ts-ignore
-            await setActivityNftConfigs((res as any).activity_id, [{
-                name: values.name,
-                image_url: file_url,
-                // @ts-ignore
-                metadata_attributes: attributes,
-            }]);
-
-            message.success('创建成功, 请到活动列表查看');
-        } catch(e) {
-            // @ts-ignore
-            message.error('创建失败' + e.response.data.message);   
-        }
-    }
-
-    useEffect(() => {
-        userProfile().then((res) => {
-            setUserId((res as any).id);
-        });
-    }, []);
+    // attribute select menu items
+    const items: MenuProps['items'] = [
+        {
+            label: '文本',
+            key: '1',
+        },
+        {
+            label: '日期',
+            key: '2',
+        },
+    ];
 
     return (
         <div>
@@ -178,6 +232,7 @@ function ActivityConfig() {
                 <Col span={8}>
                     <Form
                         id='createPoapForm'
+                        form={form}
                         name="basic"
                         labelCol={{ span: 4 }}
                         wrapperCol={{ span: 16 }}
@@ -233,7 +288,7 @@ function ActivityConfig() {
 
                         <Form.Item
                             label="发行总量"
-                            name="amounts"
+                            name="amount"
                             rules={[{ required: true, message: '请设置领取数量' }]}
                             extra="最大发行数量为100"
                         >
@@ -323,7 +378,7 @@ function ActivityConfig() {
 
                         <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
                             <Button type="primary" htmlType="submit">
-                                创建
+                                {activityId ? '更新' : '创建'}
                             </Button>
                         </Form.Item>
                     </Form>
@@ -384,6 +439,13 @@ function ActivityConfig() {
                             }}>生成勋章</Button>
                         </>
                     )}
+                    {
+                        !imgSrc && activity && (
+                            <div>
+                                <img src={activity.activity_picture_url} style={{maxWidth: '480px'}}></img>
+                            </div>
+                        )
+                    }
                 </Col>
             </Row>
         </div>
