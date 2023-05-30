@@ -65,7 +65,7 @@ export default function Poaps() {
                             <Button onClick={() => {form?.resetFields();setPage(1);form?.submit();}} key={resetText}>
                                 {resetText}
                             </Button>,
-                            <Button key='create-activity' type='primary' onClick={() => setIsActivityModalVisible(true)}>创建活动</Button>
+                            <Button key='create-activity' type='primary' onClick={() => setIsActivityModalVisible(true)}>创建活动</Button>,
                         ],
                     }}
                     options={false}

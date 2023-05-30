@@ -1,0 +1,18 @@
+#createPoapForm {
+    .ant-upload {
+      width: 100%;
+      .ant-btn {
+        font-size: 14px;
+        height: 32px;
+        padding: 4px 15px;
+        border-radius: 6px;
+      }
+      .ant-btn-icon-only {
+        width: 100%;
+      }
+    }
+    .ant-upload-list-item{
+      margin-top: 0px;
+    }
+}
+  

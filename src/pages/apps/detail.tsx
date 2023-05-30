@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import RainbowBreadcrumb from '@components/Breadcrumb';
-import { getAppDetail, getAppMetadatas, getAppFiles, File, Metadata, easyMintUrl, getAppAccounts } from '@services/app';
 import {
     Card, Tabs, Table, TablePaginationConfig, Tooltip, Space, Button, Modal,
     Typography, Form, Input, message, Image, Radio, Row, Col, TabsProps
@@ -13,6 +12,10 @@ import { address } from 'js-conflux-sdk';
 import { LinkOutlined, QuestionCircleOutlined, UserOutlined } from '@ant-design/icons/lib';
 import { CheckboxChangeEvent } from 'antd/es/checkbox';
 import { AppNFTs } from "@pages/apps/MintTasks";
+import { 
+    getAppDetail, getAppMetadatas, getAppFiles, File, 
+    Metadata, easyMintUrl, getAppAccounts
+} from '@services/app';
 const { Paragraph, Text } = Typography;
 
 const formLayout = {
@@ -23,79 +26,81 @@ const formLayout = {
 // SJR: show status in icons
 
 export default function AppDetail(props: { appId?: string, pageLimit?: number }) {
-  const { id: paramId } = useParams();
-  const id = paramId || props.appId;
-  const [app, setApp] = useState<App | {}>({});
-  const [breadcrumbItems, setBreadcrumbItems] = useState<string[]>(['应用详情']);
-  const [form] = Form.useForm();
-  const [accounts, setAccounts] = useState<ChainAccount[]>([] as ChainAccount[]);
+    const { id: paramId } = useParams();
+    const id = paramId || props.appId;
+    const [app, setApp] = useState<App | {}>({});
+    const [breadcrumbItems, setBreadcrumbItems] = useState<string[]>(['应用详情']);
+    const [form] = Form.useForm();
+    const [accounts, setAccounts] = useState<ChainAccount[]>([] as ChainAccount[]);
 
-  const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
-  const [isMintModalVisible, setIsMintModalVisible] = useState(false);
-  const [refreshNftList, setRefreshNftList] = useState(0);
-  const [useUpload, setUseUpload] = useState(true);
-  const [minting, setMinting] = useState(false);
+    const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
+    const [isMintModalVisible, setIsMintModalVisible] = useState(false);
+    const [refreshNftList, setRefreshNftList] = useState(0);
+    const [useUpload, setUseUpload] = useState(true);
+    const [minting, setMinting] = useState(false);
 
-  const mainnetAccount = () => accounts.find((item) => item.chain_id === 1029) || { address: '' };
-  const testAccount = () => accounts.find((item) => item.chain_id === 1) || { address: '' };
-  const [messageApi, contextHolder] = message.useMessage();
+    const mainnetAccount = () => accounts.find((item) => item.chain_id === 1029) || { address: '' };
+    const testAccount = () => accounts.find((item) => item.chain_id === 1) || { address: '' };
+    const [messageApi, contextHolder] = message.useMessage();
   
-  const fillMintTo = useCallback(() => {
-    const chain = form.getFieldValue('chain');
-    if (!chain) {
-      messageApi.info('请选择网络!');
-      return;
-    }
-    let setTo = chain === 'conflux' ? mainnetAccount().address : testAccount().address;
-    form.setFieldsValue({ mint_to_address: setTo || '??' });
-  }, [accounts]);
+    const fillMintTo = useCallback(() => {
+        const chain = form.getFieldValue('chain');
+        if (!chain) {
+            messageApi.info('请选择网络!');
+            return;
+        }
+        let setTo = chain === 'conflux' ? mainnetAccount().address : testAccount().address;
+        form.setFieldsValue({ mint_to_address: setTo || '??' });
+    }, [accounts]);
 
-  const onNftMint = (values: any) => {
-    const { file_url, file_link } = values;
-    if (!file_url && !file_link) {
-      messageApi.warning('请上传图片或者填入图片链接');
-      return;
-    }
-    if (!file_url && file_link) {
-      values.file_url = file_link;
-    }
-    setMinting(true);
-    easyMintUrl(id as string, values)
-      .then((res) => {
-        setIsMintModalVisible(false);
-        setRefreshNftList(refreshNftList + 1);
-        form.resetFields();
-      })
-      .catch((err) => {
-        message.error(err.response.data.message);
-      })
-      .finally(() => {
-        setMinting(false);
-      });
-  };
+    const onNftMint = (values: any) => {
+        const { file_url, file_link } = values;
+        if (!file_url && !file_link) {
+            messageApi.warning('请上传图片或者填入图片链接');
+            return;
+        }
+        if (!file_url && file_link) {
+            values.file_url = file_link;
+        }
+        setMinting(true);
+        easyMintUrl(id as string, values)
+        .then((res) => {
+            setIsMintModalVisible(false);
+            setRefreshNftList(refreshNftList + 1);
+            form.resetFields();
+        })
+        .catch((err) => {
+            message.error(err.response.data.message);
+        })
+        .finally(() => {
+            setMinting(false);
+        });
+    };
 
-  const closeMintModal = () => setIsMintModalVisible(false);
-  const closeDetailModal = () => setIsDetailModalVisible(false);
+    const closeMintModal = () => setIsMintModalVisible(false);
+    const closeDetailModal = () => setIsDetailModalVisible(false);
 
-  const idStr = id as string;
+    const idStr = id as string;
 
-  const extraOp = (
-    <Space>
-        <Text type="secondary">如果铸造交易长期处于待处理状态，请检查余额是否足够</Text>
-        <Button type="dashed" onClick={() => setRefreshNftList(refreshNftList + 1)}>
-            刷新
-        </Button>
-        <Button type="primary" onClick={() => setIsMintModalVisible(true)}>
-            快捷铸造藏品{' '}
-            <Tooltip title={'快捷铸造使用的是平台内置合约，所有人共用。'}>
-                <QuestionCircleOutlined />
-            </Tooltip>
-        </Button>
-        <Button type="primary" onClick={() => setIsDetailModalVisible(true)}>
-            查看AppKey
-        </Button>
-    </Space>
-  );
+    const extraOp = (
+        <Space>
+            <Text type="secondary">如果铸造交易长期处于待处理状态，请检查余额是否足够</Text>
+            <Button type="dashed" onClick={() => setRefreshNftList(refreshNftList + 1)}>
+                刷新
+            </Button>
+            <Link to={`/panels/poaps/${id}/createGasless`}>
+                <Button type='link'>
+                    创建POAP
+                    <Tooltip title={'POAP 勋章快捷创建'}>
+                        <QuestionCircleOutlined />
+                    </Tooltip>
+                </Button>
+            </Link>
+            <Button type="primary" onClick={() => setIsDetailModalVisible(true)}>
+                查看AppKey
+            </Button>
+        </Space>
+    );
 
     useEffect(() => {
         getAppAccounts(id as string).then((data) => setAccounts(data));
@@ -165,6 +170,7 @@ export default function AppDetail(props: { appId?: string, pageLimit?: number })
             </Paragraph>
             </p>
         </Modal>
+        {/** TODO remove */}
         <Modal title="快捷铸造" open={isMintModalVisible} onOk={() => form.submit()} onCancel={closeMintModal} cancelButtonProps={{ hidden: true }} okButtonProps={{ hidden: true }}>
             <Form {...formLayout} form={form} name="control-hooks" onFinish={onNftMint}>
             <Form.Item name="name" label="名字" rules={[{ required: true }]}>

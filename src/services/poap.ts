@@ -1,6 +1,7 @@
 import { post, get } from '.';
 import { BaseModel } from '../models/';
 
+// 初版临时 POAP
 export interface Poap extends BaseModel {
     user_id: number;
     app_id: number;
@@ -13,10 +14,10 @@ export interface Poap extends BaseModel {
     next_id: number;
   }
 
-export async function createPoap(id: number | string, meta: object) {
+/* export async function createPoap(id: number | string, meta: object) {
     return await post(`/dashboard/apps/${id}/poaps`, meta);
-}
+} */
 
-export async function listPoaps(id: number | string, page?: number, limit?: number) {
+/* export async function listPoaps(id: number | string, page?: number, limit?: number) {
     return await get(`/dashboard/apps/${id}/poaps`, {page, limit});
-}
+} */
