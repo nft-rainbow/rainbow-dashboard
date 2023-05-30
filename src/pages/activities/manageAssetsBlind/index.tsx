@@ -39,7 +39,7 @@ const ManageAssetsBlind: React.FC = () => {
     const { activityId } = useParams<{ activityId: string }>();
     const navigate = useNavigate();
     const { data, mutate } = useSWR(`api/apps/poap/activity/${activityId}`, () => getActivityById(activityId));
-    const isContractEditable = useMemo(() => !data?.contract.contract_address, [data]);
+    const isContractEditable = useMemo(() => !data?.contract?.contract_address, [data]);
     const [nftConfigDeleted, setNftConfigDeleted] = useState<boolean[]>([]);
 
     const handleFinish = useCallback(
