@@ -433,7 +433,7 @@ function ActivityConfig() {
                             </div>
                             <Button onClick={() => {
                                 previewCanvasRef.current?.toBlob(async (blob) => {
-                                    let res = await uploadFile(blob).then(console.log);
+                                    let res = await uploadFile(blob);
                                     setFileUrl((res as any).url);
                                 })
                             }}>生成勋章</Button>
