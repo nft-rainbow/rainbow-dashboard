@@ -98,7 +98,7 @@ export function AppNFTs(props: { id: string; contract?: string, refreshTrigger: 
 			dataIndex: 'created_at',
 			render: formatDate,
 		},
-		{
+		/* {
 			title: '操作',
 			dataIndex: 'id',
 			render: (id: number, item: NFT) => {
@@ -115,7 +115,7 @@ export function AppNFTs(props: { id: string; contract?: string, refreshTrigger: 
 					</Button>
 				) : null;
 			},
-		},
+		}, */
 	];
 
 	useEffect(() => {
