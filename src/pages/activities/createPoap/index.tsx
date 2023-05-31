@@ -6,6 +6,7 @@ import {
 } from "antd";
 import { MinusCircleOutlined, DownOutlined, UploadOutlined } from '@ant-design/icons';
 import type { TabsProps, MenuProps, UploadProps } from 'antd';
+import type { UploadFile } from 'antd/es/upload/interface';
 import { useParams } from 'react-router-dom';
 import ReactCrop, { type Crop, centerCrop, makeAspectCrop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
@@ -61,6 +62,8 @@ function ActivityConfig() {
     const [file_url, setFileUrl] = useState(''); // http://dev.nftrainbow.cn/assets/uploads/3622c399a34448c9198e6e284f4d16e0.png
 
     const [activity, setActivity] = useState<ActivityItem | null>(null);
+
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
 
     const [form] = Form.useForm();
 
@@ -155,6 +158,12 @@ function ActivityConfig() {
             if (res.end_time && res.end_time !== -1) {
                 activityDate.push(timestampToDate(res.end_time));
             }
+            setFileList([{
+                uid: '0',
+                name: 'POAP.png',
+                status: 'done',
+                url: res.activity_picture_url,
+            }]);
             let attributes = [];
             if (res.nft_configs.length === 1) {
                 setTraitTypes(res.nft_configs[0].metadata_attributes.map((item: any) => item.display_type === 'date' ? 'date' : 'text'));
@@ -202,7 +211,9 @@ function ActivityConfig() {
 
     const uploadProps: UploadProps = {
         name: 'file',
-        fileList: null,
+        listType: "picture",
+        // defaultFileList: defaultFiles,
+        fileList: fileList,
         beforeUpload: (file) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -435,17 +446,16 @@ function ActivityConfig() {
                                 previewCanvasRef.current?.toBlob(async (blob) => {
                                     let res = await uploadFile(blob);
                                     setFileUrl((res as any).url);
+                                    setFileList([{
+                                        uid: '0',
+                                        name: 'POAP.png',
+                                        status: 'done',
+                                        url: (res as any).url,
+                                    }]);
                                 })
                             }}>生成勋章</Button>
                         </>
                     )}
-                    {
-                        !imgSrc && activity && (
-                            <div>
-                                <img src={activity.activity_picture_url} style={{maxWidth: '480px'}}></img>
-                            </div>
-                        )
-                    }
                 </Col>
             </Row>
         </div>
