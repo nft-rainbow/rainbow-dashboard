@@ -7,7 +7,7 @@ import {
 import { MinusCircleOutlined, DownOutlined, UploadOutlined } from '@ant-design/icons';
 import type { TabsProps, MenuProps, UploadProps } from 'antd';
 import type { UploadFile } from 'antd/es/upload/interface';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import ReactCrop, { type Crop, centerCrop, makeAspectCrop, PixelCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import { canvasPreview } from './canvasPreview'
@@ -48,6 +48,7 @@ export default function Page() {
 
 function ActivityConfig() {
     const { appId, activityId } = useParams();
+    const navigate = useNavigate();
     const [userId, setUserId] = useState<number>(0);
 
     const [crop, setCrop] = useState<Crop>();
@@ -72,7 +73,7 @@ function ActivityConfig() {
         setCrop(centerAspectCrop(width, height, 1))
     }
 
-    const createPoap = async (values: any) => {
+    const createOrUpdatePoap = async (values: any) => {
         values.file_url = file_url || activity?.activity_picture_url;
         if (!values.file_url && !activity) {
             message.warning('请上传文件, 并进行合成操作');
@@ -132,8 +133,8 @@ function ActivityConfig() {
                 await setActivityNftConfigs(activity.activity_id, [_nft_config]);
             }
             
-
-            message.success('创建成功, 请到活动列表查看');
+            message.success('操作成功');
+            navigate("/panels/poaps");
         } catch(e) {
             // @ts-ignore
             message.error('创建失败' + e.response.data.message);   
@@ -248,7 +249,7 @@ function ActivityConfig() {
                         labelCol={{ span: 4 }}
                         wrapperCol={{ span: 16 }}
                         style={{ maxWidth: 600 }}
-                        onFinish={createPoap}
+                        onFinish={createOrUpdatePoap}
                         onFinishFailed={() => message.warning('请检查表单')}
                         autoComplete="off"
                         initialValues={{
