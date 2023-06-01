@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import {
     Card, Tabs, Form, Button, Input, Checkbox, DatePicker,
     Switch, Space, Dropdown, message, Row, Col,
-    Upload, InputNumber,
+    Upload, InputNumber, Typography,
 } from "antd";
 import { MinusCircleOutlined, DownOutlined, UploadOutlined } from '@ant-design/icons';
 import type { TabsProps, MenuProps, UploadProps } from 'antd';
@@ -13,13 +13,13 @@ import 'react-image-crop/dist/ReactCrop.css';
 import { canvasPreview } from './canvasPreview'
 import { useDebounceEffect } from './useDebounceEffect'
 import { uploadFile } from '@services/misc';
-import { userProfile } from "@services/user"
+import { getApps } from '@services/app';
 import { createActivity, setActivityNftConfigs, getActivityById, updateActivity } from '@services/activity';
 import { CreateActivityData, dateTranslate, timestampToDate } from '@utils/activityHelper';
 import isProduction from '@utils/isProduction';
-import { ActivityItem } from '@models/Activity'
-
+import { ActivityItem } from '@models/Activity';
 const { RangePicker } = DatePicker;
+const { Title, Text } = Typography;
 
 export default function Page() {
     const onChange = (key: string) => {
@@ -29,7 +29,7 @@ export default function Page() {
     const items: TabsProps['items'] = [
         {
             key: '1',
-            label: `活动信息`,
+            label: `POAP信息`,
             children: <ActivityConfig />,
         },
         /* {
@@ -50,7 +50,9 @@ function ActivityConfig() {
     const { appId, activityId } = useParams();
     const navigate = useNavigate();
     const [userId, setUserId] = useState<number>(0);
+    const [defaultProjectId, setDefaultProjectId] = useState<number>(0);
 
+    // crop and preview states
     const [crop, setCrop] = useState<Crop>();
     const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
     const [imgSrc, setImgSrc] = useState('');
@@ -58,20 +60,15 @@ function ActivityConfig() {
     const imgRef = useRef<HTMLImageElement>(null)
     const templateImgRef = useRef<HTMLImageElement>(null);
 
+    // form states
     const [traitTypes, setTraitTypes] = useState<string[]>([]);
     const [useCommand, setUseCommand] = useState(false);
-    const [file_url, setFileUrl] = useState(''); // http://dev.nftrainbow.cn/assets/uploads/3622c399a34448c9198e6e284f4d16e0.png
-
+    const [file_url, setFileUrl] = useState('');
     const [activity, setActivity] = useState<ActivityItem | null>(null);
-
     const [fileList, setFileList] = useState<UploadFile[]>([]);
 
     const [form] = Form.useForm();
 
-    function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
-        const { width, height } = e.currentTarget
-        setCrop(centerAspectCrop(width, height, 1))
-    }
 
     const createOrUpdatePoap = async (values: any) => {
         values.file_url = file_url || activity?.activity_picture_url;
@@ -86,7 +83,7 @@ function ActivityConfig() {
                 description: values.description,
                 activity_type: 'gasless', // poap
                 chain_of_gasless: isProduction ? 'conflux' : 'conflux_test',
-                app_id: appId ? parseInt(appId) : (activity ? activity.app_id : 0),
+                app_id: appId ? parseInt(appId) : (activity ? activity.app_id : defaultProjectId),
                 activity_picture_url: file_url,
                 amount: values.amount,
                 start_time: values.activityDate[0] ? dateTranslate(new Date(values.activityDate[0])) : -1,
@@ -141,9 +138,14 @@ function ActivityConfig() {
         }
     }
 
+    // get defaultProjectId and user_id from project list api
     useEffect(() => {
-        userProfile().then((res) => {
-            setUserId((res as any).id);
+        getApps(1, 1).then(res => {
+            if (res.count >= 1) {
+                const app = res.items[0];
+                setDefaultProjectId(app.id);
+                setUserId(app.user_id);
+            }
         });
     }, []);
 
@@ -185,7 +187,12 @@ function ActivityConfig() {
                 file_url: res.activity_picture_url,
             });
         });
-    }, [activityId]);
+    }, [activityId, form]);
+
+    function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
+        const { width, height } = e.currentTarget
+        setCrop(centerAspectCrop(width, height, 1))
+    }
 
     useDebounceEffect(
         async () => {
@@ -213,7 +220,6 @@ function ActivityConfig() {
     const uploadProps: UploadProps = {
         name: 'file',
         listType: "picture",
-        // defaultFileList: defaultFiles,
         fileList: fileList,
         beforeUpload: (file) => {
             const reader = new FileReader();
@@ -258,7 +264,7 @@ function ActivityConfig() {
                         }}
                     >
                         <Form.Item
-                            label="活动名称"
+                            label="POAP名称"
                             name="name"
                             rules={[{ required: true, message: '' }]}
                         >
@@ -266,14 +272,14 @@ function ActivityConfig() {
                         </Form.Item>
 
                         <Form.Item
-                            label="活动描述"
+                            label="POAP描述"
                             name="description"
                             rules={[{ required: true, message: '' }]}
                         >
                             <Input.TextArea rows={4} />
                         </Form.Item>
 
-                        <Form.Item label='活动日期' id="activityDate" name="activityDate">
+                        <Form.Item label='领取日期' id="activityDate" name="activityDate">
                             <RangePicker id="activityDate" showTime placeholder={['开始日期', '结束日期(可选)']} disabled={[false, false]} allowEmpty={[false, true]} />
                         </Form.Item>
 
@@ -459,6 +465,21 @@ function ActivityConfig() {
                     )}
                 </Col>
             </Row>
+            <div style={{paddingLeft: '20px', marginTop: '50px'}}>
+                <Title level={4}>FAQs</Title>
+                <Title level={5}>POAP 功能如何收费?</Title>
+                <Text>目前POAP勋章功能免费使用，单活动限制领取数量最大100</Text>
+                <Title level={5}>图片已经上传，为什么创建时还提示请上传文件?</Title>
+                <Text>图片上传后需在右侧进行拖拽并点击“生成勋章”按钮进行上传方可</Text>
+                <Title level={5}>勋章NFT发行在哪条区块链上?</Title>
+                <Text>目前发行在树图链</Text>
+                <Title level={5}>POAP创建后，如何获取领取链接？</Title>
+                <Text>勋章创建后会自动跳转到 NFT 活动列表也，根据名字找到对应的活动，点击右侧链接 Icon 即可查看到领取链接</Text>
+                <Title level={5}>领取 POAP 后，如何查看？</Title>
+                <Text>POAP 领取并等待(十来秒)交易上链后，可至领取时所用的钱包（晒啦或Anyweb）中查看POAP</Text>
+                <Title level={5}>为什么 POAP 带有 Rainbow Logo？</Title>
+                <Text>POAP 勋章功能为 Rainbow 免费提供使用，若想创建自定义 NFT 勋章可使用 ”NFT活动” 功能</Text>
+            </div>
         </div>
     );
 }
