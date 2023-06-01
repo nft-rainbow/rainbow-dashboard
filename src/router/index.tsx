@@ -58,6 +58,7 @@ const AppRouter: React.FC = () => {
                     <Route path="contracts/deploy" element={<ContractDeployment />} />
                     <Route path="poaps" element={<Poaps />} />
                     <Route path="poaps/:appId/createGasless" element={<GaslessPoap />} />
+                    <Route path="poaps/createGaslessInDefaultProject" element={<GaslessPoap />} />
                     <Route path="poaps/:activityId/updateGasless" element={<GaslessPoap />} />
                     <Route path="poaps/asset/single/:activityId" element={<Asset />} />
                     <Route path="poaps/asset/blind/:activityId" element={<Blind />} />

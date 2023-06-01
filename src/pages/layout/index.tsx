@@ -5,6 +5,7 @@ import {
     UserOutlined, LogoutOutlined, UsergroupAddOutlined,
     CodeOutlined, MoneyCollectOutlined, AuditOutlined,
     LineChartOutlined, NodeIndexOutlined, RobotOutlined, QuestionCircleOutlined,
+    RocketOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { 
@@ -45,7 +46,7 @@ const items: MenuItem[] = [
     getItem(<Link to="/panels">仪表盘</Link>, '1', <DashboardOutlined />),
     getItem(<Link to="/panels/apps">我的项目</Link>, '2', <AppstoreOutlined />),
     getItem(<Link to="/panels/contracts">智能合约</Link>, '3', <AuditOutlined />),
-    getItem(<Link to="/panels/poaps">NFT活动</Link>, '4', <AuditOutlined />),
+    getItem(<Link to="/panels/poaps">NFT活动</Link>, '4', <RocketOutlined />),
     getItem(<Link to="/panels/socialBot">社群Bot</Link>, '5', <RobotOutlined />),
     getItem(<Link to="/panels/metadata">元数据</Link>, '6', <NodeIndexOutlined />),
     getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">开发文档</a>, '7', <CodeOutlined />),
@@ -174,6 +175,7 @@ const App: React.FC = () => {
                     <Header className="bg-white" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between' }}>
                         <div><MenuFoldOutlined style={{ fontSize: '20px' }} onClick={() => setCollapsed(!collapsed)} /></div>
                         <div>
+                            <Link to="/panels/poaps/createGaslessInDefaultProject">创建POAP</Link>
                             <Button 
                                 type='link' 
                                 onClick={() => setIsMintModalVisible(true)}

@@ -88,17 +88,17 @@ export default function AppDetail(props: { appId?: string, pageLimit?: number })
             <Button type="dashed" onClick={() => setRefreshNftList(refreshNftList + 1)}>
                 刷新
             </Button>
-            <Link to={`/panels/poaps/${id}/createGasless`}>
-                <Button type='link'>
+            <Button type="primary" onClick={() => setIsDetailModalVisible(true)}>
+                查看AppKey
+            </Button>
+            <Link to={`/panels/poaps/createGaslessInDefaultProject`}>
+                <Button>
                     创建POAP
                     <Tooltip title={'POAP 勋章快捷创建'}>
                         <QuestionCircleOutlined />
                     </Tooltip>
                 </Button>
             </Link>
-            <Button type="primary" onClick={() => setIsDetailModalVisible(true)}>
-                查看AppKey
-            </Button>
         </Space>
     );
 
