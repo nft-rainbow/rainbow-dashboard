@@ -92,6 +92,7 @@ function ActivityConfig() {
                 rainbow_user_id: userId,
                 support_wallets: values.support_wallets,
                 command: values.command,
+                is_token_id_ordered: false,
             };
 
             // create activity nft configs
