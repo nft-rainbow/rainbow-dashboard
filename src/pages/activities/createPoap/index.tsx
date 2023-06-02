@@ -248,13 +248,13 @@ function ActivityConfig() {
         <div>
             <div style={{height: '20px'}}></div>
             <Row>
-                <Col span={8}>
+                <Col xs={24} sm={24} md={24} lg={14}>
                     <Form
                         id='createPoapForm'
                         form={form}
                         name="basic"
-                        labelCol={{ span: 4 }}
-                        wrapperCol={{ span: 16 }}
+                        labelCol={{ md: 4, sm: 6 }}
+                        wrapperCol={{ md: 16, sm: 18 }}
                         style={{ maxWidth: 600 }}
                         onFinish={createOrUpdatePoap}
                         onFinishFailed={() => message.warning('请检查表单')}
@@ -402,7 +402,7 @@ function ActivityConfig() {
                         </Form.Item>
                     </Form>
                 </Col>
-                <Col span={12}>
+                <Col xs={24} sm={24} md={24} lg={10}>
                     { !!imgSrc && (
                         <ReactCrop 
                             crop={crop} 
