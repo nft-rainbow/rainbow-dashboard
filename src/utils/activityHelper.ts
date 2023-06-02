@@ -133,6 +133,7 @@ export type Switchers = typeof defaultSwitchers;
 export const activityTypeDic = {
     'single': "单NFT活动",
     'blind_box': "盲盒活动",
+    'gasless': "POAP活动",
 }
 
 // ['盲盒活动', '单个活动', 'POAP活动'];
@@ -140,6 +141,7 @@ export const activityTypeDicEn = {
     'single': 'single',
     'blind_box': 'blind',
     'poap': 'POAP',
+    'gasless': 'POAP',
 }
 
 // ['blind', 'single', 'poap'];
@@ -151,7 +153,7 @@ export const activityTypeTransform = (type: string) => {
 
 export const activityTypeIdToName = (type: number) => {
     // @ts-ignore
-    return ['blind_box', 'single', 'poap'][type - 1];
+    return ['blind_box', 'single', 'gasless', 'poap'][type - 1];
 };
 
 export const activityTypeTransformEn = (type: string) => {

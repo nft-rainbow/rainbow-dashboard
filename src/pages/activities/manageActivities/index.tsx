@@ -9,7 +9,7 @@ import LimitedInput from '@modules/limitedInput';
 import FileUploadNew from '@components/FileUploadNew';
 import { ModalStyle } from './constants';
 import { updateFormDataTranslate, timestampToDate, type FormData } from '@utils/activityHelper';
-import { updatePoap } from '@services/activity';
+import { updateActivity } from '@services/activity';
 import { DEFAULT_WALLETS } from '../createActivities/constants';
 import './index.scss';
 const { Option } = Select;
@@ -35,7 +35,7 @@ const ManageActivityModal: React.FC<CreatePOAProps> = ({ open, onCancel, hideMod
             setConfirmLoading(true);
             // @ts-ignore
             params.support_wallets = supportWallets;
-            await updatePoap(params as any);
+            await updateActivity(params as any);
             hideModal();
             message.success('保存更新成功')
         } catch (err) {

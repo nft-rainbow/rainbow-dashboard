@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
 import cx from 'clsx';
-import { Card, Button, Form, Input, Dropdown, DatePicker, Select, type MenuProps } from 'antd';
+import { 
+    Card, Button, Form, Input, Dropdown, 
+    DatePicker, Select, type MenuProps
+} from 'antd';
 import { DownOutlined, DeleteOutlined } from '@ant-design/icons';
 import RainbowBreadcrumb from '@components/Breadcrumb';
 import FileUploadNew from '@components/FileUploadNew';
@@ -21,7 +24,7 @@ const items: MenuProps['items'] = [
 ];
 
 interface CharacterItemProps {
-    trait_type: string;
+    trait_type?: string;
     display_type?: string;
     name: number;
     id: number;
@@ -68,7 +71,7 @@ const Asset: React.FC = () => {
     return (
         <div>
             <RainbowBreadcrumb items={[<Link to="/panels/poaps/">返回</Link>, '管理藏品']} />
-            <Card>
+            <Card style={{flexGrow: 1}}>
                 <Form
                     id="manageAssetsForm"
                     name="basic"
@@ -77,58 +80,54 @@ const Asset: React.FC = () => {
                     onFinish={handleFinish}
                     initialValues={{ characters: [{ type: 'text', characterName: '活动地点' }] }}
                 >
-                    <div className="grid grid-cols-2 gap-x-16px">
-                        <div>
-                            <Form.Item
-                                label="上传图片："
-                                name="file"
-                                valuePropName="fileList"
-                                className="mb-0"
-                                getValueFromEvent={(evt) => (Array.isArray(evt) ? evt : evt?.fileList)}
-                                rules={[{ required: true, message: '请上传图片' }]}
-                            >
-                                <FileUploadNew maxCount={1} listType="picture" type="plus" wrapperClass="block w-full !mb-24px" className="block" />
-                            </Form.Item>
-                        </div>
-                        <div></div>
-                        <Form.Item name="name" label="藏品名称：" rules={[{ required: true, message: '请输入藏品名称' }]}>
-                            <Input />
-                        </Form.Item>
-                        <Form.Item name="contract_id" label="合约地址" rules={[{ required: true, message: '请选择合约地址' }]}>
-                            <Select placeholder="请选择" disabled={!isContractEditable}>
-                                {contracts.map((e) => (
-                                    <Option label={e.address} value={e.id} key={e.address}>
-                                        {`${short(e.address)} (${e.name}-${e.symbol})`}
-                                    </Option>
-                                ))}
-                            </Select>
-                        </Form.Item>
-                    </div>
+                    <Form.Item name="contract_id" label="合约地址" rules={[{ required: true, message: '请选择合约地址' }]}>
+                        <Select placeholder="请选择" disabled={!isContractEditable}>
+                            {contracts.map((e) => (
+                                <Option label={e.address} value={e.id} key={e.address}>
+                                    {`${short(e.address)} (${e.name}-${e.symbol})`}
+                                </Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item name="name" label="藏品名称：" rules={[{ required: true, message: '请输入藏品名称' }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        label="上传图片："
+                        name="file"
+                        valuePropName="fileList"
+                        className="mb-0"
+                        getValueFromEvent={(evt) => (Array.isArray(evt) ? evt : evt?.fileList)}
+                        rules={[{ required: true, message: '请上传图片' }]}
+                    >
+                        <FileUploadNew maxCount={1} listType="picture" type="plus" wrapperClass="block w-full !mb-24px" className="block" />
+                    </Form.Item>
+                        
                     <Form.List name="characters">
                         {(fields, { add, remove }) => (
-                        <>
-                            <div className="mb-8px flex flex-row justify-between">
-                                <label>特征设置：</label>
-                                <Dropdown trigger={['click']} menu={{ items, onClick: (e) => add({ display_type: e.key }) }}>
-                                    <a className="border border-solid border-#6953EF py-1px px-12px rounded-2px">
-                                        新增
-                                        <DownOutlined />
-                                    </a>
-                                </Dropdown>
-                            </div>
-                            <div className="grid grid-cols-2 gap-x-16px gap-y-16px">
-                                {fields.map((field, index) => (
-                                    <CharacterItem
-                                        value={form.getFieldValue(['characters', index, 'value'])}
-                                        display_type={form.getFieldValue(['characters', index, 'display_type'])}
-                                        remove={remove}
-                                        key={index}
-                                        id={index}
-                                        name={field.name}
-                                    />
-                                ))}
-                            </div>
-                        </>
+                            <>
+                                <div className="mb-8px flex flex-row justify-between">
+                                    <label>特征设置：</label>
+                                    <Dropdown trigger={['click']} menu={{ items, onClick: (e) => add({ display_type: e.key }) }}>
+                                        <a className="border border-solid border-#6953EF py-1px px-12px rounded-2px">
+                                            新增
+                                            <DownOutlined />
+                                        </a>
+                                    </Dropdown>
+                                </div>
+                                <div className="grid grid-cols-2 gap-x-16px gap-y-16px">
+                                    {fields.map((field, index) => (
+                                        <CharacterItem
+                                            value={form.getFieldValue(['characters', index, 'value'])}
+                                            display_type={form.getFieldValue(['characters', index, 'display_type'])}
+                                            remove={remove}
+                                            key={index}
+                                            id={index}
+                                            name={field.name}
+                                        />
+                                    ))}
+                                </div>
+                            </>
                         )}
                     </Form.List>
                     <div className="flex justify-center items-center mt-[24px]">

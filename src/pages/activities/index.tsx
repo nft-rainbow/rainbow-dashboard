@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { create } from 'zustand';
+import { Link } from 'react-router-dom';
 import { Card, Button, TablePaginationConfig } from 'antd';
 import { ProTable } from '@ant-design/pro-components';
+import { RocketOutlined } from '@ant-design/icons';
 import { ActivityItem, SearchParams } from '@models/index';
 import { getActivities } from '@services/activity';
 import { throttle } from 'lodash-es';
@@ -65,7 +67,8 @@ export default function Poaps() {
                             <Button onClick={() => {form?.resetFields();setPage(1);form?.submit();}} key={resetText}>
                                 {resetText}
                             </Button>,
-                            <Button key='create-activity' type='primary' onClick={() => setIsActivityModalVisible(true)}>创建活动</Button>
+                            <Button key='create-activity' type='primary' onClick={() => setIsActivityModalVisible(true)}>创建活动</Button>,
+                            <Link to='/panels/poaps/createGaslessInDefaultProject'><Button>创建POAP<RocketOutlined /></Button></Link>
                         ],
                     }}
                     options={false}
