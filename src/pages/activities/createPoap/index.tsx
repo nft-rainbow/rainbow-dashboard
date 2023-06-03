@@ -71,8 +71,8 @@ function ActivityConfig() {
 
 
     const createOrUpdatePoap = async (values: any) => {
-        values.file_url = file_url || activity?.activity_picture_url;
-        if (!values.file_url && !activity) {
+        values.file_url = file_url;
+        if (!values.file_url) {
             message.warning('请上传文件, 并进行合成操作');
             return;
         }
@@ -154,6 +154,8 @@ function ActivityConfig() {
         if (!activityId) return;
         getActivityById(activityId).then((res) => {
             setActivity(res);
+            // restore form status from activity
+            setFileUrl(res.activity_picture_url);
             if (res.command) setUseCommand(true);
             const activityDate = [];
             if (res.start_time && res.start_time !== -1) {
