@@ -247,7 +247,6 @@ export default function UserBalance() {
             >
                 <QRCode 
                     value={payUrl} 
-                    icon='/nftrainbow-logo-icon.png'
                     style={{display: 'block', marginLeft: 'auto', marginRight: 'auto'}}
                 />
                 <div style={{textAlign: "center", marginTop: '10px'}}>

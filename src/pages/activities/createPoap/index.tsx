@@ -71,8 +71,8 @@ function ActivityConfig() {
 
 
     const createOrUpdatePoap = async (values: any) => {
-        values.file_url = file_url || activity?.activity_picture_url;
-        if (!values.file_url && !activity) {
+        values.file_url = file_url;
+        if (!values.file_url) {
             message.warning('请上传文件, 并进行合成操作');
             return;
         }
@@ -154,6 +154,8 @@ function ActivityConfig() {
         if (!activityId) return;
         getActivityById(activityId).then((res) => {
             setActivity(res);
+            // restore form status from activity
+            setFileUrl(res.activity_picture_url);
             if (res.command) setUseCommand(true);
             const activityDate = [];
             if (res.start_time && res.start_time !== -1) {
@@ -191,7 +193,11 @@ function ActivityConfig() {
     }, [activityId, form]);
 
     function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
-        const { width, height } = e.currentTarget
+        const { width, height } = e.currentTarget;
+        if (e.currentTarget.naturalWidth < 600 || e.currentTarget.naturalHeight < 600) {
+            message.warning('图片尺寸过小，最小尺寸为600*600');
+            return;
+        }
         setCrop(centerAspectCrop(width, height, 1))
     }
 
@@ -471,7 +477,7 @@ function ActivityConfig() {
                 <Title level={5}>POAP 功能如何收费?</Title>
                 <Text>目前POAP勋章功能免费使用，单活动限制领取数量最大100</Text>
                 <Title level={5}>图片尺寸有要求么?</Title>
-                <Text>图片最低宽度为 600 PX，宽度过小，裁剪效果不佳</Text>
+                <Text>图片最低宽度为 600 px，宽度过小，裁剪效果不佳</Text>
                 <Title level={5}>图片已经上传，为什么创建时还提示请上传文件?</Title>
                 <Text>图片上传后需在右侧进行拖拽并点击“生成勋章”按钮进行上传方可</Text>
                 <Title level={5}>勋章NFT发行在哪条区块链上?</Title>
