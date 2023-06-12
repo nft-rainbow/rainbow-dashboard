@@ -44,6 +44,8 @@ export function mapFiatLogType(type: number) {
       return '购买存储';
     case 5:
       return 'API费用';
+    case 6:
+      return '对公充值';
     default:
       return '其他';
   }
