@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import RainbowBreadcrumb from '@components/Breadcrumb';
 import {
-    Button, Form, Modal, Input, Radio, Space, Card,
+    Button, Form, Input, Space, Card,
     Table, TablePaginationConfig, Typography,
-    Tooltip, Select, DatePicker, QRCode,
+    Tooltip, Select, DatePicker, 
 } from 'antd';
 import type { RangePickerProps } from 'antd/es/date-picker';
+import { Link } from 'react-router-dom';
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { userFiatLogs, userBalanceRuntime } from '@services/user';
-import { createWxPayOrder } from '@services/pay';
 import { FiatLog } from '@models/index';
 import { formatDate, mapFiatLogType, short, scanAddressLink } from '@utils/index';
 import { TextDownloader } from '@components/TextDownloader';
@@ -22,13 +22,11 @@ const billText = `
     2、发票金额为实际支出并消费的订单金额，不含折扣、积分以及优惠券等方式支付的金额。
     3、电子普通发票在申请后45个工作日内开具，如需纸质发票可自行下载打印。增值税专用发票在申请后60个工作日内开具并快递到付寄出。发票收件人电话请尽量填写可以联系到您的手机号码，以免影响您收票的时效性。
     4、目前支持开票频次为每季度一次，请合理安排开票需求。
-    `;
+`;
 
 export default function UserBalance() {
     const [balance, setBalance] = useState(0);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isPayModalVisible, setIsPayModalVisible] = useState(false);
-    const [payUrl, setPayUrl] = useState('');
+    const [balanceRefreshTick, setBalanceRefreshTick] = useState(0);
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
 
@@ -62,35 +60,20 @@ export default function UserBalance() {
             '交易类型': mapFiatLogType(item.type),
             '金额(元)': (item.amount / 100).toFixed(2),
             '余额(元)': (item.balance / 100).toFixed(2),
-            // @ts-ignore
-            '地址': item.meta ? item.meta.address : '',
+            '地址': item.meta ? (item.meta as {address: string}).address : '',
         }));
         setDownloadContent(arrayToCSVText(rows));
     }
 
-    const onPay = async (values: any) => {
-        let { amount } = values;
-        if (isNaN(Number(amount))) throw new Error ('请输入正确的金额');
-        amount = parseInt((Number(amount) * 100).toString());
-        const res = await createWxPayOrder({
-            amount: amount,
-            desc: 'Charge',
-        });
-
-        setIsModalVisible(false);
-        setPayUrl(res.code_url);
-        setIsPayModalVisible(true);
-    }
-
     const columns = [
         {
-          title: 'ID',
-          dataIndex: 'id',
+            title: 'ID',
+            dataIndex: 'id',
         },
         {
-          title: '创建时间',
-          dataIndex: 'created_at',
-          render: formatDate,
+            title: '创建时间',
+            dataIndex: 'created_at',
+            render: formatDate,
         },
         {
             title: '订单号',
@@ -102,29 +85,29 @@ export default function UserBalance() {
             render: (amount: number) => amount > 0 ? '充值' : '消费'
         },
         {
-          title: '交易类型',
-          dataIndex: 'type',
-          render: mapFiatLogType
+            title: '交易类型',
+            dataIndex: 'type',
+            render: mapFiatLogType
         },
         {
-          title: '金额(元)',
-          dataIndex: 'amount', // check
-          render: (text: number) => text > 0 ? <Text type='success'>{(text / 100).toFixed(2)}</Text> : <Text type='danger'>{(text / 100).toFixed(2)}</Text>,
+            title: '金额(元)',
+            dataIndex: 'amount', // check
+            render: (text: number) => text > 0 ? <Text type='success'>{(text / 100).toFixed(2)}</Text> : <Text type='danger'>{(text / 100).toFixed(2)}</Text>,
         },
         {
-          title: '余额(元)',
-          dataIndex: 'balance',
-          render: (text: number) => (text / 100).toFixed(2),
+            title: '余额(元)',
+            dataIndex: 'balance',
+            render: (text: number) => (text / 100).toFixed(2),
         },
         {
-          title: '地址',
-          dataIndex: 'meta',
-          render: (meta: {address: string}) => meta ? <a href={scanAddressLink(1, 1029, meta?.address)}>{short(meta?.address || '')}</a> : ''
+            title: '地址',
+            dataIndex: 'meta',
+            render: (meta: {address: string}) => meta ? <a href={scanAddressLink(1, 1029, meta?.address)}>{short(meta?.address || '')}</a> : ''
         },
         /* {
-          title: '交易渠道流水号',
-          dataIndex: 'meta',
-          render: (meta: object) => '',
+            title: '交易渠道流水号',
+            dataIndex: 'meta',
+            render: (meta: object) => '',
         } */
     ];
 
@@ -135,7 +118,7 @@ export default function UserBalance() {
 
     useEffect(() => {
         userBalanceRuntime().then((res) => setBalance(res.balance));
-    }, []);
+    }, [balanceRefreshTick]);
 
     useEffect(() => {
         refreshItems(page);
@@ -143,45 +126,46 @@ export default function UserBalance() {
 
     const extra = (
         <>
-        <Form layout={'inline'} form={form}>
-            <Form.Item name="created_at" label="起止时间">
-                <RangePicker
-                    showTime={{ format: 'HH:mm:ss' }}
-                    format="YYYY-MM-DD HH:mm:ss"
-                    onChange={setDate}
-                    // onOk={setDate}
-                    placeholder={['开始时间', '截止时间']}
-                />
-            </Form.Item>
-            <Form.Item name="status" label="交易类型">
-                <Select style={{width: '100px'}} onChange={val => setType(val)}>
-                    <Select.Option value="0">所有</Select.Option>
-                    <Select.Option value="1">充值</Select.Option>
-                    {/* <Select.Option value="2">提现</Select.Option> */}
-                    <Select.Option value="3">购买燃气</Select.Option>
-                    <Select.Option value="4">购买存储</Select.Option>
-                    <Select.Option value="5">API费用</Select.Option>
-                </Select>
-            </Form.Item>
-            <Form.Item name="address" label="合约地址">
-                <Input onChange={(val) => setAddress(val.target.value)} style={{width: '300px'}} />
-            </Form.Item>
-            <Form.Item>
-                <Button type="primary" onClick={async () => {
-                    const filter = {
-                        started_at: startAt,
-                        ended_at: endAt,
-                        type,
-                        address,
-                    };
-                    await refreshItems(page, 10, filter);
-                    await getExportData(filter);
-                }}>搜索</Button>
-            </Form.Item>
-            <Form.Item>
-                {downloadContent && <TextDownloader content={downloadContent} filename='交易明细.csv' label='导出CSV' type='text/csv'/>}
-            </Form.Item>
-        </Form>
+            <Form layout={'inline'} form={form}>
+                <Form.Item name="created_at" label="起止时间">
+                    <RangePicker
+                        showTime={{ format: 'HH:mm:ss' }}
+                        format="YYYY-MM-DD HH:mm:ss"
+                        onChange={setDate}
+                        // onOk={setDate}
+                        placeholder={['开始时间', '截止时间']}
+                    />
+                </Form.Item>
+                <Form.Item name="status" label="交易类型">
+                    <Select style={{width: '100px'}} onChange={val => setType(val)}>
+                        <Select.Option value="0">所有</Select.Option>
+                        <Select.Option value="1">充值</Select.Option>
+                        {/* <Select.Option value="2">提现</Select.Option> */}
+                        <Select.Option value="3">购买燃气</Select.Option>
+                        <Select.Option value="4">购买存储</Select.Option>
+                        <Select.Option value="5">API费用</Select.Option>
+                        <Select.Option value="6">对公充值</Select.Option>
+                    </Select>
+                </Form.Item>
+                <Form.Item name="address" label="合约地址">
+                    <Input onChange={(val) => setAddress(val.target.value)} style={{width: '300px'}} />
+                </Form.Item>
+                <Form.Item>
+                    <Button type="primary" onClick={async () => {
+                        const filter = {
+                            started_at: startAt,
+                            ended_at: endAt,
+                            type,
+                            address,
+                        };
+                        await refreshItems(page, 10, filter);
+                        await getExportData(filter);
+                    }}>搜索</Button>
+                </Form.Item>
+                <Form.Item>
+                    {downloadContent && <TextDownloader content={downloadContent} filename='交易明细.csv' label='导出CSV' type='text/csv'/>}
+                </Form.Item>
+            </Form>
         </>
     );
 
@@ -189,20 +173,36 @@ export default function UserBalance() {
         <div style={{flexGrow:1}}>
             <RainbowBreadcrumb items={['设置', '用户中心']} />
             <Card>
-                <div style={{width: '200px', float: 'left'}}>
-                    <span style={{display: 'block',color: 'gray', fontSize: '14px'}}>账户余额</span>
-                    <span className='user-balance'>¥ {(balance / 100).toFixed(2)}</span>
-                    <a href="https://nftrainbow.cn/financial-agreement.html" target='_blank' rel="noreferrer">
-                        <span style={{display: 'block',color: 'gray', fontSize: '14px'}}>
-                            用户协议
+                <div>
+                    <Space>
+                        <span style={{color: 'gray', fontSize: '14px'}}>
+                            账户余额
                         </span>
-                    </a>
+                        <Tooltip title={"由于系统同步原因，查询结果可能与实际存在差异，请以实际为准"}>
+                            <InfoCircleOutlined/>
+                        </Tooltip>
+                    </Space>
                 </div>
-                <div style={{width: '100px', float: 'right'}}>
-                    <Tooltip title={billText}>
-                        <Text type='secondary'>开票说明</Text>
-                    </Tooltip>
-                    <div style={{marginTop: '5px'}}><Button type='primary' onClick={() => setIsModalVisible(true)}>充值</Button></div>
+                <div style={{marginTop: '10px'}}>
+                    <Space>
+                        <span className='user-balance'>¥ {(balance / 100).toFixed(2)}</span>
+                        <Button style={{marginLeft: '20px'}} onClick={() => setBalanceRefreshTick(balanceRefreshTick+1)}>刷新</Button>
+                        <Link to='/panels/chargeBalance'>
+                            <Button type='primary'>充值</Button>
+                        </Link>
+                    </Space>
+                </div>
+                <div style={{marginTop: '20px'}}>
+                    <Space>
+                        {/* <a href="https://nftrainbow.cn/financial-agreement.html" target='_blank' rel="noreferrer">
+                            <span style={{color: 'gray', fontSize: '14px'}}>
+                                用户协议
+                            </span>
+                        </a> */}
+                        <Tooltip title={billText}>
+                            <Text type='secondary'>开票说明</Text>
+                        </Tooltip>
+                    </Space>
                 </div>
             </Card>
             <Card style={{marginTop: '20px'}} extra={extra} title={<>
@@ -222,37 +222,6 @@ export default function UserBalance() {
                     onChange={(info: TablePaginationConfig) => { setPage(info.current as number); }}
                 />
             </Card>
-            <Modal title='余额充值' open={isModalVisible} onOk={() => form.submit()} onCancel={() => setIsModalVisible(false)} okText={'确认'} cancelText={'取消'}>
-                <Form form={form} onFinish={onPay} initialValues={{type: 1}}>
-                    <Form.Item name="amount" label="充值金额" rules={[{ required: true }]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name="type" label="充值方式" rules={[{ required: true }]}>
-                        <Radio.Group onChange={() => {}} value={1}>
-                            <Space direction="vertical">
-                                <Radio value={1}>微信支付</Radio>
-                                {/* <Radio value={2}>支付宝</Radio> */}
-                            </Space>
-                        </Radio.Group>
-                    </Form.Item>
-                    {/* <Checkbox onChange={() => {}}>我已了解：充值的款项只可用于NFTRainbow消费</Checkbox> */}
-                </Form>
-            </Modal>
-            <Modal 
-                title='扫码支付' 
-                open={isPayModalVisible} 
-                onOk={() => setIsPayModalVisible(false)} 
-                onCancel={() => setIsPayModalVisible(false)}
-                footer={null}
-            >
-                <QRCode 
-                    value={payUrl} 
-                    style={{display: 'block', marginLeft: 'auto', marginRight: 'auto'}}
-                />
-                <div style={{textAlign: "center", marginTop: '10px'}}>
-                    <span>支付完成后，请刷新页面</span>
-                </div>
-            </Modal>
         </div>
     );
 }

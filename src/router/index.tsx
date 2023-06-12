@@ -26,6 +26,7 @@ import Bots from '@pages/bots';
 import MintFrame from "@pages/mint";
 import AutoSponsors from "@pages/contracts/autoSponsorContracts";
 import GaslessPoap from '@pages/activities/createPoap';
+import ChargeBalance from '@pages/users/chargeBalance';
 
 const AppRouter: React.FC = () => {
     return (
@@ -47,6 +48,7 @@ const AppRouter: React.FC = () => {
                     <Route index element={<Panel />} />
                     <Route path="user" element={<User />} />
                     <Route path="userBalance" element={<UserBalance />} />
+                    <Route path="chargeBalance" element={<ChargeBalance />} />
                     <Route path="mintCountByMonth" element={<UserMintCountByMonth />} />
                     <Route path="company" element={<Company />} />
                     <Route path="apps" element={<App />} />

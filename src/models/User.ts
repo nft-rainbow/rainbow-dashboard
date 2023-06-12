@@ -1,13 +1,15 @@
 import { BaseModel } from ".";
 
-export interface User {
+export interface User extends BaseModel {
     id: number;
-    email: string;
     name: string;
+    email: string;
     phone: string;
+    email_verified: boolean;
     id_name: string;
     id_no: string;
     id_image: string;
+    type: number;
     status: number;
     kyc_msg?: string;
 }
@@ -43,4 +45,12 @@ export interface Company {
 export interface MintCountByMonth {
     count: number;
     month: string;
+}
+
+export interface CmbDepositNo extends BaseModel {
+    user_id: number;
+    user_name: string;
+    user_bank_no: string;
+    user_bank_name: string;
+    cmb_no: string;
 }

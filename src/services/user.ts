@@ -87,3 +87,11 @@ export async function userBalanceRuntime(): Promise<UserBalance> {
 export async function userMintCountByMonth(): Promise<any> {
     return await get('/dashboard/users/mintCountByMonth')
 }
+
+export async function requestVerifyEmailCode(email: string) {
+    return await post('/dashboard/users/requestEmailVerifyCode', {email});
+}
+
+export async function verifyEmail(email: string, code: string) {
+    return await post('/dashboard/users/verifyEmail', {email, code});
+}
