@@ -144,6 +144,7 @@ export default function UserBalance() {
                         <Select.Option value="3">购买燃气</Select.Option>
                         <Select.Option value="4">购买存储</Select.Option>
                         <Select.Option value="5">API费用</Select.Option>
+                        <Select.Option value="6">对公充值</Select.Option>
                     </Select>
                 </Form.Item>
                 <Form.Item name="address" label="合约地址">
