@@ -479,7 +479,7 @@ function ActivityConfig() {
                 <Title level={5}>图片尺寸有要求么?</Title>
                 <Text>图片最低宽度为 600 px，宽度过小，裁剪效果不佳</Text>
                 <Title level={5}>图片已经上传，为什么创建时还提示请上传文件?</Title>
-                <Text>图片上传后需在右侧进行拖拽并点击“生成勋章”按钮进行上传方可</Text>
+                <Text>图片上传后需在右侧进行拖拽并点击“生成勋章”按钮进行上传方可(合成时间较长，需耐心等待几秒)</Text>
                 <Title level={5}>勋章NFT发行在哪条区块链上?</Title>
                 <Text>目前发行在树图链</Text>
                 <Title level={5}>POAP创建后，如何获取领取链接？</Title>
