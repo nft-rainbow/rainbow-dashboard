@@ -35,11 +35,11 @@ export default function Page() {
             label: `在线充值`,
             children: <OnlineCharge user={userInfo}/>,
         },
-        {
+        /* {
             key: '2',
             label: `对公汇款`,
             children: <PublicCharge user={userInfo} />,
-        },
+        }, */
     ];
 
     useEffect(() => {

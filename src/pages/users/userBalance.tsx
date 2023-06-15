@@ -92,7 +92,7 @@ export default function UserBalance() {
         {
             title: '金额(元)',
             dataIndex: 'amount', // check
-            render: (text: number) => <Text type={text > 0 ? 'success' : 'danger'}>formatFiat(text)</Text>,
+            render: (text: number) => <Text type={text > 0 ? 'success' : 'danger'}>{formatFiat(text)}</Text>,
         },
         {
             title: '余额(元)',
