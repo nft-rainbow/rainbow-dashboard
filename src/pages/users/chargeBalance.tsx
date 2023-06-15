@@ -12,6 +12,7 @@ import { userBalanceRuntime, userProfile } from '@services/user';
 import { createWxPayOrder, getCmbCardNo, createCmbCardNo, updateCmbCardRelation } from '@services/pay';
 import { User } from '@models/index';
 import { CmbDepositNo } from '@models/index';
+import { formatFiat } from '@utils/index'
 import './userCharge.css';
 
 const { Title, Text } = Typography;
@@ -34,11 +35,11 @@ export default function Page() {
             label: `在线充值`,
             children: <OnlineCharge user={userInfo}/>,
         },
-        {
+        /* {
             key: '2',
             label: `对公汇款`,
             children: <PublicCharge user={userInfo} />,
-        },
+        }, */
     ];
 
     useEffect(() => {
@@ -65,7 +66,7 @@ export default function Page() {
                 </div>
                 <div style={{marginTop: '10px'}}>
                     <Space>
-                        <span className='user-balance'>¥ {(balance / 100).toFixed(2)}</span>
+                        <span className='user-balance'>¥ {formatFiat(balance)}</span>
                         <Button style={{marginLeft: '20px'}} onClick={() => setBalanceRefreshTick(balanceRefreshTick+1)}>刷新</Button>
                         <span>可前往收支明细查看<Link to='/panels/userBalance'>充值记录</Link></span>
                     </Space>
@@ -147,18 +148,24 @@ function PublicCharge({user: userInfo}: {user?: User}) {
     const [form] = Form.useForm();
     const [isEdit, setIsEdit] = useState(false);
     
+    // TODO: more test here
     const getCardNo = async (values: any) => {
-        if (!isEdit) { // 获取专属充值卡号
-            if (!userInfo || !(userInfo.type === 2 && userInfo.status === 1)) {
-                message.warning('请先进行企业认证');
-                return;
+        try {
+            if (!isEdit) { // 获取专属充值卡号
+                if (!userInfo || !(userInfo.type === 2 && userInfo.status === 1)) {
+                    message.warning('请先进行企业认证');
+                    return;
+                }
+                await createCmbCardNo(values.name, values.card_no, values.bank);
+            } else { // 更新关联的充值卡号
+                await updateCmbCardRelation(values.name, values.card_no, values.bank);
             }
-            await createCmbCardNo(values.name, values.card_no, values.bank);
-        } else { // 更新关联的充值卡号
-            await updateCmbCardRelation(values.name, values.card_no, values.bank);
+            setTick(tick+1);
+            setIsModalVisible(false);
+        } catch(e) {
+            // @ts-ignore
+            message.error('获取失败: ' + e.response.data.message);
         }
-        setTick(tick+1);
-        setIsModalVisible(false);
     }
 
     const openEditModal = () => {
@@ -208,9 +215,9 @@ function PublicCharge({user: userInfo}: {user?: User}) {
             <div className='gray-border'>
                 {cardNoInfo && (
                     <div className='mt-20'>
-                        <p>开户名称：杭州云萃流图网络科技有限公司</p>
-                        <p>开户银行：招商银行杭州萧山支行</p>
-                        <p>专属对公账号：{CMB_PREFIX}{cardNoInfo.cmb_no}</p>
+                        <p>开户名称：<Text copyable>杭州云萃流图网络科技有限公司</Text></p>
+                        <p>开户银行：<Text copyable>招商银行杭州萧山支行</Text></p>
+                        <p>专属对公账号：<Text copyable>{CMB_PREFIX}{cardNoInfo.cmb_no}</Text></p>
                         <div>
                             <Text strong>请妥善保存账号信息，勿告知他人</Text>
                         </div>
@@ -218,7 +225,7 @@ function PublicCharge({user: userInfo}: {user?: User}) {
                             <Button type='primary' onClick={async () => {
                                 await navigator.clipboard.writeText(CMB_PREFIX+cardNoInfo.cmb_no);
                                 message.success('复制成功');
-                            }}>复制</Button>
+                            }}>复制充值卡号</Button>
                         </div>
                     </div>
                 )}
