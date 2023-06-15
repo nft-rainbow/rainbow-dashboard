@@ -12,6 +12,7 @@ import { userBalanceRuntime, userProfile } from '@services/user';
 import { createWxPayOrder, getCmbCardNo, createCmbCardNo, updateCmbCardRelation } from '@services/pay';
 import { User } from '@models/index';
 import { CmbDepositNo } from '@models/index';
+import { formatFiat } from '@utils/index'
 import './userCharge.css';
 
 const { Title, Text } = Typography;
@@ -65,7 +66,7 @@ export default function Page() {
                 </div>
                 <div style={{marginTop: '10px'}}>
                     <Space>
-                        <span className='user-balance'>¥ {(balance / 100).toFixed(2)}</span>
+                        <span className='user-balance'>¥ {formatFiat(balance)}</span>
                         <Button style={{marginLeft: '20px'}} onClick={() => setBalanceRefreshTick(balanceRefreshTick+1)}>刷新</Button>
                         <span>可前往收支明细查看<Link to='/panels/userBalance'>充值记录</Link></span>
                     </Space>

@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { userFiatLogs, userBalanceRuntime } from '@services/user';
 import { FiatLog } from '@models/index';
-import { formatDate, mapFiatLogType, short, scanAddressLink } from '@utils/index';
+import { formatDate, mapFiatLogType, short, scanAddressLink, formatFiat } from '@utils/index';
 import { TextDownloader } from '@components/TextDownloader';
 import { arrayToCSVText } from '@utils/csvUtils';
 import './userBalance.css';
@@ -58,8 +58,8 @@ export default function UserBalance() {
             '订单号': item.order_no,
             '交易方向': item.amount > 0 ? '充值' : '消费',
             '交易类型': mapFiatLogType(item.type),
-            '金额(元)': (item.amount / 100).toFixed(2),
-            '余额(元)': (item.balance / 100).toFixed(2),
+            '金额(元)': formatFiat(item.amount),
+            '余额(元)': formatFiat(item.balance),
             '地址': item.meta ? (item.meta as {address: string}).address : '',
         }));
         setDownloadContent(arrayToCSVText(rows));
@@ -92,12 +92,12 @@ export default function UserBalance() {
         {
             title: '金额(元)',
             dataIndex: 'amount', // check
-            render: (text: number) => text > 0 ? <Text type='success'>{(text / 100).toFixed(2)}</Text> : <Text type='danger'>{(text / 100).toFixed(2)}</Text>,
+            render: (text: number) => <Text type={text > 0 ? 'success' : 'danger'}>formatFiat(text)</Text>,
         },
         {
             title: '余额(元)',
             dataIndex: 'balance',
-            render: (text: number) => (text / 100).toFixed(2),
+            render: (text: number) => formatFiat(text),
         },
         {
             title: '地址',
@@ -185,7 +185,7 @@ export default function UserBalance() {
                 </div>
                 <div style={{marginTop: '10px'}}>
                     <Space>
-                        <span className='user-balance'>¥ {(balance / 100).toFixed(2)}</span>
+                        <span className='user-balance'>¥ {formatFiat(balance)}</span>
                         <Button style={{marginLeft: '20px'}} onClick={() => setBalanceRefreshTick(balanceRefreshTick+1)}>刷新</Button>
                         <Link to='/panels/chargeBalance'>
                             <Button type='primary'>充值</Button>
