@@ -71,12 +71,12 @@ function ActivityConfig() {
 
 
     const createOrUpdatePoap = async (values: any) => {
-        values.file_url = file_url;
-        if (!values.file_url) {
-            message.warning('请上传文件, 并进行合成操作');
-            return;
-        }
         try {
+            values.file_url = file_url;
+            if (!values.file_url) {
+                message.warning('请上传文件, 并进行合成操作');
+                return;
+            }
             // date convert
             const activityMeta = {
                 name: values.name,
@@ -116,6 +116,10 @@ function ActivityConfig() {
             };
 
             if (!activityId) {
+                if (!activityMeta.app_id) {
+                    message.info("请先创建个人项目");
+                    return;
+                }
                 let res = await createActivity(activityMeta as CreateActivityData);
             
                 // @ts-ignore
