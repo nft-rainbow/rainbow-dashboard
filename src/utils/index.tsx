@@ -184,6 +184,6 @@ export const turnTimestamp = (time: string) => {
 };
 
 export function formatFiat(amount: number) {
-    // return amount;  // TODO: 保留两位小数
-    return (amount / 100).toFixed(2)
+    return amount;  // TODO: 保留两位小数
+    // return (amount / 100).toFixed(2)
 }
