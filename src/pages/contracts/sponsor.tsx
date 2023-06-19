@@ -65,8 +65,9 @@ export default function ContractSponsor() {
         }
 
         if (address.decodeCfxAddress(addr).netId === 1029) {
-            const toCharge = (values.gas + values.storage) * 80;
-            const balance = (await userBalance()).balance;
+            const toCharge = (values.gas + values.storage) * price;
+            let balance = (await userBalance()).balance;
+            balance = Number(balance) * 100;
             if (balance < toCharge) {
                 message.warning('账户余额不足');
                 return;
@@ -92,7 +93,9 @@ export default function ContractSponsor() {
     }, [contractAddr]);
 
     useEffect(() => {
-        cfxPrice().then(setPrice);
+        cfxPrice().then(num => {
+            setPrice(Number(num) * 100);
+        });
     }, []);
 
     return (
