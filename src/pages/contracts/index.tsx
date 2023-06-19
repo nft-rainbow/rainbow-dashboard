@@ -5,7 +5,7 @@ import type { ColumnsType } from 'antd/es/table';
 import { Link } from 'react-router-dom';
 import { Drip } from 'js-conflux-sdk';
 import { Contract, App, SponsorInfo } from '@models/index';
-import { mapChainName, formatDate, short, scanTxLink, scanAddressLink, mapNFTType, mapChainNetwork, mapChainNetworId } from '@utils/index';
+import { mapChainName, formatDate, short, scanTxLink, scanAddressLink, mapNFTType, mapChainNetwork, mapChainNetworkId } from '@utils/index';
 import { listContracts, deployContract, ContractFilter, getContractSponsor, getContractAutoSponsor } from '@services/contract';
 import { getAllApps, getAppAccounts } from '@services/app';
 const { Option } = Select;
@@ -142,7 +142,7 @@ export default function Contracts() {
 
   const onContractCreate = async (values: any) => {
     const accounts = await getAppAccounts(values.app_id);
-    const chainId = mapChainNetworId(values.chain);
+    const chainId = mapChainNetworkId(values.chain);
     const owner = accounts.find((item) => item.chain_id === chainId)?.address;
     if (!owner) {
       message.info('获取账户失败');
