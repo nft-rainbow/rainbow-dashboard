@@ -20,7 +20,7 @@ export default function ResetPwd() {
             }
             await userResetPassword(code, values);
             message.success('重置密码成功');
-        } catch (error) {
+        } catch (err) {
             // @ts-ignore
             message.error('重置密码邮件发送失败' + err.response.data.message);
         }
