@@ -23,3 +23,7 @@ export async function updateCmbCardRelation(name: string, card_no: string, bank:
 export async function getCmbDeposits() {
     return await get('/dashboard/users/cmbRecentDeposits');
 }
+
+export async function getCmbDepositMeta() {
+    return await get('/dashboard/users/cmbDepositMeta');
+}

@@ -9,15 +9,16 @@ import { InfoCircleOutlined, EditTwoTone } from '@ant-design/icons';
 import RainbowBreadcrumb from '@components/Breadcrumb';
 import type { TabsProps } from 'antd';
 import { userBalanceRuntime, userProfile } from '@services/user';
-import { createWxPayOrder, getCmbCardNo, createCmbCardNo, updateCmbCardRelation } from '@services/pay';
+import { 
+    createWxPayOrder, getCmbCardNo, createCmbCardNo, 
+    updateCmbCardRelation, getCmbDepositMeta 
+} from '@services/pay';
 import { User } from '@models/index';
 import { CmbDepositNo } from '@models/index';
 import { formatFiat } from '@utils/index'
 import './userCharge.css';
 
 const { Title, Text } = Typography;
-
-const CMB_PREFIX = '755915712610305';
 
 export default function Page() {
     const [balance, setBalance] = useState(0);
@@ -26,7 +27,7 @@ export default function Page() {
     const [userInfo, setUserProfile] = useState<User | undefined>(undefined);
 
     const onChange = (key: string) => {
-        console.log(key);
+        // console.log(key);
     };
       
     const items: TabsProps['items'] = [
@@ -35,11 +36,11 @@ export default function Page() {
             label: `在线充值`,
             children: <OnlineCharge user={userInfo}/>,
         },
-        /* {
+        {
             key: '2',
             label: `对公汇款`,
             children: <PublicCharge user={userInfo} />,
-        }, */
+        },
     ];
 
     useEffect(() => {
@@ -147,6 +148,7 @@ function PublicCharge({user: userInfo}: {user?: User}) {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
     const [isEdit, setIsEdit] = useState(false);
+    const [cmbDepositMeta, setDepositMeta] = useState<{AccountName: string; AccountBank: string; AccountNumber: string}|undefined>(undefined);
     
     // TODO: more test here
     const getCardNo = async (values: any) => {
@@ -184,6 +186,12 @@ function PublicCharge({user: userInfo}: {user?: User}) {
         });
     }, [tick])
 
+    useEffect(() => {
+        getCmbDepositMeta().then((res) => {
+            setDepositMeta(res);
+        });
+    }, [])
+
     return (<>
         <div style={{background: '#e2e2e2', padding: '20px'}}>
             <p>1. 对公汇款到账取决于线下汇款操作完成后，以银行到账时间为准。</p>
@@ -212,24 +220,22 @@ function PublicCharge({user: userInfo}: {user?: User}) {
                 <p>1.您申请的对公汇款专属账号，推荐使用与平台实名信息认证一致的银行账户进行汇款，若不一致可能面临汇款被拒绝。</p>
                 <p>2.每个平台账号完成信息认证，都可以申请对公汇款专属账号，获取后请妥善保管，勿告知他人。</p>
             </div>
-            <div className='gray-border'>
-                {cardNoInfo && (
-                    <div className='mt-20'>
-                        <p>开户名称：<Text copyable>杭州云萃流图网络科技有限公司</Text></p>
-                        <p>开户银行：<Text copyable>招商银行杭州萧山支行</Text></p>
-                        <p>专属对公账号：<Text copyable>{CMB_PREFIX}{cardNoInfo.cmb_no}</Text></p>
+            {cardNoInfo && (
+                <div className='gray-border mt-20'>
+                        <div>开户名称：<Text copyable>{cmbDepositMeta?.AccountName}</Text></div>
+                        <div>开户银行：<Text copyable>{cmbDepositMeta?.AccountBank}</Text></div>
+                        <div>专属对公账号：<Text copyable>{`${cmbDepositMeta?.AccountNumber}${cardNoInfo.cmb_no}`}</Text></div>
                         <div>
                             <Text strong>请妥善保存账号信息，勿告知他人</Text>
                         </div>
                         <div className='mt-20'>
                             <Button type='primary' onClick={async () => {
-                                await navigator.clipboard.writeText(CMB_PREFIX+cardNoInfo.cmb_no);
+                                await navigator.clipboard.writeText(cmbDepositMeta?.AccountNumber+cardNoInfo.cmb_no);
                                 message.success('复制成功');
                             }}>复制充值卡号</Button>
                         </div>
-                    </div>
-                )}
-            </div>
+                </div>
+            )}
             {!cardNoInfo && (
                 <Form>
                     <Form.Item>
