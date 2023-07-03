@@ -5,7 +5,7 @@ import {
     UserOutlined, LogoutOutlined, UsergroupAddOutlined,
     CodeOutlined, MoneyCollectOutlined, AuditOutlined,
     LineChartOutlined, NodeIndexOutlined, RobotOutlined, QuestionCircleOutlined,
-    RocketOutlined,
+    RocketOutlined, OrderedListOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { 
@@ -47,9 +47,10 @@ const items: MenuItem[] = [
     getItem(<Link to="/panels/apps">我的项目</Link>, '2', <AppstoreOutlined />),
     getItem(<Link to="/panels/contracts">智能合约</Link>, '3', <AuditOutlined />),
     getItem(<Link to="/panels/poaps">NFT活动</Link>, '4', <RocketOutlined />),
-    getItem(<Link to="/panels/socialBot">社群Bot</Link>, '5', <RobotOutlined />),
-    getItem(<Link to="/panels/metadata">元数据</Link>, '6', <NodeIndexOutlined />),
-    getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">开发文档</a>, '7', <CodeOutlined />),
+    getItem(<Link to="/panels/whiteList">凭证策略</Link>, '5', <OrderedListOutlined />),
+    getItem(<Link to="/panels/socialBot">社群Bot</Link>, '6', <RobotOutlined />),
+    getItem(<Link to="/panels/metadata">元数据</Link>, '7', <NodeIndexOutlined />),
+    getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">开发文档</a>, '8', <CodeOutlined />),
 ];
 
 function menuKeyFromLocation(location: object): string {
