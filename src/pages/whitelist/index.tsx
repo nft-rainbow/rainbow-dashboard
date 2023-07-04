@@ -13,11 +13,11 @@ export default function WhiteList() {
       
     const columns = [
         {
-            title: '凭证 ID',
+            title: 'ID',
             dataIndex: 'id',
         },
         {
-            title: '凭证标题',
+            title: '名称',
             dataIndex: 'name',
         },
         {
@@ -26,10 +26,10 @@ export default function WhiteList() {
         },
         {
             title: '操作',
-            render: (text: string) => {
+            render: (text: string, record: Certificate) => {
                 return <Space>
-                    <Button type='link'>查看</Button>
-                    <Button type='link'>编辑</Button>
+                    <Link to={`/panels/whitelist/detail/${record.id}`}><Button type='link'>查看</Button></Link>
+                    {/* <Button type='link'>编辑</Button> */}
                 </Space>
             }
         },
@@ -44,7 +44,7 @@ export default function WhiteList() {
       
     return (
         <>
-            <Card title='凭证策略' style={{flexGrow:1}} extra={<><Link to='/panels/whitelist/createOrUpdate'><Button type='primary'>创建凭证</Button></Link></>}>
+            <Card title='凭证策略' style={{flexGrow:1}} extra={<><Link to='/panels/whitelist/create'><Button type='primary'>创建凭证</Button></Link></>}>
                 <Table 
                     rowKey={'id'} 
                     dataSource={certis} 

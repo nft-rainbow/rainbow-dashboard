@@ -1,17 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
-    Card, Form, Input, Button, Select, Space,
+    Card, Form, Input, Button, 
+    Select, Space, message,
 } from "antd";
 import { SettingOutlined } from '@ant-design/icons';
-import { getCertificateDetail, createCertificate, deleteCertificateItems, addCertificateItems } from '@services/whitelist';
-import EditableTable from './editableTable';
+import { createCertificate } from '@services/whitelist';
+import EditableTable, { DataType } from './editableTable';
 import ParseLocalFile from '../mint/parseLocalFile';
 const { TextArea } = Input;
-
-interface DataType {
-    key: React.Key;
-    name: string;
-}
 
 export default function WhitelistEditor() {
     const [form] = Form.useForm();
@@ -21,12 +17,13 @@ export default function WhitelistEditor() {
     const handleDelete = (key: React.Key) => {
         const newData = dataSource.filter((item) => item.key !== key);
         setDataSource(newData);
+        setCount(count - 1);
     };
 
     const handleAdd = () => {
         const newData: DataType = {
           key: count,
-          name: `Your address`,
+          name: `Input item`,
         };
         setDataSource([...dataSource, newData]);
         setCount(count + 1);
@@ -37,8 +34,8 @@ export default function WhitelistEditor() {
         const index = newData.findIndex((item) => row.key === item.key);
         const item = newData[index];
         newData.splice(index, 1, {
-          ...item,
-          ...row,
+            ...item,
+            ...row,
         });
         setDataSource(newData);
     };
@@ -46,6 +43,27 @@ export default function WhitelistEditor() {
     const handleUpload = (data: any[]) => {
         setDataSource(data.map((item, index) => ({key: index, name: item.Item})));
         setCount(data.length);
+    }
+
+    const onCreateCerti = async (e: any) => {
+        try {
+            const values = await form.validateFields();
+            const items = dataSource.map((item) => ({[values.type]: item.name}));
+            if (items.length === 0) {
+                message.error('请添加凭证');
+                return;
+            }
+            // TODO: 检查手机号或地址格式
+            await createCertificate(values.type, {
+                name: values.name,
+                description: values.description,
+                items,
+            });
+            message.success('创建成功');
+        } catch(error) {
+            // @ts-ignore
+            message.error(error.message);
+        }
     }
 
     return (
@@ -65,9 +83,9 @@ export default function WhitelistEditor() {
                     </Form.Item>
                     <Form.Item label='类型' name='type' rules={[{ required: true }]}>
                         <Select>
-                            <Select.Option value='1'>地址</Select.Option>
-                            <Select.Option value='2'>手机号</Select.Option>
-                            <Select.Option value='3'>快照</Select.Option>
+                            <Select.Option value='address'>地址</Select.Option>
+                            <Select.Option value='phone'>手机号</Select.Option>
+                            {/* <Select.Option value='3'>快照</Select.Option> */}
                         </Select>
                     </Form.Item>
                 </Form>
@@ -84,7 +102,7 @@ export default function WhitelistEditor() {
                     </div>
                     <div className='mt-20'>
                         <Form.Item wrapperCol={{offset: 4}}>
-                            <Button type='primary'>提交</Button>
+                            <Button type='primary' onClick={onCreateCerti}>提交</Button>
                         </Form.Item>
                     </div>
                 </div>

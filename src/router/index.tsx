@@ -28,7 +28,8 @@ import AutoSponsors from "@pages/contracts/autoSponsorContracts";
 import GaslessPoap from '@pages/activities/createPoap';
 import ChargeBalance from '@pages/users/chargeBalance';
 import Whitelist from '@pages/whitelist';
-import WhitelistEditor from '@pages/whitelist/createOrUpdate'
+import WhitelistEditor from '@pages/whitelist/create';
+import WhitelistDetail from '@pages/whitelist/detail';
 
 const AppRouter: React.FC = () => {
     return (
@@ -71,7 +72,8 @@ const AppRouter: React.FC = () => {
                     <Route path="socialBot" element={<Bots />} />
                     <Route path="empty" element={<EmptyPage />} />
                     <Route path='whitelist' element={<Whitelist />} />
-                    <Route path='whitelist/createOrUpdate' element={<WhitelistEditor />} />
+                    <Route path='whitelist/create' element={<WhitelistEditor />} />
+                    <Route path='whitelist/detail/:id' element={<WhitelistDetail />} />
                 </Route>
                 <Route path="/" element={<Navigate to="panels" />} />
                 <Route path="*" element={<Navigate to="/" />} />

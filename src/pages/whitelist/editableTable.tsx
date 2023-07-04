@@ -97,7 +97,8 @@ const EditableCell: React.FC<EditableCellProps> = ({
 
 type EditableTableProps = Parameters<typeof Table>[0];
 
-interface DataType {
+export interface DataType {
+    id?: number;
     key: React.Key;
     name: string;
 }
@@ -113,20 +114,20 @@ export default function EditableTable(props: {
     
     const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
         {
-          title: '条目',
-          dataIndex: 'name',
-          width: '80%',
-          editable: true,
+            title: '条目',
+            dataIndex: 'name',
+            width: '80%',
+            editable: true,
         },
         {
-          title: '操作',
-          dataIndex: 'operation',
-          render: (_, record: { key: React.Key }) =>
-            dataSource.length >= 1 ? (
-              <Popconfirm title="确认删除?" onConfirm={() => handleDelete(record.key)}>
-                <a>删除</a>
-              </Popconfirm>
-            ) : null,
+            title: '操作',
+            dataIndex: 'operation',
+            render: (_, record: { key: React.Key }) =>
+                dataSource.length >= 1 ? (
+                <Popconfirm title="确认删除?" okText={'确定'} cancelText={'取消'} onConfirm={() => handleDelete(record.key)}>
+                    <a>删除</a>
+                </Popconfirm>
+                ) : <></>,
         },
     ];
 
