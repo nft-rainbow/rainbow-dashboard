@@ -3,11 +3,14 @@ import {
     Card, Button, Table, Space, TablePaginationConfig,
     Popconfirm, Modal, message,
 } from "antd";
+import { CertificateItem } from '@models/Whitelist';
 import { getCertificateDetail, deleteCertificateItems, addCertificateItems} from '@services/whitelist';
 import { useParams } from 'react-router-dom';
 import { SettingOutlined } from '@ant-design/icons';
 import EditableTable, { DataType } from './editableTable';
 import ParseLocalFile from '../mint/parseLocalFile';
+import { isCfxAddress } from '@utils/addressUtils/index';
+import { isPhone } from '@utils/format';
 
 interface Item {
     id: number;
@@ -56,12 +59,13 @@ export default function Page() {
 
     useEffect(() => {
         getCertificateDetail(id, page, 10).then((res) => {
-            setItems(res.items.map((item: {id: number; phone: string; address: string}) => ({
+            setCount(res.count);
+            setType(res.certificate_type);
+            const items = res.items || [];
+            setItems(items.map((item: CertificateItem) => ({
                 id: item.id,
                 item: item.address || item.phone,
             })));
-            setCount(res.count);
-            setType(res.certificate_type);
         });
     }, [page, id, trigger]);
 
@@ -129,9 +133,25 @@ function ItemAddModal(props: {id: number, type?: string, updateTrigger: (trigger
 
     const onAddItem = async () => {
         try {
-            // TODO 检查手机号或地址格式
-            const items: object[] = dataSource.map(item => ({[type as unknown as string]: item.name}));
+            const items: object[] = dataSource.map(item => ({[type as unknown as string]: item.name.toString()}));
             if (items.length === 0) return;
+            // 检查地址或手机号格式
+            if (type === 'phone') {
+                const invalid = items.filter(item => !isPhone((item as {phone: string}).phone));
+                if (invalid.length > 0) {
+                    // @ts-ignore
+                    message.error(`手机号格式错误: ${invalid.map(item => item.phone).join(', ')}`);
+                    return;
+                }
+            }
+            if (type === 'address') {
+                const invalid = items.filter(item => !isCfxAddress((item as {address: string}).address));
+                if (invalid.length > 0) {
+                    // @ts-ignore
+                    message.error(`地址格式错误: ${invalid.map(item => item.address).join(', ')}`);
+                    return;
+                }
+            }
             await addCertificateItems(id, items);
             setVisible(false);
             updateTrigger(parseInt((Math.random() * 10000).toString()));

@@ -5,14 +5,18 @@ import {
 } from "antd";
 import { SettingOutlined } from '@ant-design/icons';
 import { createCertificate } from '@services/whitelist';
+import { useNavigate } from 'react-router-dom';
 import EditableTable, { DataType } from './editableTable';
 import ParseLocalFile from '../mint/parseLocalFile';
+import { isCfxAddress } from '@utils/addressUtils/index';
+import { isPhone } from '@utils/format';
 const { TextArea } = Input;
 
 export default function WhitelistEditor() {
     const [form] = Form.useForm();
     const [dataSource, setDataSource] = useState<DataType[]>([]);
     const [count, setCount] = useState(0);
+    const navigate = useNavigate();
     
     const handleDelete = (key: React.Key) => {
         const newData = dataSource.filter((item) => item.key !== key);
@@ -53,13 +57,31 @@ export default function WhitelistEditor() {
                 message.error('请添加凭证');
                 return;
             }
-            // TODO: 检查手机号或地址格式
+            const type = values.type;
+            // 检查地址或手机号格式
+            if (type === 'phone') {
+                const invalid = items.filter(item => !isPhone((item as {phone: string}).phone));
+                if (invalid.length > 0) {
+                    // @ts-ignore
+                    message.error(`手机号格式错误: ${invalid.map(item => item.phone).join(', ')}`);
+                    return;
+                }
+            }
+            if (type === 'address') {
+                const invalid = items.filter(item => !isCfxAddress((item as {address: string}).address));
+                if (invalid.length > 0) {
+                    // @ts-ignore
+                    message.error(`地址格式错误: ${invalid.map(item => item.address).join(', ')}`);
+                    return;
+                }
+            }
             await createCertificate(values.type, {
                 name: values.name,
                 description: values.description,
                 items,
             });
             message.success('创建成功');
+            navigate("/panels/whiteList");
         } catch(error) {
             // @ts-ignore
             message.error(error.message);
@@ -101,7 +123,7 @@ export default function WhitelistEditor() {
                         <EditableTable dataSource={dataSource} handleDelete={handleDelete} handleSave={handleSave} />
                     </div>
                     <div className='mt-20'>
-                        <Form.Item wrapperCol={{offset: 4}}>
+                        <Form.Item>
                             <Button type='primary' onClick={onCreateCerti}>提交</Button>
                         </Form.Item>
                     </div>

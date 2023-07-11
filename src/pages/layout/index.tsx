@@ -62,8 +62,9 @@ function menuKeyFromLocation(location: object): string {
     if (pathname.startsWith('/panels/mint')) return '3';
     if (pathname.startsWith('/panels/plan')) return '300';
     if (pathname.startsWith('/panels/poaps')) return '4';
-    if (pathname.startsWith('/panels/socialBot')) return '5';
-    if (pathname.startsWith('/panels/metadata')) return '6';
+    if (pathname.startsWith('/panels/whiteList')) return '5';
+    if (pathname.startsWith('/panels/socialBot')) return '6';
+    if (pathname.startsWith('/panels/metadata')) return '7';
     return '1';
 }
 
