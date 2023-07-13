@@ -142,7 +142,7 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
                         }
                     } />
                 </Form.Item>
-                <Form.Item label='领取凭证' tooltip='领取凭证白名单' name='certificate_stratage_id'>
+                <Form.Item label='领取凭证' tooltip='领取凭证白名单' name='certificate_strategy_id'>
                     <Select>
                         {whitelist.map(item => <Option key={item.id} value={item.id}>{item.name}</Option>)}
                     </Select>
