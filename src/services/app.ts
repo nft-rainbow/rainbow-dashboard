@@ -68,6 +68,18 @@ export function batchMint(id:string, arr:any[]) {
     return post(`/dashboard/apps/${id}/nft/batch/by-meta-parts`, arr);
 }
 
+/**
+ {
+    "chain": "",
+    "contract_address": "",
+    "mint_items": [{
+        "amount": 0,
+        "metadata_uri": "",
+        "mint_to_address": "",
+        "token_id": ""
+    }]
+ }
+ */
 export function batchMintByMetadataUri(id: string, meta: object) {
     return post(`/dashboard/apps/${id}/nft/batch/by-meta-uri`, meta);
 }
@@ -86,4 +98,24 @@ export async function getAppAccounts(id: number | string): Promise<ChainAccount[
 
 export async function getContractInfo(id: number | string): Promise<any> {
     return await get(`/dashboard/contracts?id=${id}`);
+}
+
+/**
+    {
+        "app_id": 0,
+        "chain": "string",
+        "contract_address": "string",
+        "mint_items": [
+            {
+                "amount": 0,
+                "metadata_uri": "string",
+                "mint_to": "string",
+                "token_id": "string"
+            }
+        ],
+        "source_type": "string"
+    }
+ */
+export async function batchMintByAddressOrPhone(data: any): Promise<any> {
+    return post(`/apps/mints/batch/by-meta-uri`, data);
 }

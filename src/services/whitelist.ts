@@ -1,5 +1,8 @@
 import { post, get, del } from '.';
 
+/**
+ * name_like, certificate_type
+ */
 export function getCertificates(page: number, limit: number, query?: object) {
     return get('/apps/certis/strategy/list', Object.assign({page, limit}, query));
 }

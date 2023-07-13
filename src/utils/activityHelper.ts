@@ -38,6 +38,7 @@ export interface CreateActivityData {
   max_mint_count: number;
   name: string;
   rainbow_user_id?: number;
+  certificate_stratage_id?: number;
   white_list_infos?: [
     {
       count: number;
