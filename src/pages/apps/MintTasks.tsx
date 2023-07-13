@@ -82,7 +82,7 @@ export function AppNFTs(props: { id: string; contract?: string, refreshTrigger: 
 				</>
 			),
 			dataIndex: 'status',
-			render: (text: number, record: NFT) => mapSimpleStatus(text, dealError(record.error)),
+			render: (status: number, record: NFT) => mapSimpleStatus(status, dealError(record.error)),
 		},
 		{
 			title: '哈希',
@@ -162,11 +162,22 @@ export function AppNFTs(props: { id: string; contract?: string, refreshTrigger: 
 	);
 }
 
-export function mapSimpleStatus(status: number, error: string) {
+
+/**
+  mint_task.block_reason:  
+  TX_BLOCK_REASON_DB_ERR:                  "failed get sponsor status from db",
+  TX_BLOCK_REASON_SPONSORING:              "sponsoring",
+  TX_BLOCK_REASON_IO_ERR:                  "io error",
+  TX_BLOCK_REASON_NOT_ENOUGH_CASH:         "not enough cash",
+  TX_BLOCK_REASON_FAILED_GET_SPONSOR_INFO: "failed get sponsor info",
+  TX_BLOCK_REASON_SPONSOR_NOT_ENOUGH:      "sponsor not enough",
+ */
+export function mapSimpleStatus(status: number, error: string, block_reason: string) {
 	switch (status) {
 		case 0:
+            const title = block_reason === 'not enough cash' ? `余额不足,请充值` : '待处理';
 			return (
-				<Tooltip title="待处理">
+				<Tooltip title={title}>
 					<ClockCircleTwoTone />
 				</Tooltip>
 			);
