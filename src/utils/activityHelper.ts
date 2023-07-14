@@ -18,6 +18,7 @@ export interface FormData {
   activity_picture_url: string;
   amount: string;
   max_mint_count?: number;
+  certificate_strategy_id?: number;
   command?: string;
   white_list_infos?: [
     {
@@ -38,6 +39,7 @@ export interface CreateActivityData {
   max_mint_count: number;
   name: string;
   rainbow_user_id?: number;
+  certificate_strategy_id?: number;
   white_list_infos?: [
     {
       count: number;
@@ -94,6 +96,7 @@ export const formDataTranslate = (data: FormData, apps: App[], activityType: num
         name: data.name,
         activity_type: activityTypeIdToName(activityType),
         app_name: apps[appIndex].name,
+        certificate_strategy_id: data.certificate_strategy_id,
     };
 };
 

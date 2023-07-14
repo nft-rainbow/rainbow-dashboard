@@ -110,10 +110,11 @@ export async function put(url: string, body = {}) {
   return data;
 }
 
-export async function del(url: string) {
+export async function del(url: string, postData: any = {}) {
     const headers = await authHeader();
     const { data } = await axios.delete(methodUrl(url), {
-        headers
+        headers,
+        data: postData
     });
     return data;
 }
