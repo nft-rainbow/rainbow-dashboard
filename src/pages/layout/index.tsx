@@ -177,7 +177,7 @@ const App: React.FC = () => {
                     <Header className="bg-white" style={{ padding: '0 20px', display: 'flex', justifyContent: 'space-between' }}>
                         <div><MenuFoldOutlined style={{ fontSize: '20px' }} onClick={() => setCollapsed(!collapsed)} /></div>
                         <div>
-                            <Link to="/panels/poaps/createGaslessInDefaultProject">创建POAP</Link>
+                            {/* <Link to="/panels/poaps/createGaslessInDefaultProject">创建POAP</Link> */}
                             <Button 
                                 type='link' 
                                 onClick={() => setIsMintModalVisible(true)}

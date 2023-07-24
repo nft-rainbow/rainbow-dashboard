@@ -43,9 +43,9 @@ const AppRouter: React.FC = () => {
                 <Route
                     path="panels"
                     element={
-                    <RequireAuth>
-                        <DashboardLayout />
-                    </RequireAuth>
+                        <RequireAuth>
+                            <DashboardLayout />
+                        </RequireAuth>
                     }
                 >
                     <Route index element={<Panel />} />
