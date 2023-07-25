@@ -40,7 +40,7 @@ export default function EasyMint() {
         setMinting(true);
 
         easyMintUrl(appId.toString(), values).then((res) => {
-            form.resetFields();
+            message.success('铸造任务提交成功,可在项目详情页查看铸造进度');
         }).catch((err) => {
             message.error(err.response.data.message);
         }).finally(() => {
@@ -136,7 +136,7 @@ export default function EasyMint() {
                             </Button>
                         </Col>
                         <Col span={6}>
-                            <Button htmlType={'reset'}>重置</Button>
+                            <Button htmlType={'reset'} onClick={() => form.resetFields()}>重置</Button>
                         </Col>
                     </Row>
                 </Form.Item>
