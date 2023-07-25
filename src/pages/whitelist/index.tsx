@@ -49,7 +49,7 @@ export default function WhiteList() {
             <Card title='凭证策略' style={{flexGrow:1}} extra={<>
                 <Form layout={'inline'}>
                     <Form.Item label='名称'>
-                        <Input onChange={e => setSearchName(e.target.value)}/>
+                        <Input value={searchName} onChange={e => setSearchName(e.target.value)}/>
                     </Form.Item>
                     <Form.Item label='类型'>
                         <Select value={searchType} onChange={setSearchType} style={{width: '100px'}}>

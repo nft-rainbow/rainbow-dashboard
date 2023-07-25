@@ -159,6 +159,7 @@ const App: React.FC = () => {
                         left: 0,
                         top: 0,
                         bottom: 0,
+                        zIndex: 10,
                     }}
                 >
                     <div className="logo">
@@ -178,13 +179,14 @@ const App: React.FC = () => {
                         <div><MenuFoldOutlined style={{ fontSize: '20px' }} onClick={() => setCollapsed(!collapsed)} /></div>
                         <div>
                             {/* <Link to="/panels/poaps/createGaslessInDefaultProject">创建POAP</Link> */}
-                            <Button 
+                            {/* <Button 
                                 type='link' 
                                 onClick={() => setIsMintModalVisible(true)}
                             >
                                 快捷铸造
                                 <Tooltip title="快捷铸造是在事先部署的智能合约中铸造 NFT，方便新用户快速上手"><QuestionCircleOutlined/></Tooltip>
-                            </Button>
+                            </Button> */}
+                            <Link to="/panels/mint/easyMint">快捷铸造</Link>
                             <Link to="/panels/contracts/sponsor">设置代付</Link>
                             <Dropdown menu={{ items: userMenuItems }}>
                                 <Button type='link' onClick={e => e.preventDefault()} href="#">

@@ -30,6 +30,7 @@ import ChargeBalance from '@pages/users/chargeBalance';
 import Whitelist from '@pages/whitelist';
 import WhitelistEditor from '@pages/whitelist/create';
 import WhitelistDetail from '@pages/whitelist/detail';
+import EasyMint from '@pages/mint/easyMint';
 
 const AppRouter: React.FC = () => {
     return (
@@ -56,6 +57,7 @@ const AppRouter: React.FC = () => {
                     <Route path="company" element={<Company />} />
                     <Route path="apps" element={<App />} />
                     <Route path="apps/:id" element={<AppDetail />} />
+                    <Route path="mint/easyMint" element={<EasyMint />} />
                     <Route path="mint/:id" element={<MintFrame />} />
                     <Route path="contracts" element={<Contracts />} />
                     <Route path="contracts/sponsor" element={<ContractSponsor />} />
