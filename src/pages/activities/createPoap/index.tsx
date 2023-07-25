@@ -139,7 +139,7 @@ function ActivityConfig() {
             navigate("/panels/poaps");
         } catch(e) {
             // @ts-ignore
-            message.error('创建失败' + e.response.data.message);   
+            message.error('创建失败' + e.response?.data.message);   
         }
     }
 
