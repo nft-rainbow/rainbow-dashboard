@@ -77,6 +77,10 @@ function ActivityConfig() {
                 message.warning('请上传文件, 并进行合成操作');
                 return;
             }
+            if (!values.activityDate) {
+                message.warning('请选择开始日期');
+                return;
+            }
             // date convert
             const activityMeta = {
                 name: values.name,

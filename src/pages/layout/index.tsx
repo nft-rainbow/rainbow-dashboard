@@ -12,6 +12,8 @@ import {
     Layout, Menu, Dropdown, Space, Button,
     ConfigProvider,
 } from 'antd';
+import 'dayjs/locale/zh-cn';
+import locale from 'antd/locale/zh_CN';
 import { SelectInfo } from 'rc-menu/lib/interface';
 import { useAuth } from '@router/Auth';
 import { UserInfo } from '@services/index';
@@ -84,6 +86,7 @@ const App: React.FC = () => {
                     colorLink: '#6953EF',
                 },
             }}
+            locale={locale}
         >
             <Layout id="rainbow-layout">
                 <Sider
