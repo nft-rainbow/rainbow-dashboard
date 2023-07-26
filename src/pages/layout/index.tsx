@@ -41,7 +41,7 @@ const items: MenuItem[] = [
     getItem(<Link to="/panels/apps">我的项目</Link>, '2', <AppstoreOutlined />),
     getItem(<Link to="/panels/contracts">智能合约</Link>, '3', <AuditOutlined />),
     getItem(<Link to="/panels/poaps">NFT活动</Link>, '4', <RocketOutlined />),
-    getItem(<Link to="/panels/whiteList">凭证策略</Link>, '5', <OrderedListOutlined />),
+    getItem(<Link to="/panels/whitelist">凭证策略</Link>, '5', <OrderedListOutlined />),
     getItem(<Link to="/panels/socialBot">社群Bot</Link>, '6', <RobotOutlined />),
     getItem(<Link to="/panels/metadata">元数据</Link>, '7', <NodeIndexOutlined />),
     getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">开发文档</a>, '8', <CodeOutlined />),
@@ -56,7 +56,7 @@ function menuKeyFromLocation(location: object): string {
     if (pathname.startsWith('/panels/mint')) return '3';
     if (pathname.startsWith('/panels/plan')) return '300';
     if (pathname.startsWith('/panels/poaps')) return '4';
-    if (pathname.startsWith('/panels/whiteList')) return '5';
+    if (pathname.startsWith('/panels/whitelist')) return '5';
     if (pathname.startsWith('/panels/socialBot')) return '6';
     if (pathname.startsWith('/panels/metadata')) return '7';
     return '1';
@@ -65,10 +65,11 @@ function menuKeyFromLocation(location: object): string {
 const App: React.FC = () => {
     const location = useLocation();
 
-    const [selectedKeys, setSelectedKeys] = useState<string[]>([menuKeyFromLocation(location)]);
-    const [collapsed, setCollapsed] = useState(false);
     const auth = useAuth();
     const user = auth.user as UserInfo;
+
+    const [selectedKeys, setSelectedKeys] = useState<string[]>([menuKeyFromLocation(location)]);
+    const [collapsed, setCollapsed] = useState(false);
 
     const userMenuItems: MenuProps['items'] = [
         getItem(<Link to="/panels/userBalance">用户余额</Link>, '1', <MoneyCollectOutlined />),

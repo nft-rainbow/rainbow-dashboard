@@ -72,7 +72,7 @@ export default function Page() {
     return (
         <>
             <Card 
-                title='凭证内容列表'
+                title='凭证条目列表'
                 style={{flexGrow:1}} 
                 extra={<>
                     <ItemAddModal id={id} type={type} updateTrigger={setTrigger} />
@@ -127,7 +127,8 @@ function ItemAddModal(props: {id: number, type?: string, updateTrigger: (trigger
     };
 
     const handleUpload = (data: any[]) => {
-        setDataSource(data.map((item, index) => ({key: index, name: item.Item})));
+        data = data.filter(item => item.Item !== '');
+        setDataSource(data.map((item, index) => ({key: index, name: item.Item.toString()})));
         setCount(data.length);
     }
 
@@ -165,7 +166,7 @@ function ItemAddModal(props: {id: number, type?: string, updateTrigger: (trigger
 
     return (
         <>
-            <Button type='primary' onClick={() => setVisible(true)}>添加凭证</Button>
+            <Button type='primary' onClick={() => setVisible(true)}>添加条目</Button>
             <Modal 
                 open={visible} 
                 title='添加条目'
