@@ -33,6 +33,7 @@ export interface ActivityItem {
         }
     ];
     support_wallets: string[];
+    certificate_strategy_id: number;
 }
 
 export interface SearchParams {

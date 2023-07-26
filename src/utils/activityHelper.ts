@@ -118,6 +118,7 @@ export const updateFormDataTranslate = (activity: ActivityItem, data: FormData) 
         white_list_infos: data.white_list_infos,
         command: data.command ?? '',
         name: data.name,
+        certificate_strategy_id: data.certificate_strategy_id || activity.certificate_strategy_id,
     };
 };
 

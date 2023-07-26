@@ -77,6 +77,10 @@ function ActivityConfig() {
                 message.warning('请上传文件, 并进行合成操作');
                 return;
             }
+            if (!values.activityDate) {
+                message.warning('请选择开始日期');
+                return;
+            }
             // date convert
             const activityMeta = {
                 name: values.name,
@@ -139,7 +143,7 @@ function ActivityConfig() {
             navigate("/panels/poaps");
         } catch(e) {
             // @ts-ignore
-            message.error('创建失败' + e.response.data.message);   
+            message.error('创建失败' + e.response?.data.message);   
         }
     }
 

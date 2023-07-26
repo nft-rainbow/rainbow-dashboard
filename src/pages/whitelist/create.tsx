@@ -45,7 +45,8 @@ export default function WhitelistEditor() {
     };
 
     const handleUpload = (data: any[]) => {
-        setDataSource(data.map((item, index) => ({key: index, name: item.Item})));
+        data = data.filter(item => item.Item !== '');
+        setDataSource(data.map((item, index) => ({key: index, name: item.Item.toString()})));
         setCount(data.length);
     }
 

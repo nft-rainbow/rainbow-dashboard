@@ -68,7 +68,7 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
     }, []);
 
     useEffect(() => {
-        getCertificates(1, 1000).then(res => {
+        getCertificates(1, 10000).then(res => {
             setWhitelist(res.items);
         });
     }, []);

@@ -68,7 +68,7 @@ export default function Poaps() {
                                 {resetText}
                             </Button>,
                             <Button key='create-activity' type='primary' onClick={() => setIsActivityModalVisible(true)}>创建活动</Button>,
-                            <Link to='/panels/poaps/createGaslessInDefaultProject'><Button>创建POAP<RocketOutlined /></Button></Link>
+                            <Link to='/panels/poaps/createGaslessInDefaultProject'>创建POAP</Link>
                         ],
                     }}
                     options={false}
