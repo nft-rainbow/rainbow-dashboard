@@ -3,14 +3,17 @@ import {
     Card, Button, Table, Space, TablePaginationConfig,
     Popconfirm, Modal, message,
 } from "antd";
-import { CertificateItem } from '@models/Whitelist';
-import { getCertificateDetail, deleteCertificateItems, addCertificateItems} from '@services/whitelist';
 import { useParams } from 'react-router-dom';
 import { SettingOutlined } from '@ant-design/icons';
-import EditableTable, { DataType } from './editableTable';
-import ParseLocalFile from '../mint/parseLocalFile';
 import { isCfxAddress } from '@utils/addressUtils/index';
 import { isPhone } from '@utils/format';
+import { CertificateItem, Certificate } from '@models/Whitelist';
+import { 
+    getCertificateDetail, deleteCertificateItems,
+    addCertificateItems, getCertificateMeta,
+} from '@services/whitelist';
+import EditableTable, { DataType } from './editableTable';
+import ParseLocalFile from '../mint/parseLocalFile';
 
 interface Item {
     id: number;
@@ -25,6 +28,7 @@ export default function Page() {
     const [page, setPage] = useState(1);
     const [type, setType] = useState<string>('phone');
     const [trigger, setTrigger] = useState(1);
+    const [meta, setMeta] = useState<Certificate|null>(null);
 
     const columns = [
         {
@@ -69,15 +73,22 @@ export default function Page() {
         });
     }, [page, id, trigger]);
 
+    useEffect(() => {
+        getCertificateMeta(id).then(res => {
+            setMeta(res);
+        });
+    }, [id]);
+
     return (
         <>
             <Card 
-                title='凭证条目列表'
+                title={`凭证: ${meta?.name}-${meta?.certificate_type}`}
                 style={{flexGrow:1}} 
                 extra={<>
                     <ItemAddModal id={id} type={type} updateTrigger={setTrigger} />
                 </>}
             >
+                <p>{meta?.description}</p>
                 <Table 
                     rowKey={'id'}
                     dataSource={items}

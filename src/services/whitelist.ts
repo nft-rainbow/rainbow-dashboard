@@ -11,15 +11,19 @@ export function getCertificateDetail(id: number, page: number, limit: number) {
     return get(`/apps/certis/strategy/${id}/certificates`, {page, limit});
 }
 
+export function getCertificateMeta(id: number) {
+    return get(`/apps/certis/strategy/${id}`);
+}
+
 /* export function updateCertificateDetail(id: number, data: object) {
     return post(`/apps/certis/strategy/${id}/certificates`, data);
 } */
 
 /**
- name
- description
- items: []
- */
+    name
+    description
+    items: []
+*/
 // type: address, contract, dodo, gasless, phone
 export function createCertificate(type: string, data: object) {
     return post(`/apps/certis/strategy/type/${type}`, data);
