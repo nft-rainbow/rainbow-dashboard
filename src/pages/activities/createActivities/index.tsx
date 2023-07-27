@@ -12,6 +12,7 @@ import { createActivity } from '@services/activity';
 import { getAllApps } from '@services/app';
 import { formDataTranslate, type FormData } from '@utils/activityHelper';
 import useResetFormOnCloseModal from '@hooks/useResetFormOnCloseModal';
+import { getCertificates } from '@services/whitelist';
 import './index.scss';
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -31,6 +32,7 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
     const [supportWallets, setSupportWallets] = useState<string[]>(DEFAULT_WALLETS);
     const [activityType, setActivityType] = useState(-1);
     const [nolimitAmount, setNolimitAmount] = useState(false);
+    const [whitelist, setWhitelist] = useState<{name: string; id: number}[]>([]);
     useResetFormOnCloseModal({ form, open });
 
     const handleFinish = useCallback(
@@ -63,6 +65,12 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
 
     useEffect(() => {
         getAllApps().then(setApps);
+    }, []);
+
+    useEffect(() => {
+        getCertificates(1, 10000).then(res => {
+            setWhitelist(res.items);
+        });
     }, []);
 
     return (
@@ -134,6 +142,11 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
                         }
                     } />
                 </Form.Item>
+                <Form.Item label='领取凭证' tooltip='领取凭证白名单' name='certificate_strategy_id'>
+                    <Select>
+                        {whitelist.map(item => <Option key={item.id} value={item.id}>{item.name}</Option>)}
+                    </Select>
+                </Form.Item>
                 <Form.Item label='领取口令'>
                     <Space>
                         <Form.Item>
@@ -148,7 +161,6 @@ export const CreatePOAP: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal
                         {useCommand && <Form.Item name="command">
                             <Input placeholder="请输入口令" className="w-full" />
                         </Form.Item>}
-                        
                     </Space>
                 </Form.Item>
             </Form>

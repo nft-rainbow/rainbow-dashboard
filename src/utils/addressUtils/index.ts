@@ -1,5 +1,9 @@
+import { address } from 'js-conflux-sdk';
+
 const isNegative = (x: number) => typeof x === 'number' && x < 0;
+
 const isString = (x: string) => typeof x === 'string';
+
 const getEllipsStr = (str: string, frontNum: number, endNum: number) => {
   if (!isString(str) || isNegative(frontNum) || isNegative(endNum)) {
     throw new Error('Invalid args');
@@ -19,3 +23,7 @@ export const shortenCfxAddress = (address: string) => {
   const secondStr = getEllipsStr(arr[1], 3, 8);
   return `${arr[0]}:${secondStr}`;
 };
+
+export function isCfxAddress(addr: string) {
+  return address.isValidCfxAddress(addr);
+}

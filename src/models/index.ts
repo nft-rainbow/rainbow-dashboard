@@ -2,6 +2,7 @@ export * from './Bot';
 export * from './Contract';
 export * from './User';
 export * from './Activity';
+export * from './Whitelist';
 
 export interface BaseModel {
   id: number;

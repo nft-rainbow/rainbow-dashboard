@@ -27,6 +27,10 @@ import MintFrame from "@pages/mint";
 import AutoSponsors from "@pages/contracts/autoSponsorContracts";
 import GaslessPoap from '@pages/activities/createPoap';
 import ChargeBalance from '@pages/users/chargeBalance';
+import Whitelist from '@pages/whitelist';
+import WhitelistEditor from '@pages/whitelist/create';
+import WhitelistDetail from '@pages/whitelist/detail';
+import EasyMint from '@pages/mint/easyMint';
 
 const AppRouter: React.FC = () => {
     return (
@@ -40,9 +44,9 @@ const AppRouter: React.FC = () => {
                 <Route
                     path="panels"
                     element={
-                    <RequireAuth>
-                        <DashboardLayout />
-                    </RequireAuth>
+                        <RequireAuth>
+                            <DashboardLayout />
+                        </RequireAuth>
                     }
                 >
                     <Route index element={<Panel />} />
@@ -53,6 +57,7 @@ const AppRouter: React.FC = () => {
                     <Route path="company" element={<Company />} />
                     <Route path="apps" element={<App />} />
                     <Route path="apps/:id" element={<AppDetail />} />
+                    <Route path="mint/easyMint" element={<EasyMint />} />
                     <Route path="mint/:id" element={<MintFrame />} />
                     <Route path="contracts" element={<Contracts />} />
                     <Route path="contracts/sponsor" element={<ContractSponsor />} />
@@ -68,6 +73,9 @@ const AppRouter: React.FC = () => {
                     <Route path="metadata" element={<Metadata />} />
                     <Route path="socialBot" element={<Bots />} />
                     <Route path="empty" element={<EmptyPage />} />
+                    <Route path='whitelist' element={<Whitelist />} />
+                    <Route path='whitelist/create' element={<WhitelistEditor />} />
+                    <Route path='whitelist/detail/:id' element={<WhitelistDetail />} />
                 </Route>
                 <Route path="/" element={<Navigate to="panels" />} />
                 <Route path="*" element={<Navigate to="/" />} />

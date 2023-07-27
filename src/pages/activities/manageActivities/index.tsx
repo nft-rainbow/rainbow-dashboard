@@ -1,33 +1,35 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { 
     Modal, Form, Input, Switch, DatePicker, Select, 
     InputNumber, message, Checkbox, Space
 } from 'antd';
-import { ActivityItem } from '@models/index';
 import type { CheckboxValueType } from 'antd/es/checkbox/Group';
+import { ActivityItem } from '@models/index';
 import LimitedInput from '@modules/limitedInput';
 import FileUploadNew from '@components/FileUploadNew';
-import { ModalStyle } from './constants';
 import { updateFormDataTranslate, timestampToDate, type FormData } from '@utils/activityHelper';
 import { updateActivity } from '@services/activity';
+import { getCertificates } from '@services/whitelist';
 import { DEFAULT_WALLETS } from '../createActivities/constants';
+import { ModalStyle } from './constants';
 import './index.scss';
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
-interface CreatePOAProps {
+interface CreateActivityProps {
     open: boolean;
     onCancel: () => void;
     hideModal: () => void;
     activity: ActivityItem;
 }
 
-const ManageActivityModal: React.FC<CreatePOAProps> = ({ open, onCancel, hideModal, activity }) => {
+const ManageActivityModal: React.FC<CreateActivityProps> = ({ open, onCancel, hideModal, activity }) => {
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [form] = Form.useForm();
     const [noLimitAmount, setNoLimitAmount] = useState(activity.amount === -1);
     const [useCommand, setUseCommand] = useState(!!activity.command);
     const [supportWallets, setSupportWallets] = useState<string[]>(DEFAULT_WALLETS);
+    const [whitelist, setWhitelist] = useState<{name: string; id: number}[]>([]);
 
     const handleFinish = useCallback(async (values: FormData) => {
         try {
@@ -48,6 +50,12 @@ const ManageActivityModal: React.FC<CreatePOAProps> = ({ open, onCancel, hideMod
     const handleCancel = useCallback(() => {
         setConfirmLoading(false);
         onCancel();
+    }, [onCancel]);
+
+    useEffect(() => {
+        getCertificates(1, 10000).then(res => {
+            setWhitelist(res.items);
+        });
     }, []);
 
     return (
@@ -115,6 +123,11 @@ const ManageActivityModal: React.FC<CreatePOAProps> = ({ open, onCancel, hideMod
                             setSupportWallets(checkedValues as string[]);
                         }} 
                     />
+                </Form.Item>
+                <Form.Item label='领取凭证' tooltip='领取凭证白名单' name='certificate_strategy_id' initialValue={activity.certificate_strategy_id}>
+                    <Select>
+                        {whitelist.map(item => <Option key={item.id} value={item.id}>{item.name}</Option>)}
+                    </Select>
                 </Form.Item>
                 <Form.Item label='领取口令'>
                     <Space>
