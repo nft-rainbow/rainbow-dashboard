@@ -21,7 +21,7 @@ export default function WhitelistEditor() {
     const handleDelete = (key: React.Key) => {
         const newData = dataSource.filter((item) => item.key !== key);
         setDataSource(newData);
-        setCount(count - 1);
+        // setCount(count - 1);
     };
 
     const handleAdd = () => {
@@ -47,7 +47,7 @@ export default function WhitelistEditor() {
     const handleUpload = (data: any[]) => {
         data = data.filter(item => item.Item !== '');
         setDataSource(data.map((item, index) => ({key: index, name: item.Item.toString()})));
-        setCount(data.length);
+        setCount(count + data.length);
     }
 
     const onCreateCerti = async (e: any) => {
