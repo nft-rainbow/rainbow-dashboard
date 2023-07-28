@@ -16,6 +16,7 @@ import {
 import { User } from '@models/index';
 import { CmbDepositNo } from '@models/index';
 import { formatFiat } from '@utils/index'
+import { trimSpace } from '@utils/format'
 import './userCharge.css';
 
 const { Title, Text } = Typography;
@@ -158,9 +159,9 @@ function PublicCharge({user: userInfo}: {user?: User}) {
                     message.warning('请先进行企业认证');
                     return;
                 }
-                await createCmbCardNo(values.name, values.card_no, values.bank);
+                await createCmbCardNo(values.name, trimSpace(values.card_no), values.bank);
             } else { // 更新关联的充值卡号
-                await updateCmbCardRelation(values.name, values.card_no, values.bank);
+                await updateCmbCardRelation(values.name, trimSpace(values.card_no), values.bank);
             }
             setTick(tick+1);
             setIsModalVisible(false);
