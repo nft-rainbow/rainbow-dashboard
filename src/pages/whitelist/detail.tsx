@@ -28,6 +28,7 @@ export default function Page() {
     const [page, setPage] = useState(1);
     const [type, setType] = useState<string>('phone');
     const [trigger, setTrigger] = useState(1);
+    // @ts-ignore
     const [meta, setMeta] = useState<Certificate|null>(null);
 
     const columns = [
@@ -82,7 +83,7 @@ export default function Page() {
     return (
         <>
             <Card 
-                title={`凭证: ${meta?.name}-${meta?.certificate_type}`}
+                title={`凭证: ${meta ? meta.name : ''}`}
                 style={{flexGrow:1}} 
                 extra={<>
                     <ItemAddModal id={id} type={type} updateTrigger={setTrigger} />
@@ -114,7 +115,7 @@ function ItemAddModal(props: {id: number, type?: string, updateTrigger: (trigger
     const handleDelete = (key: React.Key) => {
         const newData = dataSource.filter((item) => item.key !== key);
         setDataSource(newData);
-        setCount(count - 1);
+        // setCount(count - 1);
     };
 
     const handleAdd = () => {
@@ -140,7 +141,7 @@ function ItemAddModal(props: {id: number, type?: string, updateTrigger: (trigger
     const handleUpload = (data: any[]) => {
         data = data.filter(item => item.Item !== '');
         setDataSource(data.map((item, index) => ({key: index, name: item.Item.toString()})));
-        setCount(data.length);
+        setCount(count + data.length);
     }
 
     const onAddItem = async () => {
