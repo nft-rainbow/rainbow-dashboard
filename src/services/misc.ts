@@ -19,6 +19,6 @@ export async function uploadFileKyc(file: any) {
     return data;
 }
 
-export async function cfxPrice(): Promise<number> {
+export async function cfxPrice(): Promise<string> {
     return (await get('/dashboard/misc/cfxPrice')).price;
 }
