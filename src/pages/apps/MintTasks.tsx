@@ -6,7 +6,7 @@ import {
 } from "@ant-design/icons/lib";
 import { NFT } from "@models/index";
 import { formatDate, mapChainName, mapNFTType, scanAddressLink, scanNFTLink, scanTxLink, short } from "@utils/index";
-import { reMintNFT } from "@services/NFT";
+// import { reMintNFT } from "@services/NFT";
 import { getAppNfts, getAppNftsOfContract } from "@services/app";
 import axios from "axios";
 
@@ -154,6 +154,7 @@ export function AppNFTs(props: { id: string; contract?: string, refreshTrigger: 
 				pagination={{
 					total,
 					current: page,
+                    pageSize: pageLimit,
 					showTotal: (total) => `共 ${total} 条`,
 				}}
 				onChange={(info: TablePaginationConfig) => {setPage(info.current as number); setImages([])}}

@@ -28,7 +28,7 @@ const tailLayout = {
 export default function ContractSponsor() {
     const [sponsorInfo, setSponsorInfo] = useState<SponsorInfo|null>(null);
     const [contractAddr, setContractAddr] = useState<string>('');
-    const [price, setPrice] = useState<number>(80);
+    const [price, setPrice] = useState<string>('0.8');
     const [form] = Form.useForm();
 
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -58,6 +58,11 @@ export default function ContractSponsor() {
 
         const upperBound = JSBI.BigInt(values.gas_upper_bound);
         const gas = JSBI.multiply(JSBI.BigInt(values.gas), CFX_IN_GDRIP);  // in GDrip
+        
+        if (JSBI.lessThan(JSBI.multiply(upperBound, CFX_IN_GDRIP), JSBI.BigInt(sponsorInfo?.gas_upper_bound as string))) {
+            message.warning('Gas UpperBound 不能小于当前值');
+            return;
+        }
         // @ts-ignore
         if (JSBI.lessThan(gas, JSBI.multiply(upperBound, JSBI.BigInt(1000)))) {
             message.warning('Gas必须大于Gas上限的1000倍');
@@ -65,10 +70,9 @@ export default function ContractSponsor() {
         }
 
         if (address.decodeCfxAddress(addr).netId === 1029) {
-            const toCharge = (values.gas + values.storage) * price;
+            const toCharge = (values.gas + values.storage) * Number(price);
             let balance = (await userBalance()).balance;
-            balance = Number(balance) * 100;
-            if (balance < toCharge) {
+            if (Number(balance) < toCharge) {
                 message.warning('账户余额不足');
                 return;
             }
@@ -94,7 +98,7 @@ export default function ContractSponsor() {
 
     useEffect(() => {
         cfxPrice().then(num => {
-            setPrice(Number(num) * 100);
+            setPrice(num);
         });
     }, []);
 
@@ -192,7 +196,7 @@ export default function ContractSponsor() {
                             <li>燃气上限建议值为 100w GDrip, 燃气赞助金额需大于 1000 * 燃气上限</li>
                             <li>1 个数字藏品铸造操作，通常需要 0.6-0.8 KB 的存储空间</li>
                             <li>铸造 1 个数字藏品，需要花费 0.6-0.8 KB 的存储 + 1 笔交易的燃气消耗（0.0001 KB 起）</li>
-                            <li>主网每单位(KB)代付费用单价为 {(price/100).toFixed(2)} CNY, 测试网免费</li>      
+                            <li>主网每单位(KB)代付费用单价为 {price} CNY, 测试网免费</li>      
                             <li>仅支持为树图链合约设置上链费用赞助；代付赞助一旦设置, 无法返还</li>
                             <li>需要正确的设置合约赞助白名单, 代付才能生效</li>
                         </ul>
