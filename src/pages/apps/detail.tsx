@@ -132,7 +132,7 @@ export default function AppDetail(props: { appId?: string, pageLimit?: number })
         },
     ]
   return (
-    <div className="App" style={{flexGrow:1}}>
+    <div className="App" style={{flexGrow: 1}}>
         {contextHolder}
         <RainbowBreadcrumb items={breadcrumbItems} />
         <Card>
