@@ -5,15 +5,17 @@ import {
     Typography,
 } from "antd";
 import type { RadioChangeEvent } from 'antd';
+import { useNavigate } from 'react-router-dom';
 import { getInvoiceAvailableFiatLogs, createInvoice, getInvoiceInfoDefault, getInvoiceInfoList } from '@services/invoice';
 import { InvoiceInfo } from '@models/Invoice';
 import { FiatLog } from '@models/index';
 import { formatDate } from '@utils/index';
-import { set } from 'lodash-es';
 const { Text } = Typography;
 
 // TODO: 开票时, 支持编辑开票信息的邮寄地址等信息
 export default function Page() {
+    const navigate = useNavigate();
+
     const [invoiceInfoList, setInvoiceInfoList] = useState([]);
     const [invoiceAvailableFiatLogs, setInvoiceAvailableFiatLogs] = useState<FiatLog[]>([]);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -107,6 +109,7 @@ export default function Page() {
             });
             setIsModalOpen(false);
             message.success("开票成功");
+            navigate("/panels/poaps");
         } catch(e) {
             message.error("开票失败");
         }
@@ -184,11 +187,11 @@ export default function Page() {
                         {currentInvoiceInfo?.is_default ? <Text strong>默认发票信息</Text> : null}
                     </div>
                     <p style={{marginTop: "10px"}}>抬头: {currentInvoiceInfo?.name}</p>
-                    <p>税号: {currentInvoiceInfo?.tax_no}a</p>
-                    <p>开户行: {currentInvoiceInfo?.bank}a</p>
-                    <p>账号: {currentInvoiceInfo?.bank_no}a</p>
+                    <p>税号: {currentInvoiceInfo?.tax_no}</p>
+                    <p>开户行: {currentInvoiceInfo?.bank}</p>
+                    <p>账号: {currentInvoiceInfo?.bank_no}</p>
                     <p>地址: {currentInvoiceInfo?.address}</p>
-                    <p>电话: {currentInvoiceInfo?.phone}a</p>
+                    <p>电话: {currentInvoiceInfo?.phone}</p>
                     <p>邮寄地址: {currentInvoiceInfo?.mail_address}</p>
                     <p>联系人: {currentInvoiceInfo?.mail_receiver}</p>
                     <p>手机号码: {currentInvoiceInfo?.mail_phone}</p>
@@ -216,11 +219,11 @@ export default function Page() {
                         {currentInvoiceInfo?.type === 2 ? <Tag color='blue'>企业</Tag> : <Tag color='red'>非企业</Tag>}
                     </div>
                     <p style={{marginTop: "10px"}}>抬头: {currentInvoiceInfo?.name}</p>
-                    <p>税号: {currentInvoiceInfo?.tax_no}a</p>
-                    <p>开户行: {currentInvoiceInfo?.bank}a</p>
-                    <p>账号: {currentInvoiceInfo?.bank_no}a</p>
+                    <p>税号: {currentInvoiceInfo?.tax_no}</p>
+                    <p>开户行: {currentInvoiceInfo?.bank}</p>
+                    <p>账号: {currentInvoiceInfo?.bank_no}</p>
                     <p>地址: {currentInvoiceInfo?.address}</p>
-                    <p>电话: {currentInvoiceInfo?.phone}a</p>
+                    <p>电话: {currentInvoiceInfo?.phone}</p>
                     <p>邮寄地址: {currentInvoiceInfo?.mail_address}</p>
                     <p>联系人: {currentInvoiceInfo?.mail_receiver}</p>
                     <p>手机号码: {currentInvoiceInfo?.mail_phone}</p>
