@@ -5,7 +5,7 @@ import {
     UserOutlined, LogoutOutlined, UsergroupAddOutlined,
     CodeOutlined, MoneyCollectOutlined, AuditOutlined,
     LineChartOutlined, NodeIndexOutlined, RobotOutlined,
-    RocketOutlined, OrderedListOutlined,
+    RocketOutlined, OrderedListOutlined, ReconciliationOutlined, 
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { 
@@ -76,7 +76,8 @@ const App: React.FC = () => {
         getItem(<Link to="/panels/mintCountByMonth">铸造量统计</Link>, '2', <LineChartOutlined />),
         getItem(<Link to="/panels/user">用户设置</Link>, '3', <UserOutlined />),
         getItem(<Link to="/panels/company">企业认证</Link>, '4', <UsergroupAddOutlined />),
-        getItem(<span onClick={() => auth.signout(console.log)}>退出登录</span>, '5', <LogoutOutlined />),
+        getItem(<Link to="/panels/invoice">发票管理</Link>, '5', <ReconciliationOutlined />),
+        getItem(<span onClick={() => auth.signout(console.log)}>退出登录</span>, '100', <LogoutOutlined />),
     ];
 
     return (

@@ -31,6 +31,9 @@ import Whitelist from '@pages/whitelist';
 import WhitelistEditor from '@pages/whitelist/create';
 import WhitelistDetail from '@pages/whitelist/detail';
 import EasyMint from '@pages/mint/easyMint';
+import Invoice from '@pages/invoice/index';
+import InvoiceInfo from '@pages/invoice/info';
+import InvoiceNew from '@pages/invoice/new';
 
 const AppRouter: React.FC = () => {
     return (
@@ -55,6 +58,9 @@ const AppRouter: React.FC = () => {
                     <Route path="chargeBalance" element={<ChargeBalance />} />
                     <Route path="mintCountByMonth" element={<UserMintCountByMonth />} />
                     <Route path="company" element={<Company />} />
+                    <Route path="invoice" element={<Invoice />} />
+                    <Route path="invoice/info" element={<InvoiceInfo />} />
+                    <Route path="invoice/new" element={<InvoiceNew />} />
                     <Route path="apps" element={<App />} />
                     <Route path="apps/:id" element={<AppDetail />} />
                     <Route path="mint/easyMint" element={<EasyMint />} />
