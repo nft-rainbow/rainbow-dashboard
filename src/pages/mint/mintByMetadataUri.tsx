@@ -29,6 +29,7 @@ export function MintByMetadataUri(props: {
     const [metadataUri, setMetadataUri] = useState<string|null>(null);
 
     const onFinish = async (values: any) => {
+
         try {
             if (!contract.address) message.error("");
 
@@ -95,6 +96,7 @@ export function MintByMetadataUri(props: {
             await batchMintByAddressOrPhone(metadata);
             message.success("任务提交成功，请至铸造历史查看");
         } catch(e) {
+            console.log("mintByMetadataUri error: ", e);
             // @ts-ignore
             message.error(e.response?.data?.message);
         }
@@ -154,7 +156,16 @@ export function MintByMetadataUri(props: {
             {dataType === 'upload' && 
             <Form.Item label="导入数据" name="metadata_uri">
                 <Space>
-                    <ParseLocalFile handleData={setItems} /> 
+                    <ParseLocalFile handleData={(items: object[]) => {
+                        setItems(items.map((i: object) => ({
+                            // @ts-ignore
+                            Address: i.Address.toString(),  // change to string for phone types
+                            // @ts-ignore
+                            MetadataUri: i.MetadataUri,
+                            // @ts-ignore
+                            TokenId: i.TokenId,
+                        })));
+                    }} /> 
                     <a href={'/mintByMetadataUri.csv'} download={'mintByMetadataUri.csv'} style={{ color: 'gray' }}>
                         <Button type='link'>下载模板</Button>
                     </a>
