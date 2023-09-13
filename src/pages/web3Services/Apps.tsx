@@ -6,13 +6,13 @@ import {
 import type { TabsProps, TablePaginationConfig } from 'antd';
 import { Link } from "react-router-dom";
 import { getApps, createApp } from '@services/app';
-import { getUserServicePlan, updateServiceRenewal } from '@services/web3Service';
+import { getUserServicePlan, updateServiceRenewal, ServiceNameMap } from '@services/web3Service';
 import { formatDate } from '@utils/index';
 import { App } from '@models/index';
-import { ServicePlan, ServicePackage, UserServicePlan } from '@models/Service';
+import {  UserServicePlan } from '@models/Service';
 import { userProfile } from '@services/user';
 
-export default function Page() {
+export default function Web3Apps() {
     const onChange = (key: string) => {
         console.log(key);
     };
@@ -168,6 +168,7 @@ function MyServices() {
         {
             title: 'Web3 服务',
             dataIndex: 'server_type',
+            render: (type: string) => ServiceNameMap[type]
         },
         {
             title: '套餐名称',
@@ -191,7 +192,7 @@ function MyServices() {
         {
             title: '查看',
             render: (text: number, record: UserServicePlan) => {
-                return <Button type='link' size='small'>用量</Button>
+                return <Link to={`/panels/web3Service/service/${record.server_type}`}><Button type='link' size='small'>用量</Button></Link>
             }
         },
         {
@@ -202,12 +203,12 @@ function MyServices() {
                     return null;
                 }
                 if (record.is_auto_renewal) {
-                    return <Button type='link' size='small' onClick={() => {
-
+                    return <Button type='link' size='small' onClick={async () => {
+                        await updateServiceRenewal(record.user_id, record.server_type, false);
                     }}>取消续订</Button>
                 } else {
-                    return <Button type='link' size='small' onClick={() => {
-                        
+                    return <Button type='link' size='small' onClick={async () => {
+                        await updateServiceRenewal(record.user_id, record.server_type, true);
                     }}>开启续订</Button>
                 }
             }
@@ -222,7 +223,7 @@ function MyServices() {
     return (
         <>
             <Card extra={<Link to='/panels/web3Service/buy'><Button type='primary'>购买服务</Button></Link>}>
-                <Table columns={columns} dataSource={services}/>
+                <Table columns={columns} dataSource={services} rowKey='plan_id'/>
             </Card>
         </>
     );

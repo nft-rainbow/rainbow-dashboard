@@ -1,6 +1,6 @@
 import { get, put, post } from './index';
 import { groupBy } from 'lodash-es';
-import { ServicePackage, ServicePlan, UserServicePlan } from '@models/Service';
+import { ServicePackage, ServicePlan, UserServicePlan, Web3ServiceQuota } from '@models/Service';
 
 // 一个组合方法, 获取服务按月套餐, 加油包套餐; 然后按服务分组
 // 
@@ -44,15 +44,15 @@ export function getUserServicePlan(user_id: number): Promise<UserServicePlan[]> 
     return get('/settle/v0/user/bill-plan', {user_id});
 }
 
-export function getUserQuota(user_id: number) {
-    return get('/settle/v0/user/quota', {user_id});
+export function getUserQuota(user_id: number): Promise<{count: number, items: Web3ServiceQuota[]}> {
+    return get('/settle/v0/user/quota', {user_id, page: 1, limit: 1000});
 }
 
 export function buyServicePlan(UserId: number, PlanId: number, IsAutoRenewal: boolean = true) {
     return post('/dashboard/users/plan', {UserId, PlanId, IsAutoRenewal});
 }
 
-export function updateServiceRenewal(UserId: number, ServerType: number, IsAutoRenewal: boolean) {
+export function updateServiceRenewal(UserId: number, ServerType: number | string, IsAutoRenewal: boolean) {
     return put('/dashboard/users/plan/renew', {UserId, ServerType, IsAutoRenewal});
 }
 
@@ -80,3 +80,21 @@ export enum Web3Service {
     CORE_SCAN = 'scan_cspace',
     ESPACE_SCAN = 'scan_espace',
 }
+
+export const ServiceNameMap: {[key: string]: string} = {
+    confura_cspace: 'Conflux Core RPC 服务',
+    confura_espace: 'Conflux eSpace RPC 服务',
+    scan_cspace: 'Conflux Core Scan 数据服务',
+    scan_espace: 'Conflux eSpace Scan 数据服务'
+};
+
+export const CostTypeToServiceMap: {[key: string]: string} = {
+    confura_main_cspace_normal: 'confura_cspace',
+    confura_main_espace_normal: 'confura_espace',
+    confura_test_cspace_normal: 'confura_cspace',
+    confura_test_espace_normal: 'confura_espace',
+    scan_main_cspace_normal: "scan_cspace",
+    scan_main_espace_normal: "scan_espace",
+    scan_test_cspace_normal: 'scan_cspace',
+    scan_test_espace_normal: 'scan_espace',
+};

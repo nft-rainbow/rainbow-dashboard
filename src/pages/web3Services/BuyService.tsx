@@ -8,12 +8,12 @@ import { ServicePackage, ServicePlan, UserServicePlan } from '@models/Service';
 import { UserBalance } from '@models/index';
 import { getServicePlan2Package, getUserServicePlan, buyServicePlan, buyServicePackage } from '@services/web3Service';
 import { userProfile, userBalanceRuntime } from '@services/user';
-import { groupBy, set, sumBy } from 'lodash-es';
+import { groupBy, sumBy } from 'lodash-es';
 import Counter from '@components/Counter';
 import './buy.css';
 const { Title, Paragraph, Text } = Typography;
 
-export default function Page() {
+export default function BuyWeb3Service() {
     const [visible, setVisible] = useState(false);
     const [tick, setTick] = useState(0);
 

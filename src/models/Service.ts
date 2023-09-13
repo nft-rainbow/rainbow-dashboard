@@ -41,3 +41,11 @@ export interface UserServicePlan extends BaseModel {
     expire_time: string;
     is_auto_renewal: boolean;
 }
+
+export interface Web3ServiceQuota extends BaseModel {
+    user_id: number;
+    cost_type: string;
+    count_reset: number;
+    next_reset_count_time: string;
+    count_rollover: number;
+};

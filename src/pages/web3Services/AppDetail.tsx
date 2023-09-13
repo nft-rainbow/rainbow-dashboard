@@ -9,7 +9,7 @@ import { AppWeb3ServiceMeta } from '@models/App';
 import { useParams } from 'react-router-dom';
 const { Title, Text } = Typography;
 
-export default function Page() {
+export default function Web3AppDetail() {
     const {id} = useParams<{id: string}>();
     const onChange = (key: string) => {
         console.log(key);
@@ -24,7 +24,7 @@ export default function Page() {
         {
             key: '2',
             label: '服务用量',
-            children: 'Content of Tab Pane 2',
+            children: '当前项目各服务用量',
         },
     ];
 
@@ -56,7 +56,7 @@ function AppDetail ({id}: {id: string}) {
         { appKeyInfo && 
             <div>
                 <p>项目名称: {appKeyInfo.name}</p>
-                <p>API Key: <Text copyable>{appKeyInfo.api_key}</Text></p>
+                <div style={{marginBottom: "20px"}}>API Key: <Text copyable>{appKeyInfo.api_key}</Text></div>
                 <Title level={5}>RPC 网络</Title>
                 <div>
                     <Space>
