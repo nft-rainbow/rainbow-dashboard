@@ -6,6 +6,7 @@ import {
     CodeOutlined, MoneyCollectOutlined, AuditOutlined,
     LineChartOutlined, NodeIndexOutlined, RobotOutlined,
     RocketOutlined, OrderedListOutlined, ReconciliationOutlined, 
+    GlobalOutlined, 
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { 
@@ -44,7 +45,8 @@ const items: MenuItem[] = [
     getItem(<Link to="/panels/whitelist">凭证策略</Link>, '5', <OrderedListOutlined />),
     getItem(<Link to="/panels/socialBot">社群Bot</Link>, '6', <RobotOutlined />),
     getItem(<Link to="/panels/metadata">元数据</Link>, '7', <NodeIndexOutlined />),
-    getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">开发文档</a>, '8', <CodeOutlined />),
+    getItem(<Link to="/panels/web3Service">Web3服务</Link>, '8', <GlobalOutlined />),
+    getItem(<a href="https://docs.nftrainbow.xyz" target="_blank" rel="noreferrer">开发文档</a>, '100', <CodeOutlined />),
 ];
 
 function menuKeyFromLocation(location: object): string {
@@ -54,11 +56,11 @@ function menuKeyFromLocation(location: object): string {
     if (pathname.startsWith('/panels/apps')) return '2';
     if (pathname.startsWith('/panels/contracts')) return '3';
     if (pathname.startsWith('/panels/mint')) return '3';
-    if (pathname.startsWith('/panels/plan')) return '300';
     if (pathname.startsWith('/panels/poaps')) return '4';
     if (pathname.startsWith('/panels/whitelist')) return '5';
     if (pathname.startsWith('/panels/socialBot')) return '6';
     if (pathname.startsWith('/panels/metadata')) return '7';
+    if (pathname.startsWith('/panels/web3Service')) return '8';
     return '1';
 }
 
