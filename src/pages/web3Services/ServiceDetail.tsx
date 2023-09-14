@@ -35,8 +35,8 @@ export default function ServiceDetail() {
             {
                 serviceQuote && <Card title='Service 详情' style={{flexGrow:1}}>
                     <p>服务名称: {ServiceNameMap[service_type as string]}</p>
-                    <p>当天可用量: {serviceQuote.count_reset}</p>
-                    <p>永久可用量: {serviceQuote.count_rollover}</p>
+                    <p>套餐可用量: {serviceQuote.count_reset.toLocaleString()}次</p>
+                    <p>加油包可用量: {serviceQuote.count_rollover.toLocaleString()}次</p>
                 </Card>
             }
         </>

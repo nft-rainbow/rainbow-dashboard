@@ -24,6 +24,7 @@ export default function Web3AppDetail() {
         {
             key: '2',
             label: '服务用量',
+            disabled: true,
             children: '当前项目各服务用量',
         },
     ];

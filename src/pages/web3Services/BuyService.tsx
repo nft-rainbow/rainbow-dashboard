@@ -76,6 +76,8 @@ export default function BuyWeb3Service() {
         setSelectedPlanMeta(null);
         setCurrentPackageId(0);
         setTick(tick + 1); // trigger the useEffect
+
+        message.success('购买成功');
     }
 
     const onPackageChange = (e: RadioChangeEvent) => {
@@ -172,7 +174,7 @@ export default function BuyWeb3Service() {
                                     <div className='service-level'>
                                         <div className='info'>
                                             <Title level={5}>{e.name}</Title>
-                                            <Paragraph>请求量: {sumBy(e.bill_plan_details, 'count')}/{e.reset_period}</Paragraph>
+                                            <Paragraph>请求量: {sumBy(e.bill_plan_details, 'count').toLocaleString()}次/{e.reset_period}</Paragraph>
                                             <Paragraph>QPS: {e.qps}</Paragraph>
                                         </div>
                                         <div className='price'>
@@ -196,7 +198,7 @@ export default function BuyWeb3Service() {
                                     <div className='service-level'>
                                         <div className='info'>
                                             <Title level={5}>{e.name}</Title>
-                                            <Paragraph>请求量: {sumBy(e.data_bundle_details, 'count')}</Paragraph>
+                                            <Paragraph>请求量: {sumBy(e.data_bundle_details, 'count').toLocaleString()}次</Paragraph>
                                         </div>
                                         <div className='price'>
                                             <Text strong>{e.price}元</Text>
@@ -227,8 +229,9 @@ export default function BuyWeb3Service() {
                     selectedPlanMeta && <div className='service-level'>
                         <div className='info'>
                             <Title level={5}>{selectedPlanMeta.name}</Title>
-                            <Paragraph>请求量: {sumBy(selectedPlanMeta.bill_plan_details, 'count')}/{selectedPlanMeta.reset_period}</Paragraph>
+                            <Paragraph>请求量: {sumBy(selectedPlanMeta.bill_plan_details, 'count').toLocaleString()}次/{selectedPlanMeta.reset_period}</Paragraph>
                             <Paragraph>QPS: {selectedPlanMeta.qps}</Paragraph>
+                            <Checkbox defaultChecked disabled>自动续订</Checkbox>
                         </div>
                         <div className='price'>
                             <Text strong>{selectedPlanMeta.price}元/{selectedPlanMeta.plan_period}</Text>
@@ -240,7 +243,7 @@ export default function BuyWeb3Service() {
                     selectedPackageMeta && <div className='service-level' key={selectedPackageMeta.id}>
                         <div className='info'>
                             <Title level={5}>{selectedPackageMeta.name}</Title>
-                            <Paragraph>请求量: {sumBy(selectedPackageMeta.data_bundle_details, 'count')}</Paragraph>
+                            <Paragraph>请求量: {sumBy(selectedPackageMeta.data_bundle_details, 'count').toLocaleString()}次</Paragraph>
                         </div>
                         <div className='price'>
                             <Text strong>{selectedPackageMeta.price}元</Text>

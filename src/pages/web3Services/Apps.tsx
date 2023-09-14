@@ -25,7 +25,7 @@ export default function Web3Apps() {
         },
         {
             key: '2',
-            label: '服务列表',
+            label: '我的服务',
             children: <MyServices />,
         },
         /* {
@@ -71,7 +71,7 @@ function Apps() {
         {
             title: '操作',
             key: 'action',
-            render: (text: number, record: App) => <Link to={`/panels/web3Service/${record.id}`}><Button type='link' size='small'>查看</Button></Link>
+            render: (text: number, record: App) => <Link to={`/panels/web3Service/${record.id}`}><Button type='link' size='small'>查看Key</Button></Link>
         }
     ];
 
@@ -192,7 +192,7 @@ function MyServices() {
         {
             title: '查看',
             render: (text: number, record: UserServicePlan) => {
-                return <Link to={`/panels/web3Service/service/${record.server_type}`}><Button type='link' size='small'>用量</Button></Link>
+                return <Link to={`/panels/web3Service/service/${record.server_type}`}><Button type='link' size='small'>服务用量</Button></Link>
             }
         },
         {
