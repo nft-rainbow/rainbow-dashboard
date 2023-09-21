@@ -163,6 +163,7 @@ function Apps() {
 function MyServices() {
 
     const [services, setServices] = useState<UserServicePlan[]>([]);
+    const [tick, setTick] = useState<number>(0);
 
     const columns = [
         {
@@ -204,11 +205,23 @@ function MyServices() {
                 }
                 if (record.is_auto_renewal) {
                     return <Button type='link' size='small' onClick={async () => {
-                        await updateServiceRenewal(record.user_id, record.server_type, false);
+                        try {
+                            await updateServiceRenewal(record.user_id, record.server_type, false);
+                            setTick(tick+1);
+                            message.success('取消续订成功');
+                        } catch(e) {
+                            message.error('操作失败');
+                        }
                     }}>取消续订</Button>
                 } else {
                     return <Button type='link' size='small' onClick={async () => {
-                        await updateServiceRenewal(record.user_id, record.server_type, true);
+                        try {
+                            await updateServiceRenewal(record.user_id, record.server_type, true);
+                            setTick(tick+1);
+                            message.success('续订成功');
+                        } catch(e) {
+                            message.error('操作失败');
+                        }
                     }}>开启续订</Button>
                 }
             }
@@ -219,7 +232,7 @@ function MyServices() {
         userProfile().then(user => {
             getUserServicePlan(user.id as number).then(data => setServices(data));
         });
-    }, []);
+    }, [tick]);
     return (
         <>
             <Card extra={<Link to='/panels/web3Service/buy'><Button type='primary'>购买服务</Button></Link>}>

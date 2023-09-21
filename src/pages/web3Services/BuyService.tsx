@@ -256,6 +256,8 @@ export default function BuyWeb3Service() {
                 <div style={{padding: "20px"}}>
                     <Title level={5}>总计: {totalAmount}</Title>
                     <Checkbox disabled defaultChecked>使用账户余额支付, 账户余额: {userBalance?.balance}</Checkbox>
+                    <br/>
+                    <Checkbox disabled defaultChecked>套餐切换操作实时生效, 降级操作不产生差额退款</Checkbox>
                 </div>
             </Modal>
         </div>

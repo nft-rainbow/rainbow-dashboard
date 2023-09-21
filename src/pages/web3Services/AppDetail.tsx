@@ -21,12 +21,12 @@ export default function Web3AppDetail() {
             label: '项目详情',
             children: <AppDetail id={id as string} />,
         },
-        {
+        /* {
             key: '2',
             label: '服务用量',
             disabled: true,
             children: '当前项目各服务用量',
-        },
+        }, */
     ];
 
     return (

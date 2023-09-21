@@ -1,18 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import {
     Card, Row, Col, Typography, Table, Button,
-    Form, Input, Select
+    TablePaginationConfig, Modal,
 } from "antd";
 import { useParams } from 'react-router-dom';
 import { userProfile } from '@services/user';
 import { getUserQuota, CostTypeToServiceMap, ServiceNameMap, getLogs, logCountByDate } from '@services/web3Service';
 import { Web3ServiceQuota } from '@models/Service';
-const { Text, Link } = Typography;
+import { Column } from '@ant-design/plots';
+import { formatDate } from '@utils/index';
+const { Text } = Typography;
 
 export default function ServiceDetail() {
     const {service_type} = useParams<{service_type:string}>();
     const [serviceQuota, setServiceQuota] = useState<Web3ServiceQuota | undefined>(undefined);
     const [userId, setUserId] = useState<number>(0);
+    const [_logCountByDate, setLogCountByDate] = useState<{count: number}[]>([]);
+
+    const [page, setPage] = useState<number>(1);
+    const [total, setTotalLogCount] = useState<number>(0);
+    const [logs, setLogs] = useState<{}[]>([]);
+
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [modalData, setModalData] = useState<{}>({});
 
     useEffect(() => {
         userProfile().then((user) => {
@@ -32,24 +42,100 @@ export default function ServiceDetail() {
 
     useEffect(() => {
         if (userId === 0) return;
-        getLogs({collection: service_type as string, user_key: userId.toString()}).then((res) => {
-            console.log('getLogs', res);
+        getLogs({collection: service_type as string, user_key: userId.toString()}, page).then((res) => {
+            setTotalLogCount(res.count);
+            setLogs(res.items);
         });
-    }, [service_type, userId]);
+    }, [service_type, userId, page]);
 
     useEffect(() => {
         if (userId === 0) return;
         logCountByDate(service_type as string, userId.toString()).then((res) => {
-            console.log('logCount', res);
+            setLogCountByDate(res.items.reverse());
         });
     }, [service_type, userId]);
 
     console.log('ServiceDetail', serviceQuota);
 
+    const columnConfig = {
+        data: _logCountByDate,
+        xField: 'id',
+        yField: 'count',
+        label: {
+          // 可手动配置 label 数据标签位置
+          position: 'middle',
+          // 'top', 'bottom', 'middle',
+          // 配置样式
+          style: {
+            fill: '#FFFFFF',
+            opacity: 0.6,
+          },
+        },
+        xAxis: {
+          label: {
+            autoHide: true,
+            autoRotate: false,
+          },
+        },
+        meta: {
+          id: {
+            alias: '日期',
+          },
+          count: {
+            alias: '请求次数',
+          },
+        },
+    };
+
+    // 
+    const tableColumns = [
+        {
+            title: '请求方法',
+            dataIndex: 'method'
+        },
+        {
+            title: '请求路径',
+            dataIndex: 'path',
+        },
+        {
+            title: '请求IP',
+            dataIndex: 'ip',
+        },
+        {
+            title: 'StatusCode',
+            dataIndex: 'status_code',
+        },
+        {
+            title: '请求日期',
+            dataIndex: 'req_date',
+            render: (text: string) => formatDate(text),
+        },
+        /* {
+            title: '请求体',
+            dataIndex: 'body',
+            render: (text: string) => <Text ellipsis>{text}</Text>
+        }, */
+        {
+            title: '操作',
+            dataIndex: 'id',
+            render: (a: any, log: any) => {
+                return <Button type='link' onClick={() => {
+                    setModalData(log);
+                    setIsModalOpen(true);
+                }}>详情</Button>
+            }
+        }
+    ]
+
     return (
         <>
-            <Card style={{flexGrow: 1}}>
+            <div style={{flexGrow: 1}}>
                 <Row gutter={10}>
+                    <Col span={12}>
+                        <Card title='近期用量'>
+                            <Column {...columnConfig} />
+                        </Card>
+                    </Col>
                     <Col span={12}>
                         {
                             serviceQuota && <Card title='服务可用量'>
@@ -59,16 +145,28 @@ export default function ServiceDetail() {
                             </Card>
                         }
                     </Col>
-                    <Col span={12}>
-                        <Card title='近期用量'>
-                            
+                </Row>
+                <Row className='mt-10'>
+                    <Col span={24}>
+                        <Card title='请求日志' extra={<Button type='primary'>导出日志</Button>}>
+                            <Table 
+                                dataSource={logs} 
+                                pagination={{
+                                    total,
+                                    current: page,
+                                    showTotal: (total) => `共 ${total} 条`,
+                                }} 
+                                onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
+                                key={"id"} 
+                                columns={tableColumns} 
+                            />
                         </Card>
+                        <Modal open={isModalOpen} onCancel={() => setIsModalOpen(false)} onOk={() => setIsModalOpen(false)}>
+                            <Text code><pre>{JSON.stringify(modalData, null, 2)}</pre></Text>
+                        </Modal>
                     </Col>
                 </Row>
-                <Row>
-                    <Col></Col>
-                </Row>
-            </Card>
+            </div>
         </>
     );
 }

@@ -53,7 +53,7 @@ export function buyServicePlan(UserId: number, PlanId: number, IsAutoRenewal: bo
 }
 
 export function updateServiceRenewal(UserId: number, ServerType: number | string, IsAutoRenewal: boolean) {
-    return put('/dashboard/users/plan/renew', {UserId, ServerType, IsAutoRenewal});
+    return put('/dashboard/users/plan/renew', {UserId, ServerType: ServerTypeIntMap[ServerType], IsAutoRenewal});
 }
 
 export function buyServicePackage(UserId: number, DataBundleId: number, Count: number = 1) {
@@ -72,7 +72,7 @@ export function getLogs(filter: LogFilter, page: number = 1, limit: number = 10)
     return get('/logs', Object.assign({page, limit}, filter));
 }
 
-export function logCountByDate(collection: string, user_key: string) {
+export function logCountByDate(collection: string, user_key: string): Promise<{items: {id:string;count:number}[]}> {
     return get('/logs/countByDate', {collection, user_key});
 }
 
@@ -114,3 +114,11 @@ export const CostTypeToServiceMap: {[key: string]: string} = {
     scan_test_cspace_normal: 'scan_cspace',
     scan_test_espace_normal: 'scan_espace',
 };
+
+export const ServerTypeIntMap: {[key: string]: number} = {
+    "rainbow": 1,
+    "confura_cspace": 2,
+    "confura_espace": 3,
+    "scan_cspace": 4,
+    "scan_espace": 5,
+}
