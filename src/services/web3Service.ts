@@ -60,6 +60,22 @@ export function buyServicePackage(UserId: number, DataBundleId: number, Count: n
     return post('/dashboard/users/bundle', {UserId, DataBundleId, Count});
 }
 
+interface LogFilter {
+    collection: string;
+    user_key: string;
+    path?: string;
+    method?: string; 
+    status?: number;
+}
+
+export function getLogs(filter: LogFilter, page: number = 1, limit: number = 10) {
+    return get('/logs', Object.assign({page, limit}, filter));
+}
+
+export function logCountByDate(collection: string, user_key: string) {
+    return get('/logs/countByDate', {collection, user_key});
+}
+
 function mapEffectivePeriod(p: number): string {
     switch (p) {
         case 1:

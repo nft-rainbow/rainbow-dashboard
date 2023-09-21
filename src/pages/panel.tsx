@@ -56,6 +56,7 @@ export default function Panel() {
     }, []);
 
     useEffect(() => {
+        // TODO: update the api to get the free quota
         userBalanceRuntime().then(setFreeQuota);
     }, []);
 
