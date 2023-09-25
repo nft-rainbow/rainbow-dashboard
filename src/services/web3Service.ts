@@ -66,6 +66,7 @@ interface LogFilter {
     path?: string;
     method?: string; 
     status?: number;
+    app_id?: string;
 }
 
 export function getLogs(filter: LogFilter, page: number = 1, limit: number = 10) {

@@ -112,14 +112,14 @@ export default function BuyWeb3Service() {
             setPlans(data[serviceKey].plans);
             setPackages(data[serviceKey].packages);
         })
-    }, []);
+    }, [serviceKey]);
 
     // when service changed, update the available plan and package
     useEffect(() => {
         if (!serviceInfo[serviceKey]) return;
         setPlans(serviceInfo[serviceKey].plans);
         setPackages(serviceInfo[serviceKey].packages);
-    }, [serviceKey]);
+    }, [serviceKey, serviceInfo]);
 
     // get user current service plans
     useEffect(() => {

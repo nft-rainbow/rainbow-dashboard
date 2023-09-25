@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import {
     Card, Row, Col, Typography, Table, Button,
-    TablePaginationConfig, Modal,
+    TablePaginationConfig, Modal, Select, Space
 } from "antd";
 import { useParams } from 'react-router-dom';
 import { userProfile } from '@services/user';
 import { getUserQuota, CostTypeToServiceMap, ServiceNameMap, getLogs, logCountByDate } from '@services/web3Service';
+import { getAllApps } from '@services/app';
 import { Web3ServiceQuota } from '@models/Service';
 import { Column } from '@ant-design/plots';
 import { formatDate } from '@utils/index';
@@ -23,6 +24,9 @@ export default function ServiceDetail() {
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [modalData, setModalData] = useState<{}>({});
+
+    const [apps, setApps] = useState<{}[]>([]);
+    const [currentAppId, setCurrentAppId] = useState<number>(0);
 
     useEffect(() => {
         userProfile().then((user) => {
@@ -42,11 +46,15 @@ export default function ServiceDetail() {
 
     useEffect(() => {
         if (userId === 0) return;
-        getLogs({collection: service_type as string, user_key: userId.toString()}, page).then((res) => {
+        getLogs({
+            collection: service_type as string, 
+            user_key: userId.toString(),
+            app_id: currentAppId.toString(),
+        }, page).then((res) => {
             setTotalLogCount(res.count);
             setLogs(res.items);
         });
-    }, [service_type, userId, page]);
+    }, [service_type, userId, page, currentAppId]);
 
     useEffect(() => {
         if (userId === 0) return;
@@ -55,8 +63,15 @@ export default function ServiceDetail() {
         });
     }, [service_type, userId]);
 
+    useEffect(() => {
+        getAllApps().then((res) => {
+            setApps(res);
+        });
+    }, []);
+
     console.log('ServiceDetail', serviceQuota);
 
+    // chart config
     const columnConfig = {
         data: _logCountByDate,
         xField: 'id',
@@ -140,7 +155,7 @@ export default function ServiceDetail() {
                         {
                             serviceQuota && <Card title='服务可用量'>
                                 <p><Text>服务名称:</Text> <Text strong>{ServiceNameMap[service_type as string]}</Text></p>
-                                <p><Text>套餐可用量:</Text> <Text strong>{serviceQuota.count_reset.toLocaleString()}次</Text></p>
+                                <p><Text>套餐当日可用量:</Text> <Text strong>{serviceQuota.count_reset.toLocaleString()}次</Text></p>
                                 <p><Text>加油包可用量:</Text> <Text strong>{serviceQuota.count_rollover.toLocaleString()}次</Text></p>
                             </Card>
                         }
@@ -148,7 +163,15 @@ export default function ServiceDetail() {
                 </Row>
                 <Row className='mt-10'>
                     <Col span={24}>
-                        <Card title='请求日志' extra={<Button type='primary'>导出日志</Button>}>
+                        <Card title='请求日志' extra={<Space>
+                                <Select defaultValue={0} style={{width: 120}} onChange={val => setCurrentAppId(val)}>
+                                    <Select.Option value={0}>全部</Select.Option>
+                                    {
+                                        apps.map((app: any) => <Select.Option key={app.id} value={app.id}>{app.name}</Select.Option>)
+                                    }
+                                </Select>
+                                <Button disabled type='primary'>导出日志</Button>
+                            </Space>}>
                             <Table 
                                 dataSource={logs} 
                                 pagination={{

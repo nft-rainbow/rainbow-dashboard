@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
     Card, Tabs, Form, Input, Modal, message, 
-    Button, Table,
+    Button, Table, Space,
 } from "antd";
 import type { TabsProps, TablePaginationConfig } from 'antd';
 import { Link } from "react-router-dom";
@@ -75,7 +75,7 @@ function Apps() {
         }
     ];
 
-    const refreshItems = (currentPage: number) => {
+    const refreshItems = useCallback((currentPage: number) => {
         setLoading(true);
         getApps(currentPage).then(data => {
             setApps(data.items);
@@ -87,7 +87,7 @@ function Apps() {
         }).then(() => {
             setLoading(false);
         });
-    }
+    }, [createForm])
 
     const handleOk = async (values: object) => {
         try {
@@ -106,11 +106,16 @@ function Apps() {
 
     useEffect(() => {
         refreshItems(page);
-    }, [page]);
+    }, [page, refreshItems]);
 
     return (
         <>
-            <Card extra={<Button onClick={() => setIsModalVisible(true)} type="primary">创建项目</Button>}>
+            <Card extra={
+                <Space>
+                    <Link to='https://docs.nftrainbow.xyz/products/web3-services'><Button type='link'>查看文档</Button></Link>
+                    <Button onClick={() => setIsModalVisible(true)} type="primary">创建项目</Button>
+                </Space>
+            }>
                 <Table
                     rowKey='id'
                     dataSource={apps}
@@ -188,7 +193,7 @@ function MyServices() {
         {
             title: '开始/结束时间',
             dataIndex: 'created_at',
-            render: (text: string, record: UserServicePlan) => `${formatDate(record.bought_time)} / ${formatDate(record.expire_time)}`
+            render: (text: string, record: UserServicePlan) => `${record.plan.price === '0' ? '--' : formatDate(record.bought_time)} / ${record.plan.price === '0' ? '--' : formatDate(record.expire_time)}`
         },
         {
             title: '查看',
@@ -235,7 +240,12 @@ function MyServices() {
     }, [tick]);
     return (
         <>
-            <Card extra={<Link to='/panels/web3Service/buy'><Button type='primary'>购买服务</Button></Link>}>
+            <Card extra={
+                <Space>
+                    <Link to='https://docs.nftrainbow.xyz/products/web3-services'><Button type='link'>查看文档</Button></Link>
+                    <Link to='/panels/web3Service/buy'><Button type='primary'>购买服务</Button></Link>
+                </Space>
+            }>
                 <Table columns={columns} dataSource={services} rowKey='plan_id'/>
             </Card>
         </>
