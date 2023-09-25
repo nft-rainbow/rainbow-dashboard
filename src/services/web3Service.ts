@@ -60,6 +60,17 @@ export function buyServicePackage(UserId: number, DataBundleId: number, Count: n
     return post('/dashboard/users/bundle', {UserId, DataBundleId, Count});
 }
 
+export async function getUserRainbowQuota(user_id: number): Promise<object> {
+    let {items} = await getUserQuota(user_id);
+    items = items.filter((i: Web3ServiceQuota) => i.cost_type.match('rainbow'));
+    return {
+        rainbow_normal: items.find((i: Web3ServiceQuota) => i.cost_type === 'rainbow_normal'),
+        rainbow_free: items.find((i: Web3ServiceQuota) => i.cost_type === 'rainbow_free'),
+        rainbow_mint: items.find((i: Web3ServiceQuota) => i.cost_type === 'rainbow_mint'),
+        rainbow_deploy: items.find((i: Web3ServiceQuota) => i.cost_type === 'rainbow_deploy'),
+    };
+}
+
 interface LogFilter {
     collection: string;
     user_key: string;

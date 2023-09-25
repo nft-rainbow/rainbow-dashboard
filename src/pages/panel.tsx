@@ -4,8 +4,8 @@ import {
   userStatistics, 
   UserStatistics,
   userProfile,
-  userBalanceRuntime,
 } from '@services/user';
+import { getUserRainbowQuota } from '@services/web3Service';
 import { User } from '@models/index';
 const { Title, Paragraph, Text } = Typography;
 
@@ -56,9 +56,19 @@ export default function Panel() {
     }, []);
 
     useEffect(() => {
-        // TODO: update the api to get the free quota
-        userBalanceRuntime().then(setFreeQuota);
-    }, []);
+        if (!user) return;
+        // @ts-ignore
+        getUserRainbowQuota(user.id).then(res => {
+            setFreeQuota({
+                // @ts-ignore
+                free_deploy_quota: res.rainbow_deploy.count_reset,
+                // @ts-ignore
+                free_mint_quota: res.rainbow_mint.count_reset,
+                // @ts-ignore
+                free_other_api_quota: res.rainbow_normal.count_reset,
+            });
+        });
+    }, [user]);
 
     return (<div style={{flexGrow: 1}}>
         {user && user.status === 0 && user.id_no.length === 0 ? <Alert message="新用户请先至右上角个人中心完善信息" type="info" showIcon /> : null}
