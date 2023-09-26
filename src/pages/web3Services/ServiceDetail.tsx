@@ -109,8 +109,22 @@ export default function ServiceDetail() {
             dataIndex: 'method'
         },
         {
-            title: '请求路径',
+            title: service_type?.match('confura') ? '请求方法' : '请求路径',
             dataIndex: 'path',
+            render: (text: string, record: object) => {
+                if (service_type?.match('confura')) {
+                    const body = JSON.parse((record as any).body);
+                    let method = '';
+                    if (Array.isArray(body)) {
+                        method = 'batch';
+                    } else {
+                        method = body.method;
+                    }
+                    return <Text ellipsis>{method}</Text>
+                } else {
+                    return <Text ellipsis>{text}</Text>
+                }
+            }
         },
         {
             title: '请求IP',
