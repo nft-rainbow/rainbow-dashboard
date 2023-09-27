@@ -10,6 +10,7 @@ import { getAllApps } from '@services/app';
 import { Web3ServiceQuota } from '@models/Service';
 import { Column } from '@ant-design/plots';
 import { formatDate } from '@utils/index';
+import { downloadFile } from '@components/TextDownloader';
 const { Text } = Typography;
 
 export default function ServiceDetail() {
@@ -64,10 +65,18 @@ export default function ServiceDetail() {
     }, [service_type, userId]);
 
     useEffect(() => {
-        getAllApps().then((res) => {
-            setApps(res);
-        });
+        getAllApps().then(setApps);
     }, []);
+
+    const downloadLog = async () => {
+        // default page size is 5000
+        let {items} = await getLogs({
+            collection: service_type as string, 
+            user_key: userId.toString(),
+            app_id: currentAppId.toString(),
+        }, page, 5000);
+        downloadFile('请求日志.json', JSON.stringify(items, null, 2), 'application/json');
+    }
 
     console.log('ServiceDetail', serviceQuota);
 
@@ -184,7 +193,7 @@ export default function ServiceDetail() {
                                         apps.map((app: any) => <Select.Option key={app.id} value={app.id}>{app.name}</Select.Option>)
                                     }
                                 </Select>
-                                <Button disabled type='primary'>导出日志</Button>
+                                <Button type='primary' onClick={downloadLog}>导出日志</Button>
                             </Space>}>
                             <Table 
                                 dataSource={logs} 

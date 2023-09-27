@@ -15,3 +15,13 @@ export function TextDownloader({content, filename, label, type = 'text/plain'}: 
         <a href={obj} download={filename}>{label}</a>
     )
 }
+
+export function downloadFile(fileName: string, content: string, type = 'text/plain') {
+    const aElement = document.createElement('a');
+    aElement.setAttribute('download', fileName);
+    const href = URL.createObjectURL(new Blob([content], {type}));
+    aElement.href = href;
+    aElement.setAttribute('target', '_blank');
+    aElement.click();
+    URL.revokeObjectURL(href);
+}

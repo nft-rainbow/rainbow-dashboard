@@ -80,7 +80,7 @@ interface LogFilter {
     app_id?: string;
 }
 
-export function getLogs(filter: LogFilter, page: number = 1, limit: number = 10) {
+export function getLogs(filter: LogFilter, page: number = 1, limit: number = 10): Promise<{count: number, items: object[]}> {
     return get('/logs', Object.assign({page, limit}, filter));
 }
 
