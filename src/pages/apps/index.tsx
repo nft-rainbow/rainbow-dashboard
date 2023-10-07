@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
     Card, Button, Table, Modal, Form,
     Input, Select, TablePaginationConfig, message, Space,
@@ -18,7 +18,7 @@ function Apps() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [createForm] = Form.useForm();
 
-    const refreshItems = (currentPage: number) => {
+    const refreshItems = useCallback((currentPage: number) => {
         setLoading(true);
         getApps(currentPage).then(data => {
         setApps(data.items);
@@ -32,7 +32,7 @@ function Apps() {
         }).then(() => {
             setLoading(false);
         });
-    }
+    }, [createForm])
 
     const columns = [
         {
@@ -69,8 +69,12 @@ function Apps() {
             setIsModalVisible(false);
             message.success('创建成功');
             refreshItems(page);
-        } catch (err) {
-            message.error('创建失败');
+        } catch (err: any) {
+            if (err.message.match('kyc')) {
+                message.error('请先完成KYC认证');
+            } else {
+                message.error('创建失败');
+            }
         }
     };
 
@@ -80,7 +84,7 @@ function Apps() {
 
     useEffect(() => {
         refreshItems(page);
-    }, [page]);
+    }, [page, refreshItems]);
 
     return (
         <Space direction={"vertical"}>
