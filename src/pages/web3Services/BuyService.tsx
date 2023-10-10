@@ -7,7 +7,7 @@ import type { RadioChangeEvent } from 'antd';
 import { ServicePackage, ServicePlan, UserServicePlan } from '@models/Service';
 import { UserBalance } from '@models/index';
 import { getServicePlan2Package, getUserServicePlan, buyServicePlan, buyServicePackage } from '@services/web3Service';
-import { userProfile, userBalanceRuntime } from '@services/user';
+import { userProfile, userBalance as getUserBalance } from '@services/user';
 import { groupBy, sumBy } from 'lodash-es';
 import Counter from '@components/Counter';
 import './buy.css';
@@ -138,7 +138,7 @@ export default function BuyWeb3Service() {
     }, [userCurrentServicePlans, serviceKey]);
 
     useEffect(() => {
-        userBalanceRuntime().then(balance => setUserBalance(balance));
+        getUserBalance().then(balance => setUserBalance(balance));
     }, []);
 
     useEffect(() => {

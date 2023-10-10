@@ -14,18 +14,21 @@ export interface User extends BaseModel {
     kyc_msg?: string;
 }
   
-export interface UserBalance {
+export interface UserBalance extends BaseModel {
     user_id: number;
-    balance: number;
+    balance: string; // real time balance
+    balance_on_fiatlog: string;
+    arrears_quota: string;
+    storage_price: string;
 }
   
 export interface FiatLog extends BaseModel {
     user_id: number;
-    amount: number;
+    amount: string;
     type: number;
     meta: object;
     order_no: string;
-    balance: number;
+    balance: string;
 }
   
 export interface Company {

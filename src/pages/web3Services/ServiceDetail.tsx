@@ -19,6 +19,7 @@ export default function ServiceDetail() {
     const [userId, setUserId] = useState<number>(0);
     const [_logCountByDate, setLogCountByDate] = useState<{count: number}[]>([]);
 
+    const [pageSize, setPageSize] = useState<number>(10);
     const [page, setPage] = useState<number>(1);
     const [total, setTotalLogCount] = useState<number>(0);
     const [logs, setLogs] = useState<{}[]>([]);
@@ -51,11 +52,11 @@ export default function ServiceDetail() {
             collection: service_type as string, 
             user_key: userId.toString(),
             app_id: currentAppId.toString(),
-        }, page).then((res) => {
+        }, page, pageSize).then((res) => {
             setTotalLogCount(res.count);
             setLogs(res.items);
         });
-    }, [service_type, userId, page, currentAppId]);
+    }, [service_type, userId, page, currentAppId, pageSize]);
 
     useEffect(() => {
         if (userId === 0) return;
@@ -196,13 +197,15 @@ export default function ServiceDetail() {
                                 <Button type='primary' onClick={downloadLog}>导出日志</Button>
                             </Space>}>
                             <Table 
+                                rowKey={"id"}
                                 dataSource={logs} 
                                 pagination={{
                                     total,
+                                    pageSize,
                                     current: page,
                                     showTotal: (total) => `共 ${total} 条`,
                                 }} 
-                                onChange={(info: TablePaginationConfig) => setPage(info.current as number)}
+                                onChange={(info: TablePaginationConfig) => {setPage(info.current as number); setPageSize(info.pageSize as number)}}
                                 key={"id"} 
                                 columns={tableColumns} 
                             />
