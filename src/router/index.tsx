@@ -31,54 +31,74 @@ import Whitelist from '@pages/whitelist';
 import WhitelistEditor from '@pages/whitelist/create';
 import WhitelistDetail from '@pages/whitelist/detail';
 import EasyMint from '@pages/mint/easyMint';
+import Invoice from '@pages/invoice/index';
+import InvoiceInfo from '@pages/invoice/info';
+import InvoiceNew from '@pages/invoice/new';
+import Web3ServiceRoute from '@pages/web3Services';
 
 const AppRouter: React.FC = () => {
     return (
         <BrowserRouter>
             <Routes>
                 <Route path="/">
-                <Route path="login" element={<Login />} />
-                <Route path="register" element={<Register />} />
-                <Route path="forgotPwd" element={<ForgotPwd />} />
-                <Route path="resetPwd" element={<ResetPwd />} />
-                <Route
-                    path="panels"
-                    element={
-                        <RequireAuth>
-                            <DashboardLayout />
-                        </RequireAuth>
-                    }
-                >
-                    <Route index element={<Panel />} />
-                    <Route path="user" element={<User />} />
-                    <Route path="userBalance" element={<UserBalance />} />
-                    <Route path="chargeBalance" element={<ChargeBalance />} />
-                    <Route path="mintCountByMonth" element={<UserMintCountByMonth />} />
-                    <Route path="company" element={<Company />} />
-                    <Route path="apps" element={<App />} />
-                    <Route path="apps/:id" element={<AppDetail />} />
-                    <Route path="mint/easyMint" element={<EasyMint />} />
-                    <Route path="mint/:id" element={<MintFrame />} />
-                    <Route path="contracts" element={<Contracts />} />
-                    <Route path="contracts/sponsor" element={<ContractSponsor />} />
-                    <Route path="contracts/autoSponsors" element={<AutoSponsors />} />
-                    <Route path="contracts/deploy" element={<ContractDeployment />} />
-                    <Route path="poaps" element={<Poaps />} />
-                    <Route path="poaps/:appId/createGasless" element={<GaslessPoap />} />
-                    <Route path="poaps/createGaslessInDefaultProject" element={<GaslessPoap />} />
-                    <Route path="poaps/:activityId/updateGasless" element={<GaslessPoap />} />
-                    <Route path="poaps/asset/single/:activityId" element={<Asset />} />
-                    <Route path="poaps/asset/blind/:activityId" element={<Blind />} />
-                    <Route path="poaps/building/:activityId" element={<Building />} />
-                    <Route path="metadata" element={<Metadata />} />
-                    <Route path="socialBot" element={<Bots />} />
-                    <Route path="empty" element={<EmptyPage />} />
-                    <Route path='whitelist' element={<Whitelist />} />
-                    <Route path='whitelist/create' element={<WhitelistEditor />} />
-                    <Route path='whitelist/detail/:id' element={<WhitelistDetail />} />
-                </Route>
-                <Route path="/" element={<Navigate to="panels" />} />
-                <Route path="*" element={<Navigate to="/" />} />
+                    <Route path="login" element={<Login />} />
+                    <Route path="register" element={<Register />} />
+                    <Route path="forgotPwd" element={<ForgotPwd />} />
+                    <Route path="resetPwd" element={<ResetPwd />} />
+                    <Route
+                        path="panels"
+                        element={
+                            <RequireAuth>
+                                <DashboardLayout />
+                            </RequireAuth>
+                        }
+                    >
+                        <Route index element={<Panel />} />
+                        <Route path="user" element={<User />} />
+                        <Route path="userBalance" element={<UserBalance />} />
+                        <Route path="chargeBalance" element={<ChargeBalance />} />
+                        <Route path="mintCountByMonth" element={<UserMintCountByMonth />} />
+                        <Route path="company" element={<Company />} />
+                        <Route path="invoice">
+                            <Route index element={<Invoice />} />
+                            <Route path="info" element={<InvoiceInfo />} />
+                            <Route path="new" element={<InvoiceNew />} />
+                        </Route>
+                        <Route path="apps">
+                            <Route index element={<App />} />
+                            <Route path=":id" element={<AppDetail />} />
+                        </Route>
+                        <Route path="mint">
+                            <Route path='easyMint' element={<EasyMint />} />
+                            <Route path=':id' element={<MintFrame />} />
+                        </Route>
+                        <Route path='contracts'>
+                            <Route path="" element={<Contracts />} />
+                            <Route path="sponsor" element={<ContractSponsor />} />
+                            <Route path="autoSponsors" element={<AutoSponsors />} />
+                            <Route path="deploy" element={<ContractDeployment />} />
+                        </Route>
+                        <Route path='poaps'>
+                            <Route path="" element={<Poaps />} />
+                            <Route path=":appId/createGasless" element={<GaslessPoap />} />
+                            <Route path="createGaslessInDefaultProject" element={<GaslessPoap />} />
+                            <Route path=":activityId/updateGasless" element={<GaslessPoap />} />
+                            <Route path="asset/single/:activityId" element={<Asset />} />
+                            <Route path="asset/blind/:activityId" element={<Blind />} />
+                            <Route path="building/:activityId" element={<Building />} />
+                        </Route>
+                        <Route path="metadata" element={<Metadata />} />
+                        <Route path="socialBot" element={<Bots />} />
+                        <Route path='whitelist'>
+                            <Route index element={<Whitelist />} />
+                            <Route path='create' element={<WhitelistEditor />} />
+                            <Route path='detail/:id' element={<WhitelistDetail />} />
+                        </Route>
+                        {Web3ServiceRoute()}
+                        <Route path="empty" element={<EmptyPage />} />
+                    </Route>
+                    <Route index path="/" element={<Navigate to="panels" />} />
+                    <Route path="*" element={<Navigate to="/" />} />
                 </Route>
             </Routes>
         </BrowserRouter>

@@ -5,6 +5,7 @@
   "publicPath": "./",
   "dependencies": {
     "@ant-design/icons": "^4.8.0",
+    "@ant-design/plots": "^1.2.5",
     "@ant-design/pro-components": "^2.3.54",
     "antd": "~5.1.7",
     "axios": "^0.27.2",

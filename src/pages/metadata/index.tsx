@@ -11,18 +11,19 @@ import {
     Space,
     Select,
     Image,
+    Typography,
 } from "antd";
 import {
     MinusCircleOutlined,
     PlusOutlined,
 } from '@ant-design/icons';
-import FileUpload from '@components/FileUpload';
 import FileUploadOrInput from '@components/FileUploadOrInput';
 import { getMedtadataList, createMetadata } from '@services/metadata';
 import { getAllApps } from '@services/app';
 import { Metadata, App } from '@models/index';
 import { short, formatDate } from '@utils/index';
 import { Link } from "react-router-dom";
+const { Paragraph } = Typography;
 const { Option } = Select;
 
 const formLayout = {
@@ -35,6 +36,9 @@ export default function MetaTable() {
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
     const [apps, setApps] = useState<App[]>([]);
+    const [tick, setTick] = useState(0);
+    const [app_id, setAppId] = useState<number | undefined>(undefined);
+    const [search, setSearch] = useState<string | undefined>(undefined);
 
     const [form] = Form.useForm();
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -45,12 +49,12 @@ export default function MetaTable() {
             dataIndex: 'id',
         },
         {
-            title: '项目ID',
+            title: '项目',
             dataIndex: 'app_id',
             render: (app_id: number) => <Link to={`/panels/apps/${app_id}`}>{apps.find(item => item.id === app_id)?.name || app_id}</Link>,
         },
         {
-            title: '名称(Hover Desc)',
+            title: '名称',
             dataIndex: 'name',
             render: (text: string, record: Metadata) => <Tooltip title={record.description}>{text}</Tooltip>
         },
@@ -61,11 +65,11 @@ export default function MetaTable() {
             render: (text: string) => <Image src={text} alt='NFT'/>
         },
         {
-            title: 'MetadataId',
+            title: 'metadata uri',
             dataIndex: 'metadata_id',
-            render: (text: string, record: Metadata) => <a href={record.uri} target='_blank' rel="noreferrer">{short(text)}</a>
+            render: (text: string, record: Metadata) => <a href={record.uri} target='_blank' rel="noreferrer"><Paragraph copyable={{text: record.uri}}>{short(text)}</Paragraph></a>
         },
-        {
+        /* {
             title: 'ExternalLink',
             dataIndex: 'external_link',
             render: (text: string) => text ? <a href={text} target='_blank' rel="noreferrer">查看</a> : null
@@ -74,7 +78,7 @@ export default function MetaTable() {
             title: 'AnimationUrl',
             dataIndex: 'animation_url',
             render: (text: string) => text ? <a href={text} target='_blank' rel="noreferrer">查看</a> : null
-        },
+        }, */
         {
             title: '创建时间',
             dataIndex: 'created_at',
@@ -97,11 +101,11 @@ export default function MetaTable() {
     }
 
     useEffect(() => {
-        getMedtadataList(page, 10).then(res => {
+        getMedtadataList(page, 10, {app_id, search}).then(res => {
             setTotal(res.count);
             setItems(res.items);
         });
-    }, [page]);
+    }, [page, tick, app_id, search]);
 
     useEffect(() => {
         getAllApps().then(setApps);
@@ -109,7 +113,29 @@ export default function MetaTable() {
 
     return (
         <>
-            <Card title='元数据管理' extra={<Button type='primary' onClick={() => setIsModalVisible(true)}>添加</Button>} style={{flexGrow:1}}>
+            <Card title='元数据管理' 
+                extra={<>
+                    <Space>
+                        <Form layout='inline'>
+                            <Form.Item label="项目" name="app_id">
+                                <Select style={{width: '150px'}} onChange={val => setAppId(val)}>
+                                    {apps.map((app) => <Option key={app.id} value={app.id}>{app.name}</Option>)}
+                                </Select>
+                            </Form.Item>
+                            <Form.Item label="名称" name='search'>
+                                <Input placeholder="" onChange={e => setSearch(e.target.value)} />
+                            </Form.Item>
+                            <Button onClick={() => {
+                                setAppId(undefined);
+                                setSearch(undefined);
+                            }}>重置</Button>
+                        </Form>
+                        <Button onClick={() => setTick(tick+1)}>刷新</Button>
+                        <Button type='primary' onClick={() => setIsModalVisible(true)}>添加</Button>
+                    </Space>
+                </>} 
+                style={{flexGrow:1}}
+            >
                 <Table
                     rowKey='id'
                     dataSource={items}

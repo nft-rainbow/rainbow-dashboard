@@ -146,7 +146,7 @@ export default function MintFormFields(props: {
                         >
                             <Upload name={"file"} action={methodUrl("/dashboard/misc/upload")} showUploadList={false}
                                     maxCount={1} listType="picture"
-                                    accept={".mp4,.gif"}
+                                    accept={".mp4,.gif,.glb"}
                                     headers={authHeaderSync()}
                                     onChange={(info) => {
                                         if (info.file.status === 'done') {
