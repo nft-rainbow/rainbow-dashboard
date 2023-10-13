@@ -1,5 +1,6 @@
 import { get, NFT, post, put } from '.';
 import { ChainAccount } from '../models';
+import { AppWeb3ServiceMeta } from '../models/App';
 
 export interface File {
     file_name: string;
@@ -38,6 +39,11 @@ export async function createApp(metadata: any) {
 
 export async function getAppDetail(id: number | string) {
     return await get(`/dashboard/apps/${id}`);
+}
+
+// get web3 service key and urls
+export async function getAppWeb3ServiceKey(id: number | string): Promise<AppWeb3ServiceMeta> {
+    return await get(`/dashboard/apps/${id}/web3`);
 }
 
 export async function updateApp(id: number | string, metadata: any) {

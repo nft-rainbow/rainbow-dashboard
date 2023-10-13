@@ -183,7 +183,6 @@ export const turnTimestamp = (time: string) => {
   return date;
 };
 
-export function formatFiat(amount: number) {
-    return amount;  // TODO: 保留两位小数
-    // return (amount / 100).toFixed(2)
+export function formatFiat(amount: number|string) {
+    return typeof amount === 'string' ? amount : amount.toFixed(2);
 }

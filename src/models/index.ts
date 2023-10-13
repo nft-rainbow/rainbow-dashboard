@@ -3,6 +3,8 @@ export * from './Contract';
 export * from './User';
 export * from './Activity';
 export * from './Whitelist';
+export * from './Service';
+export * from './App';
 
 export interface BaseModel {
   id: number;
@@ -19,15 +21,6 @@ export interface ChainAccount extends BaseModel {
   address: string;
   public_key: string;
   private_key: string;
-}
-
-export interface App extends BaseModel {
-  chain_id: any;
-  name: string;
-  intro: string;
-  app_id: string;
-  app_secret?: string;
-  chain_type: number;
 }
 
 export interface Metadata extends BaseModel {

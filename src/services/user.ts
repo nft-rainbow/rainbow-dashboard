@@ -80,10 +80,6 @@ export async function userFiatLogs(page = 1, limit = 10, filter = {}) {
     return await get('/dashboard/users/fiatLogs', Object.assign({page, limit}, filter));
 }
 
-export async function userBalanceRuntime(): Promise<UserBalance> {
-    return await get('/dashboard/users/balance/runtime');
-}
-
 export async function userMintCountByMonth(): Promise<any> {
     return await get('/dashboard/users/mintCountByMonth')
 }

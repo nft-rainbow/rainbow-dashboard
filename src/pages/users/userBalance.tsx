@@ -8,7 +8,7 @@ import {
 import type { RangePickerProps } from 'antd/es/date-picker';
 import { Link } from 'react-router-dom';
 import { InfoCircleOutlined } from '@ant-design/icons'
-import { userFiatLogs, userBalanceRuntime } from '@services/user';
+import { userFiatLogs, userBalance } from '@services/user';
 import { FiatLog } from '@models/index';
 import { formatDate, mapFiatLogType, short, scanAddressLink, formatFiat } from '@utils/index';
 import { TextDownloader } from '@components/TextDownloader';
@@ -25,7 +25,8 @@ const billText = `
 `;
 
 export default function UserBalance() {
-    const [balance, setBalance] = useState(0);
+    const [balance, setBalance] = useState<number>(0);
+    const [balanceRealTime, setBalanceRealTime] = useState<number>(0);
     const [balanceRefreshTick, setBalanceRefreshTick] = useState(0);
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
@@ -56,7 +57,7 @@ export default function UserBalance() {
             'ID': item.id,
             '创建时间': formatDate(item.created_at),
             '订单号': item.order_no,
-            '交易方向': item.amount > 0 ? '充值' : '消费',
+            '交易方向': Number(item.amount) > 0 ? '充值' : '消费',
             '交易类型': mapFiatLogType(item.type),
             '金额(元)': formatFiat(item.amount),
             '余额(元)': formatFiat(item.balance),
@@ -117,7 +118,10 @@ export default function UserBalance() {
     }
 
     useEffect(() => {
-        userBalanceRuntime().then((res) => setBalance(res.balance));
+        userBalance().then((res) => {
+            setBalance(Number(res.balance_on_fiatlog));
+            setBalanceRealTime(Number(res.balance));
+        });
     }, [balanceRefreshTick]);
 
     useEffect(() => {
@@ -190,6 +194,9 @@ export default function UserBalance() {
                         <Link to='/panels/chargeBalance'>
                             <Button type='primary'>充值</Button>
                         </Link>
+                        <Tooltip title={billText}>
+                            <Text type='secondary'>开票说明</Text>
+                        </Tooltip>
                     </Space>
                 </div>
                 <div style={{marginTop: '20px'}}>
@@ -199,9 +206,9 @@ export default function UserBalance() {
                                 用户协议
                             </span>
                         </a> */}
-                        <Tooltip title={billText}>
-                            <Text type='secondary'>开票说明</Text>
-                        </Tooltip>
+                        {
+                            balanceRealTime < balance ? <span style={{color: 'red', fontSize: '14px'}}>待结算金额: {balance - balanceRealTime}</span> : null
+                        }
                     </Space>
                 </div>
             </Card>
@@ -216,6 +223,7 @@ export default function UserBalance() {
                     loading={loading}
                     pagination={{
                         total,
+                        pageSize: 10,
                         current: page,
                         showTotal: (total) => `共 ${total} 条`,
                     }}

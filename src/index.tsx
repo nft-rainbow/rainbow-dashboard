@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import 'uno.css';
-import './index.css';
-import 'antd/dist/reset.css';
 import reportWebVitals from './router/reportWebVitals';
 import { AuthProvider } from './router/Auth';
 import AppRouter from './router';
+import 'uno.css';
+import 'antd/dist/reset.css';
+import './index.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

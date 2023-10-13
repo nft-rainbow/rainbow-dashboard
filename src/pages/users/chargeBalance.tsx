@@ -8,7 +8,7 @@ import {
 import { InfoCircleOutlined, EditTwoTone } from '@ant-design/icons';
 import RainbowBreadcrumb from '@components/Breadcrumb';
 import type { TabsProps } from 'antd';
-import { userBalanceRuntime, userProfile } from '@services/user';
+import { userBalance, userProfile } from '@services/user';
 import { 
     createWxPayOrder, getCmbCardNo, createCmbCardNo, 
     updateCmbCardRelation, getCmbDepositMeta 
@@ -45,7 +45,7 @@ export default function Page() {
     ];
 
     useEffect(() => {
-        userBalanceRuntime().then((res) => setBalance(res.balance));
+        userBalance().then((res) => setBalance(Number(res.balance)));
     }, [balanceRefreshTick]);
 
     useEffect(() => {
