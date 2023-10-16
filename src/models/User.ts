@@ -50,10 +50,11 @@ export interface MintCountByMonth {
     month: string;
 }
 
-export interface CmbDepositNo extends BaseModel {
-    user_id: number;
-    user_name: string;
-    user_bank_no: string;
-    user_bank_name: string;
-    cmb_no: string;
+export interface CmbDepositNo {
+    ID: number;
+    UserId: number;
+    UserName: string;
+    UserBankNo: string;
+    UserBankName: string;
+    CmbNo: string;
 }

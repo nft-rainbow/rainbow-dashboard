@@ -97,7 +97,7 @@ function OnlineCharge({user: userInfo}: {user?: User}) {
             amount: amount,
             desc: 'Charge',
         });
-        setPayUrl(res.code_url);
+        setPayUrl(res.CodeUrl);
         setIsPayModalVisible(true);
     }
 
@@ -173,9 +173,9 @@ function PublicCharge({user: userInfo}: {user?: User}) {
 
     const openEditModal = () => {
         form.setFieldsValue({
-            name: cardNoInfo?.user_name,
-            bank: cardNoInfo?.user_bank_name,
-            card_no: cardNoInfo?.user_bank_no,
+            name: cardNoInfo?.UserName,
+            bank: cardNoInfo?.UserBankName,
+            card_no: cardNoInfo?.UserBankNo,
         });
         setIsEdit(true);
         setIsModalVisible(true);
@@ -205,13 +205,13 @@ function PublicCharge({user: userInfo}: {user?: User}) {
             </div>
             {cardNoInfo && (<>
                 <div>
-                    <span>开户名称: </span> <span>{cardNoInfo?.user_name}</span> <EditTwoTone onClick={openEditModal} />
+                    <span>开户名称: </span> <span>{cardNoInfo?.UserName}</span> <EditTwoTone onClick={openEditModal} />
                 </div>
                 <div>
-                    <span>开户银行: </span> <span>{cardNoInfo?.user_bank_name}</span> <EditTwoTone onClick={openEditModal} />
+                    <span>开户银行: </span> <span>{cardNoInfo?.UserBankName}</span> <EditTwoTone onClick={openEditModal} />
                 </div>
                 <div>
-                    <span>银行账号: </span> <span>{cardNoInfo?.user_bank_no}</span> <EditTwoTone onClick={openEditModal} />
+                    <span>银行账号: </span> <span>{cardNoInfo?.UserBankNo}</span> <EditTwoTone onClick={openEditModal} />
                 </div>
             </>)}
         </div>
@@ -225,13 +225,13 @@ function PublicCharge({user: userInfo}: {user?: User}) {
                 <div className='gray-border mt-20'>
                         <div>开户名称：<Text copyable>{cmbDepositMeta?.AccountName}</Text></div>
                         <div>开户银行：<Text copyable>{cmbDepositMeta?.AccountBank}</Text></div>
-                        <div>专属对公账号：<Text copyable>{`${cmbDepositMeta?.AccountNumber}${cardNoInfo.cmb_no}`}</Text></div>
+                        <div>专属对公账号：<Text copyable>{`${cmbDepositMeta?.AccountNumber}${cardNoInfo.CmbNo}`}</Text></div>
                         <div>
                             <Text strong>请妥善保存账号信息，勿告知他人</Text>
                         </div>
                         <div className='mt-20'>
                             <Button type='primary' onClick={async () => {
-                                await navigator.clipboard.writeText(cmbDepositMeta?.AccountNumber+cardNoInfo.cmb_no);
+                                await navigator.clipboard.writeText(cmbDepositMeta?.AccountNumber+cardNoInfo.CmbNo);
                                 message.success('复制成功');
                             }}>复制充值卡号</Button>
                         </div>
