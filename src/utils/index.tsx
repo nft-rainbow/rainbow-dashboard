@@ -46,10 +46,20 @@ export function mapFiatLogType(type: number) {
       return 'API费用';
     case 6:
       return '对公充值';
+    case 7:
+      return "API使用返还"; // api fee refund
+    case 8:
+      return "代付返还";
+    case 15:
+      return '购买Web3服务套餐';
+    case 16:
+      return '购买Web3服务加油包';
     default:
       return '其他';
   }
 }
+
+// 
 
 export function formatDate(date: Date | string) {
   if (typeof date === 'string') {
