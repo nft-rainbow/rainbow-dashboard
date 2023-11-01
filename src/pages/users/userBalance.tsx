@@ -207,7 +207,7 @@ export default function UserBalance() {
                             </span>
                         </a> */}
                         {
-                            balanceRealTime < balance ? <span style={{color: 'red', fontSize: '14px'}}>待结算金额: {balance - balanceRealTime}</span> : null
+                            balanceRealTime < balance ? <span style={{color: 'red', fontSize: '14px'}}>待结算金额: {(balance - balanceRealTime).toFixed(2)}</span> : null
                         }
                     </Space>
                 </div>
