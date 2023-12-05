@@ -50,7 +50,9 @@ export default function Page() {
         {
             title: '金额(元)',
             dataIndex: 'amount',
-            render: (amount: string) => Math.abs(Number(amount))
+            render: (amount: string, record: FiatLog) => {
+                return realConsumeAmount(record);
+            }
         },
     ];
 
@@ -60,26 +62,26 @@ export default function Page() {
             // console.log(record, selected, selectedRows, e);
             if (selected) {
                 setSelectedRowKeys([...selectedRowKeys, record.id]);
-                setInvoiceAmount(invoiceAmount + Math.abs(Number(record.amount)) * 100);
+                setInvoiceAmount(invoiceAmount + realConsumeAmount(record));
             } else {
                 setSelectedRowKeys(selectedRowKeys.filter((key) => key !== record.id));
-                setInvoiceAmount(invoiceAmount - Math.abs(Number(record.amount)) * 100);
+                setInvoiceAmount(invoiceAmount - realConsumeAmount(record));
             }
         },
         onSelectAll: (selected: boolean, selectedRows: FiatLog[], changedRow: FiatLog[]) => {
             // console.log(selected, selectedRows, changedRow);
-            const amount = changedRow.reduce((prev, curr) => {
-                return prev + Math.abs(Number(curr.amount));
+            const amount = changedRow.reduce((prev: number, curr: FiatLog) => {
+                return prev + realConsumeAmount(curr);
             }, 0);
             if (selected) {
                 const keys = changedRow.map((row) => row.id);
                 setSelectedRowKeys([...selectedRowKeys, ...keys]);
-                setInvoiceAmount(invoiceAmount + amount * 100);
+                setInvoiceAmount(invoiceAmount + amount);
             } else {
                 const keys = changedRow.map((row) => row.id);
                 // @ts-ignore
                 setSelectedRowKeys(selectedRowKeys.filter((key) => keys.indexOf(key) === -1));
-                setInvoiceAmount(invoiceAmount - amount * 100);
+                setInvoiceAmount(invoiceAmount - amount);
             }
         },
     };
@@ -161,7 +163,7 @@ export default function Page() {
                         }
                         setIsModalOpen(true);
                     }}>开票</Button>
-                    <span>开票总金额: {(invoiceAmount / 100).toFixed(2)}</span>
+                    <span>开票总金额: {invoiceAmount.toFixed(2)}</span>
                 </Space>
             </Card>
             <Modal 
@@ -178,7 +180,7 @@ export default function Page() {
                         </Radio.Group>
                     </Form.Item>
                     <Form.Item label='发票总额'>
-                        <span>{(invoiceAmount / 100).toFixed(2)}</span>
+                        <span>{invoiceAmount.toFixed(2)}</span>
                     </Form.Item>
                     <Button type='link' style={{float: 'right'}} onClick={() => setIsModal2Open(true)}>更换</Button>
                     <h3>发票信息</h3>
@@ -232,4 +234,15 @@ export default function Page() {
             </Modal>
         </>
     );
+}
+
+// consume amount minus refunded amount
+function realConsumeAmount(record: FiatLog): number {
+    let fAmount = Number(record.amount);
+    // @ts-ignore
+    if (record.meta && record.meta.refunded_amount) {
+        // @ts-ignore
+        fAmount = fAmount + Number(record.meta.refunded_amount);
+    }
+    return Math.abs(fAmount);
 }

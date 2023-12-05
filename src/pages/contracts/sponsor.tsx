@@ -116,7 +116,7 @@ export default function ContractSponsor() {
                                 rules={[{ required: true }]}
                                 extra={sponsorInfo ? `白名单状态: ${sponsorInfo.is_all_white_listed ? '开' : '关'}` : null}
                             >
-                                <Input onChange={e => setContractAddr(e.target.value)}/>
+                                <Input placeholder="Conflux主网或测试网地址" onChange={e => setContractAddr(e.target.value)}/>
                             </Form.Item>
                             <Form.Item 
                                 name="gas"
