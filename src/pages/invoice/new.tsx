@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { getInvoiceAvailableFiatLogs, createInvoice, getInvoiceInfoDefault, getInvoiceInfoList } from '@services/invoice';
 import { InvoiceInfo } from '@models/Invoice';
 import { FiatLog } from '@models/index';
-import { formatDate } from '@utils/index';
+import { formatDate, mapFiatLogType } from '@utils/index';
 const { Text } = Typography;
 
 // TODO: 开票时, 支持编辑开票信息的邮寄地址等信息
@@ -46,6 +46,7 @@ export default function Page() {
         {
             title: '消费项目',
             dataIndex: 'type',
+            render: (type: number) => mapFiatLogType(type)
         },
         {
             title: '金额(元)',
