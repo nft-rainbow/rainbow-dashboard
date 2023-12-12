@@ -24,6 +24,7 @@ export default function Page() {
     const [currentInvoiceInfo, setCurrentInvoiceInfo] = useState<InvoiceInfo|undefined>(undefined);
 
     const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
     const [total, setTotal] = useState(0);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -127,11 +128,11 @@ export default function Page() {
     }, []);
 
     useEffect(() => {
-        getInvoiceAvailableFiatLogs(page, 10).then((res) => {
+        getInvoiceAvailableFiatLogs(page, pageSize).then((res) => {
             setInvoiceAvailableFiatLogs(res.items);
             setTotal(res.count);
         });
-    }, [page]);
+    }, [page, pageSize]);
 
     useEffect(() => {
         getInvoiceInfoList(1, 1000).then(res => {
@@ -152,9 +153,10 @@ export default function Page() {
                     pagination={{
                         total,
                         current: page,
+                        pageSize,
                         showTotal: (total) => `共 ${total} 条`,
                     }}
-                    onChange={(info: TablePaginationConfig) => setPage(info.current as number) }
+                    onChange={(info: TablePaginationConfig) => {setPage(info.current as number); setPageSize(info.pageSize as number)} }
                 />
                 <Space>
                     <Button type='primary' onClick={() => {
