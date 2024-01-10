@@ -11,6 +11,7 @@ import {
     Space,
     Select,
     Image,
+    message,
     Typography,
 } from "antd";
 import {
@@ -94,10 +95,15 @@ export default function MetaTable() {
     ];
 
     const createMetadta = async (values: object) => {
-        // @ts-ignore
-        const appId = values.app_id;
-        await createMetadata(appId, values);
-        setIsModalVisible(false);
+        try {
+            // @ts-ignore
+            const appId = values.app_id;
+            await createMetadata(appId, values);
+            setIsModalVisible(false);
+        } catch (error: any) {
+            message.error(`创建 Metadata 失败: ${error.response.data.message}`);
+        }
+        
     }
 
     useEffect(() => {
