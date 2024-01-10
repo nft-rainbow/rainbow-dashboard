@@ -61,11 +61,11 @@ export default function Panel() {
         getUserRainbowQuota(user.id).then(res => {
             setFreeQuota({
                 // @ts-ignore
-                free_deploy_quota: res.rainbow_deploy.count_reset,
+                free_deploy_quota: res.rainbow_deploy.count_reset + res.rainbow_deploy.count_rollover,
                 // @ts-ignore
-                free_mint_quota: res.rainbow_mint.count_reset,
+                free_mint_quota: res.rainbow_mint.count_reset + res.rainbow_mint.count_rollover,
                 // @ts-ignore
-                free_other_api_quota: res.rainbow_normal.count_reset,
+                free_other_api_quota: res.rainbow_normal.count_reset + res.rainbow_normal.count_rollover,
             });
         });
     }, [user]);
