@@ -84,6 +84,7 @@ export function MintSingle(props: { appId: any, contract: Contract }) {
                 }
                 setMintLoading(true);
                 let res = await batchMintByMetadataUri(appId, {
+                    tokenid_auto_order: false,
                     chain: mapChainAndNetworkName(contract.chain_type, contract.chain_id),
                     contract_address: contract.address,
                     mint_items: [item],

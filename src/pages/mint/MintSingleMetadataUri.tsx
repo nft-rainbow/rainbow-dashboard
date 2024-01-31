@@ -49,6 +49,7 @@ export function MintSingleByMetadataUri(props: {
                 item.token_id = tokenId;
             }
             await batchMintByMetadataUri(appId, {
+                tokenid_auto_order: false,
                 chain,
                 contract_address: contract.address,
                 mint_items: [item],
