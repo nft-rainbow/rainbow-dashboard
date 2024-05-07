@@ -8,7 +8,7 @@ interface Character {
 }
 export interface MetadataAttribute {
     id?: string;
-    display_type: 'text' | 'date';
+    display_type?: 'text' | 'date';
     trait_type: string;
     value?: string | Date;
 }

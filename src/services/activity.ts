@@ -50,6 +50,7 @@ export const updateActivity = async (meta: PoapActivityConfig) => {
 export const getActivityById = async (activity_id?: string) => (activity_id ? get(`/apps/poap/activity/${activity_id}`) : false);
 
 export const setActivityNftConfigs = async (activity_code: string, nft_configs: NftConfig[]) => {
+    dealNftMetaAttribute(nft_configs);
     // delete removed nft_configs
     const toDelete = nft_configs.filter((nft_config) => nft_config.deleted && nft_config.id);
     for (const item of toDelete) {
@@ -79,4 +80,20 @@ export const deleteNftConfigs = async (nft_config_id: number) => {
 
 export const updateNftConfig = async (nft_config_id: number, nft_config: NftConfig) => {
     return put(`/apps/poap/activity/nftconfig/${nft_config_id}`, nft_config);
+}
+
+function dealNftMetaAttribute(nft_configs: NftConfig[]) {
+    for(let i in nft_configs) {
+        let item = nft_configs[i];
+        for(let j in item.metadata_attributes) {
+            let meta = item.metadata_attributes[j];
+            if (meta.display_type === 'text') {
+                delete nft_configs[i].metadata_attributes[j].display_type;
+            }
+            // if (meta.display_type === 'date') {
+            //     let value = nft_configs[i].metadata_attributes[j].value;
+            //     // convert value to timestamp
+            // }
+        }
+    }    
 }
